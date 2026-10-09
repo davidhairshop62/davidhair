@@ -719,12 +719,12 @@
                                 <span class="text-xs sm:text-sm font-bold text-brand-tealLight"
                                     x-text="builder.greyPercent + '% Synthetic Grey'"></span>
                             </div>
-                            <input type="range" min="0" max="50" step="5" x-model.number="builder.greyPercent"
+                            <input type="range" min="0" max="100" step="5" x-model.number="builder.greyPercent"
                                 class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-3">
                             <div class="flex justify-between text-[10px] text-brand-textMuted mt-1">
                                 <span>0% (No Grey)</span>
-                                <span>20% (Natural Salt & Pepper)</span>
-                                <span>50% (Heavy Grey)</span>
+                                <span>50% (Medium Grey)</span>
+                                <span>100% (Full Grey)</span>
                             </div>
                         </div>
                     </div>
@@ -755,7 +755,7 @@
                             <div
                                 class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
                                 <div>
-                                    <div class="text-xs sm:text-sm font-bold text-white">Bleached Knots (Front Hairline)
+                                    <div class="text-xs sm:text-sm font-bold text-white">Bleached Knots (Front Hairline) <span class="text-brand-tealLight font-semibold text-xs ml-1">(+$20)</span>
                                     </div>
                                     <div class="text-[11px] text-brand-textMuted">Creates invisible scalp illusion along
                                         front lace.</div>
@@ -771,7 +771,7 @@
                             <div
                                 class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
                                 <div>
-                                    <div class="text-xs sm:text-sm font-bold text-white">Under-ventilation</div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">Under-ventilation <span class="text-brand-tealLight font-semibold text-xs ml-1">(+$20)</span></div>
                                     <div class="text-[11px] text-brand-textMuted">Conceals edge lines for natural side
                                         and perimeter lay.</div>
                                 </div>
@@ -848,11 +848,19 @@
                         <div class="space-y-2.5 text-xs">
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Profile:</span>
-                                <span class="font-bold text-white" x-text="getProfileName(builder.profile)"></span>
+                                <span class="font-bold text-white">
+                                    <span x-text="getProfileName(builder.profile)"></span>
+                                    <span class="text-brand-tealLight font-semibold text-[11px] ml-1"
+                                        x-text="'(' + formatCurrency(getProfilePrice(builder.profile)) + ')'"></span>
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Base Type:</span>
-                                <span class="font-bold text-white" x-text="getBaseName(builder.base)"></span>
+                                <span class="font-bold text-white">
+                                    <span x-text="getBaseName(builder.base)"></span>
+                                    <span class="text-brand-tealLight font-semibold text-[11px] ml-1"
+                                        x-text="'(+' + formatCurrency(getBasePrice(builder.base)) + ')'"></span>
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Dimensions:</span>
@@ -871,8 +879,17 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Crafting:</span>
-                                <span class="font-bold text-white"
-                                    x-text="builder.bleachedKnots ? 'Bleached Knots' : 'Standard Knots'"></span>
+                                <span class="font-bold text-white text-right">
+                                    <template x-if="!builder.bleachedKnots && !builder.underVentilation">
+                                        <span>Standard Knots</span>
+                                    </template>
+                                    <template x-if="builder.bleachedKnots">
+                                        <span class="block">Bleached Knots (+$20)</span>
+                                    </template>
+                                    <template x-if="builder.underVentilation">
+                                        <span class="block">Under-ventilation (+$20)</span>
+                                    </template>
+                                </span>
                             </div>
                         </div>
 
@@ -2363,7 +2380,7 @@
                     { id: 'lace', name: 'Full Swiss Lace', price: 60, desc: 'Maximum breathability and natural hairline.' },
                     { id: 'pu', name: 'PU Perimeter Base', price: 50, desc: 'Durable Polyurethane perimeter for easy taping & liquid adhesive bonding.' },
                     { id: 'combo', name: 'Lace Front + PU Perimeter', price: 50, desc: 'Durable perimeter bonding with realistic lace front.' },
-                    { id: 'silk', name: 'Silk Top (불파트)', price: 90, desc: 'Triple-layer realistic scalp appearance.' },
+                    { id: 'silk', name: 'Silk Top', price: 90, desc: 'Triple-layer realistic scalp appearance.' },
                     { id: 'cnc', name: 'Premier CNC Virgin Hair System', price: 140, desc: 'Medical-grade custom head mold paired with European Virgin Hair.' }
                 ],
 
@@ -2378,7 +2395,7 @@
                 stockItems: [
                     { sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '90%', color: '#1B Off Black', price: 420, stockQty: 12, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80' },
                     { sku: 'SKU-DH-102', name: "French Lace Front + PU Perimeter", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '100%', color: '#2 Dark Brown', price: 450, stockQty: 8, image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
-                    { sku: 'SKU-DH-103', name: "Silk Top Topper (불파트) 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80' },
+                    { sku: 'SKU-DH-103', name: "Silk Top Topper 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80' },
                     { sku: 'SKU-DH-104', name: "All-Swiss Breathable Full Lace", category: "Men's Toupees", type: "Swiss Lace", base: "Swiss Lace", size: '8x10"', density: '85%', color: '#1 Jet Black', price: 440, stockQty: 15, image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80' },
                     { sku: 'SKU-DH-105', name: "PU Perimeter Hand-Tied Toupee", category: "Men's Toupees", type: "PU Perimeter", base: "PU Perimeter", size: '8x10"', density: '95%', color: '#1B Off Black', price: 460, stockQty: 10, image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80' }
                 ],
@@ -2387,16 +2404,16 @@
                     profile: 'men',
                     base: 'skin',
                     unit: 'inch',
-                    width: 7.0,
-                    length: 9.0,
+                    width: 8.0,
+                    length: 10.0,
                     hairLength: 6,
-                    density: 90,
+                    density: 80,
                     wave: 'Slight Wave',
                     color: '#1B',
-                    greyPercent: 10,
+                    greyPercent: 0,
                     direction: 'Freestyle',
-                    bleachedKnots: true,
-                    underVentilation: true,
+                    bleachedKnots: false,
+                    underVentilation: false,
                     customerName: '',
                     customerPhone: ''
                 },
@@ -2443,6 +2460,16 @@
                     return p ? p.name : id;
                 },
 
+                getProfilePrice(id) {
+                    const p = this.profiles.find(x => x.id === id);
+                    return p ? p.basePrice : 500;
+                },
+
+                getBasePrice(id) {
+                    const b = this.bases.find(x => x.id === id);
+                    return b ? b.price : 40;
+                },
+
                 getProfileDesc(id) {
                     if (this.lang === 'ko') {
                         if (id === 'men') return 'M자 이마 및 정수리 탈모 커버용 맞춤 가발.';
@@ -2463,14 +2490,14 @@
                         if (id === 'lace') return '풀 스위스 레이스';
                         if (id === 'pu') return 'PU 테두리 강화 베이스';
                         if (id === 'combo') return '레이스 프론트 + PU 테두리';
-                        if (id === 'silk') return '실크 탑 (불파트)';
+                        if (id === 'silk') return '실크 탑';
                         if (id === 'cnc') return '최고급 CNC 버진 헤어 시스템';
                     } else if (this.lang === 'id') {
                         if (id === 'skin') return 'Kulit Ultra-tipis (0.03mm)';
                         if (id === 'lace') return 'Swiss Lace Penuh';
                         if (id === 'pu') return 'Base Keliling PU';
                         if (id === 'combo') return 'Lace Depan + Keliling PU';
-                        if (id === 'silk') return 'Silk Top (Bagian Rambut)';
+                        if (id === 'silk') return 'Silk Top';
                         if (id === 'cnc') return 'Sistem Virgin Hair CNC Premier';
                     }
                     const b = this.bases.find(x => x.id === id);
@@ -2487,9 +2514,10 @@
                 calculateTotal() {
                     const p = this.profiles.find(x => x.id === this.builder.profile);
                     const b = this.bases.find(x => x.id === this.builder.base);
-                    let total = (p ? p.basePrice : 380) + (b ? b.price : 40);
+                    let total = (p ? p.basePrice : 500) + (b ? b.price : 40);
                     if (this.builder.hairLength > 8) total += (this.builder.hairLength - 8) * 15;
-                    if (this.builder.bleachedKnots) total += 25;
+                    if (this.builder.bleachedKnots) total += 20;
+                    if (this.builder.underVentilation) total += 20;
                     return total;
                 },
 
