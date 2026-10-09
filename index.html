@@ -752,8 +752,11 @@
                             </div>
                         </div>
 
-                        <!-- Craft Toggles -->
+                        <!-- Craft & Service Toggles -->
                         <div class="pt-4 border-t border-brand-border space-y-3.5 sm:space-y-4">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-1">Custom Craft & Salon Services</label>
+
+                            <!-- Bleached Knots -->
                             <div
                                 class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
                                 <div>
@@ -770,6 +773,7 @@
                                 </button>
                             </div>
 
+                            <!-- Under-ventilation -->
                             <div
                                 class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
                                 <div>
@@ -781,6 +785,51 @@
                                     :class="builder.underVentilation ? 'bg-brand-teal' : 'bg-slate-700'"
                                     class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
                                     <div :class="builder.underVentilation ? 'translate-x-6' : 'translate-x-0'"
+                                        class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                                </button>
+                            </div>
+
+                            <!-- Precision Cut-in & Blend -->
+                            <div
+                                class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">Precision Cut-in & Blend <span class="text-brand-tealLight font-semibold text-xs ml-1">(+$145)</span></div>
+                                    <div class="text-[11px] text-brand-textMuted">Seamless blending with existing bio hair & barber fade</div>
+                                </div>
+                                <button @click="builder.precisionCutIn = !builder.precisionCutIn"
+                                    :class="builder.precisionCutIn ? 'bg-brand-teal' : 'bg-slate-700'"
+                                    class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
+                                    <div :class="builder.precisionCutIn ? 'translate-x-6' : 'translate-x-0'"
+                                        class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                                </button>
+                            </div>
+
+                            <!-- 4–6 Wk bond Service -->
+                            <div
+                                class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">4–6 Wk bond Service <span class="text-brand-tealLight font-semibold text-xs ml-1">(+$80)</span></div>
+                                    <div class="text-[11px] text-brand-textMuted">Detachment, scalp exfoliation & medical re-bonding</div>
+                                </div>
+                                <button @click="builder.bondService = !builder.bondService"
+                                    :class="builder.bondService ? 'bg-brand-teal' : 'bg-slate-700'"
+                                    class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
+                                    <div :class="builder.bondService ? 'translate-x-6' : 'translate-x-0'"
+                                        class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                                </button>
+                            </div>
+
+                            <!-- Clip + Double Side Tape -->
+                            <div
+                                class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">Clip + Double Side Tape <span class="text-brand-tealLight font-semibold text-xs ml-1">(+$30)</span></div>
+                                    <div class="text-[11px] text-brand-textMuted">Daily attachment clip set & medical grade perimeter tape rolls</div>
+                                </div>
+                                <button @click="builder.clipAndTape = !builder.clipAndTape"
+                                    :class="builder.clipAndTape ? 'bg-brand-teal' : 'bg-slate-700'"
+                                    class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
+                                    <div :class="builder.clipAndTape ? 'translate-x-6' : 'translate-x-0'"
                                         class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
                                 </button>
                             </div>
@@ -890,16 +939,25 @@
                                     x-text="builder.color + ' (' + builder.greyPercent + '% Grey)'"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-brand-textMuted">Crafting:</span>
+                                <span class="text-brand-textMuted">Craft & Services:</span>
                                 <span class="font-bold text-white text-right">
-                                    <template x-if="!builder.bleachedKnots && !builder.underVentilation">
-                                        <span>Standard Knots</span>
+                                    <template x-if="!builder.bleachedKnots && !builder.underVentilation && !builder.precisionCutIn && !builder.bondService && !builder.clipAndTape">
+                                        <span>Standard System Only</span>
                                     </template>
                                     <template x-if="builder.bleachedKnots">
-                                        <span class="block">Bleached Knots (+$20)</span>
+                                        <span class="block text-brand-tealLight">Bleached Knots (+$20)</span>
                                     </template>
                                     <template x-if="builder.underVentilation">
-                                        <span class="block">Under-ventilation (+$20)</span>
+                                        <span class="block text-brand-tealLight">Under-ventilation (+$20)</span>
+                                    </template>
+                                    <template x-if="builder.precisionCutIn">
+                                        <span class="block text-brand-tealLight">Precision Cut-in (+$145)</span>
+                                    </template>
+                                    <template x-if="builder.bondService">
+                                        <span class="block text-brand-tealLight">4–6 Wk Bond (+$80)</span>
+                                    </template>
+                                    <template x-if="builder.clipAndTape">
+                                        <span class="block text-brand-tealLight">Clip + Tape (+$30)</span>
                                     </template>
                                 </span>
                             </div>
@@ -2426,6 +2484,9 @@
                     direction: 'Freestyle',
                     bleachedKnots: false,
                     underVentilation: false,
+                    precisionCutIn: false,
+                    bondService: false,
+                    clipAndTape: false,
                     customerName: '',
                     customerPhone: ''
                 },
@@ -2570,6 +2631,9 @@
                     total += this.getHairLengthSurcharge();
                     if (this.builder.bleachedKnots) total += 20;
                     if (this.builder.underVentilation) total += 20;
+                    if (this.builder.precisionCutIn) total += 145;
+                    if (this.builder.bondService) total += 80;
+                    if (this.builder.clipAndTape) total += 30;
                     return total;
                 },
 
