@@ -335,12 +335,43 @@
 
     <!-- 2. HERO SECTION WITH VIDEO BACKGROUND -->
     <section
-        class="relative pt-28 sm:pt-36 pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg">
+        class="relative pt-28 sm:pt-36 pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
+        x-data="{
+            videos: ['videos/Runing.mp4', 'videos/shampoo.mp4', 'videos/swim.mp4', 'videos/windy.mp4'],
+            videoNames: ['Running', 'Shampoo', 'Swimming', 'Windy'],
+            currentIdx: 0,
+            playNext() {
+                this.currentIdx = (this.currentIdx + 1) % this.videos.length;
+                this.$nextTick(() => {
+                    const video = this.$refs.bgVideo;
+                    if (video) {
+                        video.load();
+                        video.play().catch(() => {});
+                    }
+                });
+            },
+            selectVideo(idx) {
+                this.currentIdx = idx;
+                this.$nextTick(() => {
+                    const video = this.$refs.bgVideo;
+                    if (video) {
+                        video.load();
+                        video.play().catch(() => {});
+                    }
+                });
+            }
+        }">
         <!-- Background Video -->
-        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0 opacity-40">
-            <source src="videos/swim.mp4" type="video/mp4">
+        <video 
+            x-ref="bgVideo"
+            autoplay 
+            muted 
+            playsinline 
+            @ended="playNext()"
+            class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 transition-all duration-700">
+            <source :src="videos[currentIdx]" type="video/mp4">
         </video>
-        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1C3F]/70 via-brand-darkBg/60 to-brand-darkBg/80 z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0F1C3F]/75 via-brand-darkBg/65 to-brand-darkBg/85 z-0"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -425,6 +456,20 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Video Playlist Indicators -->
+            <div class="mt-8 pt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 z-10 relative">
+                <span class="text-xs text-slate-400 font-semibold mr-2 hidden sm:inline-block"><i class="fa-solid fa-clapperboard text-brand-tealLight mr-1.5"></i>Background Scene:</span>
+                <template x-for="(name, idx) in videoNames" :key="idx">
+                    <button 
+                        @click="selectVideo(idx)"
+                        :class="currentIdx === idx ? 'bg-brand-teal text-white border-brand-tealLight scale-105 shadow-md' : 'bg-brand-cardBg/80 text-slate-300 border-brand-border hover:border-slate-500'"
+                        class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 backdrop-blur-sm cursor-pointer">
+                        <span class="w-2.5 h-2.5 rounded-full" :class="currentIdx === idx ? 'bg-white animate-pulse' : 'bg-slate-500'"></span>
+                        <span x-text="(idx + 1) + '. ' + name"></span>
+                    </button>
+                </template>
             </div>
         </div>
     </section>
