@@ -643,12 +643,14 @@
                             <label
                                 class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Hair
                                 Length (Inches)</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
-                                <template x-for="l in [5, 6, 8, 10, 12, 14]" :key="l">
+                            <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-9 gap-2 sm:gap-2.5">
+                                <template x-for="l in [5, 6, 8, 10, 12, 14, 16, 18, 20]" :key="l">
                                     <button @click="builder.hairLength = l"
                                         :class="builder.hairLength === l ? 'border-brand-teal bg-teal-950/40 text-white font-bold' : 'border-brand-border text-slate-300 bg-brand-inner'"
-                                        class="py-3 border-2 rounded-xl text-center text-xs sm:text-sm transition-all min-h-[44px]"
-                                        x-text="l + ' Inches'"></button>
+                                        class="py-2.5 border-2 rounded-xl text-center text-xs transition-all min-h-[48px] flex flex-col items-center justify-center">
+                                        <span x-text="l + ' Inches'"></span>
+                                        <span class="text-[10px] text-brand-tealLight font-medium mt-0.5" x-text="getHairLengthPriceTag(l)"></span>
+                                    </button>
                                 </template>
                             </div>
                         </div>
@@ -864,13 +866,23 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Dimensions:</span>
-                                <span class="font-bold text-white"
-                                    x-text="builder.width + ' x ' + builder.length + ' ' + builder.unit"></span>
+                                <span class="font-bold text-white">
+                                    <span x-text="builder.width + ' x ' + builder.length + ' ' + builder.unit"></span>
+                                    <template x-if="getDimensionSurcharge() > 0">
+                                        <span class="text-brand-tealLight font-semibold text-[11px] ml-1"
+                                            x-text="'(+' + formatCurrency(getDimensionSurcharge()) + ')'"></span>
+                                    </template>
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Hair Spec:</span>
-                                <span class="font-bold text-white"
-                                    x-text="builder.hairLength + '&quot; / ' + builder.density + '% Density'"></span>
+                                <span class="font-bold text-white">
+                                    <span x-text="builder.hairLength + '&quot; / ' + builder.density + '% Density'"></span>
+                                    <template x-if="getHairLengthSurcharge() > 0">
+                                        <span class="text-brand-tealLight font-semibold text-[11px] ml-1"
+                                            x-text="'(+' + formatCurrency(getHairLengthSurcharge()) + ')'"></span>
+                                    </template>
+                                </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-brand-textMuted">Color & Blend:</span>
@@ -2511,11 +2523,51 @@
                     return 'Heavy';
                 },
 
+                getDimensionSurcharge() {
+                    let w = Number(this.builder.width) || 0;
+                    let l = Number(this.builder.length) || 0;
+                    if (this.builder.unit === 'cm') {
+                        w = w / 2.54;
+                        l = l / 2.54;
+                    }
+                    const sum = w + l;
+                    if (sum <= 8) return 0;
+                    if (sum <= 10) return 20;
+                    if (sum <= 13) return 40;
+                    if (sum <= 15) return 70;
+                    return 100;
+                },
+
+                getHairLengthSurchargeFor(len) {
+                    const l = Number(len) || 6;
+                    if (l <= 6) return 0;
+                    if (l === 8) return 50;
+                    if (l === 10) return 90;
+                    if (l === 12) return 100;
+                    if (l === 14) return 200;
+                    if (l === 16) return 300;
+                    if (l === 18) return 400;
+                    if (l === 20) return 500;
+                    if (l > 20) return 500 + (l - 20) * 50;
+                    return 0;
+                },
+
+                getHairLengthSurcharge() {
+                    return this.getHairLengthSurchargeFor(this.builder.hairLength);
+                },
+
+                getHairLengthPriceTag(len) {
+                    const cost = this.getHairLengthSurchargeFor(len);
+                    if (cost === 0) return 'Included';
+                    return '+' + this.formatCurrency(cost);
+                },
+
                 calculateTotal() {
                     const p = this.profiles.find(x => x.id === this.builder.profile);
                     const b = this.bases.find(x => x.id === this.builder.base);
                     let total = (p ? p.basePrice : 500) + (b ? b.price : 40);
-                    if (this.builder.hairLength > 8) total += (this.builder.hairLength - 8) * 15;
+                    total += this.getDimensionSurcharge();
+                    total += this.getHairLengthSurcharge();
                     if (this.builder.bleachedKnots) total += 20;
                     if (this.builder.underVentilation) total += 20;
                     return total;
