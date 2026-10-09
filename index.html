@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>David Hair | Bespoke Hairpieces & Melbourne Salon</title>
+    <meta name="description"
+        content="Factory-direct bespoke hand-tied human hair toupees and silk top pieces from our Indonesian factory, styled and maintained at our Springvale, Melbourne flagship salon.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome & Tailwind -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                screens: {
+                    'xs': '480px',
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                },
+                extend: {
+                    colors: {
+                        brand: {
+                            darkBg: '#0B132B',
+                            cardBg: '#1C2541',
+                            cardInner: '#151E38',
+                            border: '#2E3A59',
+                            textMain: '#F1F5F9',
+                            textMuted: '#94A3B8',
+                            teal: '#0D9488',
+                            tealLight: '#14B8A6',
+                            bronze: '#D97706',
+                            bronzeHover: '#B45309'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Schema.org LocalBusiness JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HairSalon",
+        "name": "David Hair Flagship Salon",
+        "image": "https://davidhair.atozhair.shop/images/salon.jpg",
+        "@id": "https://davidhair.atozhair.shop",
+        "url": "https://davidhair.atozhair.shop",
+        "telephone": "+61 400 000 000",
+        "priceRange": "$$$",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Springvale Road",
+            "addressLocality": "Springvale",
+            "addressRegion": "VIC",
+            "postalCode": "3171",
+            "addressCountry": "AU"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -37.9493,
+            "longitude": 145.1537
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "10:00",
+            "closes": "18:00"
+        },
+        "description": "Bespoke hand-tied human hairpiece fitting, template making, cut-in styling and maintenance in Springvale, Melbourne."
+    }
+    </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .glass-nav {
+            background: rgba(11, 19, 43, 0.90);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .teal-gradient {
+            background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%);
+        }
+
+        .bronze-gradient {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+        }
+
+        .eye-shadow {
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        button,
+        a,
+        input,
+        select {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-brand-darkBg text-brand-textMain font-sans antialiased selection:bg-brand-teal selection:text-white overflow-x-hidden"
+    x-data="davidHairApp()">
+
+    <!-- 1. GLOBAL HEADER / NAVIGATION -->
+    <header
+        class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-brand-border/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2.5 sm:gap-3 group">
+                <div
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-lg sm:text-xl shadow-md group-hover:scale-105 transition-transform">
+                    DH
+                </div>
+                <div>
+                    <span
+                        class="font-heading text-lg sm:text-xl font-bold tracking-tight text-brand-textMain block leading-tight">DAVID
+                        HAIR</span>
+                    <span
+                        class="text-[9px] sm:text-[10px] uppercase tracking-widest text-brand-tealLight font-bold block">Factory-Direct
+                        & Melbourne Salon</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav
+                class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold text-slate-300 uppercase tracking-wider">
+                <a href="#builder" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_order')">Order</a>
+                <a href="#salon" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_salon')">Salon</a>
+                <a href="#stock" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_stock')">Stock</a>
+                <a href="#ai-simulator" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_trans')">Trans</a>
+                <a href="#factory" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_factory')">Factory</a>
+                <a href="#b2b" class="hover:text-brand-tealLight transition-colors" x-text="t('nav_b2b')">B2B</a>
+            </nav>
+
+            <!-- Right Utilities -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Language Switcher Buttons (Hidden in Header) -->
+                <div class="hidden items-center gap-1 bg-brand-cardBg border border-brand-border rounded-lg p-1 text-sm font-bold shadow-sm">
+                    <button type="button" @click="setLang('en')" :class="lang === 'en' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="English (Australia)">
+                        <span>🇦🇺</span>
+                    </button>
+                    <button type="button" @click="setLang('ko')" :class="lang === 'ko' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="한국어 (Korean)">
+                        <span>🇰🇷</span>
+                    </button>
+                    <button type="button" @click="setLang('id')" :class="lang === 'id' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="Bahasa Indonesia">
+                        <span>🇮🇩</span>
+                    </button>
+                </div>
+
+                <!-- Currency Switcher -->
+                <div class="relative">
+                    <select x-model="currency"
+                        class="bg-brand-cardBg text-xs font-bold text-slate-200 border border-brand-border rounded-lg px-2.5 py-2 outline-none focus:border-brand-teal text-center cursor-pointer shadow-sm min-h-[38px]">
+                        <option value="AUD">AUD ($)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="KRW">KRW (₩)</option>
+                    </select>
+                </div>
+
+                <!-- Free Consulting Primary CTA -->
+                <button @click="isBookingModalOpen = true"
+                    class="hidden sm:flex items-center gap-2 teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 sm:px-4 py-2.5 rounded-lg shadow-md transition-all transform active:scale-95 min-h-[38px]">
+                    <i class="fa-regular fa-comments"></i>
+                    <span x-text="t('nav_free_consulting')">Free Consulting</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen"
+                    class="lg:hidden text-slate-200 text-xl p-2 rounded-lg hover:bg-brand-cardBg border border-brand-border/60 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                    <i :class="mobileMenuOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-4"
+            class="lg:hidden bg-brand-darkBg/98 border-b border-brand-border px-6 py-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            
+            <!-- Mobile Language Selector -->
+            <div class="flex items-center justify-between pb-3 border-b border-brand-border/60">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Language</span>
+                <div class="flex items-center gap-1 bg-brand-cardBg border border-brand-border rounded-lg p-1 text-sm font-bold">
+                    <button type="button" @click="setLang('en')" :class="lang === 'en' ? 'bg-brand-teal text-white scale-105' : 'text-slate-400 opacity-70'" class="px-3 py-1 rounded" title="English (Australia)">🇦🇺</button>
+                    <button type="button" @click="setLang('ko')" :class="lang === 'ko' ? 'bg-brand-teal text-white scale-105' : 'text-slate-400 opacity-70'" class="px-3 py-1 rounded" title="한국어 (Korean)">🇰🇷</button>
+                    <button type="button" @click="setLang('id')" :class="lang === 'id' ? 'bg-brand-teal text-white scale-105' : 'text-slate-400 opacity-70'" class="px-3 py-1 rounded" title="Bahasa Indonesia">🇮🇩</button>
+                </div>
+            </div>
+
+            <a href="#builder" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_order')">Order</a>
+            <a href="#salon" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_salon')">Salon</a>
+            <a href="#stock" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_stock')">Stock</a>
+            <a href="#ai-simulator" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_trans')">Trans</a>
+            <a href="#factory" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_factory')">Factory</a>
+            <a href="#b2b" @click="mobileMenuOpen = false"
+                class="block text-slate-200 font-bold hover:text-brand-tealLight py-2 border-b border-brand-border/40 uppercase tracking-wider" x-text="t('nav_b2b')">B2B</a>
+            <button @click="isBookingModalOpen = true; mobileMenuOpen = false;"
+                class="w-full teal-gradient py-3.5 rounded-xl text-white font-bold text-center shadow-md min-h-[48px] mt-4 uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-regular fa-comments"></i>
+                <span x-text="t('nav_free_consulting')">Free Consulting</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/61400000000" target="_blank" rel="noopener"
+        class="fixed bottom-5 right-5 z-50 w-12 h-12 sm:w-14 sm:h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 group">
+        <i class="fa-brands fa-whatsapp text-2xl sm:text-3xl"></i>
+        <span
+            class="hidden md:block absolute right-16 bg-brand-cardBg text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-brand-border shadow-xl">
+            Chat with Melbourne Specialist
+        </span>
+    </a>
+
+    <!-- 2. HERO SECTION -->
+    <section
+        class="relative pt-28 sm:pt-36 pb-16 sm:pb-20 overflow-hidden bg-gradient-to-b from-[#0F1C3F] via-brand-darkBg to-brand-darkBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left">
+                    <div
+                        class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-brand-cardBg border border-teal-500/30 text-brand-tealLight text-[11px] sm:text-xs font-semibold uppercase tracking-wider shadow-sm max-w-full">
+                        <span class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse flex-shrink-0"></span>
+                        <span class="truncate" x-text="t('hero_badge')">Indonesian Factory Direct &bull; Springvale Flagship</span>
+                    </div>
+
+                    <h1
+                        class="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold text-brand-textMain leading-tight sm:leading-tight tracking-tight">
+                        <span x-text="t('hero_title_1')">Factory-Direct Precision Hairpieces,</span> <br class="hidden sm:block">
+                        <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-sky-400 to-emerald-400"
+                            x-text="t('hero_title_2')">
+                            Finished by Melbourne Specialists
+                        </span>
+                    </h1>
+
+                    <p
+                        class="text-brand-textMuted text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
+                        x-text="t('hero_subtitle')">
+                        Bespoke hand-tied human hair toupees and silk top pieces from our Indonesian factory, tailored
+                        and maintained at our Springvale flagship salon.
+                    </p>
+
+                    <div
+                        class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4 pt-2">
+                        <a href="#builder"
+                            class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg hover:opacity-95 transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span x-text="t('hero_btn_builder')">Build Custom Order</span>
+                        </a>
+                        <button @click="isBookingModalOpen = true"
+                            class="w-full sm:w-auto bg-brand-cardBg hover:bg-brand-border text-slate-200 border border-brand-border font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-sm transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-location-dot text-brand-bronze"></i>
+                            <span x-text="t('hero_btn_stock')">Book Springvale Fitting</span>
+                        </button>
+                    </div>
+
+                    <!-- Trust Stats -->
+                    <div
+                        class="grid grid-cols-3 gap-3 sm:gap-6 pt-6 sm:pt-8 border-t border-brand-border/60 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <div class="font-heading text-xl sm:text-2xl font-bold text-brand-textMain" x-text="t('hero_stat_1_val')">100%</div>
+                            <div class="text-[10px] sm:text-xs text-brand-textMuted font-medium" x-text="t('hero_stat_1_lbl')">Virgin Human Hair</div>
+                        </div>
+                        <div>
+                            <div class="font-heading text-xl sm:text-2xl font-bold text-brand-textMain" x-text="t('hero_stat_2_val')">1-Piece</div>
+                            <div class="text-[10px] sm:text-xs text-brand-textMuted font-medium" x-text="t('hero_stat_2_lbl')">Custom MOQ</div>
+                        </div>
+                        <div>
+                            <div class="font-heading text-xl sm:text-2xl font-bold text-brand-textMain" x-text="t('hero_stat_3_val')">15+ Yrs</div>
+                            <div class="text-[10px] sm:text-xs text-brand-textMuted font-medium" x-text="t('hero_stat_3_lbl')">Indonesian Crafts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 relative mt-4 lg:mt-0">
+                    <div
+                        class="relative mx-auto max-w-md rounded-2xl overflow-hidden border border-brand-border shadow-2xl bg-brand-cardBg">
+                        <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80"
+                            alt="Melbourne Hairpiece Fitting"
+                            class="w-full h-72 sm:h-[420px] lg:h-[460px] object-cover">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-brand-darkBg via-transparent to-transparent opacity-90">
+                        </div>
+                        <div
+                            class="absolute bottom-4 sm:bottom-6 left-4 right-4 sm:left-6 sm:right-6 p-3.5 sm:p-4 rounded-xl bg-brand-cardBg/90 backdrop-blur border border-brand-border shadow-lg">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-full teal-gradient flex items-center justify-center font-bold text-white flex-shrink-0">
+                                    <i class="fa-solid fa-scissors"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white" x-text="t('hero_card_title')">Melbourne Master Cut-in</div>
+                                    <div class="text-[10px] sm:text-xs text-brand-tealLight font-bold" x-text="t('hero_card_sub')">Springvale Salon,
+                                        VIC Australia</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2.5 ACTIVE LIFESTYLE & AUSTRALIAN CLIMATE PERFORMANCE -->
+    <section class="py-12 bg-brand-darkBg/95 border-b border-brand-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-1" x-text="t('climate_badge')">Engineered for Freedom</span>
+                <h3 class="font-heading text-xl sm:text-3xl font-extrabold text-white" x-text="t('climate_title')">Built for the Australian Climate & Active Lifestyle</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-brand-cardBg border border-brand-border/80 p-5 rounded-xl space-y-2 eye-shadow">
+                    <div class="w-10 h-10 rounded-lg teal-gradient flex items-center justify-center text-white text-lg font-bold mb-3 shadow-md">
+                        <i class="fa-solid fa-person-swimming"></i>
+                    </div>
+                    <div class="font-bold text-white text-sm" x-text="t('climate_card_1_title')">100% Water-Resistant Hold</div>
+                    <p class="text-xs text-brand-textMuted leading-relaxed" x-text="t('climate_card_1_desc')">Confidently swim in open water, take hot showers, and maintain 4-6 weeks of waterproof hold.</p>
+                </div>
+                <div class="bg-brand-cardBg border border-brand-border/80 p-5 rounded-xl space-y-2 eye-shadow">
+                    <div class="w-10 h-10 rounded-lg teal-gradient flex items-center justify-center text-white text-lg font-bold mb-3 shadow-md">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </div>
+                    <div class="font-bold text-white text-sm" x-text="t('climate_card_2_title')">Gym & Workout Breathability</div>
+                    <p class="text-xs text-brand-textMuted leading-relaxed" x-text="t('climate_card_2_desc')">Micro-ventilation mesh base releases heat and scalp moisture during high-intensity workouts.</p>
+                </div>
+                <div class="bg-brand-cardBg border border-brand-border/80 p-5 rounded-xl space-y-2 eye-shadow">
+                    <div class="w-10 h-10 rounded-lg teal-gradient flex items-center justify-center text-white text-lg font-bold mb-3 shadow-md">
+                        <i class="fa-solid fa-sun"></i>
+                    </div>
+                    <div class="font-bold text-white text-sm" x-text="t('climate_card_3_title')">UV & Climate Shield</div>
+                    <p class="text-xs text-brand-textMuted leading-relaxed" x-text="t('climate_card_3_desc')">Materials tested against high Australian UV and humidity without adhesive breakdown.</p>
+                </div>
+                <div class="bg-brand-cardBg border border-brand-border/80 p-5 rounded-xl space-y-2 eye-shadow">
+                    <div class="w-10 h-10 rounded-lg teal-gradient flex items-center justify-center text-white text-lg font-bold mb-3 shadow-md">
+                        <i class="fa-solid fa-scissors"></i>
+                    </div>
+                    <div class="font-bold text-white text-sm" x-text="t('climate_card_4_title')">Seamless Barber Cut-In</div>
+                    <p class="text-xs text-brand-textMuted leading-relaxed" x-text="t('climate_card_4_desc')">Precision fade work and texture matching eliminates any visible transition seam.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. INTERACTIVE 6-STEP CUSTOM ORDER BUILDER -->
+    <section id="builder" class="py-16 sm:py-20 bg-[#0E1733]/60 relative border-y border-brand-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+                <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2" x-text="t('builder_badge')">Bespoke
+                    Customizer</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-brand-textMain" x-text="t('builder_title')">Interactive Custom
+                    Order Builder</h2>
+                <p class="text-brand-textMuted text-xs sm:text-base mt-2 sm:mt-3" x-text="t('builder_sub')">Design your custom hand-tied hairpiece
+                    step-by-step. Get instant price estimations and direct factory precision.</p>
+            </div>
+
+            <!-- Wizard Container -->
+            <div class="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+                <!-- Main Wizard Steps (Left Column) -->
+                <div class="lg:col-span-8 bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-8 eye-shadow">
+
+                    <!-- Progress Bar Header -->
+                    <div class="mb-6 sm:mb-8">
+                        <div
+                            class="flex items-center justify-between text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-3">
+                            <span><span x-text="t('builder_step')">Step</span> <span x-text="currentStep"></span> <span x-text="t('builder_of')">of</span> 6</span>
+                            <span class="text-brand-tealLight truncate max-w-[180px] sm:max-w-none"
+                                x-text="getStepTitle(currentStep)"></span>
+                        </div>
+                        <div class="w-full bg-brand-inner h-2.5 rounded-full overflow-hidden">
+                            <div class="teal-gradient h-full transition-all duration-500"
+                                :style="`width: ${(currentStep / 6) * 100}%`"></div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 1: Profile -->
+                    <div x-show="currentStep === 1" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Select Hairpiece Profile</h3>
+                        <p class="text-xs sm:text-sm text-brand-textMuted">Choose the overall hairpiece system layout
+                            suited for your needs.</p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                            <template x-for="p in profiles" :key="p.id">
+                                <div @click="builder.profile = p.id"
+                                    :class="builder.profile === p.id ? 'border-brand-teal bg-teal-950/40 shadow-md' : 'border-brand-border bg-brand-inner hover:border-slate-500'"
+                                    class="p-4 sm:p-5 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col justify-between h-full min-h-[140px]">
+                                    <div>
+                                        <div
+                                            class="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-full bg-brand-darkBg flex items-center justify-center text-brand-tealLight text-lg sm:text-xl mb-2 sm:mb-3">
+                                            <i :class="p.icon"></i>
+                                        </div>
+                                        <div class="font-bold text-white text-sm sm:text-base" x-text="getProfileName(p.id)"></div>
+                                        <div class="text-[11px] sm:text-xs text-brand-textMuted mt-1.5" x-text="getProfileDesc(p.id)">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 text-xs font-bold text-brand-tealLight"
+                                        x-text="'+' + formatCurrency(p.basePrice)"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Base Construction & Dimensions -->
+                    <div x-show="currentStep === 2" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Base Construction & Dimensions</h3>
+
+                        <!-- Base Material Cards -->
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Base
+                                Material Type</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                                <template x-for="base in bases" :key="base.id">
+                                    <div @click="builder.base = base.id"
+                                        :class="builder.base === base.id ? 'border-brand-teal bg-teal-950/40 shadow-md' : 'border-brand-border bg-brand-inner hover:border-slate-500'"
+                                        class="p-4 rounded-xl border-2 cursor-pointer transition-all">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-white text-xs sm:text-sm"
+                                                x-text="getBaseName(base.id)"></span>
+                                            <span class="text-xs font-bold text-brand-tealLight"
+                                                x-text="'+' + formatCurrency(base.price)"></span>
+                                        </div>
+                                        <p class="text-[11px] sm:text-xs text-brand-textMuted mt-1.5"
+                                            x-text="base.desc"></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Dimensions Inputs -->
+                        <div class="pt-4 border-t border-brand-border">
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-xs font-bold uppercase tracking-wider text-brand-textMuted">Base
+                                    Dimensions</label>
+                                <div class="inline-flex bg-brand-darkBg rounded-lg p-1 text-xs">
+                                    <button @click="builder.unit = 'inch'"
+                                        :class="builder.unit === 'inch' ? 'bg-brand-teal text-white font-bold' : 'text-slate-400'"
+                                        class="px-3 py-1 rounded-md transition-colors">Inches</button>
+                                    <button @click="builder.unit = 'cm'"
+                                        :class="builder.unit === 'cm' ? 'bg-brand-teal text-white font-bold' : 'text-slate-400'"
+                                        class="px-3 py-1 rounded-md transition-colors">CM</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Width (<span
+                                            x-text="builder.unit"></span>)</label>
+                                    <input type="number" step="0.5" x-model.number="builder.width"
+                                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3.5 sm:px-4 py-2.5 text-white font-semibold outline-none focus:border-brand-teal min-h-[44px]">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Length (<span
+                                            x-text="builder.unit"></span>)</label>
+                                    <input type="number" step="0.5" x-model.number="builder.length"
+                                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3.5 sm:px-4 py-2.5 text-white font-semibold outline-none focus:border-brand-teal min-h-[44px]">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Hair Specs -->
+                    <div x-show="currentStep === 3" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Hair Specifications</h3>
+
+                        <!-- Length Selection -->
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Hair
+                                Length (Inches)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
+                                <template x-for="l in [5, 6, 8, 10, 12, 14]" :key="l">
+                                    <button @click="builder.hairLength = l"
+                                        :class="builder.hairLength === l ? 'border-brand-teal bg-teal-950/40 text-white font-bold' : 'border-brand-border text-slate-300 bg-brand-inner'"
+                                        class="py-3 border-2 rounded-xl text-center text-xs sm:text-sm transition-all min-h-[44px]"
+                                        x-text="l + ' Inches'"></button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Density Slider -->
+                        <div class="pt-4 border-t border-brand-border">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-brand-textMuted">Hair
+                                    Density</label>
+                                <span class="text-xs sm:text-sm font-bold text-brand-tealLight"
+                                    x-text="builder.density + '% (' + getDensityLabel(builder.density) + ')'"></span>
+                            </div>
+                            <input type="range" min="60" max="130" step="5" x-model.number="builder.density"
+                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-3">
+                            <div class="flex justify-between text-[10px] text-brand-textMuted mt-1">
+                                <span>60% (Light)</span>
+                                <span>90% (Med)</span>
+                                <span>110% (Dense)</span>
+                                <span>130% (Heavy)</span>
+                            </div>
+                        </div>
+
+                        <!-- Wave/Curl Selection -->
+                        <div class="pt-4 border-t border-brand-border">
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Hair
+                                Texture / Wave</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                                <template x-for="wave in ['Straight', 'Slight Wave', 'Body Wave', 'Tight Curl']"
+                                    :key="wave">
+                                    <button @click="builder.wave = wave"
+                                        :class="builder.wave === wave ? 'border-brand-teal bg-teal-950/40 text-white font-bold' : 'border-brand-border text-slate-300 bg-brand-inner'"
+                                        class="py-2.5 border-2 rounded-xl text-center text-xs transition-all min-h-[44px]"
+                                        x-text="wave"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Color & Blend -->
+                    <div x-show="currentStep === 4" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Hair Color & Grey Blend</h3>
+
+                        <!-- Color Swatches -->
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Base
+                                Hair Color</label>
+                            <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-2.5 sm:gap-3">
+                                <template x-for="c in colors" :key="c.code">
+                                    <div @click="builder.color = c.code"
+                                        :class="builder.color === c.code ? 'border-brand-teal bg-teal-950/40' : 'border-brand-border bg-brand-inner'"
+                                        class="p-3 border-2 rounded-xl cursor-pointer text-center transition-all min-h-[90px] flex flex-col items-center justify-center">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 mx-auto rounded-full border border-slate-600 mb-1.5 shadow-inner"
+                                            :style="`background-color: ${c.hex}`"></div>
+                                        <div class="text-xs font-bold text-white" x-text="c.code"></div>
+                                        <div class="text-[10px] text-brand-textMuted" x-text="c.name"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Grey Hair % Slider -->
+                        <div class="pt-4 border-t border-brand-border">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold uppercase tracking-wider text-brand-textMuted">Grey Hair
+                                    Percentage</label>
+                                <span class="text-xs sm:text-sm font-bold text-brand-tealLight"
+                                    x-text="builder.greyPercent + '% Synthetic Grey'"></span>
+                            </div>
+                            <input type="range" min="0" max="50" step="5" x-model.number="builder.greyPercent"
+                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-3">
+                            <div class="flex justify-between text-[10px] text-brand-textMuted mt-1">
+                                <span>0% (No Grey)</span>
+                                <span>20% (Natural Salt & Pepper)</span>
+                                <span>50% (Heavy Grey)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: Direction & Craft -->
+                    <div x-show="currentStep === 5" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Hair Direction & Craft Details</h3>
+
+                        <!-- Direction -->
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-brand-textMuted mb-3">Hair
+                                Direction Style</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                                <template
+                                    x-for="d in ['Freestyle', 'Left Part', 'Right Part', 'Center Part', 'Crown', 'Back Swept']"
+                                    :key="d">
+                                    <button @click="builder.direction = d"
+                                        :class="builder.direction === d ? 'border-brand-teal bg-teal-950/40 text-white font-bold' : 'border-brand-border text-slate-300 bg-brand-inner'"
+                                        class="py-3 border-2 rounded-xl text-center text-xs transition-all min-h-[44px]"
+                                        x-text="d"></button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Craft Toggles -->
+                        <div class="pt-4 border-t border-brand-border space-y-3.5 sm:space-y-4">
+                            <div
+                                class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">Bleached Knots (Front Hairline)
+                                    </div>
+                                    <div class="text-[11px] text-brand-textMuted">Creates invisible scalp illusion along
+                                        front lace.</div>
+                                </div>
+                                <button @click="builder.bleachedKnots = !builder.bleachedKnots"
+                                    :class="builder.bleachedKnots ? 'bg-brand-teal' : 'bg-slate-700'"
+                                    class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
+                                    <div :class="builder.bleachedKnots ? 'translate-x-6' : 'translate-x-0'"
+                                        class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                                </button>
+                            </div>
+
+                            <div
+                                class="flex justify-between items-center p-3.5 sm:p-4 bg-brand-inner border border-brand-border rounded-xl">
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-white">Under-ventilation</div>
+                                    <div class="text-[11px] text-brand-textMuted">Conceals edge lines for natural side
+                                        and perimeter lay.</div>
+                                </div>
+                                <button @click="builder.underVentilation = !builder.underVentilation"
+                                    :class="builder.underVentilation ? 'bg-brand-teal' : 'bg-slate-700'"
+                                    class="w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out relative flex-shrink-0">
+                                    <div :class="builder.underVentilation ? 'translate-x-6' : 'translate-x-0'"
+                                        class="w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6: Review & Photo Upload -->
+                    <div x-show="currentStep === 6" x-cloak class="space-y-5 sm:space-y-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Review & Scalp Photo Upload</h3>
+
+                        <!-- Drag and Drop Photo Upload Area -->
+                        <div
+                            class="border-2 border-dashed border-brand-border hover:border-brand-teal rounded-xl p-5 sm:p-6 text-center bg-brand-inner transition-colors cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl sm:text-3xl text-brand-tealLight mb-2"></i>
+                            <div class="text-xs sm:text-sm font-bold text-white">Upload Scalp or Template Photo
+                                (Optional)</div>
+                            <div class="text-[11px] text-brand-textMuted mt-1">Drag & drop image files here or click to
+                                browse</div>
+                        </div>
+
+                        <!-- Customer Info Form -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">Your Full Name</label>
+                                <input type="text" x-model="builder.customerName" placeholder="David Smith"
+                                    class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-4 py-2.5 text-white text-xs sm:text-sm outline-none focus:border-brand-teal min-h-[44px]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">Phone / WhatsApp</label>
+                                <input type="text" x-model="builder.customerPhone" placeholder="+61 400 000 000"
+                                    class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-4 py-2.5 text-white text-xs sm:text-sm outline-none focus:border-brand-teal min-h-[44px]">
+                            </div>
+                        </div>
+
+                        <button @click="submitOrder()"
+                            class="w-full teal-gradient py-3.5 sm:py-4 rounded-xl text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:opacity-95 transition-all min-h-[48px]">
+                            Submit Custom Order Inquiry
+                        </button>
+                    </div>
+
+                    <!-- Wizard Controls Navigation -->
+                    <div
+                        class="flex justify-between items-center pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-brand-border">
+                        <button @click="prevStep()" :disabled="currentStep === 1"
+                            class="px-4 sm:px-5 py-2.5 rounded-xl border border-brand-border text-xs sm:text-sm font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed min-h-[44px]">
+                            <i class="fa-solid fa-arrow-left mr-1.5"></i> Back
+                        </button>
+
+                        <button @click="nextStep()" x-show="currentStep < 6"
+                            class="teal-gradient px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white hover:opacity-95 shadow-md min-h-[44px]">
+                            Next Step <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sticky Summary Card -->
+                <div class="lg:col-span-4 sticky top-24 sm:top-28">
+                    <div
+                        class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 sm:p-6 eye-shadow space-y-4 sm:space-y-6">
+                        <div class="flex items-center justify-between border-b border-brand-border pb-3.5">
+                            <h3 class="font-heading font-bold text-white text-base sm:text-lg">Order Summary</h3>
+                            <span
+                                class="text-[10px] sm:text-xs bg-teal-950 text-brand-tealLight px-2.5 py-1 rounded-full font-bold border border-teal-800/60">Live
+                                Estimate</span>
+                        </div>
+
+                        <div class="space-y-2.5 text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Profile:</span>
+                                <span class="font-bold text-white" x-text="getProfileName(builder.profile)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Base Type:</span>
+                                <span class="font-bold text-white" x-text="getBaseName(builder.base)"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Dimensions:</span>
+                                <span class="font-bold text-white"
+                                    x-text="builder.width + ' x ' + builder.length + ' ' + builder.unit"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Hair Spec:</span>
+                                <span class="font-bold text-white"
+                                    x-text="builder.hairLength + '&quot; / ' + builder.density + '% Density'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Color & Blend:</span>
+                                <span class="font-bold text-white"
+                                    x-text="builder.color + ' (' + builder.greyPercent + '% Grey)'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-brand-textMuted">Crafting:</span>
+                                <span class="font-bold text-white"
+                                    x-text="builder.bleachedKnots ? 'Bleached Knots' : 'Standard Knots'"></span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-brand-border">
+                            <div class="text-[11px] text-brand-textMuted font-medium">Estimated Total</div>
+                            <div class="font-heading text-2xl sm:text-3xl font-extrabold text-brand-tealLight mt-1"
+                                x-text="formatCurrency(calculateTotal())"></div>
+                            <div class="text-[10px] text-brand-textMuted mt-1">Includes Indonesian factory hand-tie &
+                                Melbourne fitting option</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. STOCK PIECES SECTION -->
+    <section id="stock" class="py-16 sm:py-20 bg-brand-darkBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+                <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2" x-text="t('stock_badge')">Ready-To-Ship
+                    Inventory</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white" x-text="t('stock_title')">In-Stock Precision Pieces</h2>
+                <p class="text-brand-textMuted text-xs sm:text-sm mt-2 sm:mt-3" x-text="t('stock_sub')">Pre-made master stock systems ready for
+                    immediate express dispatch or same-day Melbourne salon fitting.</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-12">
+                <template x-for="cat in ['All', 'Men\'s Toupees', 'Women\'s Toppers', 'Skin Systems', 'Swiss Lace', 'PU Perimeter']"
+                    :key="cat">
+                    <button @click="stockFilter = cat"
+                        :class="stockFilter === cat ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 border border-brand-border hover:border-slate-500'"
+                        class="px-4 sm:px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition-all min-h-[38px]"
+                        x-text="cat"></button>
+                </template>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <template x-for="item in filteredStockItems" :key="item.sku">
+                    <div
+                        class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden eye-shadow flex flex-col justify-between group hover:border-brand-teal transition-all">
+                        <div>
+                            <div class="relative h-44 sm:h-48 overflow-hidden bg-brand-inner">
+                                <img :src="item.image" :alt="item.name"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded-md border border-brand-border"
+                                    x-text="'Stock: ' + item.stockQty + ' pcs'"></div>
+                                <div
+                                    class="absolute top-3 right-3 bg-emerald-950 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-800">
+                                    Express Ship</div>
+                            </div>
+
+                            <div class="p-4 sm:p-5 space-y-3">
+                                <div class="text-[10px] font-mono text-brand-tealLight" x-text="item.sku"></div>
+                                <h3 class="font-bold text-white text-sm sm:text-base leading-snug" x-text="item.name">
+                                </h3>
+
+                                <div
+                                    class="grid grid-cols-2 gap-2 text-[10px] sm:text-[11px] text-brand-textMuted font-mono">
+                                    <div
+                                        class="bg-brand-inner px-2 py-1 rounded border border-brand-border/60 truncate">
+                                        Base: <span class="text-slate-200" x-text="item.base"></span></div>
+                                    <div
+                                        class="bg-brand-inner px-2 py-1 rounded border border-brand-border/60 truncate">
+                                        Size: <span class="text-slate-200" x-text="item.size"></span></div>
+                                    <div
+                                        class="bg-brand-inner px-2 py-1 rounded border border-brand-border/60 truncate">
+                                        Density: <span class="text-slate-200" x-text="item.density"></span></div>
+                                    <div
+                                        class="bg-brand-inner px-2 py-1 rounded border border-brand-border/60 truncate">
+                                        Color: <span class="text-slate-200" x-text="item.color"></span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-5 pt-0 space-y-3 border-t border-brand-border/60 mt-3 sm:mt-4">
+                            <div class="flex items-center justify-between pt-3">
+                                <span class="text-xs text-brand-textMuted">Price</span>
+                                <span class="font-heading text-base sm:text-lg font-bold text-brand-tealLight"
+                                    x-text="formatCurrency(item.price)"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button @click="orderStockItem(item)"
+                                    class="teal-gradient text-white text-[11px] font-bold py-2.5 rounded-lg shadow-sm hover:opacity-95 min-h-[40px]">
+                                    Express Order
+                                </button>
+                                <button @click="bookStockFit(item)"
+                                    class="bg-brand-inner text-slate-200 border border-brand-border text-[11px] font-semibold py-2.5 rounded-lg hover:border-slate-500 min-h-[40px]">
+                                    Book Salon Fit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. MELBOURNE FLAGSHIP SALON SECTION -->
+    <section id="salon" class="py-16 sm:py-20 relative bg-[#0E1733]/60 border-y border-brand-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                <div class="lg:col-span-6 space-y-5 sm:space-y-6 text-center sm:text-left">
+                    <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block">Melbourne
+                        Flagship Salon</span>
+                    <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white">Springvale Specialist
+                        Fitting & Maintenance</h2>
+                    <p class="text-brand-textMuted text-xs sm:text-base leading-relaxed font-normal">
+                        Experience privacy, comfort, and master craftsmanship. Our Springvale salon provides personal
+                        consultations, custom scalp template sculpting, seamless cut-in styling, and routine re-bonding
+                        maintenance.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 pt-2">
+                        <div class="p-4 bg-brand-cardBg border border-brand-border rounded-xl shadow-sm text-left">
+                            <i class="fa-solid fa-scissors text-brand-tealLight text-lg sm:text-xl mb-2"></i>
+                            <div class="font-bold text-white text-xs sm:text-sm">Precision Cut-in & Blend ($145)</div>
+                            <div class="text-[11px] text-brand-textMuted mt-1">Seamless blending with existing bio hair & barber fade.</div>
+                        </div>
+                        <div class="p-4 bg-brand-cardBg border border-brand-border rounded-xl shadow-sm text-left">
+                            <i class="fa-solid fa-sync text-brand-tealLight text-lg sm:text-xl mb-2"></i>
+                            <div class="font-bold text-white text-xs sm:text-sm">4–6 Wk Re-bond Service ($99)</div>
+                            <div class="text-[11px] text-brand-textMuted mt-1">Detachment, scalp exfoliation & medical re-bonding.</div>
+                        </div>
+                        <div class="p-4 bg-brand-cardBg border border-brand-border rounded-xl shadow-sm text-left">
+                            <i class="fa-solid fa-head-side-virus text-brand-tealLight text-lg sm:text-xl mb-2"></i>
+                            <div class="font-bold text-white text-xs sm:text-sm">Template Sculpting ($0 Free)</div>
+                            <div class="text-[11px] text-brand-textMuted mt-1">Exact scalp contour duplication & hair loss assessment.</div>
+                        </div>
+                        <div class="p-4 bg-brand-cardBg border border-brand-border rounded-xl shadow-sm text-left">
+                            <i class="fa-solid fa-graduation-cap text-brand-bronze text-lg sm:text-xl mb-2"></i>
+                            <div class="font-bold text-white text-xs sm:text-sm">DIY Self-Care Coaching</div>
+                            <div class="text-[11px] text-brand-textMuted mt-1">30–45 min hands-on home re-bonding training & supply kits.</div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex items-center justify-center sm:justify-start gap-2.5 sm:gap-3 pt-2 text-xs sm:text-sm text-slate-300 font-medium">
+                        <i class="fa-solid fa-location-dot text-brand-bronze text-base sm:text-lg flex-shrink-0"></i>
+                        <span>Springvale Road, Springvale VIC 3171, Melbourne Australia</span>
+                    </div>
+
+                    <button @click="isBookingModalOpen = true"
+                        class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-8 py-4 rounded-xl shadow-lg hover:opacity-95 transition-all min-h-[48px]">
+                        Book In-Person Appointment
+                    </button>
+                </div>
+
+                <div class="lg:col-span-6 mt-4 lg:mt-0">
+                    <div class="rounded-2xl border border-brand-border overflow-hidden bg-brand-cardBg shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
+                            alt="Springvale Salon Interior" class="w-full h-64 sm:h-80 object-cover">
+                        <div class="p-5 sm:p-6">
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                                <div>
+                                    <div class="font-bold text-white text-sm sm:text-base">Springvale Flagship</div>
+                                    <div class="text-[11px] sm:text-xs text-brand-textMuted">Private Consultation Rooms
+                                    </div>
+                                </div>
+                                <span
+                                    class="bg-emerald-950 text-emerald-400 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-emerald-800/60">Open
+                                    Tue - Sat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. TRANSFORMATIONS (BEFORE & AFTER SHOWCASE) - Hidden -->
+    <section id="transformations" class="hidden py-16 sm:py-20 bg-brand-darkBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
+                <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2">Proven
+                    Results</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white">Before & After Transformations
+                </h2>
+                <p class="text-brand-textMuted text-xs sm:text-sm mt-2">See how custom hand-tied pieces restore
+                    confidence instantly.</p>
+            </div>
+
+            <!-- B&A Card Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                <!-- Card 1 -->
+                <div
+                    class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden p-4 sm:p-6 space-y-4 eye-shadow">
+                    <div class="relative h-60 sm:h-72 rounded-xl overflow-hidden select-none" x-data="{ sliderPos: 50 }"
+                        @mousemove="if ($event.buttons === 1) sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))"
+                        @touchmove="sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))">
+                        <!-- After Image -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80"
+                            class="absolute inset-0 w-full h-full object-cover">
+                        <!-- Before Image Overlay -->
+                        <div class="absolute inset-0 overflow-hidden" :style="`width: ${sliderPos}%`">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80"
+                                class="absolute inset-0 w-full h-full object-cover max-w-none"
+                                :style="`width: ${$el.parentElement.clientWidth}px`">
+                        </div>
+                        <!-- Slider Handle -->
+                        <div class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize shadow-md"
+                            :style="`left: ${sliderPos}%`">
+                            <div
+                                class="w-8 h-8 rounded-full teal-gradient absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center text-white text-xs shadow-lg">
+                                <i class="fa-solid fa-arrows-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 xs:gap-0">
+                        <span
+                            class="bg-teal-950 text-brand-tealLight text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-teal-800/60">Styled
+                            at Melbourne Main Shop</span>
+                        <div class="flex gap-2 text-[10px] text-slate-300 font-mono font-semibold">
+                            <span class="bg-brand-inner border border-brand-border px-2 py-1 rounded">Base: 0.03mm
+                                Skin</span>
+                            <span class="bg-brand-inner border border-brand-border px-2 py-1 rounded">Density:
+                                90%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div
+                    class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden p-4 sm:p-6 space-y-4 eye-shadow">
+                    <div class="relative h-60 sm:h-72 rounded-xl overflow-hidden select-none" x-data="{ sliderPos: 50 }"
+                        @mousemove="if ($event.buttons === 1) sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))"
+                        @touchmove="sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))">
+                        <!-- After Image -->
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+                            class="absolute inset-0 w-full h-full object-cover">
+                        <!-- Before Image Overlay -->
+                        <div class="absolute inset-0 overflow-hidden" :style="`width: ${sliderPos}%`">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80"
+                                class="absolute inset-0 w-full h-full object-cover max-w-none"
+                                :style="`width: ${$el.parentElement.clientWidth}px`">
+                        </div>
+                        <!-- Slider Handle -->
+                        <div class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize shadow-md"
+                            :style="`left: ${sliderPos}%`">
+                            <div
+                                class="w-8 h-8 rounded-full teal-gradient absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center text-white text-xs shadow-lg">
+                                <i class="fa-solid fa-arrows-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 xs:gap-0">
+                        <span
+                            class="bg-teal-950 text-brand-tealLight text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-teal-800/60">Styled
+                            at Melbourne Main Shop</span>
+                        <div class="flex gap-2 text-[10px] text-slate-300 font-mono font-semibold">
+                            <span class="bg-brand-inner border border-brand-border px-2 py-1 rounded">Base: Silk Top
+                                (불파트)</span>
+                            <span class="bg-brand-inner border border-brand-border px-2 py-1 rounded">Density:
+                                110%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 6.5 AI VIRTUAL HAIRSTYLE FITTING SIMULATOR -->
+    <section id="ai-simulator" class="py-16 sm:py-20 bg-gradient-to-b from-brand-darkBg via-[#0E1838] to-brand-darkBg border-t border-brand-border/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="aiTryOnSimulator()">
+            <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-950/80 border border-teal-500/40 text-brand-tealLight text-xs font-bold uppercase tracking-wider mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> AI Powered Hair Transformation
+                </div>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white">AI Virtual Hairstyle Try-On Simulator</h2>
+                <p class="text-brand-textMuted text-xs sm:text-base mt-2">Upload your face photo and instantly swap your hairstyle to Crew Cut, Gentleman, or custom hairpiece styles before booking your Melbourne fitting.</p>
+            </div>
+
+            <!-- Simulator Interactive Container -->
+            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 sm:p-8 eye-shadow">
+                <div class="grid lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Left Column: Controls & Photo Upload -->
+                    <div class="lg:col-span-5 space-y-5">
+                        
+                        <!-- Step 1: Upload Face Photo -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight mb-2">Step 1: Upload Face Photo</label>
+                            <div class="border-2 border-dashed border-brand-border hover:border-brand-teal rounded-xl p-4 text-center bg-brand-inner transition-colors relative cursor-pointer group">
+                                <input type="file" accept="image/*" @change="handleFaceUpload($event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+                                <i class="fa-solid fa-camera text-2xl text-brand-tealLight mb-1.5 group-hover:scale-110 transition-transform"></i>
+                                <div class="text-xs font-bold text-white">Upload Your Portrait Photo</div>
+                                <div class="text-[10px] text-brand-textMuted mt-0.5">Click or drag & drop (JPG, PNG, WEBP)</div>
+                            </div>
+                            <!-- Sample Image Selector -->
+                            <div class="flex items-center gap-2 pt-2.5">
+                                <span class="text-[10px] text-brand-textMuted font-medium">Or try sample portrait:</span>
+                                <button @click="setSampleFace('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80')" class="text-[10px] text-brand-tealLight underline font-bold">Sample 1 (Male)</button>
+                                <button @click="setSampleFace('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80')" class="text-[10px] text-brand-tealLight underline font-bold">Sample 2 (Female)</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Select Target Hairstyle -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight mb-2">Step 2: Choose Target Hairstyle</label>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <template x-for="st in styles" :key="st.name">
+                                    <button @click="selectedStyle = st.name; runTransformation()" 
+                                            :class="selectedStyle === st.name ? 'border-brand-teal bg-teal-950/60 text-white font-bold shadow-md' : 'border-brand-border bg-brand-inner text-slate-300 hover:border-slate-500'"
+                                            class="p-3 border-2 rounded-xl text-left transition-all min-h-[60px] flex items-center justify-between">
+                                        <div>
+                                            <div class="text-xs font-bold" x-text="st.name"></div>
+                                            <div class="text-[10px] text-brand-textMuted" x-text="st.tag"></div>
+                                        </div>
+                                        <i class="fa-solid fa-scissors text-xs" :class="selectedStyle === st.name ? 'text-brand-tealLight' : 'text-slate-500'"></i>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Choose Hair Color -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight mb-2">Step 3: Hair Color & Blend</label>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <template x-for="c in ['#1B Off Black', '#1 Jet Black', '#2 Dark Brown', '#4 Med Brown', '#613 Blonde']" :key="c">
+                                    <button @click="selectedColor = c; runTransformation()" 
+                                            :class="selectedColor === c ? 'ring-2 ring-brand-teal scale-105 bg-teal-950 text-white font-bold' : 'opacity-70 hover:opacity-100 bg-brand-inner text-slate-300'"
+                                            class="px-2.5 py-1.5 rounded-lg border border-brand-border text-[11px] transition-all" x-text="c"></button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Fine-tune Original Photo (Zoom & Position) -->
+                        <div class="pt-3 border-t border-brand-border space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+                                <span><i class="fa-solid fa-image text-brand-tealLight mr-1"></i> 1. Original Photo Fit (사진 크기 & 위치)</span>
+                                <button @click="resetFaceFit()" class="text-[10px] text-brand-textMuted hover:text-white underline">Reset Photo</button>
+                            </div>
+                            <!-- Photo Zoom -->
+                            <div>
+                                <div class="flex justify-between items-center text-[10px] text-brand-textMuted mb-1">
+                                    <span>Photo Zoom (사진 확대/축소)</span>
+                                    <span class="text-slate-300 font-mono font-bold" x-text="faceScale + '%'"></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click="faceScale = Math.max(50, faceScale - 5)" class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs hover:border-teal-500 font-bold">-</button>
+                                    <input type="range" min="50" max="200" x-model.number="faceScale" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-2">
+                                    <button @click="faceScale = Math.min(200, faceScale + 5)" class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs hover:border-teal-500 font-bold">+</button>
+                                </div>
+                            </div>
+                            <!-- Photo Position (X / Y) -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-brand-textMuted mb-1">Position Up/Down (상하)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="faceY = Math.max(-100, faceY - 5)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↑</button>
+                                        <input type="range" min="-100" max="100" x-model.number="faceY" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="faceY = Math.min(100, faceY + 5)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↓</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-brand-textMuted mb-1">Position Left/Right (좌우)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="faceX = Math.max(-100, faceX - 5)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">←</button>
+                                        <input type="range" min="-100" max="100" x-model.number="faceX" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="faceX = Math.min(100, faceX + 5)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">→</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Fine-tune Hairpiece (Size, Width, Height, Position) -->
+                        <div class="pt-3 border-t border-brand-border space-y-2.5">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+                                <span><i class="fa-solid fa-scissors text-brand-tealLight mr-1"></i> 2. Hairpiece Fitting (가발 상하/좌우/크기)</span>
+                                <button @click="resetHairFit()" class="text-[10px] text-brand-textMuted hover:text-white underline">Reset Hair</button>
+                            </div>
+                            <!-- Hairpiece Up/Down & Left/Right -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-brand-textMuted mb-1">Hair Up/Down (상하 이동)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="hairY = Math.max(-100, hairY - 4)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↑</button>
+                                        <input type="range" min="-100" max="100" x-model.number="hairY" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="hairY = Math.min(100, hairY + 4)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↓</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-brand-textMuted mb-1">Hair Left/Right (좌우 이동)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="hairX = Math.max(-100, hairX - 4)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">←</button>
+                                        <input type="range" min="-100" max="100" x-model.number="hairX" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="hairX = Math.min(100, hairX + 4)" class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">→</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hairpiece Width & Height Stretch -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
+                                        <span>Hair Width (좌우 폭)</span>
+                                        <span class="text-slate-300 font-mono" x-text="hairWidth + '%'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="hairWidth = Math.max(50, hairWidth - 5)" class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
+                                        <input type="range" min="50" max="200" x-model.number="hairWidth" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="hairWidth = Math.min(200, hairWidth + 5)" class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
+                                        <span>Hair Height (상하 길이)</span>
+                                        <span class="text-slate-300 font-mono" x-text="hairHeight + '%'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button @click="hairHeight = Math.max(50, hairHeight - 5)" class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
+                                        <input type="range" min="50" max="200" x-model.number="hairHeight" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
+                                        <button @click="hairHeight = Math.min(200, hairHeight + 5)" class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Overall Hairpiece Scale -->
+                            <div>
+                                <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
+                                    <span>Overall Hair Scale (가발 전체 크기)</span>
+                                    <span class="text-slate-300 font-mono font-bold" x-text="hairScale + '%'"></span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click="hairScale = Math.max(50, hairScale - 5)" class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs hover:border-teal-500 font-bold">-</button>
+                                    <input type="range" min="50" max="200" x-model.number="hairScale" class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-2">
+                                    <button @click="hairScale = Math.min(200, hairScale + 5)" class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs hover:border-teal-500 font-bold">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Generate Button -->
+                        <button @click="runTransformation()" :disabled="isProcessing" class="w-full teal-gradient text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all min-h-[48px] flex items-center justify-center gap-2 disabled:opacity-50">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span x-text="isProcessing ? 'AI Mapping Scalp & Fitting...' : 'Apply Hairstyle to Original Photo'"></span>
+                        </button>
+                    </div>
+
+                    <!-- Right Column: Interactive Before/After AI Transformation Result -->
+                    <div class="lg:col-span-7 relative">
+                        
+                        <!-- AI Processing Overlay Loader -->
+                        <div x-show="isProcessing" x-cloak class="absolute inset-0 z-20 bg-brand-cardBg/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center space-y-4">
+                            <div class="w-12 h-12 rounded-full border-4 border-brand-teal border-t-transparent animate-spin"></div>
+                            <div class="text-sm font-bold text-white animate-pulse">AI Scalp Mapping & Fitting <span class="text-brand-tealLight" x-text="selectedStyle"></span>...</div>
+                            <div class="text-xs text-brand-textMuted">Superimposing hairpiece texture directly onto uploaded original photo</div>
+                        </div>
+
+                        <!-- Result Card -->
+                        <div class="bg-brand-darkBg border border-brand-border rounded-2xl p-4 space-y-4 eye-shadow">
+                            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                                <div>
+                                    <span class="text-xs font-bold text-white" x-text="'Result: Original Photo + ' + selectedStyle"></span>
+                                    <div class="text-[10px] text-brand-textMuted" x-text="'Color: ' + selectedColor + ' | Fitted on Uploaded Image'"></div>
+                                </div>
+                                <span class="bg-amber-950 text-brand-bronze text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-amber-800 uppercase tracking-wider">Original Photo Fitted</span>
+                            </div>
+
+                            <!-- Photo Box (Non-draggable to prevent accidental image selection) -->
+                            <div class="relative min-h-[340px] sm:min-h-[440px] max-h-[540px] aspect-[4/3] rounded-xl overflow-hidden select-none bg-slate-950 flex items-center justify-center border border-brand-border/60">
+                                
+                                <!-- Base Layer: Full Original Face Photo (Left Side of Slider) -->
+                                <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2">
+                                    <img :src="userFacePhoto" class="max-w-full max-h-full object-contain rounded-lg pointer-events-none select-none" :style="getFaceTransform()">
+                                </div>
+                                
+                                <!-- Top Layer: Transformed Photo (Full Face + Hairpiece Overlay, Clipped to Right Side) -->
+                                <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none select-none"
+                                     :style="`clip-path: inset(0 0 0 ${sliderPos}%)`">
+                                    <!-- Base Face Photo -->
+                                    <img :src="userFacePhoto" class="max-w-full max-h-full object-contain rounded-lg pointer-events-none select-none" :style="getFaceTransform()">
+                                    <!-- Hairpiece Overlay (Superimposed Directly on Scalp) -->
+                                    <div class="absolute inset-x-0 top-3 sm:top-5 pointer-events-none flex justify-center transition-transform duration-75"
+                                         :style="getHairTransform()">
+                                        <img :src="getHairOverlayUrl()" class="w-3/4 sm:w-2/3 max-h-[55%] object-contain drop-shadow-2xl pointer-events-none select-none">
+                                    </div>
+                                </div>
+                                
+                                <!-- Vertical Comparison Split Divider Line -->
+                                <div class="absolute top-0 bottom-0 w-1 bg-white/90 shadow-2xl pointer-events-none z-10" :style="`left: ${sliderPos}%`">
+                                    <div class="w-8 h-8 rounded-full teal-gradient absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center text-white text-[10px] shadow-2xl border-2 border-white">
+                                        <i class="fa-solid fa-arrows-left-right"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Labels -->
+                                <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded border border-brand-border pointer-events-none z-10">Original Photo (Before)</div>
+                                <div class="absolute top-3 right-3 bg-teal-950/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded border border-teal-800 pointer-events-none z-10" x-text="selectedStyle + ' Fitted'"></div>
+                            </div>
+
+                            <!-- Before / After Slider Bar below the Photo Box -->
+                            <div class="bg-brand-inner border border-brand-border rounded-xl p-3 space-y-2">
+                                <div class="flex justify-between items-center text-xs font-bold">
+                                    <span class="text-slate-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-sliders text-brand-tealLight"></i> Compare Before & After (사진 비교 슬라이더)
+                                    </span>
+                                    <span class="text-brand-tealLight text-[11px] font-extrabold" x-text="sliderPos + '% Transformation'"></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 whitespace-nowrap">Original (Before)</span>
+                                    <input type="range" min="0" max="100" x-model.number="sliderPos" class="w-full accent-teal-400 bg-brand-darkBg h-3 rounded-lg cursor-pointer">
+                                    <span class="text-[10px] sm:text-xs font-bold text-brand-tealLight whitespace-nowrap">Fitted (After)</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <button @click="isBookingModalOpen = true" class="teal-gradient text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md hover:opacity-95 min-h-[44px]">
+                                    <i class="fa-regular fa-calendar-check mr-1.5"></i> Book Salon Cut-in for this Look
+                                </button>
+                                <a href="#builder" class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-bold uppercase tracking-wider py-3 rounded-xl text-center flex items-center justify-center min-h-[44px]">
+                                    <i class="fa-solid fa-sliders mr-1.5"></i> Custom Build This Style
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FACTORY DIRECT ADVANTAGE -->
+    <section id="factory" class="py-16 sm:py-20 bg-[#0E1733]/60 border-y border-brand-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
+                <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2" x-text="t('factory_badge')">Direct
+                    Indonesian Factory</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white" x-text="t('factory_title')">The Factory-Direct Advantage
+                </h2>
+            </div>
+
+            <!-- 3 Pillars -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 sm:mb-16">
+                <div
+                    class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl text-center space-y-4 eye-shadow">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl teal-gradient flex items-center justify-center text-white text-xl sm:text-2xl shadow-md">
+                        <i class="fa-solid fa-hands-holding"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base sm:text-lg">100% Hand-Tied Craft</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed font-normal">Crafted in our Indonesian
+                        facility by master technicians with over 15 years of single-knot ventilation experience.</p>
+                </div>
+
+                <div
+                    class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl text-center space-y-4 eye-shadow">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl teal-gradient flex items-center justify-center text-white text-xl sm:text-2xl shadow-md">
+                        <i class="fa-solid fa-tag"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base sm:text-lg">Zero Middleman Markup</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed font-normal">Eliminate distributor margins.
+                        You get true factory-direct wholesale pricing backed by Melbourne salon support.</p>
+                </div>
+
+                <div
+                    class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl text-center space-y-4 eye-shadow">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-2xl teal-gradient flex items-center justify-center text-white text-xl sm:text-2xl shadow-md">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base sm:text-lg">1-Piece Custom MOQ</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed font-normal">We accept single bespoke custom
+                        orders with full specification choices and fast direct delivery options.</p>
+                </div>
+            </div>
+
+            <!-- Workflow Timeline -->
+            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 sm:p-8 eye-shadow">
+                <h4 class="font-bold text-white text-center text-xs sm:text-sm uppercase tracking-wider mb-6 sm:mb-8">
+                    Production to Salon Workflow</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 text-center text-xs">
+                    <div class="space-y-2">
+                        <div
+                            class="w-8 h-8 mx-auto rounded-full bg-brand-inner text-brand-tealLight font-bold flex items-center justify-center border border-brand-border">
+                            1</div>
+                        <div class="font-bold text-white text-xs">Raw Hair Selection</div>
+                        <div class="text-[10px] text-brand-textMuted">100% Virgin Hair</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div
+                            class="w-8 h-8 mx-auto rounded-full bg-brand-inner text-brand-tealLight font-bold flex items-center justify-center border border-brand-border">
+                            2</div>
+                        <div class="font-bold text-white text-xs">Base Sculpting</div>
+                        <div class="text-[10px] text-brand-textMuted">Swiss Lace / Skin</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div
+                            class="w-8 h-8 mx-auto rounded-full bg-brand-inner text-brand-tealLight font-bold flex items-center justify-center border border-brand-border">
+                            3</div>
+                        <div class="font-bold text-white text-xs">Ventilation</div>
+                        <div class="text-[10px] text-brand-textMuted">Single Knot Hand-Tie</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div
+                            class="w-8 h-8 mx-auto rounded-full bg-brand-inner text-brand-tealLight font-bold flex items-center justify-center border border-brand-border">
+                            4</div>
+                        <div class="font-bold text-white text-xs">Melbourne Finish</div>
+                        <div class="text-[10px] text-brand-textMuted">Springvale Salon</div>
+                    </div>
+                    <div class="space-y-2 col-span-2 sm:col-span-1">
+                        <div
+                            class="w-8 h-8 mx-auto rounded-full bg-brand-inner text-brand-tealLight font-bold flex items-center justify-center border border-brand-border">
+                            5</div>
+                        <div class="font-bold text-white text-xs">Worldwide Delivery</div>
+                        <div class="text-[10px] text-brand-textMuted">Discreet Express</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7.5 CLIENT VALUE PERKS & REFERRAL PROGRAM -->
+    <section class="py-12 bg-gradient-to-r from-brand-cardBg via-[#131D38] to-brand-cardBg border-b border-brand-border/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <!-- Dual System Rotation Package -->
+                <div class="bg-brand-darkBg/90 border border-brand-border p-6 rounded-2xl flex items-start gap-4 eye-shadow">
+                    <div class="w-12 h-12 rounded-xl bronze-gradient flex items-center justify-center text-white text-xl font-bold flex-shrink-0 shadow-md">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="inline-block bg-amber-950 text-brand-bronze text-[10px] font-bold px-2 py-0.5 rounded border border-amber-800 uppercase tracking-wider mb-1">Dual-System Rotation</div>
+                        <h4 class="font-bold text-white text-base">Multi-Unit Rotation Package</h4>
+                        <p class="text-xs text-brand-textMuted leading-relaxed">Save 15% when ordering 2 systems together. Allows seamless rotation and zero downtime during 4-6 week salon maintenance re-bonding.</p>
+                    </div>
+                </div>
+
+                <!-- $100 Referral Program -->
+                <div class="bg-brand-darkBg/90 border border-brand-border p-6 rounded-2xl flex items-start gap-4 eye-shadow">
+                    <div class="w-12 h-12 rounded-xl teal-gradient flex items-center justify-center text-white text-xl font-bold flex-shrink-0 shadow-md">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="inline-block bg-teal-950 text-brand-tealLight text-[10px] font-bold px-2 py-0.5 rounded border border-teal-800 uppercase tracking-wider mb-1">Referral Rewards</div>
+                        <h4 class="font-bold text-white text-base">$100 AUD Friend Referral Reward</h4>
+                        <p class="text-xs text-brand-textMuted leading-relaxed">Refer a friend or colleague to David Hair. Both you and your referee receive a $100 AUD credit toward your next system or re-bond maintenance service.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. B2B WHOLESALE SECTION -->
+    <section id="b2b" class="py-16 sm:py-20 bg-brand-darkBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+                <span class="text-brand-bronze text-xs font-bold uppercase tracking-widest block mb-2" x-text="t('b2b_badge')">Salon &
+                    Distributor Program</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white" x-text="t('b2b_title')">B2B Indonesian Factory Wholesale
+                </h2>
+                <p class="text-brand-textMuted text-xs sm:text-sm mt-2" x-text="t('b2b_sub')">Partner directly with our Indonesian hand-tied
+                    manufacturing plant. Premium custom hairpiece supply for hair replacement clinics, salons, and
+                    global distributors.</p>
+            </div>
+
+            <!-- Value Pillars -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 sm:mb-16">
+                <div class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl space-y-3 eye-shadow">
+                    <div
+                        class="w-12 h-12 rounded-xl bronze-gradient flex items-center justify-center text-white text-xl shadow-md mb-2">
+                        <i class="fa-solid fa-industry"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Direct Factory OEM</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed">Custom private labeling, packaging branding,
+                        and tailor-made base specs for your salon brand.</p>
+                </div>
+
+                <div class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl space-y-3 eye-shadow">
+                    <div
+                        class="w-12 h-12 rounded-xl bronze-gradient flex items-center justify-center text-white text-xl shadow-md mb-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Strict Quality Assurance</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed">Each piece undergoes double knot inspection
+                        and cuticle alignment check before export.</p>
+                </div>
+
+                <div class="bg-brand-cardBg border border-brand-border p-6 sm:p-8 rounded-2xl space-y-3 eye-shadow">
+                    <div
+                        class="w-12 h-12 rounded-xl bronze-gradient flex items-center justify-center text-white text-xl shadow-md mb-2">
+                        <i class="fa-solid fa-box text-white"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">Sample Box Trial</h3>
+                    <p class="text-xs text-brand-textMuted leading-relaxed">Order a 3-piece trial master sample set
+                        including Swiss lace, Skin 0.03mm, and Silk Top bases.</p>
+                </div>
+            </div>
+
+            <!-- Wholesale Pricing Tier Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch mb-12">
+                <!-- Tier 1 -->
+                <div
+                    class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 flex flex-col justify-between eye-shadow">
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Salon Starter Tier
+                        </div>
+                        <h4 class="font-heading font-extrabold text-2xl text-white">5 – 19 Pieces</h4>
+                        <div class="text-3xl font-extrabold text-brand-tealLight">25% OFF <span
+                                class="text-xs text-brand-textMuted font-normal">Retail Rate</span></div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-4 border-t border-brand-border">
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Standard Factory Lead Time
+                                (18-21 days)</li>
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Access to Stock Master Ring
+                                Color Chart</li>
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Express DHL / FedEx Air
+                                Freight</li>
+                        </ul>
+                    </div>
+                    <button @click="openB2BModal('Salon Starter Tier')"
+                        class="w-full mt-6 bg-brand-inner hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl border border-brand-border transition-colors min-h-[44px]">
+                        Apply Starter Account
+                    </button>
+                </div>
+
+                <!-- Tier 2 (Featured) -->
+                <div
+                    class="bg-brand-cardBg border-2 border-brand-bronze rounded-2xl p-6 flex flex-col justify-between eye-shadow relative transform md:-translate-y-2">
+                    <div
+                        class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand-bronze text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Most Popular for Salons
+                    </div>
+                    <div class="space-y-4 pt-2 md:pt-0">
+                        <div class="text-xs font-bold text-brand-bronze uppercase tracking-wider">Master Salon Partner
+                        </div>
+                        <h4 class="font-heading font-extrabold text-2xl text-white">20 – 49 Pieces</h4>
+                        <div class="text-3xl font-extrabold text-brand-bronze">40% OFF <span
+                                class="text-xs text-brand-textMuted font-normal">Retail Rate</span></div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-4 border-t border-brand-border">
+                            <li><i class="fa-solid fa-check text-brand-bronze mr-2"></i> Free Custom Logo Printing &
+                                Packaging</li>
+                            <li><i class="fa-solid fa-check text-brand-bronze mr-2"></i> Priority Production Line (14-16
+                                days)</li>
+                            <li><i class="fa-solid fa-check text-brand-bronze mr-2"></i> Dedicated Indonesian Officer
+                            </li>
+                            <li><i class="fa-solid fa-check text-brand-bronze mr-2"></i> Complementary Swatch Box</li>
+                        </ul>
+                    </div>
+                    <button @click="openB2BModal('Master Salon Partner')"
+                        class="w-full mt-6 bronze-gradient text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:opacity-95 min-h-[44px]">
+                        Apply Partner Account
+                    </button>
+                </div>
+
+                <!-- Tier 3 -->
+                <div
+                    class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 flex flex-col justify-between eye-shadow">
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Global Distributor
+                        </div>
+                        <h4 class="font-heading font-extrabold text-2xl text-white">50+ Pieces / Mo</h4>
+                        <div class="text-3xl font-extrabold text-brand-tealLight">Custom OEM <span
+                                class="text-xs text-brand-textMuted font-normal">Factory Contract</span></div>
+                        <ul class="space-y-2 text-xs text-slate-300 pt-4 border-t border-brand-border">
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Dedicated Hand-Tying
+                                Production Line</li>
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Exclusive Regional Territory
+                                Options</li>
+                            <li><i class="fa-solid fa-check text-brand-tealLight mr-2"></i> Direct Factory Invoice &
+                                Bulk Cargo</li>
+                        </ul>
+                    </div>
+                    <button @click="openB2BModal('Global Distributor')"
+                        class="w-full mt-6 bg-brand-inner hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl border border-brand-border transition-colors min-h-[44px]">
+                        Inquire Distributor Terms
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING MODAL -->
+    <div x-show="isBookingModalOpen" x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-transition>
+        <div @click.away="isBookingModalOpen = false"
+            class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-5 sm:space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button @click="isBookingModalOpen = false"
+                class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center">
+                <h3 class="font-heading font-bold text-lg sm:text-xl text-white">Book Springvale Fitting</h3>
+                <p class="text-xs text-brand-textMuted mt-1">Select your preferred date & time for in-person
+                    consultation.</p>
+            </div>
+
+            <form @submit.prevent="submitBooking()" class="space-y-3.5 sm:space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Service Type</label>
+                    <select x-model="booking.service"
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+                        <option value="consultation">Free Consultation & Hairline Assessment ($0 Free)</option>
+                        <option value="cutin">New Hairpiece Fitting & Cut-in Styling ($145 AUD)</option>
+                        <option value="maintenance">Re-bond Maintenance & Scalp Clean ($99 AUD)</option>
+                        <option value="adjustment">Minor Adjustment & Perimeter Touch-up ($49 AUD)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Date</label>
+                        <input type="date" x-model="booking.date"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Time Slot</label>
+                        <select x-model="booking.time"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+                            <option value="10:00">10:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Full Name</label>
+                    <input type="text" x-model="booking.name" required placeholder="John Doe"
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Phone Number</label>
+                    <input type="tel" x-model="booking.phone" required placeholder="+61 400 000 000"
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+                </div>
+
+                <button type="submit"
+                    class="w-full teal-gradient py-3.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-95 min-h-[48px]">
+                    Confirm Reservation Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- B2B WHOLESALE MODAL -->
+    <div x-show="isB2bModalOpen" x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-transition>
+        <div @click.away="isB2bModalOpen = false"
+            class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-5 sm:space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button @click="isB2bModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center">
+                <span class="text-brand-bronze text-xs font-bold uppercase tracking-wider">Indonesian Factory
+                    Direct</span>
+                <h3 class="font-heading font-bold text-lg sm:text-xl text-white mt-1">B2B Wholesale Application</h3>
+                <p class="text-xs text-brand-textMuted mt-1">Tier: <span class="text-brand-bronze font-bold"
+                        x-text="b2bForm.selectedTier"></span></p>
+            </div>
+
+            <form @submit.prevent="submitB2BForm()" class="space-y-3.5 sm:space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Company / Salon Name</label>
+                        <input type="text" x-model="b2bForm.company" required placeholder="Elite Salon Co."
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Business Type</label>
+                        <select x-model="b2bForm.type"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                            <option value="Hair Salon">Hair Salon / Barber</option>
+                            <option value="Hair Replacement Clinic">Hair Replacement Clinic</option>
+                            <option value="Wholesale Distributor">Wholesale Distributor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Country / City</label>
+                        <input type="text" x-model="b2bForm.location" required placeholder="Melbourne, Australia"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Est. Monthly Volume</label>
+                        <select x-model="b2bForm.volume"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                            <option value="5-15 pcs">5 - 15 pcs / month</option>
+                            <option value="15-40 pcs">15 - 40 pcs / month</option>
+                            <option value="50+ pcs">50+ pcs / month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Contact Name</label>
+                        <input type="text" x-model="b2bForm.name" required placeholder="Jane Smith"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">WhatsApp / Phone</label>
+                        <input type="tel" x-model="b2bForm.phone" required placeholder="+61 400 000 000"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-bronze min-h-[44px]">
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bronze-gradient py-3.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:opacity-95 min-h-[48px]">
+                    Submit Wholesale Account Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RECOMMENDED MULTI-COLUMN FOOTER -->
+    <footer class="bg-[#060B18] border-t border-brand-border/80 pt-12 sm:pt-16 pb-8 text-xs text-brand-textMuted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10 sm:pb-12 border-b border-brand-border/60">
+
+                <!-- Col 1: Brand & Socials -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-lg teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-base shadow-sm">
+                            DH
+                        </div>
+                        <span class="font-heading font-extrabold text-lg text-white tracking-tight">DAVID HAIR</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-slate-400">
+                        Bespoke hand-tied human hairpieces & silk top toppers from our Indonesian factory, custom fitted
+                        and maintained at our Springvale, Melbourne flagship salon.
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="#"
+                            class="w-9 h-9 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-slate-300 hover:text-brand-tealLight hover:border-brand-teal transition-colors">
+                            <i class="fa-brands fa-instagram text-base"></i>
+                        </a>
+                        <a href="#"
+                            class="w-9 h-9 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-slate-300 hover:text-brand-tealLight hover:border-brand-teal transition-colors">
+                            <i class="fa-brands fa-facebook-f text-base"></i>
+                        </a>
+                        <a href="#"
+                            class="w-9 h-9 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-slate-300 hover:text-brand-tealLight hover:border-brand-teal transition-colors">
+                            <i class="fa-brands fa-youtube text-base"></i>
+                        </a>
+                        <a href="https://wa.me/61400000000" target="_blank"
+                            class="w-9 h-9 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-slate-300 hover:text-emerald-400 hover:border-emerald-500 transition-colors">
+                            <i class="fa-brands fa-whatsapp text-base"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Navigation -->
+                <div class="space-y-3">
+                    <h4 class="font-heading font-bold text-xs sm:text-sm text-white uppercase tracking-wider">Navigation
+                    </h4>
+                    <ul class="space-y-2 text-slate-300 font-medium">
+                        <li><a href="#builder"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Order</a></li>
+                        <li><a href="#salon"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Salon</a></li>
+                        <li><a href="#stock"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Stock</a></li>
+                        <li><a href="#transformations"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Trans</a></li>
+                        <li><a href="#factory"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Factory</a>
+                        </li>
+                        <li><a href="#b2b"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">B2B</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Melbourne Salon Info -->
+                <div class="space-y-3">
+                    <h4 class="font-heading font-bold text-xs sm:text-sm text-white uppercase tracking-wider">Springvale
+                        Salon</h4>
+                    <ul class="space-y-2 text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-location-dot text-brand-bronze mt-1 flex-shrink-0"></i>
+                            <span>Springvale Road, Springvale, VIC 3171, Melbourne Australia</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-brand-tealLight flex-shrink-0"></i>
+                            <span>+61 400 000 000</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-brand-tealLight flex-shrink-0"></i>
+                            <span>contact@davidhairshop.com</span>
+                        </li>
+                        <li class="flex items-start gap-2 pt-1 text-slate-400">
+                            <i class="fa-solid fa-clock text-slate-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Tue – Sat: 10:00 AM – 6:00 PM<br>(Sun – Mon: Closed)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Guarantees & Support -->
+                <div class="space-y-3">
+                    <h4 class="font-heading font-bold text-xs sm:text-sm text-white uppercase tracking-wider">Quality &
+                        Support</h4>
+                    <ul class="space-y-2 text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-emerald-400 flex-shrink-0"></i>
+                            <span>100% Virgin Hair Quality Guarantee</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-plane text-brand-tealLight flex-shrink-0"></i>
+                            <span>Discreet Express Worldwide Freight</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-screwdriver-wrench text-brand-bronze flex-shrink-0"></i>
+                            <span>Re-bonding & Maintenance Guide</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-brand-tealLight flex-shrink-0"></i>
+                            <a href="/stock_manager.php" target="_blank" class="hover:text-brand-tealLight transition-colors underline font-bold">Stock Admin Manager (CRUD)</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-database text-sky-400 flex-shrink-0"></i>
+                            <a href="/db_test.php" class="hover:text-brand-tealLight transition-colors underline">System
+                                Status (PDO/MySQL)</a>
+                        </li>
+                        <li class="pt-2 text-[11px] text-slate-400">
+                            <a href="#" class="hover:underline mr-3">Privacy Policy</a>
+                            <a href="#" class="hover:underline">Terms of Service</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Sub-Footer -->
+            <div
+                class="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-400 text-center md:text-left">
+                <div x-text="t('footer_rights')">
+                    &copy; 2026 David Hair Systems Pty Ltd. All rights reserved. &bull; Melbourne, Victoria Australia
+                </div>
+
+                <!-- Payment Method Icons -->
+                <div class="flex items-center gap-3 sm:gap-4 text-base sm:text-lg text-slate-300">
+                    <i class="fa-brands fa-cc-visa hover:text-white transition-colors" title="Visa"></i>
+                    <i class="fa-brands fa-cc-mastercard hover:text-white transition-colors" title="Mastercard"></i>
+                    <i class="fa-brands fa-cc-paypal hover:text-white transition-colors" title="PayPal"></i>
+                    <i class="fa-brands fa-apple-pay hover:text-white transition-colors" title="Apple Pay"></i>
+                    <span
+                        class="text-[10px] font-bold font-mono bg-brand-cardBg px-2 py-0.5 rounded border border-brand-border">AFTERPAY</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Google Translate Element & Global Multi-Language Handler -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function setLanguage(lang) {
+            const domain = location.hostname;
+            if (lang === 'en') {
+                document.cookie = "googtrans=/en/en; path=/;";
+                document.cookie = "googtrans=/en/en; path=/; domain=" + domain;
+            } else if (lang === 'ko') {
+                document.cookie = "googtrans=/en/ko; path=/;";
+                document.cookie = "googtrans=/en/ko; path=/; domain=" + domain;
+            } else if (lang === 'id') {
+                document.cookie = "googtrans=/en/id; path=/;";
+                document.cookie = "googtrans=/en/id; path=/; domain=" + domain;
+            }
+            localStorage.setItem('dh_lang', lang);
+            location.reload();
+        }
+
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,ko,id',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Alpine.js Application Logic -->
+    <script>
+        function davidHairApp() {
+            return {
+                lang: localStorage.getItem('dh_lang') || 'en',
+                setLang(l) {
+                    this.lang = l;
+                    localStorage.setItem('dh_lang', l);
+                    const domain = location.hostname;
+                    document.cookie = `googtrans=/en/${l}; path=/;`;
+                    document.cookie = `googtrans=/en/${l}; path=/; domain=${domain};`;
+                },
+                currency: 'AUD',
+                mobileMenuOpen: false,
+                isBookingModalOpen: false,
+                isB2bModalOpen: false,
+                currentStep: 1,
+                stockFilter: 'All',
+
+                t(key) {
+                    if (this.dict && this.dict[this.lang] && this.dict[this.lang][key]) {
+                        return this.dict[this.lang][key];
+                    }
+                    if (this.dict && this.dict['en'] && this.dict['en'][key]) {
+                        return this.dict['en'][key];
+                    }
+                    return key;
+                },
+
+                getStepTitle(step) {
+                    const titles = {
+                        en: ['Select Profile', 'Base & Size', 'Hair Specs', 'Color & Blend', 'Craft Details', 'Review & Submit'],
+                        ko: ['스타일 선택', '베이스 및 규격', '모발 사양', '모발 색상', '세부 공정', '견적 확인 및 신청'],
+                        id: ['Pilih Profil', 'Bahan & Ukuran', 'Spesifikasi Rambut', 'Warna Rambut', 'Detail Kerajinan', 'Tinjau & Kirim']
+                    };
+                    const list = titles[this.lang] || titles['en'];
+                    return list[step - 1] || '';
+                },
+
+                dict: {
+                    en: {
+                        nav_order: 'Order',
+                        nav_salon: 'Salon',
+                        nav_stock: 'Stock',
+                        nav_trans: 'Trans',
+                        nav_factory: 'Factory',
+                        nav_b2b: 'B2B',
+                        nav_free_consulting: 'Free Consulting',
+
+                        hero_badge: 'Indonesian Factory Direct • Springvale Flagship',
+                        hero_title_1: 'Factory-Direct Precision Hairpieces,',
+                        hero_title_2: 'Finished by Melbourne Specialists',
+                        hero_subtitle: 'Bespoke hand-tied human hair toupees and silk top pieces from our Indonesian factory, tailored and maintained at our Springvale flagship salon.',
+                        hero_btn_builder: 'Build Custom Order',
+                        hero_btn_stock: 'Book Springvale Fitting',
+                        hero_stat_1_val: '100%',
+                        hero_stat_1_lbl: 'Virgin Human Hair',
+                        hero_stat_2_val: '1-Piece',
+                        hero_stat_2_lbl: 'Custom MOQ',
+                        hero_stat_3_val: '15+ Yrs',
+                        hero_stat_3_lbl: 'Indonesian Crafts',
+                        hero_card_title: 'Melbourne Master Cut-in',
+                        hero_card_sub: 'Springvale Salon, VIC Australia',
+
+                        climate_badge: 'Engineered for Freedom',
+                        climate_title: 'Built for the Australian Climate & Active Lifestyle',
+                        climate_card_1_title: '100% Water-Resistant Hold',
+                        climate_card_1_desc: 'Confidently swim in open water, take hot showers, and maintain 4-6 weeks of waterproof hold.',
+                        climate_card_2_title: 'Gym & Workout Breathability',
+                        climate_card_2_desc: 'Micro-ventilation mesh base releases heat and scalp moisture during high-intensity workouts.',
+                        climate_card_3_title: 'UV & Climate Shield',
+                        climate_card_3_desc: 'Materials tested against high Australian UV and humidity without adhesive breakdown.',
+                        climate_card_4_title: 'Seamless Barber Cut-In',
+                        climate_card_4_desc: 'Precision fade work and texture matching eliminates any visible transition seam.',
+
+                        ai_badge: 'Instant Style Fitting',
+                        ai_title: 'AI Hairstyle Fitting & Simulator',
+                        ai_desc: 'Try on different hairpieces & styles directly on your photo. Adjust position and scale for a perfect fit before ordering.',
+                        ai_upload_btn: 'Upload Your Photo',
+                        ai_select_style: 'Select Style:',
+                        ai_select_color: 'Select Color:',
+                        ai_fit_controls: 'Hairpiece Fit Controls',
+                        ai_move_x: 'Move Left / Right',
+                        ai_move_y: 'Move Up / Down',
+                        ai_scale_size: 'Scale Size',
+                        ai_width_stretch: 'Width Stretch',
+                        ai_height_stretch: 'Height Stretch',
+                        ai_reset_hair: 'Reset Hair Fit',
+                        ai_reset_face: 'Reset Photo',
+                        ai_reset_all: 'Reset All',
+                        ai_save_btn: 'Save Hairstyle Specs',
+
+                        builder_badge: 'Bespoke Customizer',
+                        builder_title: 'Interactive Custom Order Builder',
+                        builder_sub: 'Design your custom hand-tied hairpiece step-by-step. Get instant price estimations and direct factory precision.',
+                        builder_step: 'Step',
+                        builder_of: 'of',
+                        builder_next: 'Next Step',
+                        builder_prev: 'Previous',
+                        builder_submit: 'Submit Custom Order',
+
+                        stock_badge: 'Express Delivery',
+                        stock_title: 'Melbourne In-Stock Toupees & Toppers',
+                        stock_sub: 'Same-day dispatch or immediate salon fitting available in Springvale.',
+                        stock_btn_express: 'Express Order Inquiry',
+                        stock_btn_fit: 'Book Salon Fit',
+
+                        factory_badge: 'Direct Manufacturing',
+                        factory_title: 'Direct Indonesian Factory Craftsmanship',
+                        factory_sub: 'Every hairpiece is 100% hand-tied by master artisans using premium human hair.',
+
+                        b2b_badge: 'Wholesale & Salon Supply',
+                        b2b_title: 'B2B Wholesale & Salon Partnership',
+                        b2b_sub: 'Join our salon network in Australia & global distribution. Direct factory pricing with low MOQ.',
+
+                        footer_rights: '© 2026 David Hair Systems Pty Ltd. All rights reserved. • Melbourne, Victoria Australia'
+                    },
+                    ko: {
+                        nav_order: '주문',
+                        nav_salon: '멜번살롱',
+                        nav_stock: '즉시구매',
+                        nav_trans: '가상피팅',
+                        nav_factory: '공장',
+                        nav_b2b: '도매문의',
+                        nav_free_consulting: '무료 상담 신청',
+
+                        hero_badge: '인도네시아 공장직영 • 멜버른 스프링베일 플래그십',
+                        hero_title_1: '공장직영 초정밀 맞춤 가발 &',
+                        hero_title_2: '멜버른 디자이너 스타일링 완성',
+                        hero_subtitle: '인도네시아 자사 공장에서 100% 수제작한 최고급 인모 맞춤가발 및 불파트 topper. 멜버른 스프링베일 플래그십 살롱에서 전문 피팅 및 맞춤 커트 서비스를 제공합니다.',
+                        hero_btn_builder: '맞춤가발 제작 견적',
+                        hero_btn_stock: '살롱 피팅 예약',
+                        hero_stat_1_val: '100%',
+                        hero_stat_1_lbl: '최고급 천연 인모',
+                        hero_stat_2_val: '1개부터',
+                        hero_stat_2_lbl: '소량 맞춤 주문 가능',
+                        hero_stat_3_val: '15년+',
+                        hero_stat_3_lbl: '인도네시아 공장 장인기술',
+                        hero_card_title: '멜버른 마스터 스타일링 & 커트',
+                        hero_card_sub: '스프링베일 살롱, 호주 빅토리아주',
+
+                        climate_badge: '자유로운 활동을 위한 맞춤 설계',
+                        climate_title: '호주의 강한 기후와 액티브한 라이프스타일에 맞춤 설계',
+                        climate_card_1_title: '100% 강력 방수 결합',
+                        climate_card_1_desc: '수영, 샤워, 땀배출에도 4-6주간 흔들림 없는 강력 방수 접착 유지.',
+                        climate_card_2_title: '스포츠 & 피트니스 통기성',
+                        climate_card_2_desc: '고강도 운동 중 발생하는 열기와 땀을 즉시 배출하는 미세 통기성 내피.',
+                        climate_card_3_title: '강한 자외선 & 기후 내구성',
+                        climate_card_3_desc: '호주의 강렬한 자외선과 자극적인 습도에도 접착력이 약화되지 않는 특수 소재.',
+                        climate_card_4_title: '경계선 없는 마스터 재단',
+                        climate_card_4_desc: '본인 모발과의 자연스러운 연결과 그라데이션 커트로 가발 경계선 완벽 커버.',
+
+                        ai_badge: 'AI 가상 스타일 피팅',
+                        ai_title: 'AI 헤어스타일 가상 착용 시뮬레이터',
+                        ai_desc: '본인의 사진에 다양한 맞춤 가발 스타일을 직접 착용해 보세요. 크기, 위치, 가로세로 비율을 조절하여 완벽한 스타일을 미리 확인할 수 있습니다.',
+                        ai_upload_btn: '내 사진 업로드하기',
+                        ai_select_style: '헤어 스타일 선택:',
+                        ai_select_color: '모발 색상 선택:',
+                        ai_fit_controls: '가발 위치 및 크기 세부 조절',
+                        ai_move_x: '좌 / 우 이동',
+                        ai_move_y: '상 / 하 이동',
+                        ai_scale_size: '전체 크기 확대/축소',
+                        ai_width_stretch: '가로 비율 조절',
+                        ai_height_stretch: '세로 비율 조절',
+                        ai_reset_hair: '가발 조절 초기화',
+                        ai_reset_face: '사진 조절 초기화',
+                        ai_reset_all: '전체 초기화',
+                        ai_save_btn: '선택한 헤어스타일 정보 저장',
+
+                        builder_badge: '맞춤 커스터마이저',
+                        builder_title: '6단계 맞춤 가발 온라인 견적 시스템',
+                        builder_sub: '원하는 두피 베이스, 모발 길이, 밀도, 색상을 선택해 나만의 맞춤 가발을 디자인하세요. 실시간 견적을 확인하실 수 있습니다.',
+                        builder_step: '단계',
+                        builder_of: '/',
+                        builder_next: '다음 단계',
+                        builder_prev: '이전 단계',
+                        builder_submit: '맞춤 주문 신청하기',
+
+                        stock_badge: '당일 출고 & 즉시 피팅',
+                        stock_title: '멜버른 매장 당일출고 및 즉시피팅 재고 목록',
+                        stock_sub: '스프링베일 매장에 즉시 착용 가능한 프리미엄 재고가 준비되어 있습니다.',
+                        stock_btn_express: '당일 배송 문의',
+                        stock_btn_fit: '매장 착용 예약',
+
+                        factory_badge: '100% 자사 공장 생산',
+                        factory_title: '인도네시아 자사 공장의 장인정신과 100% 수제작',
+                        factory_sub: '숙련된 장인들이 100% 천연 인모를 한 땀 한 땀 심어 제작합니다. 엄격한 품질 관리를 거칩니다.',
+
+                        b2b_badge: '살롱 파트너십 & 도매 납품',
+                        b2b_title: '전 세계 살롱 파트너 및 도매 공급 프로그램',
+                        b2b_sub: '공장 직영 공급가로 최고 품질의 가발 제품을 보급받으세요. 소량 주문부터 대량 도매까지 지원합니다.',
+
+                        footer_rights: '© 2026 David Hair Systems Pty Ltd. 모든 권리 보유. • 호주 멜버른 빅토리아'
+                    },
+                    id: {
+                        nav_order: 'Pesan',
+                        nav_salon: 'Salon',
+                        nav_stock: 'Stok',
+                        nav_trans: 'AI Trans',
+                        nav_factory: 'Pabrik',
+                        nav_b2b: 'B2B',
+                        nav_free_consulting: 'Konsultasi Gratis',
+
+                        hero_badge: 'Pabrik Langsung Indonesia • Salon Utama Springvale',
+                        hero_title_1: 'Hairpiece Presisi Langsung Pabrik,',
+                        hero_title_2: 'Disempurnakan Spesialis Melbourne',
+                        hero_subtitle: 'Toupee dan topper rambut asli buatan tangan dari pabrik Indonesia kami, disesuaikan dan dirawat di salon utama kami di Springvale, Melbourne.',
+                        hero_btn_builder: 'Buat Pesanan Khusus',
+                        hero_btn_stock: 'Pesan Fitting Springvale',
+                        hero_stat_1_val: '100%',
+                        hero_stat_1_lbl: 'Rambut Asli Virgin',
+                        hero_stat_2_val: '1 Pcs',
+                        hero_stat_2_lbl: 'MOQ Pesanan Khusus',
+                        hero_stat_3_val: '15+ Thn',
+                        hero_stat_3_lbl: 'Kerajinan Indonesia',
+                        hero_card_title: 'Potong & Styling Spesialis Melbourne',
+                        hero_card_sub: 'Salon Springvale, VIC Australia',
+
+                        climate_badge: 'Dirancang untuk Kebebasan',
+                        climate_title: 'Dibuat untuk Iklim Australia & Gaya Hidup Aktif',
+                        climate_card_1_title: 'Daya Tahan 100% Tahan Air',
+                        climate_card_1_desc: 'Berenang, mandi air hangat, dan pertahankan daya rekat tahan air 4-6 minggu dengan percaya diri.',
+                        climate_card_2_title: 'Ventilasi untuk Olahraga & Gym',
+                        climate_card_2_desc: 'Bahan jaring mikro melepaskan panas dan kelembapan kulit kepala saat olahraga intensitas tinggi.',
+                        climate_card_3_title: 'Perlindungan UV & Iklim',
+                        climate_card_3_desc: 'Bahan diuji terhadap sinar UV tinggi dan kelembapan Australia tanpa merusak perekat.',
+                        climate_card_4_title: 'Pemotongan Barber Alami',
+                        climate_card_4_desc: 'Potongan gradasi presisi dan pencocokan tekstur menghilangkan garis batas yang terlihat.',
+
+                        ai_badge: 'Fitting Gaya Instan',
+                        ai_title: 'Simulator & Fitting Gaya Hairpiece AI',
+                        ai_desc: 'Coba berbagai gaya hairpiece langsung pada foto Anda. Atur posisi dan ukuran untuk pas sempurna sebelum memesan.',
+                        ai_upload_btn: 'Unggah Foto Anda',
+                        ai_select_style: 'Pilih Gaya:',
+                        ai_select_color: 'Pilih Warna:',
+                        ai_fit_controls: 'Kontrol Ukuran & Posisi Hairpiece',
+                        ai_move_x: 'Geser Kiri / Kanan',
+                        ai_move_y: 'Geser Atas / Bawah',
+                        ai_scale_size: 'Ukuran Skala',
+                        ai_width_stretch: 'Lebar Hairpiece',
+                        ai_height_stretch: 'Tinggi Hairpiece',
+                        ai_reset_hair: 'Reset Posisi Hairpiece',
+                        ai_reset_face: 'Reset Posisi Foto',
+                        ai_reset_all: 'Reset Semua',
+                        ai_save_btn: 'Simpan Spesifikasi Gaya',
+
+                        builder_badge: 'Kustomisasi Khusus',
+                        builder_title: 'Pembuat Pesanan Khusus 6-Langkah',
+                        builder_sub: 'Rancang hairpiece buatan tangan Anda langkah demi langkah. Dapatkan estimasi harga instan dan presisi langsung dari pabrik.',
+                        builder_step: 'Langkah',
+                        builder_of: 'dari',
+                        builder_next: 'Langkah Berikutnya',
+                        builder_prev: 'Sebelumnya',
+                        builder_submit: 'Kirim Pesanan Khusus',
+
+                        stock_badge: 'Pengiriman Ekspres',
+                        stock_title: 'Stok Toupee & Topper Siap Kirim Melbourne',
+                        stock_sub: 'Pengiriman hari yang sama atau fitting salon langsung tersedia di Springvale.',
+                        stock_btn_express: 'Tanya Pesanan Ekspres',
+                        stock_btn_fit: 'Pesan Fitting Salon',
+
+                        factory_badge: 'Manufaktur Langsung',
+                        factory_title: 'Kerajinan Pabrik Langsung Indonesia',
+                        factory_sub: 'Setiap hairpiece 100% diikat dengan tangan oleh pengrajin ahli menggunakan rambut asli berkualitas.',
+
+                        b2b_badge: 'Grosir & Kemitraan Salon',
+                        b2b_title: 'Kemitraan Grosir B2B & Salon',
+                        b2b_sub: 'Bergabunglah dengan jaringan salon kami di Australia & distribusi global. Harga langsung pabrik dengan MOQ rendah.',
+
+                        footer_rights: '© 2026 David Hair Systems Pty Ltd. Hak cipta dilindungi undang-undang. • Melbourne, Victoria Australia'
+                    }
+                },
+
+                async init() {
+                    try {
+                        const res = await fetch('/api_get_stock.php');
+                        const result = await res.json();
+                        if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
+                            this.stockItems = result.data;
+                        }
+                    } catch (e) {
+                        console.log('Loaded default stock fallback:', e);
+                    }
+                },
+
+                stepTitles: [
+                    'Select Profile',
+                    'Base & Size',
+                    'Hair Specs',
+                    'Color & Blend',
+                    'Craft Details',
+                    'Review & Submit'
+                ],
+
+                profiles: [
+                    { id: 'men', name: "Men's Toupee", desc: 'Frontal & crown coverage toupee systems.', basePrice: 500, icon: 'fa-solid fa-mars' },
+                    { id: 'women', name: "Women's Top Piece", desc: 'Silk top hair toppers for thinning hair.', basePrice: 600, icon: 'fa-solid fa-venus' },
+                    { id: 'full', name: 'Full Cap System', desc: 'Complete cap coverage for total hair loss.', basePrice: 800, icon: 'fa-solid fa-user-tie' }
+                ],
+
+                bases: [
+                    { id: 'skin', name: 'Ultra-thin Skin (0.03mm)', price: 40, desc: 'Seamless skin illusion with direct knotless injection.' },
+                    { id: 'lace', name: 'Full Swiss Lace', price: 60, desc: 'Maximum breathability and natural hairline.' },
+                    { id: 'pu', name: 'PU Perimeter Base', price: 50, desc: 'Durable Polyurethane perimeter for easy taping & liquid adhesive bonding.' },
+                    { id: 'combo', name: 'Lace Front + PU Perimeter', price: 50, desc: 'Durable perimeter bonding with realistic lace front.' },
+                    { id: 'silk', name: 'Silk Top (불파트)', price: 90, desc: 'Triple-layer realistic scalp appearance.' },
+                    { id: 'cnc', name: 'Premier CNC Virgin Hair System', price: 140, desc: 'Medical-grade custom head mold paired with European Virgin Hair.' }
+                ],
+
+                colors: [
+                    { code: '#1', name: 'Jet Black', hex: '#0a0a0a' },
+                    { code: '#1B', name: 'Off Black', hex: '#1c1917' },
+                    { code: '#2', name: 'Dark Brown', hex: '#3f2212' },
+                    { code: '#4', name: 'Medium Brown', hex: '#5c3317' },
+                    { code: '#613', name: 'Blonde', hex: '#fef08a' }
+                ],
+
+                stockItems: [
+                    { sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '90%', color: '#1B Off Black', price: 420, stockQty: 12, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80' },
+                    { sku: 'SKU-DH-102', name: "French Lace Front + PU Perimeter", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '100%', color: '#2 Dark Brown', price: 450, stockQty: 8, image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
+                    { sku: 'SKU-DH-103', name: "Silk Top Topper (불파트) 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80' },
+                    { sku: 'SKU-DH-104', name: "All-Swiss Breathable Full Lace", category: "Men's Toupees", type: "Swiss Lace", base: "Swiss Lace", size: '8x10"', density: '85%', color: '#1 Jet Black', price: 440, stockQty: 15, image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80' },
+                    { sku: 'SKU-DH-105', name: "PU Perimeter Hand-Tied Toupee", category: "Men's Toupees", type: "PU Perimeter", base: "PU Perimeter", size: '8x10"', density: '95%', color: '#1B Off Black', price: 460, stockQty: 10, image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80' }
+                ],
+
+                builder: {
+                    profile: 'men',
+                    base: 'skin',
+                    unit: 'inch',
+                    width: 7.0,
+                    length: 9.0,
+                    hairLength: 6,
+                    density: 90,
+                    wave: 'Slight Wave',
+                    color: '#1B',
+                    greyPercent: 10,
+                    direction: 'Freestyle',
+                    bleachedKnots: true,
+                    underVentilation: true,
+                    customerName: '',
+                    customerPhone: ''
+                },
+
+                booking: {
+                    service: 'consultation',
+                    date: '',
+                    time: '10:00',
+                    name: '',
+                    phone: ''
+                },
+
+                b2bForm: {
+                    selectedTier: 'Master Salon Partner',
+                    company: '',
+                    type: 'Hair Salon',
+                    location: '',
+                    volume: '15-40 pcs',
+                    name: '',
+                    phone: ''
+                },
+
+                get filteredStockItems() {
+                    if (this.stockFilter === 'All') return this.stockItems;
+                    if (this.stockFilter === "Men's Toupees") return this.stockItems.filter(i => i.category === "Men's Toupees");
+                    if (this.stockFilter === "Women's Toppers") return this.stockItems.filter(i => i.category === "Women's Toppers");
+                    if (this.stockFilter === 'Skin Systems') return this.stockItems.filter(i => i.type === "Skin Systems");
+                    if (this.stockFilter === 'Swiss Lace') return this.stockItems.filter(i => i.type === "Swiss Lace");
+                    if (this.stockFilter === 'PU Perimeter') return this.stockItems.filter(i => i.type === "PU Perimeter" || i.base.includes("PU"));
+                    return this.stockItems;
+                },
+
+                getProfileName(id) {
+                    if (this.lang === 'ko') {
+                        if (id === 'men') return '남성용 맞춤 가발';
+                        if (id === 'women') return '여성용 불파트 톱피스';
+                        if (id === 'full') return '전두용 풀캡 시스템';
+                    } else if (this.lang === 'id') {
+                        if (id === 'men') return 'Toupee Pria';
+                        if (id === 'women') return 'Top Piece Wanita (Silk)';
+                        if (id === 'full') return 'Sistem Full Cap';
+                    }
+                    const p = this.profiles.find(x => x.id === id);
+                    return p ? p.name : id;
+                },
+
+                getProfileDesc(id) {
+                    if (this.lang === 'ko') {
+                        if (id === 'men') return 'M자 이마 및 정수리 탈모 커버용 맞춤 가발.';
+                        if (id === 'women') return '정수리 빈모 및 가르마 커버용 실크탑 톱피스.';
+                        if (id === 'full') return '전체 탈모용 최고급 수제 전두캡 시스템.';
+                    } else if (this.lang === 'id') {
+                        if (id === 'men') return 'Sistem toupee untuk area depan dan mahkota.';
+                        if (id === 'women') return 'Hair topper silk top untuk rambut menipis.';
+                        if (id === 'full') return 'Cakupan topi penuh untuk kerontokan total.';
+                    }
+                    const p = this.profiles.find(x => x.id === id);
+                    return p ? p.desc : '';
+                },
+
+                getBaseName(id) {
+                    if (this.lang === 'ko') {
+                        if (id === 'skin') return '울트라 스킨 (0.03mm)';
+                        if (id === 'lace') return '풀 스위스 레이스';
+                        if (id === 'pu') return 'PU 테두리 강화 베이스';
+                        if (id === 'combo') return '레이스 프론트 + PU 테두리';
+                        if (id === 'silk') return '실크 탑 (불파트)';
+                        if (id === 'cnc') return '최고급 CNC 버진 헤어 시스템';
+                    } else if (this.lang === 'id') {
+                        if (id === 'skin') return 'Kulit Ultra-tipis (0.03mm)';
+                        if (id === 'lace') return 'Swiss Lace Penuh';
+                        if (id === 'pu') return 'Base Keliling PU';
+                        if (id === 'combo') return 'Lace Depan + Keliling PU';
+                        if (id === 'silk') return 'Silk Top (Bagian Rambut)';
+                        if (id === 'cnc') return 'Sistem Virgin Hair CNC Premier';
+                    }
+                    const b = this.bases.find(x => x.id === id);
+                    return b ? b.name : id;
+                },
+
+                getDensityLabel(val) {
+                    if (val <= 70) return 'Light';
+                    if (val <= 95) return 'Medium Light';
+                    if (val <= 115) return 'Medium';
+                    return 'Heavy';
+                },
+
+                calculateTotal() {
+                    const p = this.profiles.find(x => x.id === this.builder.profile);
+                    const b = this.bases.find(x => x.id === this.builder.base);
+                    let total = (p ? p.basePrice : 380) + (b ? b.price : 40);
+                    if (this.builder.hairLength > 8) total += (this.builder.hairLength - 8) * 15;
+                    if (this.builder.bleachedKnots) total += 25;
+                    return total;
+                },
+
+                formatCurrency(amount) {
+                    if (this.currency === 'USD') return '$' + Math.round(amount * 0.66) + ' USD';
+                    if (this.currency === 'KRW') return '₩' + (Math.round(amount * 890)).toLocaleString() + ' KRW';
+                    return '$' + amount + ' AUD';
+                },
+
+                nextStep() {
+                    if (this.currentStep < 6) this.currentStep++;
+                },
+
+                prevStep() {
+                    if (this.currentStep > 1) this.currentStep--;
+                },
+
+                orderStockItem(item) {
+                    alert(`Express Order Inquiry created for ${item.name} (${item.sku}). Our Melbourne logistics manager will contact you via WhatsApp to finalize express dispatch.`);
+                },
+
+                bookStockFit(item) {
+                    this.booking.service = 'cutin';
+                    this.isBookingModalOpen = true;
+                },
+
+                openB2BModal(tierName) {
+                    this.b2bForm.selectedTier = tierName;
+                    this.isB2bModalOpen = true;
+                },
+
+                submitOrder() {
+                    alert(`Thank you, ${this.builder.customerName || 'Valued Customer'}! Your custom order specification has been received. Our Springvale specialist will contact you via WhatsApp shortly.`);
+                },
+
+                submitBooking() {
+                    alert(`Appointment booked for ${this.booking.name} on ${this.booking.date} at ${this.booking.time}. Confirmation sent to ${this.booking.phone}.`);
+                    this.isBookingModalOpen = false;
+                },
+
+                submitB2BForm() {
+                    alert(`B2B Wholesale Application received for ${this.b2bForm.company} (${this.b2bForm.selectedTier}). Our Indonesian Factory Export Manager will send trial catalog terms to ${this.b2bForm.phone} shortly.`);
+                    this.isB2bModalOpen = false;
+                }
+            }
+        }
+
+        function aiTryOnSimulator() {
+            return {
+                userFacePhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+                selectedStyle: 'Crew cut',
+                selectedColor: '#1B Off Black',
+                isProcessing: false,
+                sliderPos: 50,
+
+                // Original Face Photo transform controls
+                faceScale: 100,
+                faceX: 0,
+                faceY: 0,
+
+                // Hairpiece fitting & stretch controls
+                hairX: 0,
+                hairY: 0,
+                hairScale: 100,
+                hairWidth: 100,
+                hairHeight: 100,
+
+                styles: [
+                    { 
+                        name: 'Crew cut', 
+                        tag: 'Clean Short Fade', 
+                        overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" fill="none"><path d="M120,180 C110,110 160,35 250,30 C340,35 390,110 380,180 C360,140 330,85 250,80 C170,85 140,140 120,180 Z" fill="%231a1a1a" opacity="0.95"/><path d="M140,145 C170,75 330,75 360,145 C330,95 170,95 140,145 Z" fill="%232b2b2b" opacity="0.88"/><path d="M160,110 C200,55 300,55 340,110 C300,70 200,70 160,110 Z" fill="%230f0f0f" opacity="0.95"/></svg>'
+                    },
+                    { 
+                        name: 'Gentleman', 
+                        tag: 'Executive Side Part', 
+                        overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320" fill="none"><path d="M100,200 C90,120 150,25 260,20 C360,20 410,100 400,200 C380,140 350,60 270,60 C200,60 170,120 100,200 Z" fill="%23151515" opacity="0.95"/><path d="M110,180 C140,80 240,40 340,70 C380,120 370,180 340,130 C270,75 200,80 110,180 Z" fill="%232a2a2a" opacity="0.88"/><path d="M140,130 C190,50 300,50 360,110 C310,65 220,65 140,130 Z" fill="%230a0a0a" opacity="0.95"/></svg>'
+                    },
+                    { 
+                        name: 'Textured Crop', 
+                        tag: 'Modern Layered Fringe', 
+                        overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320" fill="none"><path d="M110,210 C100,120 160,30 250,25 C340,30 400,120 390,210 C370,170 360,120 330,125 C300,130 280,115 250,120 C220,125 190,115 170,125 C140,130 130,170 110,210 Z" fill="%231a1a1a" opacity="0.95"/><path d="M130,160 C160,70 340,70 370,160 C340,105 300,110 250,105 C200,110 160,105 130,160 Z" fill="%23303030" opacity="0.85"/><path d="M150,120 C190,45 310,45 350,120 C310,65 260,65 150,120 Z" fill="%230d0d0d" opacity="0.95"/></svg>'
+                    },
+                    { 
+                        name: 'Slick Back', 
+                        tag: 'Back Swept Undercut', 
+                        overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320" fill="none"><path d="M105,210 C95,110 150,20 250,15 C350,20 405,110 395,210 C380,150 340,50 250,55 C160,50 120,150 105,210 Z" fill="%23181818" opacity="0.95"/><path d="M125,170 C160,60 340,60 375,170 C340,90 250,85 125,170 Z" fill="%232c2c2c" opacity="0.88"/><path d="M150,120 C190,40 310,40 350,120 C310,55 190,55 150,120 Z" fill="%230a0a0a" opacity="0.95"/></svg>'
+                    },
+                    { 
+                        name: 'Silk Topper', 
+                        tag: 'Women\'s Crown Volume', 
+                        overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" fill="none"><path d="M90,260 C80,130 150,15 250,10 C350,15 420,130 410,260 C390,180 370,80 250,75 C130,80 110,180 90,260 Z" fill="%23181818" opacity="0.95"/><path d="M110,210 C140,80 360,80 390,210 C360,110 250,105 110,210 Z" fill="%232e2e2e" opacity="0.88"/><path d="M140,140 C180,45 320,45 360,140 C320,65 180,65 140,140 Z" fill="%230c0c0c" opacity="0.95"/></svg>'
+                    }
+                ],
+
+                getHairOverlayUrl() {
+                    const matched = this.styles.find(s => s.name === this.selectedStyle);
+                    return matched ? matched.overlay : this.styles[0].overlay;
+                },
+
+                getHairFilter() {
+                    if (this.selectedColor === '#1 Jet Black') return 'contrast(130%) brightness(80%)';
+                    if (this.selectedColor === '#2 Dark Brown') return 'sepia(40%) contrast(110%) brightness(95%)';
+                    if (this.selectedColor === '#4 Med Brown') return 'sepia(60%) hue-rotate(-10deg) brightness(105%)';
+                    if (this.selectedColor === '#613 Blonde') return 'sepia(90%) hue-rotate(20deg) brightness(130%)';
+                    return 'contrast(105%) brightness(95%)';
+                },
+
+                getFaceTransform() {
+                    return `transform: translate(${this.faceX}px, ${this.faceY}px) scale(${this.faceScale / 100}); transform-origin: center;`;
+                },
+
+                getHairTransform() {
+                    const finalScaleX = (this.hairScale / 100) * (this.hairWidth / 100);
+                    const finalScaleY = (this.hairScale / 100) * (this.hairHeight / 100);
+                    return `transform: translate(${this.hairX}px, ${this.hairY}px) scale(${finalScaleX}, ${finalScaleY}); filter: ${this.getHairFilter()};`;
+                },
+
+                async init() {
+                    await this.fetchAiStyles();
+                },
+
+                async fetchAiStyles() {
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=list_ai_styles');
+                        const data = await res.json();
+                        if (data.status === 'success' && data.data && data.data.length > 0) {
+                            this.styles = data.data;
+                            if (this.styles.length > 0) {
+                                this.selectedStyle = this.styles[0].name;
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Using default static AI styles');
+                    }
+                },
+
+                resetHairFit() {
+                    this.hairX = 0;
+                    this.hairY = 0;
+                    this.hairScale = 100;
+                    this.hairWidth = 100;
+                    this.hairHeight = 100;
+                },
+
+                resetFaceFit() {
+                    this.faceScale = 100;
+                    this.faceX = 0;
+                    this.faceY = 0;
+                },
+
+                resetAllFit() {
+                    this.resetHairFit();
+                    this.resetFaceFit();
+                },
+
+                setSampleFace(url) {
+                    this.userFacePhoto = url;
+                    this.resetAllFit();
+                    this.runTransformation();
+                },
+
+                handleFaceUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.userFacePhoto = e.target.result;
+                            this.resetAllFit();
+                            this.runTransformation();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                runTransformation() {
+                    this.isProcessing = true;
+                    setTimeout(() => {
+                        this.isProcessing = false;
+                    }, 600);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ssh": {
+      "command": "node",
+      "args": [
+        "c:/Users/david/OneDrive/Desktop/davidhair/.agents/mcp_ssh_server.js"
+      ]
+    }
+  }
+}
