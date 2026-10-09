@@ -364,12 +364,15 @@
         <!-- Background Video -->
         <video 
             x-ref="bgVideo"
+            :src="videos[currentIdx]"
+            src="videos/Runing.mp4"
             autoplay 
             muted 
             playsinline 
             @ended="playNext()"
+            x-init="$nextTick(() => { if ($refs.bgVideo) { $refs.bgVideo.play().catch(() => {}); } })"
             class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 transition-all duration-700">
-            <source :src="videos[currentIdx]" type="video/mp4">
+            <source :src="videos[currentIdx]" src="videos/Runing.mp4" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-gradient-to-b from-[#0F1C3F]/75 via-brand-darkBg/65 to-brand-darkBg/85 z-0"></div>
 
