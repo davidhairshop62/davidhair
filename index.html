@@ -1552,10 +1552,10 @@
                             <div class="flex items-center gap-2 pt-1">
                                 <span class="text-[10px] text-brand-textMuted font-medium">Or try sample:</span>
                                 <button
-                                    @click="setSampleFace('/images/TransMan.png')"
+                                    @click="setSampleFace('images/TransMan.png')"
                                     class="text-[10px] text-brand-tealLight underline font-bold">Sample 1 (Man)</button>
                                 <button
-                                    @click="setSampleFace('/images/transwoman.png')"
+                                    @click="setSampleFace('images/transwoman.png')"
                                     class="text-[10px] text-brand-tealLight underline font-bold">Sample 2 (Woman)</button>
                             </div>
                         </div>
@@ -2689,7 +2689,7 @@
 
         function aiTryOnSimulator() {
             return {
-                userFacePhoto: '/images/TransMan.png',
+                userFacePhoto: 'images/TransMan.png',
                 selectedStyle: 'Crew cut',
                 selectedColor: '#1B Off Black',
                 selectedCategory: 'Man', // 'All', 'Man', 'Woman', 'Unisex'
@@ -2953,11 +2953,11 @@
                 selectCategory(cat) {
                     this.selectedCategory = cat;
                     if (cat === 'Man') {
-                        this.userFacePhoto = '/images/TransMan.png';
+                        this.userFacePhoto = 'images/TransMan.png';
                     } else if (cat === 'Woman' || cat === 'Unisex') {
-                        this.userFacePhoto = '/images/transwoman.png';
+                        this.userFacePhoto = 'images/transwoman.png';
                     } else if (cat === 'All') {
-                        this.userFacePhoto = '/images/TransMan.png';
+                        this.userFacePhoto = 'images/TransMan.png';
                     }
                     const available = this.filteredStyles;
                     if (available.length > 0 && !available.some(s => s.name === this.selectedStyle)) {
