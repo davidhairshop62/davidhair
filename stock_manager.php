@@ -254,6 +254,7 @@
                                         </td>
                                         <td class="py-3 px-4 text-right space-x-1">
                                             <button @click="openModal('edit', item)" class="bg-brand-inner hover:bg-slate-700 text-slate-200 border border-brand-border text-xs px-2.5 py-1.5 rounded transition-colors font-semibold">Edit</button>
+                                            <button @click="copyItemFromTable(item)" class="bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs px-2.5 py-1.5 rounded transition-colors font-semibold" title="Copy to New Product"><i class="fa-solid fa-copy mr-1"></i>Copy</button>
                                             <button @click="deleteItem(item)" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs px-2.5 py-1.5 rounded transition-colors font-semibold">Delete</button>
                                         </td>
                                     </tr>
@@ -322,8 +323,38 @@
     <div x-show="isModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm">
         <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-brand-border pb-3">
-                <h3 class="font-heading font-bold text-white text-lg" x-text="modalMode === 'edit' ? 'Edit Stock Item' : 'Add New Stock Item'"></h3>
-                <button @click="isModalOpen = false" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <div class="flex items-center gap-2">
+                    <h3 class="font-heading font-bold text-white text-lg flex items-center gap-2" x-text="modalMode === 'edit' ? 'Edit Stock Item' : (copiedNotice ? 'Add New Stock Item (Copied Draft)' : 'Add New Stock Item')"></h3>
+                    <span x-show="modalMode === 'edit'" class="text-[11px] bg-brand-inner border border-brand-border px-2 py-0.5 rounded text-brand-tealLight font-mono">ID: <span x-text="form.id"></span></span>
+                    <span x-show="copiedNotice" class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Copy Mode</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" x-show="modalMode === 'edit'" @click="copyAsNewProduct()" class="px-3 py-1.5 bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-indigo-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm hover:border-indigo-400" title="Copy this product to create a new one">
+                        <i class="fa-solid fa-copy text-indigo-400"></i>
+                        <span>Copy as New</span>
+                    </button>
+                    <button @click="isModalOpen = false" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+            </div>
+
+            <!-- Copied Notice Banner -->
+            <div x-show="copiedNotice" x-cloak class="p-3 bg-indigo-950/90 border border-indigo-500/70 rounded-xl text-indigo-200 text-xs flex items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-circle-check text-indigo-400 text-base flex-shrink-0"></i>
+                    <div>
+                        <div class="font-bold text-white flex items-center gap-1.5">
+                            <span>Product Copied (제품 복사 완료)</span>
+                            <span class="text-[10px] bg-indigo-800/80 text-indigo-200 px-1.5 py-0.5 rounded font-mono">New Product Draft</span>
+                        </div>
+                        <p class="text-[11px] text-indigo-300 mt-0.5" x-text="copiedNotice"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <button type="button" @click="saveStockItem()" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white rounded text-xs font-bold flex items-center gap-1 shadow transition-all whitespace-nowrap" title="Save this copied product immediately">
+                        <i class="fa-solid fa-bolt"></i> Instant Save
+                    </button>
+                    <button type="button" @click="copiedNotice = ''" class="text-indigo-400 hover:text-white p-1 text-sm"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
             <form @submit.prevent="saveStockItem()" class="space-y-4 text-xs">
                 <div class="grid grid-cols-2 gap-3">
@@ -395,9 +426,17 @@
                     <span class="text-[11px] text-slate-300">Selected Image Preview</span>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" @click="isModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 teal-gradient rounded-lg text-white font-bold">Save Stock</button>
+                <div class="flex justify-between items-center pt-2">
+                    <div>
+                        <button type="button" x-show="modalMode === 'edit'" @click="copyAsNewProduct()" class="px-3.5 py-2 bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-indigo-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm hover:border-indigo-400">
+                            <i class="fa-solid fa-copy text-indigo-400"></i>
+                            <span>Copy as New Product (새 제품으로 복사)</span>
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" @click="isModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white">Cancel</button>
+                        <button type="submit" class="px-4 py-2 teal-gradient rounded-lg text-white font-bold" x-text="modalMode === 'edit' ? 'Save Stock' : (copiedNotice ? 'Create Copied Product' : 'Save Stock')"></button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -482,6 +521,7 @@
 
                 isModalOpen: false,
                 modalMode: 'add',
+                copiedNotice: '',
                 form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '' },
                 selectedFile: null,
                 imagePreview: '',
@@ -599,6 +639,7 @@
                 openModal(mode, item = null) {
                     this.modalMode = mode;
                     this.selectedFile = null;
+                    this.copiedNotice = '';
                     if (mode === 'edit' && item) {
                         this.form = { ...item, image_url: item.image };
                         this.imagePreview = item.image;
@@ -613,6 +654,47 @@
                         this.imagePreview = '';
                     }
                     this.isModalOpen = true;
+                },
+
+                copyAsNewProduct() {
+                    if (!this.form.name && !this.form.sku) {
+                        alert('복사할 제품 정보가 없습니다.');
+                        return;
+                    }
+
+                    const originalSku = this.form.sku || 'SKU';
+                    const originalName = this.form.name || 'Product';
+
+                    // Generate unique new SKU
+                    let newSku = `${originalSku}-COPY`;
+                    let counter = 1;
+                    while (this.items.some(item => item.sku && item.sku.toLowerCase() === newSku.toLowerCase())) {
+                        counter++;
+                        newSku = `${originalSku}-COPY-${counter}`;
+                    }
+
+                    // New name
+                    let newName = originalName;
+                    if (!newName.includes('(Copy)')) {
+                        newName = `${newName} (Copy)`;
+                    }
+
+                    // Convert modal to Add New mode with copied specs
+                    this.modalMode = 'add';
+                    this.form.id = null; // Important: Clear ID so backend performs INSERT, not UPDATE
+                    this.form.sku = newSku;
+                    this.form.name = newName;
+                    if (!this.form.image_url && this.imagePreview) {
+                        this.form.image_url = this.imagePreview;
+                    }
+                    this.selectedFile = null;
+
+                    this.copiedNotice = `"${originalSku}" 제품 정보가 복사되었습니다. SKU 및 세부 사양을 검토/수정한 후 저장하세요.`;
+                },
+
+                copyItemFromTable(item) {
+                    this.openModal('edit', item);
+                    this.copyAsNewProduct();
                 },
 
                 handleFileSelect(event) {
@@ -648,6 +730,7 @@
                         if (result.status === 'success') {
                             alert(result.message);
                             this.isModalOpen = false;
+                            this.copiedNotice = '';
                             await this.loadItems();
                         } else {
                             alert('Error: ' + result.message);
