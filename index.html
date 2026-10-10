@@ -1624,182 +1624,37 @@
                             </div>
                         </div>
 
-                        <!-- STEP 3: Separate Adjustment Mode Switcher (Original Photo Fit vs Hairpiece Fitting) -->
-                        <div class="pt-2 border-t border-brand-border space-y-3">
+                        <!-- STEP 3: Fine-Tune Adjustments (Hair Color & Blend) -->
+                        <div class="pt-2 border-t border-brand-border space-y-2.5">
                             <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight">Step 3:
                                 Fine-Tune Adjustments</label>
 
-                            <!-- Control Mode Selector Buttons -->
-                            <div
-                                class="grid grid-cols-2 gap-2 bg-brand-inner p-1 rounded-xl border border-brand-border">
-                                <button type="button" @click="activeControlTab = 'hair'"
-                                    :class="activeControlTab === 'hair' ? 'teal-gradient text-white font-bold shadow' : 'text-slate-400 hover:text-white'"
-                                    class="py-2 px-3 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-scissors"></i> Hairpiece Fitting (가발 조절)
-                                </button>
-                                <button type="button" @click="activeControlTab = 'photo'"
-                                    :class="activeControlTab === 'photo' ? 'teal-gradient text-white font-bold shadow' : 'text-slate-400 hover:text-white'"
-                                    class="py-2 px-3 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-image"></i> Original Photo Fit (사진 조절)
-                                </button>
-                            </div>
-
-                            <!-- CONTROLS PANEL A: Hairpiece Fitting (activeControlTab === 'hair') -->
-                            <div x-show="activeControlTab === 'hair'" x-cloak
-                                class="space-y-3 bg-brand-inner/60 border border-brand-border/80 p-3.5 rounded-xl">
-                                <div class="flex items-center justify-between text-xs font-bold text-slate-300">
-                                    <span>Hairpiece Positioning & Stretch</span>
-                                    <button @click="resetHairFit()"
-                                        class="text-[10px] text-brand-tealLight hover:underline font-bold">Reset
-                                        Hair</button>
+                            <!-- Hair Color & Blend Selection -->
+                            <div class="bg-brand-inner/60 border border-brand-border/80 p-3.5 rounded-xl space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-palette text-brand-tealLight"></i> Hair Color & Blend (모발 색상)
+                                    </span>
+                                    <span class="text-[11px] font-mono text-brand-tealLight font-bold" x-text="selectedColor"></span>
                                 </div>
-
-                                <!-- Hair Color Selector -->
-                                <div>
-                                    <label class="block text-[10px] text-brand-textMuted mb-1 font-bold">Hair Color &
-                                        Blend (모발 색상)</label>
-                                    <div class="flex flex-wrap items-center gap-1.5">
-                                        <template
-                                            x-for="c in ['#1B Off Black', '#1 Jet Black', '#2 Dark Brown', '#4 Med Brown', '#613 Blonde']"
-                                            :key="c">
-                                            <button @click="selectedColor = c; runTransformation()"
-                                                :class="selectedColor === c ? 'ring-2 ring-brand-teal scale-105 bg-teal-950 text-white font-bold' : 'opacity-70 hover:opacity-100 bg-brand-inner text-slate-300'"
-                                                class="px-2 py-1 rounded border border-brand-border text-[10px] transition-all"
-                                                x-text="c"></button>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                <!-- Hairpiece Up/Down & Left/Right -->
-                                <div class="grid grid-cols-2 gap-2 pt-1">
-                                    <div>
-                                        <label class="block text-[10px] text-brand-textMuted mb-1">Hair Up/Down (상하
-                                            이동)</label>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="hairY = Math.max(-100, hairY - 4)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
-                                            <input type="range" min="-100" max="100" x-model.number="hairY"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="hairY = Math.min(100, hairY + 4)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] text-brand-textMuted mb-1">Hair Left/Right (좌우
-                                            이동)</label>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="hairX = Math.max(-100, hairX - 4)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
-                                            <input type="range" min="-100" max="100" x-model.number="hairX"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="hairX = Math.min(100, hairX + 4)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Hairpiece Width & Height Stretch -->
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
-                                            <span>Hair Width (가로 폭)</span>
-                                            <span class="text-slate-300 font-mono" x-text="hairWidth + '%'"></span>
-                                        </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="hairWidth = Math.max(50, hairWidth - 5)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
-                                            <input type="range" min="50" max="200" x-model.number="hairWidth"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="hairWidth = Math.min(200, hairWidth + 5)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
-                                            <span>Hair Height (세로 길이)</span>
-                                            <span class="text-slate-300 font-mono" x-text="hairHeight + '%'"></span>
-                                        </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="hairHeight = Math.max(50, hairHeight - 5)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">-</button>
-                                            <input type="range" min="50" max="200" x-model.number="hairHeight"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="hairHeight = Math.min(200, hairHeight + 5)"
-                                                class="px-2 py-0.5 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Hair Overall Scale -->
-                                <div>
-                                    <div class="flex justify-between text-[10px] text-brand-textMuted mb-1">
-                                        <span>Overall Hair Scale (전체 가발 크기)</span>
-                                        <span class="text-slate-300 font-mono font-bold"
-                                            x-text="hairScale + '%'"></span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button @click="hairScale = Math.max(50, hairScale - 5)"
-                                            class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs font-bold">-</button>
-                                        <input type="range" min="50" max="200" x-model.number="hairScale"
-                                            class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-2">
-                                        <button @click="hairScale = Math.min(200, hairScale + 5)"
-                                            class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs font-bold">+</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- CONTROLS PANEL B: Original Photo Fit (activeControlTab === 'photo') -->
-                            <div x-show="activeControlTab === 'photo'" x-cloak
-                                class="space-y-3 bg-brand-inner/60 border border-brand-border/80 p-3.5 rounded-xl">
-                                <div class="flex items-center justify-between text-xs font-bold text-slate-300">
-                                    <span>Original Photo Zoom & Position</span>
-                                    <button @click="resetFaceFit()"
-                                        class="text-[10px] text-brand-tealLight hover:underline font-bold">Reset
-                                        Photo</button>
-                                </div>
-                                <!-- Photo Zoom -->
-                                <div>
-                                    <div
-                                        class="flex justify-between items-center text-[10px] text-brand-textMuted mb-1">
-                                        <span>Photo Zoom (사진 확대/축소)</span>
-                                        <span class="text-slate-300 font-mono font-bold"
-                                            x-text="faceScale + '%'"></span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button @click="faceScale = Math.max(50, faceScale - 5)"
-                                            class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs font-bold">-</button>
-                                        <input type="range" min="50" max="200" x-model.number="faceScale"
-                                            class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-2">
-                                        <button @click="faceScale = Math.min(200, faceScale + 5)"
-                                            class="w-7 h-7 bg-brand-inner border border-brand-border rounded text-white text-xs font-bold">+</button>
-                                    </div>
-                                </div>
-                                <!-- Photo Position (X / Y) -->
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-[10px] text-brand-textMuted mb-1">Photo Up/Down (상하
-                                            이동)</label>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="faceY = Math.max(-100, faceY - 5)"
-                                                class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↑</button>
-                                            <input type="range" min="-100" max="100" x-model.number="faceY"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="faceY = Math.min(100, faceY + 5)"
-                                                class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">↓</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] text-brand-textMuted mb-1">Photo Left/Right (좌우
-                                            이동)</label>
-                                        <div class="flex items-center gap-1.5">
-                                            <button @click="faceX = Math.max(-100, faceX - 5)"
-                                                class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">←</button>
-                                            <input type="range" min="-100" max="100" x-model.number="faceX"
-                                                class="w-full accent-teal-500 bg-brand-darkBg cursor-pointer h-1.5">
-                                            <button @click="faceX = Math.min(100, faceX + 5)"
-                                                class="px-2 py-1 bg-brand-inner border border-brand-border rounded text-white text-[10px] font-bold">→</button>
-                                        </div>
-                                    </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <template
+                                        x-for="c in ['#1B Off Black', '#1 Jet Black', '#2 Dark Brown', '#4 Med Brown', '#613 Blonde']"
+                                        :key="c">
+                                        <button type="button" @click="selectedColor = c; runTransformation()"
+                                            :class="selectedColor === c ? 'ring-2 ring-brand-teal scale-105 bg-teal-950 text-white font-bold border-brand-teal shadow-md' : 'opacity-70 hover:opacity-100 bg-brand-inner text-slate-300 border-brand-border hover:border-slate-500'"
+                                            class="px-2.5 py-1.5 rounded-lg border text-xs transition-all flex items-center gap-2 cursor-pointer">
+                                            <span class="w-3 h-3 rounded-full border border-white/20 inline-block shadow-inner shrink-0"
+                                                :style="{
+                                                    '#1B Off Black': 'background-color: #242424',
+                                                    '#1 Jet Black': 'background-color: #0d0d0d',
+                                                    '#2 Dark Brown': 'background-color: #3d2314',
+                                                    '#4 Med Brown': 'background-color: #633e24',
+                                                    '#613 Blonde': 'background-color: #e8ca8c'
+                                                }[c]"></span>
+                                            <span x-text="c"></span>
+                                        </button>
+                                    </template>
                                 </div>
                             </div>
                         </div>
