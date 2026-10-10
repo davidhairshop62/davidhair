@@ -1552,12 +1552,11 @@
                             <div class="flex items-center gap-2 pt-1">
                                 <span class="text-[10px] text-brand-textMuted font-medium">Or try sample:</span>
                                 <button
-                                    @click="setSampleFace('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80')"
+                                    @click="setSampleFace('/images/TransMan.png')"
                                     class="text-[10px] text-brand-tealLight underline font-bold">Sample 1 (Man)</button>
                                 <button
-                                    @click="setSampleFace('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80')"
-                                    class="text-[10px] text-brand-tealLight underline font-bold">Sample 2
-                                    (Woman)</button>
+                                    @click="setSampleFace('/images/transwoman.png')"
+                                    class="text-[10px] text-brand-tealLight underline font-bold">Sample 2 (Woman)</button>
                             </div>
                         </div>
 
@@ -1569,22 +1568,22 @@
                             <!-- Category Filter Tabs (Man, Woman, Unisex, All) -->
                             <div
                                 class="flex items-center gap-1.5 bg-brand-inner p-1 rounded-xl border border-brand-border text-xs font-bold">
-                                <button type="button" @click="selectedCategory = 'Man'"
+                                <button type="button" @click="selectCategory('Man')"
                                     :class="selectedCategory === 'Man' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
                                     👨 Man (남성)
                                 </button>
-                                <button type="button" @click="selectedCategory = 'Woman'"
+                                <button type="button" @click="selectCategory('Woman')"
                                     :class="selectedCategory === 'Woman' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
                                     👩 Woman (여성)
                                 </button>
-                                <button type="button" @click="selectedCategory = 'Unisex'"
+                                <button type="button" @click="selectCategory('Unisex')"
                                     :class="selectedCategory === 'Unisex' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
                                     👫 Unisex (공용)
                                 </button>
-                                <button type="button" @click="selectedCategory = 'All'"
+                                <button type="button" @click="selectCategory('All')"
                                     :class="selectedCategory === 'All' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="py-1.5 px-2.5 rounded-lg transition-all text-center">
                                     ✨ All
@@ -2690,7 +2689,7 @@
 
         function aiTryOnSimulator() {
             return {
-                userFacePhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+                userFacePhoto: '/images/TransMan.png',
                 selectedStyle: 'Crew cut',
                 selectedColor: '#1B Off Black',
                 selectedCategory: 'Man', // 'All', 'Man', 'Woman', 'Unisex'
@@ -2949,6 +2948,23 @@
                 resetAllFit() {
                     this.resetHairFit();
                     this.resetFaceFit();
+                },
+
+                selectCategory(cat) {
+                    this.selectedCategory = cat;
+                    if (cat === 'Man') {
+                        this.userFacePhoto = '/images/TransMan.png';
+                    } else if (cat === 'Woman' || cat === 'Unisex') {
+                        this.userFacePhoto = '/images/transwoman.png';
+                    } else if (cat === 'All') {
+                        this.userFacePhoto = '/images/TransMan.png';
+                    }
+                    const available = this.filteredStyles;
+                    if (available.length > 0 && !available.some(s => s.name === this.selectedStyle)) {
+                        this.selectedStyle = available[0].name;
+                    }
+                    this.resetAllFit();
+                    this.runTransformation();
                 },
 
                 setSampleFace(url) {
