@@ -234,8 +234,16 @@
                                             </div>
                                         </td>
                                         <td class="py-3 px-4">
-                                            <div class="font-mono text-brand-tealLight font-bold" x-text="item.sku"></div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-mono text-brand-tealLight font-bold" x-text="item.sku"></span>
+                                                <template x-if="item.badge">
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border shadow-sm"
+                                                          :class="getBadgeClass(item.badge)"
+                                                          x-text="item.badge"></span>
+                                                </template>
+                                            </div>
                                             <div class="font-bold text-white text-sm mt-0.5" x-text="item.name"></div>
+                                            <div x-show="item.description" class="text-[11px] text-brand-textMuted line-clamp-1 mt-0.5" x-text="item.description"></div>
                                         </td>
                                         <td class="py-3 px-4 space-y-1">
                                             <span class="inline-block bg-brand-inner px-2 py-0.5 rounded border border-brand-border font-semibold text-slate-300" x-text="item.category"></span>
@@ -385,6 +393,24 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Badge Tag / 제품 구분 (사진 위 표시)</label>
+                        <select x-model="form.badge" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-semibold">
+                            <option value="">None (선택 안함)</option>
+                            <option value="New">⭐ New (신상품)</option>
+                            <option value="Best Seller">🔥 Best Seller (베스트셀러)</option>
+                            <option value="MD's Pick">👑 MD's Pick (MD 추천)</option>
+                            <option value="Limited">⚡ Limited (한정판)</option>
+                            <option value="Promotion">🎉 Promotion (특가/프로모션)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Product Description / 제품 설명</label>
+                        <input type="text" x-model="form.description" placeholder="e.g. 100% human hair, ultra-soft natural look..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="block font-bold text-slate-300 mb-1">Size</label>
@@ -421,9 +447,21 @@
                     <input type="text" x-model="form.image_url" placeholder="https://..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
                 </div>
 
-                <div x-show="imagePreview" class="p-2 bg-brand-inner border border-brand-border rounded-lg flex items-center gap-3">
-                    <img :src="imagePreview" class="w-12 h-12 object-cover rounded border">
-                    <span class="text-[11px] text-slate-300">Selected Image Preview</span>
+                <div x-show="imagePreview" class="p-2.5 bg-brand-inner border border-brand-border rounded-lg flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-14 h-14 rounded overflow-hidden border border-brand-border bg-black flex-shrink-0">
+                            <img :src="imagePreview" class="w-full h-full object-cover">
+                            <template x-if="form.badge">
+                                <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase shadow"
+                                      :class="getBadgeClass(form.badge)"
+                                      x-text="form.badge"></span>
+                            </template>
+                        </div>
+                        <div>
+                            <span class="text-[11px] text-slate-200 font-bold block">Selected Image Preview</span>
+                            <span x-show="form.badge" class="text-[10px] text-brand-tealLight font-bold" x-text="'Selected Badge: ' + form.badge"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex justify-between items-center pt-2">
@@ -522,7 +560,7 @@
                 isModalOpen: false,
                 modalMode: 'add',
                 copiedNotice: '',
-                form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '' },
+                form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '', description: '', badge: '' },
                 selectedFile: null,
                 imagePreview: '',
 
@@ -641,7 +679,7 @@
                     this.selectedFile = null;
                     this.copiedNotice = '';
                     if (mode === 'edit' && item) {
-                        this.form = { ...item, image_url: item.image };
+                        this.form = { ...item, image_url: item.image, description: item.description || '', badge: item.badge || '' };
                         this.imagePreview = item.image;
                     } else {
                         this.form = {
@@ -649,7 +687,8 @@
                             sku: 'SKU-DH-' + (100 + this.items.length + 1),
                             name: '', category: "Men's Toupees", type: "Skin Systems",
                             base: "0.03mm Skin", size: '8x10"', density: '90%',
-                            color: '#1B Off Black', price: 450, stockQty: 10, image_url: ''
+                            color: '#1B Off Black', price: 450, stockQty: 10, image_url: '',
+                            description: '', badge: ''
                         };
                         this.imagePreview = '';
                     }
@@ -721,6 +760,8 @@
                     formData.append('color', this.form.color);
                     formData.append('price', this.form.price);
                     formData.append('stockQty', this.form.stockQty);
+                    formData.append('description', this.form.description || '');
+                    formData.append('badge', this.form.badge || '');
                     formData.append('image_url', this.form.image_url);
                     if (this.selectedFile) formData.append('image_file', this.selectedFile);
 
@@ -750,6 +791,23 @@
                                 await this.loadItems();
                             }
                         } catch (e) { alert('Network error deleting item.'); }
+                    }
+                },
+
+                getBadgeClass(badge) {
+                    switch (badge) {
+                        case 'New':
+                            return 'bg-cyan-500/90 text-slate-950 border-cyan-400 font-black';
+                        case 'Best Seller':
+                            return 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 border-amber-300 font-black';
+                        case "MD's Pick":
+                            return 'bg-purple-600 text-white border-purple-400 font-black';
+                        case 'Limited':
+                            return 'bg-rose-600 text-white border-rose-400 font-black';
+                        case 'Promotion':
+                            return 'bg-emerald-500 text-slate-950 border-emerald-300 font-black';
+                        default:
+                            return 'bg-slate-800 text-slate-200 border-slate-700';
                     }
                 },
 

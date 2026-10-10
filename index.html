@@ -1047,12 +1047,28 @@
                                 <div
                                     class="absolute top-3 right-3 bg-emerald-950 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-800">
                                     Express Ship</div>
+
+                                <!-- Badge Tag Overlay (New, Best Seller, MD's Pick, Limited, Promotion) -->
+                                <template x-if="item.badge">
+                                    <div class="absolute bottom-3 left-3 z-10">
+                                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-xl border flex items-center gap-1.5"
+                                              :class="getStockBadgeClass(item.badge)">
+                                            <i :class="getStockBadgeIcon(item.badge)"></i>
+                                            <span x-text="item.badge"></span>
+                                        </span>
+                                    </div>
+                                </template>
                             </div>
 
                             <div class="p-4 sm:p-5 space-y-3">
-                                <div class="text-[10px] font-mono text-brand-tealLight" x-text="item.sku"></div>
-                                <h3 class="font-bold text-white text-sm sm:text-base leading-snug" x-text="item.name">
-                                </h3>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-[10px] font-mono text-brand-tealLight" x-text="item.sku"></div>
+                                    <span class="text-[10px] text-brand-textMuted font-medium" x-text="item.category"></span>
+                                </div>
+                                <h3 class="font-bold text-white text-sm sm:text-base leading-snug" x-text="item.name"></h3>
+                                <template x-if="item.description">
+                                    <p class="text-xs text-brand-textMuted line-clamp-2 leading-relaxed" x-text="item.description"></p>
+                                </template>
 
                                 <div
                                     class="grid grid-cols-2 gap-2 text-[10px] sm:text-[11px] text-brand-textMuted font-mono">
@@ -2502,11 +2518,11 @@
                 ],
 
                 stockItems: [
-                    { sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '90%', color: '#1B Off Black', price: 420, stockQty: 12, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80' },
-                    { sku: 'SKU-DH-102', name: "French Lace Front + PU Perimeter", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '100%', color: '#2 Dark Brown', price: 450, stockQty: 8, image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
-                    { sku: 'SKU-DH-103', name: "Silk Top Topper 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80' },
-                    { sku: 'SKU-DH-104', name: "All-Swiss Breathable Full Lace", category: "Men's Toupees", type: "Swiss Lace", base: "Swiss Lace", size: '8x10"', density: '85%', color: '#1 Jet Black', price: 440, stockQty: 15, image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80' },
-                    { sku: 'SKU-DH-105', name: "PU Perimeter Hand-Tied Toupee", category: "Men's Toupees", type: "PU Perimeter", base: "PU Perimeter", size: '8x10"', density: '95%', color: '#1B Off Black', price: 460, stockQty: 10, image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80' }
+                    { sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '90%', color: '#1B Off Black', price: 420, stockQty: 12, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80', badge: 'Best Seller', description: 'Invisible knotless skin system with ultra-realistic hairline.' },
+                    { sku: 'SKU-DH-102', name: "French Lace Front + PU Perimeter", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '100%', color: '#2 Dark Brown', price: 450, stockQty: 8, image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', badge: "MD's Pick", description: 'Breathable French lace front with durable poly perimeter bonding.' },
+                    { sku: 'SKU-DH-103', name: "Silk Top Topper 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80', badge: 'New', description: 'Triple-layer realistic silk scalp topper for thinning crown volume.' },
+                    { sku: 'SKU-DH-104', name: "All-Swiss Breathable Full Lace", category: "Men's Toupees", type: "Swiss Lace", base: "Swiss Lace", size: '8x10"', density: '85%', color: '#1 Jet Black', price: 440, stockQty: 15, image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80', badge: 'Limited', description: 'Maximum heat dissipation and undetectable Swiss lace hairline.' },
+                    { sku: 'SKU-DH-105', name: "PU Perimeter Hand-Tied Toupee", category: "Men's Toupees", type: "PU Perimeter", base: "PU Perimeter", size: '8x10"', density: '95%', color: '#1B Off Black', price: 460, stockQty: 10, image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80', badge: 'Promotion', description: 'Durable PU base for active sports and long-lasting adhesive bond.' }
                 ],
 
                 builder: {
@@ -2691,6 +2707,40 @@
                 bookStockFit(item) {
                     this.booking.service = 'cutin';
                     this.isBookingModalOpen = true;
+                },
+
+                getStockBadgeClass(badge) {
+                    switch (badge) {
+                        case 'New':
+                            return 'bg-cyan-500 text-slate-950 border-cyan-300 shadow-cyan-500/30';
+                        case 'Best Seller':
+                            return 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 border-amber-300 shadow-amber-500/30';
+                        case "MD's Pick":
+                            return 'bg-purple-600 text-white border-purple-400 shadow-purple-600/30';
+                        case 'Limited':
+                            return 'bg-rose-600 text-white border-rose-400 shadow-rose-600/30 animate-pulse';
+                        case 'Promotion':
+                            return 'bg-emerald-500 text-slate-950 border-emerald-300 shadow-emerald-500/30';
+                        default:
+                            return 'bg-slate-800 text-slate-200 border-slate-700';
+                    }
+                },
+
+                getStockBadgeIcon(badge) {
+                    switch (badge) {
+                        case 'New':
+                            return 'fa-solid fa-sparkles text-slate-950';
+                        case 'Best Seller':
+                            return 'fa-solid fa-fire text-amber-950';
+                        case "MD's Pick":
+                            return 'fa-solid fa-crown text-amber-300';
+                        case 'Limited':
+                            return 'fa-solid fa-bolt text-yellow-300';
+                        case 'Promotion':
+                            return 'fa-solid fa-tag text-emerald-950';
+                        default:
+                            return 'fa-solid fa-star';
+                    }
                 },
 
                 openB2BModal(tierName) {

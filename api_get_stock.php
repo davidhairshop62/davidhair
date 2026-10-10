@@ -10,7 +10,7 @@ try {
     $category = isset($_GET['category']) ? trim($_GET['category']) : 'All';
     $sort = isset($_GET['sort']) ? trim($_GET['sort']) : 'default';
 
-    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image FROM stock_items";
+    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image, description, badge FROM stock_items";
     $params = [];
 
     // 조건별 SQL 쿼리 나열

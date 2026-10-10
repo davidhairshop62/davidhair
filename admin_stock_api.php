@@ -52,6 +52,19 @@ try {
     // Table exists or error ignored
 }
 
+// Auto-check stock_items table columns for description and badge
+try {
+    $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('description', $cols)) {
+        $conn->exec("ALTER TABLE stock_items ADD COLUMN description TEXT NULL");
+    }
+    if (!in_array('badge', $cols)) {
+        $conn->exec("ALTER TABLE stock_items ADD COLUMN badge VARCHAR(50) DEFAULT ''");
+    }
+} catch (Exception $e) {
+    // Columns already exist or error ignored
+}
+
 $action = $_REQUEST['action'] ?? 'list';
 
 try {
@@ -148,12 +161,15 @@ try {
             }
         }
 
+        $description = trim($_POST['description'] ?? '');
+        $badge = trim($_POST['badge'] ?? '');
+
         if (empty($sku) || empty($name)) {
             sendJsonResponse(['status' => 'error', 'message' => 'SKU and Name are required fields.']);
         }
 
         if ($id) {
-            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty";
+            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty, description = :description, badge = :badge";
             if (!empty($imageUrl)) {
                 $sql .= ", image = :image";
             }
@@ -163,7 +179,7 @@ try {
             $params = [
                 ':sku' => $sku, ':name' => $name, ':category' => $category, ':type' => $type,
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
-                ':price' => $price, ':stockQty' => $stockQty, ':id' => $id
+                ':price' => $price, ':stockQty' => $stockQty, ':description' => $description, ':badge' => $badge, ':id' => $id
             ];
             if (!empty($imageUrl)) {
                 $params[':image'] = $imageUrl;
@@ -174,11 +190,12 @@ try {
             if (empty($imageUrl)) {
                 $imageUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
             }
-            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image)");
+            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image, description, badge) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image, :description, :badge)");
             $stmt->execute([
                 ':sku' => $sku, ':name' => $name, ':category' => $category, ':type' => $type,
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
-                ':price' => $price, ':stockQty' => $stockQty, ':image' => $imageUrl
+                ':price' => $price, ':stockQty' => $stockQty, ':image' => $imageUrl,
+                ':description' => $description, ':badge' => $badge
             ]);
             sendJsonResponse(['status' => 'success', 'message' => 'New stock item created successfully.']);
         }
