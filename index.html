@@ -2549,13 +2549,40 @@
                 },
 
                 get filteredStockItems() {
-                    if (this.stockFilter === 'All') return this.stockItems;
-                    if (this.stockFilter === "Men's Toupees") return this.stockItems.filter(i => i.category === "Men's Toupees");
-                    if (this.stockFilter === "Women's Toppers") return this.stockItems.filter(i => i.category === "Women's Toppers");
-                    if (this.stockFilter === 'Skin Systems') return this.stockItems.filter(i => i.type === "Skin Systems");
-                    if (this.stockFilter === 'Swiss Lace') return this.stockItems.filter(i => i.type === "Swiss Lace");
-                    if (this.stockFilter === 'PU Perimeter') return this.stockItems.filter(i => i.type === "PU Perimeter" || i.base.includes("PU"));
-                    return this.stockItems;
+                    let items = this.stockItems;
+                    if (this.stockFilter === "Men's Toupees") {
+                        items = this.stockItems.filter(i => i.category === "Men's Toupees");
+                    } else if (this.stockFilter === "Women's Toppers") {
+                        items = this.stockItems.filter(i => i.category === "Women's Toppers");
+                    } else if (this.stockFilter === 'Skin Systems') {
+                        items = this.stockItems.filter(i => i.type === "Skin Systems" || (i.base && i.base.includes("Skin")));
+                    } else if (this.stockFilter === 'Swiss Lace') {
+                        items = this.stockItems.filter(i => i.type === "Swiss Lace" || (i.base && i.base.includes("Lace")));
+                    } else if (this.stockFilter === 'PU Perimeter') {
+                        items = this.stockItems.filter(i => i.type === "PU Perimeter" || (i.base && i.base.includes("PU")));
+                    }
+
+                    // Sort by Category, then Product Name (A-Z)
+                    const catOrder = {
+                        "Men's Toupees": 1,
+                        "Women's Toppers": 2,
+                        "Skin Systems": 3,
+                        "Swiss Lace": 4,
+                        "PU Perimeter": 5
+                    };
+
+                    return [...items].sort((a, b) => {
+                        const orderA = catOrder[a.category] !== undefined ? catOrder[a.category] : 99;
+                        const orderB = catOrder[b.category] !== undefined ? catOrder[b.category] : 99;
+                        if (orderA !== orderB) {
+                            return orderA - orderB;
+                        }
+                        const catCmp = (a.category || '').localeCompare(b.category || '', undefined, { sensitivity: 'base' });
+                        if (catCmp !== 0) {
+                            return catCmp;
+                        }
+                        return (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
+                    });
                 },
 
                 getProfileName(id) {

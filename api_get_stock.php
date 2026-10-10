@@ -40,7 +40,7 @@ try {
     } elseif ($sort === 'qty_desc') {
         $sql .= " ORDER BY stockQty DESC";
     } else {
-        $sql .= " ORDER BY id ASC";
+        $sql .= " ORDER BY category ASC, name ASC";
     }
 
     $stmt = $conn->prepare($sql);
