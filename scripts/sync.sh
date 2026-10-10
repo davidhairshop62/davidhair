@@ -22,7 +22,7 @@ git push origin main
 echo "========================================="
 echo "3. Updating production server (/var/www/davidhair)..."
 echo "========================================="
-ssh root@187.127.96.101 "cd /var/www/davidhair && git pull origin main"
+ssh -i ~/.ssh/id_ed25519_davidhair root@187.127.96.101 "cd /var/www/davidhair && git pull origin main"
 
 echo "========================================="
 echo "Sync Complete!"
