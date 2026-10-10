@@ -1444,7 +1444,7 @@
                                     <div class="absolute inset-x-0 top-3 sm:top-5 flex justify-center transition-transform duration-75"
                                         :style="getHairTransform()">
                                         <img :src="getHairOverlayUrl()"
-                                            class="w-3/4 sm:w-2/3 max-h-[55%] object-contain drop-shadow-2xl select-none">
+                                            class="w-3/4 sm:w-2/3 h-48 sm:h-64 object-contain drop-shadow-2xl select-none">
                                     </div>
                                 </div>
 
@@ -1452,26 +1452,26 @@
                                 <div x-show="activeControlTab === 'hair'" 
                                      class="absolute inset-x-0 top-3 sm:top-5 pointer-events-none flex justify-center z-15"
                                      :style="getHairTransform()">
-                                    <div class="w-3/4 sm:w-2/3 max-h-[55%] relative pointer-events-auto border-2 border-dashed border-teal-400 rounded-xl group shadow-2xl bg-teal-500/10">
+                                    <div class="w-3/4 sm:w-2/3 h-48 sm:h-64 relative pointer-events-auto border-2 border-dashed border-amber-300 ring-2 ring-teal-400/50 rounded-2xl group shadow-2xl bg-teal-400/10 transition-all">
                                         <!-- Corner Resize Handles (Scale) -->
                                         <div @mousedown.stop="startDrag($event, 'se')" @touchstart.stop="startDrag($event, 'se')" 
-                                             class="absolute -bottom-2.5 -right-2.5 w-6 h-6 bg-teal-400 border-2 border-white rounded-full cursor-se-resize shadow-lg hover:scale-125 transition-transform flex items-center justify-center text-[8px] text-slate-900 font-bold">↘</div>
+                                             class="absolute -bottom-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-se-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↘</div>
                                         <div @mousedown.stop="startDrag($event, 'sw')" @touchstart.stop="startDrag($event, 'sw')" 
-                                             class="absolute -bottom-2.5 -left-2.5 w-6 h-6 bg-teal-400 border-2 border-white rounded-full cursor-sw-resize shadow-lg hover:scale-125 transition-transform flex items-center justify-center text-[8px] text-slate-900 font-bold">↙</div>
+                                             class="absolute -bottom-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-sw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↙</div>
                                         <div @mousedown.stop="startDrag($event, 'ne')" @touchstart.stop="startDrag($event, 'ne')" 
-                                             class="absolute -top-2.5 -right-2.5 w-6 h-6 bg-teal-400 border-2 border-white rounded-full cursor-ne-resize shadow-lg hover:scale-125 transition-transform flex items-center justify-center text-[8px] text-slate-900 font-bold">↗</div>
+                                             class="absolute -top-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-ne-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↗</div>
                                         <div @mousedown.stop="startDrag($event, 'nw')" @touchstart.stop="startDrag($event, 'nw')" 
-                                             class="absolute -top-2.5 -left-2.5 w-6 h-6 bg-teal-400 border-2 border-white rounded-full cursor-nw-resize shadow-lg hover:scale-125 transition-transform flex items-center justify-center text-[8px] text-slate-900 font-bold">↖</div>
+                                             class="absolute -top-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-nw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↖</div>
 
                                         <!-- Side Handles (Width & Height) -->
                                         <div @mousedown.stop="startDrag($event, 'e')" @touchstart.stop="startDrag($event, 'e')" 
-                                             class="absolute top-1/2 -right-3 -translate-y-1/2 w-5 h-7 bg-amber-400 border-2 border-white rounded-md cursor-e-resize shadow-lg hover:scale-110 transition-transform flex items-center justify-center text-[10px] text-slate-900 font-bold">↔</div>
+                                             class="absolute top-1/2 -right-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-e-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
                                         <div @mousedown.stop="startDrag($event, 'w')" @touchstart.stop="startDrag($event, 'w')" 
-                                             class="absolute top-1/2 -left-3 -translate-y-1/2 w-5 h-7 bg-amber-400 border-2 border-white rounded-md cursor-w-resize shadow-lg hover:scale-110 transition-transform flex items-center justify-center text-[10px] text-slate-900 font-bold">↔</div>
+                                             class="absolute top-1/2 -left-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-w-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
                                         <div @mousedown.stop="startDrag($event, 's')" @touchstart.stop="startDrag($event, 's')" 
-                                             class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-7 h-5 bg-amber-400 border-2 border-white rounded-md cursor-s-resize shadow-lg hover:scale-110 transition-transform flex items-center justify-center text-[10px] text-slate-900 font-bold">↕</div>
+                                             class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-s-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
                                         <div @mousedown.stop="startDrag($event, 'n')" @touchstart.stop="startDrag($event, 'n')" 
-                                             class="absolute -top-3 left-1/2 -translate-x-1/2 w-7 h-5 bg-amber-400 border-2 border-white rounded-md cursor-n-resize shadow-lg hover:scale-110 transition-transform flex items-center justify-center text-[10px] text-slate-900 font-bold">↕</div>
+                                             class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-n-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
                                     </div>
                                 </div>
 
