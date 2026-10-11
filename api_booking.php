@@ -233,6 +233,35 @@ if ($action === 'update_status') {
     }
 }
 
+// 5.5 RESCHEDULE BOOKING (Drag & Drop Date & Time)
+if ($action === 'reschedule_booking') {
+    $id = intval($_POST['id'] ?? 0);
+    $newDate = trim($_POST['booking_date'] ?? '');
+    $newTime = trim($_POST['booking_time'] ?? '');
+
+    if ($id <= 0 || empty($newDate) || empty($newTime)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid ID, Date, or Time for rescheduling']);
+        exit;
+    }
+
+    try {
+        $stmt = $conn->prepare("UPDATE fitting_bookings SET booking_date = :bdate, booking_time = :btime WHERE id = :id");
+        $stmt->execute([':bdate' => $newDate, ':btime' => $newTime, ':id' => $id]);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => "Booking #{$id} rescheduled to {$newDate} at {$newTime}.",
+            'booking_id' => $id,
+            'booking_date' => $newDate,
+            'booking_time' => $newTime
+        ]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
 // 6. DELETE BOOKING (Admin)
 if ($action === 'delete_booking') {
     $id = intval($_REQUEST['id'] ?? 0);

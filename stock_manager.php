@@ -119,7 +119,6 @@
                     <div class="flex items-center gap-1 bg-brand-inner border border-brand-border rounded-lg p-1 text-sm font-bold">
                         <button type="button" @click="setLang('en')" :class="lang === 'en' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="English (Australia)">🇦🇺</button>
                         <button type="button" @click="setLang('ko')" :class="lang === 'ko' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="한국어 (Korean)">🇰🇷</button>
-                        <button type="button" @click="setLang('id')" :class="lang === 'id' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="Bahasa Indonesia">🇮🇩</button>
                     </div>
 
                     <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-inner border border-brand-border text-xs text-slate-300 font-mono">
@@ -142,9 +141,24 @@
                         </button>
                     </template>
                     <template x-if="activeTab === 'bookings'">
-                        <button @click="loadBookings()" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i> Refresh Bookings
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button @click="openNewBookingModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-plus"></i> + New Booking
+                            </button>
+                            <button @click="loadBookings()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Bookings">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i>
+                            </button>
+                        </div>
+                    </template>
+                    <template x-if="activeTab === 'members'">
+                        <div class="flex items-center gap-2">
+                            <button @click="openMemberModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-user-plus"></i> + Add Member
+                            </button>
+                            <button @click="loadMembers()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Members">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingMembers }"></i>
+                            </button>
+                        </div>
                     </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
@@ -176,19 +190,27 @@
                 <button @click="activeTab = 'stock'" 
                         :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
                         class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-boxes-stacked"></i> Stock Inventory Manager (재고 관리)
+                    <i class="fa-solid fa-boxes-stacked"></i> Stock Inventory Manager
                 </button>
                 <button @click="activeTab = 'ai_styles'; loadAiStyles()" 
                         :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
                         class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-scissors text-amber-400"></i> AI Simulator Hairstyles (가상 헤어스타일 등록/관리)
+                    <i class="fa-solid fa-scissors text-amber-400"></i> AI Simulator Hairstyles
                 </button>
                 <button @click="activeTab = 'bookings'; loadBookings()" 
                         :class="activeTab === 'bookings' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
                         class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
-                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Springvale Fitting Bookings (예약 관리)
+                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Springvale Fitting Bookings
                     <template x-if="pendingBookingsCount > 0">
                         <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
+                    </template>
+                </button>
+                <button @click="activeTab = 'members'; loadMembers()" 
+                        :class="activeTab === 'members' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
+                    <i class="fa-solid fa-users-gear text-purple-400"></i> Members &amp; VIP Performance
+                    <template x-if="members.length > 0">
+                        <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
                     </template>
                 </button>
             </div>
@@ -244,15 +266,15 @@
                                 <i class="fa-solid fa-arrow-down-short-wide text-brand-tealLight"></i> Sort:
                             </label>
                             <select @change="applySelectSort($event.target.value)" :value="sortColumn ? (sortColumn + '-' + sortDirection) : 'id-desc'" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal font-medium">
-                                <option value="id-desc">최신 등록순</option>
-                                <option value="name-asc">Item Name (제품명 A-Z)</option>
-                                <option value="name-desc">Item Name (제품명 Z-A)</option>
-                                <option value="category-asc">Category (카테고리순)</option>
-                                <option value="size-asc">Size (사이즈순)</option>
-                                <option value="price-asc">Price (가격 낮은순 ↑)</option>
-                                <option value="price-desc">Price (가격 높은순 ↓)</option>
-                                <option value="stockQty-desc">Stock Qty (재고 많은순 ↓)</option>
-                                <option value="stockQty-asc">Stock Qty (재고 적은순 ↑)</option>
+                                <option value="id-desc">Newest First</option>
+                                <option value="name-asc">Item Name (A–Z)</option>
+                                <option value="name-desc">Item Name (Z–A)</option>
+                                <option value="category-asc">Category</option>
+                                <option value="size-asc">Size</option>
+                                <option value="price-asc">Price (Lowest First ↑)</option>
+                                <option value="price-desc">Price (Highest First ↓)</option>
+                                <option value="stockQty-desc">Stock Qty (Highest First ↓)</option>
+                                <option value="stockQty-asc">Stock Qty (Lowest First ↑)</option>
                             </select>
                         </div>
                     </div>
@@ -531,7 +553,7 @@
                             <i class="fa-solid fa-calendar-days text-brand-tealLight"></i>
                         </div>
                         <div class="text-2xl font-extrabold text-white mt-1" x-text="bookings.length"></div>
-                        <div class="text-[11px] text-brand-textMuted mt-0.5">전체 피팅 예약 접수</div>
+                        <div class="text-[11px] text-brand-textMuted mt-0.5">Total fitting requests received</div>
                     </div>
 
                     <div class="bg-brand-cardBg border border-amber-500/40 p-4 rounded-xl shadow-sm">
@@ -540,7 +562,7 @@
                             <i class="fa-solid fa-clock text-amber-400"></i>
                         </div>
                         <div class="text-2xl font-extrabold text-amber-300 mt-1" x-text="pendingBookingsCount"></div>
-                        <div class="text-[11px] text-amber-400/80 mt-0.5">컨펌 대기 (WhatsApp 발송 필요)</div>
+                        <div class="text-[11px] text-amber-400/80 mt-0.5">Awaiting WhatsApp confirmation</div>
                     </div>
 
                     <div class="bg-brand-cardBg border border-emerald-500/40 p-4 rounded-xl shadow-sm">
@@ -549,7 +571,7 @@
                             <i class="fa-solid fa-circle-check text-emerald-400"></i>
                         </div>
                         <div class="text-2xl font-extrabold text-emerald-300 mt-1" x-text="confirmedBookingsCount"></div>
-                        <div class="text-[11px] text-emerald-400/80 mt-0.5">확정 완료된 피팅 예약</div>
+                        <div class="text-[11px] text-emerald-400/80 mt-0.5">Confirmed studio visits</div>
                     </div>
 
                     <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
@@ -558,7 +580,7 @@
                             <i class="fa-solid fa-location-dot text-brand-tealLight"></i>
                         </div>
                         <div class="text-2xl font-extrabold text-brand-tealLight mt-1" x-text="todayBookingsCount"></div>
-                        <div class="text-[11px] text-brand-textMuted mt-0.5">오늘 스튜디오 방문 예정</div>
+                        <div class="text-[11px] text-brand-textMuted mt-0.5">Scheduled for today</div>
                     </div>
                 </div>
 
@@ -569,40 +591,262 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" 
                                x-model="bookingSearchQuery" 
-                               placeholder="고객명, 연락처, 서비스명 검색..." 
+                               placeholder="Search customer, phone, service, #FIT ID..." 
                                class="w-full bg-brand-inner border border-brand-border rounded-lg pl-9 pr-4 py-2 text-white text-xs outline-none focus:border-brand-teal placeholder:text-slate-500">
                     </div>
 
-                    <!-- Filter Buttons -->
+                    <!-- View Switcher & Filter Buttons -->
                     <div class="flex flex-wrap items-center gap-2">
+                        <!-- View Mode Switcher: Weekly Timetable vs List View -->
+                        <div class="flex items-center gap-1 bg-brand-inner border border-brand-border p-1 rounded-lg text-xs">
+                            <button type="button" 
+                                    @click="bookingViewMode = 'week'" 
+                                    :class="bookingViewMode === 'week' ? 'bg-brand-teal text-white font-bold shadow-md' : 'text-slate-300 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-calendar-week"></i>
+                                <span>Weekly Timetable (08:00–20:00)</span>
+                            </button>
+                            <button type="button" 
+                                    @click="bookingViewMode = 'list'" 
+                                    :class="bookingViewMode === 'list' ? 'bg-brand-teal text-white font-bold shadow-md' : 'text-slate-300 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-md flex items-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-list-ul"></i>
+                                <span>List View</span>
+                            </button>
+                        </div>
+
                         <!-- Status Filter -->
                         <div class="flex items-center gap-1 bg-brand-inner border border-brand-border p-1 rounded-lg text-xs">
                             <span class="px-2 text-[11px] text-slate-400 font-bold uppercase">Status:</span>
-                            <button type="button" @click="bookingStatusFilter = 'All'" :class="bookingStatusFilter === 'All' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">All</button>
-                            <button type="button" @click="bookingStatusFilter = 'Pending'" :class="bookingStatusFilter === 'Pending' ? 'bg-amber-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Pending</button>
-                            <button type="button" @click="bookingStatusFilter = 'Confirmed'" :class="bookingStatusFilter === 'Confirmed' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Confirmed</button>
-                            <button type="button" @click="bookingStatusFilter = 'Completed'" :class="bookingStatusFilter === 'Completed' ? 'bg-sky-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Completed</button>
-                            <button type="button" @click="bookingStatusFilter = 'Cancelled'" :class="bookingStatusFilter === 'Cancelled' ? 'bg-rose-700 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Cancelled</button>
+                            <button type="button" @click="bookingStatusFilter = 'All'" :class="bookingStatusFilter === 'All' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">All</button>
+                            <button type="button" @click="bookingStatusFilter = 'Pending'" :class="bookingStatusFilter === 'Pending' ? 'bg-amber-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Pending</button>
+                            <button type="button" @click="bookingStatusFilter = 'Confirmed'" :class="bookingStatusFilter === 'Confirmed' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Confirmed</button>
+                            <button type="button" @click="bookingStatusFilter = 'Completed'" :class="bookingStatusFilter === 'Completed' ? 'bg-sky-600 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Completed</button>
+                            <button type="button" @click="bookingStatusFilter = 'Cancelled'" :class="bookingStatusFilter === 'Cancelled' ? 'bg-rose-700 text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Cancelled</button>
                         </div>
 
-                        <!-- Date Filter -->
-                        <div class="flex items-center gap-1 bg-brand-inner border border-brand-border p-1 rounded-lg text-xs">
+                        <!-- Date Filter (for List View) -->
+                        <div x-show="bookingViewMode === 'list'" class="flex items-center gap-1 bg-brand-inner border border-brand-border p-1 rounded-lg text-xs">
                             <span class="px-2 text-[11px] text-slate-400 font-bold uppercase">Date:</span>
-                            <button type="button" @click="bookingDateFilter = 'All'" :class="bookingDateFilter === 'All' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">All</button>
-                            <button type="button" @click="bookingDateFilter = 'Today'" :class="bookingDateFilter === 'Today' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Today</button>
-                            <button type="button" @click="bookingDateFilter = 'Upcoming'" :class="bookingDateFilter === 'Upcoming' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2.5 py-1 rounded transition-colors">Upcoming</button>
+                            <button type="button" @click="bookingDateFilter = 'All'" :class="bookingDateFilter === 'All' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">All</button>
+                            <button type="button" @click="bookingDateFilter = 'Today'" :class="bookingDateFilter === 'Today' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Today</button>
+                            <button type="button" @click="bookingDateFilter = 'Upcoming'" :class="bookingDateFilter === 'Upcoming' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Upcoming</button>
                         </div>
 
                         <!-- Refresh -->
-                        <button type="button" @click="loadBookings()" class="px-3 py-2 bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all">
+                        <button type="button" @click="loadBookings()" class="px-3 py-1.5 bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" title="Refresh Bookings">
                             <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i>
-                            <span>새로고침</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Bookings Table -->
-                <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                <!-- VIEW 1: WEEKLY TIMETABLE (08:00 - 20:00) -->
+                <div x-show="bookingViewMode === 'week'" class="space-y-4">
+                    <!-- Visual Drag & Drop Guide Banner -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-brand-inner/70 border border-teal-500/30 px-4 py-2.5 rounded-xl text-xs text-brand-tealLight shadow-md">
+                        <div class="flex items-center gap-2.5">
+                            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-500/20 text-teal-300">
+                                <i class="fa-solid fa-arrows-up-down-left-right text-xs"></i>
+                            </span>
+                            <span>
+                                <strong>Drag & Drop Rescheduling:</strong> Click and drag any appointment card to a new date and time slot (08:00–20:00) to reschedule instantly.
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[11px] text-slate-400 self-end sm:self-auto font-mono">
+                            <i class="fa-regular fa-calendar-check text-teal-400"></i>
+                            <span>7-Day Weekly View</span>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Navigation Bar -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row gap-4 justify-between items-center shadow-lg">
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" @click="prevWeek()" class="px-3 py-2 bg-brand-inner hover:bg-slate-800 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Go to previous 7 days">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <span>Prev 7 Days</span>
+                            </button>
+                            <button type="button" @click="goToTodayWeek()" class="px-3 py-2 bg-brand-inner hover:bg-brand-teal/20 border border-brand-teal/60 text-brand-tealLight rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="Show 7 days starting from today">
+                                <i class="fa-solid fa-calendar-day mr-1"></i>Today + 7 Days
+                            </button>
+                            <button type="button" @click="goToMondayWeek()" class="px-3 py-2 bg-brand-inner hover:bg-slate-800 border border-brand-border text-slate-300 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="Show Monday through Sunday of this week">
+                                This Week (Mon–Sun)
+                            </button>
+                            <button type="button" @click="nextWeek()" class="px-3 py-2 bg-brand-inner hover:bg-slate-800 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95" title="Go to next 7 days">
+                                <span>Next 7 Days</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+
+                            <!-- Date Picker: Pick ANY start date -> Shows 7 days -->
+                            <div class="flex items-center gap-2 bg-brand-inner border border-brand-border px-3 py-1.5 rounded-lg text-xs text-slate-300">
+                                <i class="fa-regular fa-calendar-days text-brand-tealLight"></i>
+                                <span class="text-[11px] text-slate-300 font-semibold">Start Date:</span>
+                                <input type="date" 
+                                       :value="weekStartDate" 
+                                       @change="setStartDate($event.target.value)" 
+                                       class="bg-brand-darkBg border border-brand-border text-white text-xs rounded px-2.5 py-1 outline-none focus:border-brand-teal cursor-pointer font-mono font-bold"
+                                       title="Pick an initial date to display a 7-day schedule">
+                                <span class="text-[10px] text-brand-textMuted font-mono">(+7 Days)</span>
+                            </div>
+                        </div>
+
+                        <!-- Week Range Label & Stats -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="text-xs font-bold text-white bg-brand-inner border border-brand-border px-3.5 py-2 rounded-lg flex items-center gap-2 shadow-sm font-mono">
+                                <i class="fa-regular fa-calendar-check text-brand-tealLight text-sm"></i>
+                                <span x-text="weekRangeLabel"></span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs font-mono">
+                                <span class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 font-semibold">
+                                    Total: <strong class="text-white font-extrabold" x-text="weekTotalBookingsCount"></strong>
+                                </span>
+                                <span class="px-2.5 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-700 text-emerald-300 font-semibold">
+                                    Confirmed: <strong class="text-white font-extrabold" x-text="weekConfirmedBookingsCount"></strong>
+                                </span>
+                                <span class="px-2.5 py-1.5 rounded-lg bg-amber-950/80 border border-amber-700 text-amber-300 font-semibold">
+                                    Pending: <strong class="text-white font-extrabold" x-text="weekPendingBookingsCount"></strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timetable Grid -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse min-w-[1050px]">
+                                <!-- Header: Time + 7 Days -->
+                                <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[11px] border-b border-brand-border sticky top-0 z-20">
+                                    <tr>
+                                        <th class="py-3.5 px-3 w-32 text-center border-r border-brand-border/60 bg-brand-inner">
+                                            <div class="flex items-center justify-center gap-1.5 text-slate-300 font-heading">
+                                                <i class="fa-regular fa-clock text-brand-tealLight"></i>
+                                                <span>Time Slot</span>
+                                            </div>
+                                        </th>
+                                        <template x-for="day in weekDays" :key="day.dateStr">
+                                            <th class="py-3 px-3 text-center border-r border-brand-border/60 last:border-r-0 transition-colors"
+                                                :class="day.isToday ? 'bg-teal-950/60 text-brand-tealLight border-b-2 border-b-brand-teal' : 'bg-brand-inner text-slate-300'">
+                                                <div class="flex flex-col items-center gap-1">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-sm font-extrabold" x-text="day.nameEn"></span>
+                                                        <template x-if="day.isToday">
+                                                            <span class="px-1.5 py-0.5 text-[9px] rounded font-black uppercase bg-teal-400 text-slate-950 shadow animate-pulse">TODAY</span>
+                                                        </template>
+                                                    </div>
+                                                    <div class="text-[11px] font-mono font-medium text-slate-400" x-text="day.monthDay"></div>
+                                                    <template x-if="day.bookingsCount > 0">
+                                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40" x-text="day.bookingsCount + (day.bookingsCount === 1 ? ' booking' : ' bookings')"></span>
+                                                    </template>
+                                                </div>
+                                            </th>
+                                        </template>
+                                    </tr>
+                                </thead>
+
+                                <!-- Body: 08:00 to 20:00 (13 hourly slots) -->
+                                <tbody class="divide-y divide-brand-border/50">
+                                    <template x-for="slot in timeSlots" :key="slot">
+                                        <tr class="hover:bg-slate-900/40 transition-colors">
+                                            <!-- Time Column -->
+                                            <td class="py-3 px-2 text-center border-r border-brand-border/60 bg-brand-inner/40 font-mono align-top w-32 select-none">
+                                                <div class="font-extrabold text-white text-sm" x-text="slot"></div>
+                                                <div class="text-[10px] text-slate-400 mt-0.5" x-text="formatSlotLabel(slot)"></div>
+                                            </td>
+
+                                            <!-- 7 Day Columns -->
+                                            <template x-for="day in weekDays" :key="day.dateStr">
+                                                <td class="p-2 border-r border-brand-border/40 last:border-r-0 align-top min-w-[135px] min-h-[96px] relative group transition-all"
+                                                    :class="{
+                                                        'bg-teal-950/15': day.isToday && dragOverCell !== (day.dateStr + '_' + slot),
+                                                        'ring-2 ring-brand-teal ring-inset bg-teal-900/50 shadow-inner': dragOverCell === (day.dateStr + '_' + slot)
+                                                    }"
+                                                    @dragover.prevent="handleDragOver($event, day.dateStr, slot)"
+                                                    @dragleave="handleDragLeave($event, day.dateStr, slot)"
+                                                    @drop.prevent="handleDrop($event, day.dateStr, slot)">
+                                                    
+                                                    <!-- Drop Target Visual Indicator -->
+                                                    <template x-if="dragOverCell === (day.dateStr + '_' + slot)">
+                                                        <div class="mb-1.5 py-1 px-2 bg-teal-400 text-slate-950 font-black text-[10px] rounded text-center shadow-lg pointer-events-none animate-pulse flex items-center justify-center gap-1">
+                                                            <i class="fa-solid fa-arrow-down"></i>
+                                                            <span>Drop Here</span>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Bookings Container in this cell -->
+                                                    <div class="space-y-2 min-h-[76px] flex flex-col justify-start">
+                                                        <template x-for="b in getBookingsForSlot(day.dateStr, slot)" :key="b.id">
+                                                            <div draggable="true"
+                                                                 @dragstart="handleDragStart($event, b)"
+                                                                 @dragend="handleDragEnd($event)"
+                                                                 @click="openBookingDetail(b)"
+                                                                 class="p-2.5 rounded-xl border transition-all cursor-grab active:cursor-grabbing shadow-md hover:scale-[1.02] flex flex-col justify-between group/card select-none"
+                                                                 :class="{
+                                                                     'opacity-40 border-dashed border-teal-400 ring-2 ring-brand-teal': draggedBooking && draggedBooking.id === b.id,
+                                                                     'bg-amber-950/80 border-amber-500/80 hover:border-amber-400 hover:shadow-amber-950/70': b.status === 'Pending' && (!draggedBooking || draggedBooking.id !== b.id),
+                                                                     'bg-emerald-950/80 border-emerald-500/80 hover:border-emerald-400 hover:shadow-emerald-950/70': b.status === 'Confirmed' && (!draggedBooking || draggedBooking.id !== b.id),
+                                                                     'bg-sky-950/80 border-sky-500/80 hover:border-sky-400 hover:shadow-sky-950/70': b.status === 'Completed' && (!draggedBooking || draggedBooking.id !== b.id),
+                                                                     'bg-rose-950/80 border-rose-500/80 hover:border-rose-400 opacity-60': b.status === 'Cancelled' && (!draggedBooking || draggedBooking.id !== b.id)
+                                                                 }">
+                                                                <!-- Card Top: Drag Handle + Time & Status -->
+                                                                <div class="flex items-center justify-between gap-1 mb-1">
+                                                                    <div class="font-mono text-[10px] font-bold text-white flex items-center gap-1">
+                                                                        <span class="text-slate-400 group-hover/card:text-teal-300 transition-colors" title="Drag to reschedule date &amp; time">
+                                                                            <i class="fa-solid fa-grip-vertical"></i>
+                                                                        </span>
+                                                                        <span x-text="b.booking_time"></span>
+                                                                    </div>
+                                                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase"
+                                                                          :class="{
+                                                                              'bg-amber-500/30 text-amber-300': b.status === 'Pending',
+                                                                              'bg-emerald-500/30 text-emerald-300': b.status === 'Confirmed',
+                                                                              'bg-sky-500/30 text-sky-300': b.status === 'Completed',
+                                                                              'bg-rose-500/30 text-rose-300': b.status === 'Cancelled'
+                                                                          }"
+                                                                          x-text="b.status"></span>
+                                                                </div>
+
+                                                                <!-- Card Middle: Customer Name & Phone -->
+                                                                <div class="font-bold text-white text-xs truncate" :title="b.customer_name" x-text="b.customer_name"></div>
+                                                                <div class="text-[10px] font-mono text-slate-300 truncate mt-0.5" x-text="b.phone"></div>
+
+                                                                <!-- Card Bottom: Service & WhatsApp -->
+                                                                <div class="mt-1.5 pt-1 border-t border-white/10 flex items-center justify-between gap-1">
+                                                                    <span class="text-[9px] text-slate-400 truncate max-w-[85px]" :title="b.service_type" x-text="b.service_type"></span>
+                                                                    <a :href="'https://wa.me/' + formatWhatsAppPhone(b.phone)" 
+                                                                       @click.stop
+                                                                       target="_blank" 
+                                                                       class="text-emerald-400 hover:text-emerald-300 text-xs p-0.5 transition-colors" 
+                                                                       title="Chat on WhatsApp">
+                                                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+
+                                                        <!-- If no bookings: Hover "+ New Booking" slot button -->
+                                                        <template x-if="getBookingsForSlot(day.dateStr, slot).length === 0">
+                                                            <div @click="openNewBookingModal(day.dateStr, slot)"
+                                                                 class="w-full h-full min-h-[70px] rounded-lg border border-dashed border-transparent hover:border-brand-border/80 hover:bg-brand-inner/40 flex items-center justify-center transition-all cursor-pointer group/slot">
+                                                                <span class="opacity-0 group-hover/slot:opacity-100 transition-opacity text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                                                                    <i class="fa-solid fa-plus text-brand-tealLight"></i>
+                                                                    <span>+ New Booking</span>
+                                                                </span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: LIST TABLE VIEW -->
+                <div x-show="bookingViewMode === 'list'" class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs whitespace-nowrap">
                             <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[11px] border-b border-brand-border">
@@ -624,7 +868,7 @@
                                     <tr>
                                         <td colspan="10" class="py-12 text-center text-slate-400">
                                             <i class="fa-regular fa-calendar-xmark text-3xl mb-2 text-slate-500 block"></i>
-                                            등록된 피팅 예약이 없거나 필터 조건과 일치하는 내역이 없습니다.
+                                            No fitting bookings found matching your search or filters.
                                         </td>
                                     </tr>
                                 </template>
@@ -659,7 +903,7 @@
 
                                         <!-- WhatsApp / Phone -->
                                         <td class="py-3.5 px-4">
-                                            <a :href="'https://wa.me/' + formatWhatsAppPhone(b.phone)" target="_blank" class="font-mono text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1.5 hover:underline" title="WhatsApp으로 대화 열기">
+                                            <a :href="'https://wa.me/' + formatWhatsAppPhone(b.phone)" target="_blank" class="font-mono text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1.5 hover:underline" title="Open WhatsApp chat">
                                                 <i class="fa-brands fa-whatsapp text-sm"></i>
                                                 <span x-text="b.phone"></span>
                                             </a>
@@ -681,10 +925,10 @@
                                                         'bg-sky-950/90 text-sky-300 border-sky-700': b.status === 'Completed',
                                                         'bg-rose-950/90 text-rose-300 border-rose-700': b.status === 'Cancelled'
                                                     }">
-                                                <option value="Pending">🟡 Pending (대기)</option>
-                                                <option value="Confirmed">🟢 Confirmed (확정)</option>
-                                                <option value="Completed">🔵 Completed (완료)</option>
-                                                <option value="Cancelled">🔴 Cancelled (취소)</option>
+                                                <option value="Pending">🟡 Pending</option>
+                                                <option value="Confirmed">🟢 Confirmed</option>
+                                                <option value="Completed">🔵 Completed</option>
+                                                <option value="Cancelled">🔴 Cancelled</option>
                                             </select>
                                         </td>
 
@@ -698,7 +942,7 @@
                                             <button type="button" 
                                                     @click="confirmAndWhatsApp(b)" 
                                                     class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-2 rounded-lg shadow transition-all inline-flex items-center gap-1.5 whitespace-nowrap"
-                                                    title="예약 상태를 Confirmed로 변경하고 고객에게 WhatsApp 확정 메세지를 보냅니다.">
+                                                    title="Change status to Confirmed and open WhatsApp confirmation message">
                                                 <i class="fa-brands fa-whatsapp text-sm"></i>
                                                 <span x-text="b.status === 'Confirmed' ? 'Re-send WhatsApp' : 'Confirm & WhatsApp'"></span>
                                             </button>
@@ -709,9 +953,9 @@
                                             <button type="button" 
                                                     @click="addToGoogleCalendar(b)" 
                                                     class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-2 rounded-lg shadow transition-all inline-flex items-center gap-1.5 whitespace-nowrap"
-                                                    title="이 예약을 Google Calendar에 1클릭으로 저장합니다.">
+                                                    title="Add this booking to Google Calendar with 1 click">
                                                 <i class="fa-regular fa-calendar-plus text-sm"></i>
-                                                <span>Google Cal 저장</span>
+                                                <span>Add to Google Cal</span>
                                             </button>
                                         </td>
 
@@ -720,9 +964,256 @@
                                             <button type="button" 
                                                     @click="deleteBooking(b)" 
                                                     class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs px-2.5 py-1.5 rounded transition-colors" 
-                                                    title="예약 삭제">
+                                                    title="Delete Booking">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: MEMBERS & VIP PERFORMANCE -->
+            <div x-show="activeTab === 'members'" class="space-y-6">
+                <!-- KPI Performance Bar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Members</span>
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-extrabold text-white mt-2" x-text="members.length"></div>
+                        <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                            <span class="text-emerald-400 font-bold" x-text="members.filter(m => m.status === 'Active').length + ' Active'"></span>
+                            <span>•</span>
+                            <span x-text="members.filter(m => m.status !== 'Active').length + ' Inactive'"></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">VIP &amp; Gold Tier</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-crown"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-extrabold text-amber-300 mt-2" x-text="vipAndGoldCount"></div>
+                        <div class="text-[11px] text-slate-400 mt-1">
+                            High-loyalty returning clients
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Performance Spent</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-sack-dollar"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-extrabold text-brand-tealLight mt-2 font-mono">
+                            $<span x-text="Number(totalMembersSpent).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">
+                            Cumulative revenue tracked
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Loyalty Points</span>
+                            <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-extrabold text-sky-300 mt-2 font-mono">
+                            <span x-text="Number(totalMembersPoints).toLocaleString()"></span> <span class="text-xs font-normal text-slate-400">Pts</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">
+                            Active reward balance
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls & Filters Bar -->
+                <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col lg:flex-row items-center justify-between gap-4">
+                    <div class="relative w-full lg:w-96">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" x-model="memberSearchQuery" placeholder="Search by name, email, phone, code (#DH-M...)" class="w-full bg-brand-inner border border-brand-border rounded-lg pl-9 pr-4 py-2 text-xs text-white outline-none focus:border-brand-teal">
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                        <!-- Tier Filter -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Tier:</label>
+                            <select x-model="memberTierFilter" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal">
+                                <option value="All">All Tiers</option>
+                                <option value="Bronze">Bronze ($0-$499)</option>
+                                <option value="Silver">Silver ($500-$1,499)</option>
+                                <option value="Gold">Gold ($1,500-$2,999)</option>
+                                <option value="VIP Partner">VIP Partner ($3,000+)</option>
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Status:</label>
+                            <select x-model="memberStatusFilter" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal">
+                                <option value="All">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Suspended">Suspended</option>
+                            </select>
+                        </div>
+
+                        <button type="button" @click="openMemberModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2 rounded-lg shadow-md transition-all flex items-center gap-1.5 ml-auto lg:ml-0">
+                            <i class="fa-solid fa-user-plus"></i> + Add Member
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Members Table -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-brand-inner/80 text-brand-textMuted uppercase tracking-wider text-[11px] border-b border-brand-border">
+                                <tr>
+                                    <th class="py-3 px-4 font-bold">Member Code &amp; Name</th>
+                                    <th class="py-3 px-4 font-bold">Contact &amp; Hair System</th>
+                                    <th class="py-3 px-4 font-bold">Membership Tier</th>
+                                    <th class="py-3 px-4 font-bold">Total Spent &amp; Visits</th>
+                                    <th class="py-3 px-4 font-bold">Loyalty Points</th>
+                                    <th class="py-3 px-4 font-bold">Referral Stats</th>
+                                    <th class="py-3 px-4 font-bold">Status</th>
+                                    <th class="py-3 px-4 font-bold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60">
+                                <template x-if="filteredMembers.length === 0">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-12 text-slate-400">
+                                            <i class="fa-solid fa-user-slash text-3xl mb-2 text-slate-600 block"></i>
+                                            <span>No members found matching your search criteria.</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="m in filteredMembers" :key="m.id">
+                                    <tr class="hover:bg-brand-inner/40 transition-colors">
+                                        <!-- Code & Name -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-8 h-8 rounded-full teal-gradient flex items-center justify-center font-bold text-white text-xs shadow-sm flex-shrink-0" x-text="m.full_name ? m.full_name.charAt(0).toUpperCase() : 'M'"></div>
+                                                <div>
+                                                    <div class="font-bold text-white flex items-center gap-1.5">
+                                                        <span x-text="m.full_name"></span>
+                                                    </div>
+                                                    <div class="text-[10px] font-mono text-brand-tealLight" x-text="m.member_code"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <!-- Contact & Hair System -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="text-slate-200 font-mono text-[11px]" x-text="m.email"></div>
+                                            <div class="text-slate-400 text-[11px] flex items-center gap-1 mt-0.5">
+                                                <i class="fa-solid fa-phone text-[9px]"></i>
+                                                <span x-text="m.phone || 'No phone'"></span>
+                                            </div>
+                                            <div class="text-[10px] text-teal-300 font-medium mt-0.5 flex items-center gap-1" x-show="m.hair_system_type">
+                                                <i class="fa-solid fa-scissors text-[9px]"></i>
+                                                <span x-text="m.hair_system_type"></span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Membership Tier -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border"
+                                                  :class="{
+                                                      'bg-amber-950/80 text-amber-300 border-amber-700': m.tier === 'Bronze',
+                                                      'bg-slate-800 text-slate-200 border-slate-600': m.tier === 'Silver',
+                                                      'bg-yellow-950/80 text-yellow-300 border-yellow-600': m.tier === 'Gold',
+                                                      'bg-purple-950/90 text-purple-200 border-purple-500 shadow-sm shadow-purple-500/20': m.tier === 'VIP Partner'
+                                                  }">
+                                                <i class="fa-solid" :class="{
+                                                    'fa-shield-halved': m.tier === 'Bronze',
+                                                    'fa-star': m.tier === 'Silver',
+                                                    'fa-medal': m.tier === 'Gold',
+                                                    'fa-crown': m.tier === 'VIP Partner'
+                                                }"></i>
+                                                <span x-text="m.tier"></span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Total Spent & Visits -->
+                                        <td class="py-3.5 px-4 font-mono">
+                                            <div class="text-white font-bold text-sm">
+                                                $<span x-text="Number(m.total_spent || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span>
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                                <i class="fa-solid fa-calendar-check text-[9px] text-brand-tealLight"></i>
+                                                <span x-text="(m.visit_count || 0) + ' visits'"></span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Loyalty Points -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-950/60 border border-sky-800/80 text-sky-200 font-mono font-bold text-xs">
+                                                <i class="fa-solid fa-coins text-sky-400 text-[10px]"></i>
+                                                <span x-text="Number(m.points || 0).toLocaleString()"></span>
+                                                <span class="text-[10px] font-normal text-sky-300">Pts</span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Referral Stats -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="text-[10px] font-mono text-slate-300">
+                                                Code: <span class="text-amber-300 font-bold" x-text="m.referral_code || '-'"></span>
+                                            </div>
+                                            <div class="text-[10px] text-slate-400 mt-0.5">
+                                                <span class="text-emerald-400 font-bold" x-text="m.referral_count || 0"></span> referred
+                                            </div>
+                                            <div class="text-[9px] text-slate-500 mt-0.5" x-show="m.referred_by">
+                                                By: <span x-text="m.referred_by"></span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Status -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold"
+                                                  :class="{
+                                                      'bg-emerald-950/80 text-emerald-300 border border-emerald-800': m.status === 'Active',
+                                                      'bg-slate-800 text-slate-400 border border-slate-700': m.status === 'Inactive',
+                                                      'bg-rose-950/80 text-rose-300 border border-rose-800': m.status === 'Suspended'
+                                                  }">
+                                                <span class="w-1.5 h-1.5 rounded-full" :class="{
+                                                    'bg-emerald-400': m.status === 'Active',
+                                                    'bg-slate-400': m.status === 'Inactive',
+                                                    'bg-rose-400': m.status === 'Suspended'
+                                                }"></span>
+                                                <span x-text="m.status"></span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Actions -->
+                                        <td class="py-3.5 px-4 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button type="button" @click="openRecordModal(m)" class="bg-brand-inner hover:bg-slate-800 text-brand-tealLight border border-brand-border text-xs px-2.5 py-1.5 rounded transition-colors font-bold" title="Add Purchase, Service or Points Record">
+                                                    <i class="fa-solid fa-plus-minus mr-1"></i>Record
+                                                </button>
+                                                <button type="button" @click="openHistoryModal(m)" class="bg-brand-inner hover:bg-slate-800 text-sky-300 border border-brand-border text-xs px-2.5 py-1.5 rounded transition-colors" title="View Transaction &amp; Performance History">
+                                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                                </button>
+                                                <button type="button" @click="openMemberModal('edit', m)" class="bg-brand-inner hover:bg-slate-800 text-amber-300 border border-brand-border text-xs px-2 py-1.5 rounded transition-colors" title="Edit Member Profile">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button>
+                                                <button type="button" @click="deleteMember(m)" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs px-2 py-1.5 rounded transition-colors" title="Delete Member">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </template>
@@ -1029,7 +1520,454 @@
         </div>
     </div>
 
-    <!-- ALPINE LOGIC -->
+    <!-- BOOKING DETAIL MODAL -->
+    <div x-show="bookingDetailModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl my-6" @click.away="closeBookingDetail()">
+            <!-- Header -->
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg teal-gradient flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-base">Fitting Appointment Details</h3>
+                        <span class="text-xs font-mono font-bold text-brand-tealLight" x-text="selectedBooking ? '#FIT-' + selectedBooking.id : ''"></span>
+                    </div>
+                </div>
+                <button type="button" @click="closeBookingDetail()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Body Content -->
+            <template x-if="selectedBooking">
+                <div class="space-y-4 text-xs">
+                    <!-- Status & Time Banner -->
+                    <div class="p-3 rounded-xl border flex items-center justify-between"
+                         :class="{
+                             'bg-amber-950/60 border-amber-600/60 text-amber-200': selectedBooking.status === 'Pending',
+                             'bg-emerald-950/60 border-emerald-600/60 text-emerald-200': selectedBooking.status === 'Confirmed',
+                             'bg-sky-950/60 border-sky-600/60 text-sky-200': selectedBooking.status === 'Completed',
+                             'bg-rose-950/60 border-rose-600/60 text-rose-200': selectedBooking.status === 'Cancelled'
+                         }">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider opacity-80 block">Appointment Date &amp; Time</span>
+                            <span class="text-sm font-bold text-white font-mono flex items-center gap-1.5 mt-0.5">
+                                <i class="fa-regular fa-calendar-days text-brand-tealLight"></i>
+                                <span x-text="selectedBooking.booking_date"></span>
+                                <span class="text-slate-400">|</span>
+                                <i class="fa-regular fa-clock text-brand-tealLight"></i>
+                                <span x-text="selectedBooking.booking_time"></span>
+                            </span>
+                        </div>
+                        <div>
+                            <select x-model="selectedBooking.status" 
+                                    @change="updateBookingStatus(selectedBooking.id, $event.target.value)"
+                                    class="text-xs font-bold rounded-lg px-2.5 py-1.5 outline-none cursor-pointer border bg-brand-darkBg text-white">
+                                <option value="Pending">🟡 Pending</option>
+                                <option value="Confirmed">🟢 Confirmed</option>
+                                <option value="Completed">🔵 Completed</option>
+                                <option value="Cancelled">🔴 Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Customer Info Grid -->
+                    <div class="grid grid-cols-2 gap-3 bg-brand-inner/70 p-3.5 rounded-xl border border-brand-border">
+                        <div>
+                            <span class="text-slate-400 text-[11px] block">Customer Name</span>
+                            <span class="text-white font-bold text-sm" x-text="selectedBooking.customer_name"></span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 text-[11px] block">Phone / WhatsApp</span>
+                            <a :href="'https://wa.me/' + formatWhatsAppPhone(selectedBooking.phone)" target="_blank" class="text-emerald-400 hover:text-emerald-300 font-mono font-bold flex items-center gap-1 mt-0.5">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                <span x-text="selectedBooking.phone"></span>
+                            </a>
+                        </div>
+                        <div class="col-span-2" x-show="selectedBooking.email">
+                            <span class="text-slate-400 text-[11px] block">Email</span>
+                            <span class="text-slate-200 font-mono" x-text="selectedBooking.email"></span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-slate-400 text-[11px] block">Selected Service</span>
+                            <span class="text-brand-tealLight font-bold" x-text="selectedBooking.service_type"></span>
+                        </div>
+                    </div>
+
+                    <!-- Notes / Memo -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="font-bold text-slate-300">Admin Notes / Remarks</label>
+                            <button type="button" @click="saveSelectedBookingNotes()" class="text-brand-tealLight hover:underline text-[11px] font-bold">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i>Save Notes
+                            </button>
+                        </div>
+                        <textarea x-model="selectedBooking.notes" 
+                                  rows="3" 
+                                  placeholder="Customer requirements, toupee base preferences, etc..."
+                                  class="w-full bg-brand-darkBg border border-brand-border rounded-lg p-2.5 text-white outline-none focus:border-brand-teal leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-2 pt-2 border-t border-brand-border">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" 
+                                    @click="confirmAndWhatsApp(selectedBooking)" 
+                                    class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Confirm & WhatsApp</span>
+                            </button>
+                            <button type="button" 
+                                    @click="addToGoogleCalendar(selectedBooking)" 
+                                    class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md">
+                                <i class="fa-regular fa-calendar-plus text-sm"></i>
+                                <span>Add to Google Cal</span>
+                            </button>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <button type="button" 
+                                    @click="deleteBooking(selectedBooking); closeBookingDetail()" 
+                                    class="text-rose-400 hover:text-rose-300 text-xs font-bold flex items-center gap-1.5 px-2 py-1">
+                                <i class="fa-solid fa-trash-can"></i> Delete Booking
+                            </button>
+                            <button type="button" 
+                                    @click="closeBookingDetail()" 
+                                    class="px-4 py-2 bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-200 rounded-lg font-bold">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- NEW BOOKING MANUAL MODAL -->
+    <div x-show="newBookingModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-6" @click.away="newBookingModalOpen = false">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg teal-gradient flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-base">Add New Fitting Appointment</h3>
+                </div>
+                <button type="button" @click="newBookingModalOpen = false" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="submitNewBooking()" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Customer Full Name *</label>
+                    <input type="text" x-model="newBookingForm.customer_name" required placeholder="e.g. David Kim" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Phone / WhatsApp *</label>
+                        <input type="text" x-model="newBookingForm.phone" required placeholder="+61 412 345 678" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Email (Optional)</label>
+                        <input type="email" x-model="newBookingForm.email" placeholder="customer@example.com" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-mono">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Fitting Service *</label>
+                    <select x-model="newBookingForm.service_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                        <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
+                        <option value="New Hairpiece Fitting & Cut-in Styling ($145 AUD)">New Hairpiece Fitting & Cut-in Styling ($145 AUD)</option>
+                        <option value="Re-bond Maintenance & Scalp Clean ($99 AUD)">Re-bond Maintenance & Scalp Clean ($99 AUD)</option>
+                        <option value="Minor Adjustment & Perimeter Touch-up ($49 AUD)">Minor Adjustment & Perimeter Touch-up ($49 AUD)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Booking Date *</label>
+                        <input type="date" x-model="newBookingForm.booking_date" required class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Booking Time *</label>
+                        <select x-model="newBookingForm.booking_time" required class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-mono">
+                            <option value="08:00 AM">08:00 AM</option>
+                            <option value="09:00 AM">09:00 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="01:00 PM">01:00 PM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:00 PM">03:00 PM</option>
+                            <option value="04:00 PM">04:00 PM</option>
+                            <option value="05:00 PM">05:00 PM</option>
+                            <option value="06:00 PM">06:00 PM</option>
+                            <option value="07:00 PM">07:00 PM</option>
+                            <option value="08:00 PM">08:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Consultation Notes</label>
+                    <textarea x-model="newBookingForm.notes" rows="2" placeholder="Customer requests or specifications..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-brand-border">
+                    <button type="button" @click="newBookingModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 teal-gradient rounded-lg text-white font-bold shadow-md">Create Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEMBER PROFILE MODAL (ADD / EDIT) -->
+    <div x-show="isMemberModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl my-6" @click.away="isMemberModalOpen = false">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg teal-gradient flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-lg" x-text="memberModalMode === 'edit' ? 'Edit Member Profile' : 'Add New Member'"></h3>
+                    <span x-show="memberModalMode === 'edit'" class="text-[11px] bg-brand-inner border border-brand-border px-2 py-0.5 rounded text-brand-tealLight font-mono" x-text="memberForm.member_code"></span>
+                </div>
+                <button type="button" @click="isMemberModalOpen = false" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveMember()" class="space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Full Name *</label>
+                        <input type="text" x-model="memberForm.full_name" required placeholder="John Smith" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Email Address *</label>
+                        <input type="email" x-model="memberForm.email" required placeholder="client@example.com" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Phone / WhatsApp</label>
+                        <input type="text" x-model="memberForm.phone" placeholder="+61 412 345 678" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">
+                            <span x-text="memberModalMode === 'edit' ? 'Change Password (Leave blank to keep)' : 'Password *'"></span>
+                        </label>
+                        <input type="password" x-model="memberForm.password" :required="memberModalMode === 'add'" placeholder="••••••••" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Hair System Specification</label>
+                        <select x-model="memberForm.hair_system_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                            <option value="Full Skin System (0.03mm)">Full Skin System (0.03mm)</option>
+                            <option value="Full Swiss Lace">Full Swiss Lace</option>
+                            <option value="Lace Front + PU Perimeter">Lace Front + PU Perimeter</option>
+                            <option value="Silk Top System">Silk Top System</option>
+                            <option value="CNC Premier Virgin Hair">CNC Premier Virgin Hair</option>
+                            <option value="Women Silk Topper">Women Silk Topper</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Membership Tier</label>
+                        <select x-model="memberForm.tier" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-semibold">
+                            <option value="Bronze">Bronze Tier ($0 - $499)</option>
+                            <option value="Silver">Silver Tier ($500 - $1,499)</option>
+                            <option value="Gold">Gold Tier ($1,500 - $2,999)</option>
+                            <option value="VIP Partner">VIP Partner Tier ($3,000+)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Total Spent ($ AUD)</label>
+                        <input type="number" step="0.01" min="0" x-model="memberForm.total_spent" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Salon Visits</label>
+                        <input type="number" min="0" x-model="memberForm.visit_count" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Loyalty Points</label>
+                        <input type="number" min="0" x-model="memberForm.points" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Account Status</label>
+                        <select x-model="memberForm.status" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                            <option value="Active">🟢 Active</option>
+                            <option value="Inactive">⚪ Inactive</option>
+                            <option value="Suspended">🔴 Suspended</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Referred By (Referral Code)</label>
+                        <input type="text" x-model="memberForm.referred_by" placeholder="e.g. DH-REF-ABC1" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Consultation / Fitting Notes</label>
+                    <textarea x-model="memberForm.notes" rows="2" placeholder="Custom base measurements, haircut preferences, skin sensitivity notes..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal leading-relaxed"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-brand-border">
+                    <button type="button" @click="isMemberModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 teal-gradient rounded-lg text-white font-bold shadow-md">
+                        <span x-text="memberModalMode === 'edit' ? 'Save Changes' : 'Create Member'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RECORD CLIENT ACTIVITY MODAL (PURCHASE / SERVICE / POINTS) -->
+    <div x-show="isRecordModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-6" @click.away="isRecordModalOpen = false">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg teal-gradient flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-plus-minus"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-base">Record Activity &amp; Performance</h3>
+                        <p class="text-[11px] text-slate-400" x-text="selectedMemberForRecord ? selectedMemberForRecord.full_name + ' (' + selectedMemberForRecord.member_code + ')' : ''"></p>
+                    </div>
+                </div>
+                <button type="button" @click="isRecordModalOpen = false" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="submitMemberRecord()" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Activity / Transaction Type *</label>
+                    <select x-model="recordForm.type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                        <option value="purchase">🛍️ Toupee / Product Purchase (Increases Spent &amp; Tiers)</option>
+                        <option value="service">✂️ Salon Fitting &amp; Maintenance Service (Increases Visits)</option>
+                        <option value="points_add">🎁 Loyalty Bonus Points Award</option>
+                        <option value="points_redeem">🏷️ Points Redemption (Discount applied)</option>
+                        <option value="referral">🤝 Referral Performance Reward (+Points)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Description / Service Title *</label>
+                    <input type="text" x-model="recordForm.title" required placeholder="e.g. Full Skin System #0.03mm or Re-bond Service" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Amount ($ AUD)</label>
+                        <input type="number" step="0.01" min="0" x-model="recordForm.amount" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                        <p class="text-[10px] text-slate-400 mt-1">Added to member's total spending</p>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Points Delta (+ or -)</label>
+                        <input type="number" step="1" x-model="recordForm.points_delta" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono outline-none focus:border-brand-teal">
+                        <p class="text-[10px] text-slate-400 mt-1">e.g. +100 for earn, -200 for redeem</p>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-lg bg-brand-inner/80 border border-brand-border text-[11px] text-slate-300 space-y-1">
+                    <div class="font-bold text-brand-tealLight flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Automatic Tier Progression</span>
+                    </div>
+                    <p class="text-slate-400">
+                        When total spending reaches thresholds, the membership tier automatically promotes:
+                        Silver ($500+), Gold ($1,500+), VIP Partner ($3,000+).
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-brand-border">
+                    <button type="button" @click="isRecordModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 teal-gradient rounded-lg text-white font-bold shadow-md">Record Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE HISTORY MODAL -->
+    <div x-show="isHistoryModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl my-6" @click.away="closeHistoryModal()">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-base">Client Performance &amp; Activity Log</h3>
+                        <p class="text-[11px] text-slate-400" x-text="selectedMemberHistory ? selectedMemberHistory.full_name + ' (' + selectedMemberHistory.member_code + ')' : ''"></p>
+                    </div>
+                </div>
+                <button type="button" @click="closeHistoryModal()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <template x-if="selectedMemberHistory">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-3 bg-brand-inner p-3 rounded-xl border border-brand-border text-center text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Current Tier</span>
+                            <span class="font-bold text-amber-300 mt-0.5 block" x-text="selectedMemberHistory.tier"></span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Total Spent</span>
+                            <span class="font-bold text-brand-tealLight font-mono mt-0.5 block">$<span x-text="Number(selectedMemberHistory.total_spent || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span></span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Points Balance</span>
+                            <span class="font-bold text-sky-300 font-mono mt-0.5 block" x-text="Number(selectedMemberHistory.points || 0).toLocaleString() + ' Pts'"></span>
+                        </div>
+                    </div>
+
+                    <div class="border border-brand-border rounded-xl overflow-hidden max-h-72 overflow-y-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-brand-inner/90 text-brand-textMuted uppercase tracking-wider text-[10px] border-b border-brand-border sticky top-0">
+                                <tr>
+                                    <th class="py-2.5 px-3">Date</th>
+                                    <th class="py-2.5 px-3">Type</th>
+                                    <th class="py-2.5 px-3">Title / Description</th>
+                                    <th class="py-2.5 px-3 text-right">Amount</th>
+                                    <th class="py-2.5 px-3 text-right">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60">
+                                <template x-if="memberRecordsList.length === 0">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-8 text-slate-400">
+                                            <span>No activity records recorded yet.</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="r in memberRecordsList" :key="r.id">
+                                    <tr class="hover:bg-brand-inner/30">
+                                        <td class="py-2.5 px-3 font-mono text-[10px] text-slate-400" x-text="r.created_at ? r.created_at.substring(0, 16) : '-'"></td>
+                                        <td class="py-2.5 px-3">
+                                            <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
+                                                  :class="{
+                                                      'bg-emerald-950 text-emerald-300 border border-emerald-800': r.type === 'purchase',
+                                                      'bg-purple-950 text-purple-300 border border-purple-800': r.type === 'service',
+                                                      'bg-sky-950 text-sky-300 border border-sky-800': r.type === 'points_add',
+                                                      'bg-rose-950 text-rose-300 border border-rose-800': r.type === 'points_redeem',
+                                                      'bg-amber-950 text-amber-300 border border-amber-800': r.type === 'referral'
+                                                  }" x-text="r.type"></span>
+                                        </td>
+                                        <td class="py-2.5 px-3 text-slate-200" x-text="r.title"></td>
+                                        <td class="py-2.5 px-3 text-right font-mono font-bold" :class="Number(r.amount) > 0 ? 'text-brand-tealLight' : 'text-slate-400'" x-text="Number(r.amount) > 0 ? '
     <script>
         function stockManagerApp() {
             return {
@@ -1082,13 +2020,70 @@
 
                 // Fitting Bookings state
                 bookings: [],
+                bookingViewMode: 'week', // 'week' or 'list'
+                weekStartDate: '', // Starting date for 7-day display
+                draggedBooking: null,
+                dragOverCell: '',
+                get currentWeekMonday() { return this.weekStartDate; },
+                set currentWeekMonday(val) { this.weekStartDate = val; },
                 bookingSearchQuery: '',
                 bookingStatusFilter: 'All',
                 bookingDateFilter: 'All',
                 isLoadingBookings: false,
+                bookingDetailModalOpen: false,
+                selectedBooking: null,
+                newBookingModalOpen: false,
+                newBookingForm: {
+                    customer_name: '',
+                    phone: '',
+                    email: '',
+                    service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                    booking_date: '',
+                    booking_time: '11:00 AM',
+                    notes: ''
+                },
+
+                // Membership & VIP Performance State
+                members: [],
+                isLoadingMembers: false,
+                memberSearchQuery: '',
+                memberTierFilter: 'All',
+                memberStatusFilter: 'All',
+                isMemberModalOpen: false,
+                memberModalMode: 'add',
+                memberForm: {
+                    id: null,
+                    member_code: '',
+                    full_name: '',
+                    email: '',
+                    password: '',
+                    phone: '',
+                    hair_system_type: 'Full Skin System (0.03mm)',
+                    tier: 'Bronze',
+                    points: 100,
+                    total_spent: 0,
+                    visit_count: 0,
+                    referral_code: '',
+                    referred_by: '',
+                    status: 'Active',
+                    notes: ''
+                },
+                isRecordModalOpen: false,
+                selectedMemberForRecord: null,
+                recordForm: {
+                    type: 'purchase',
+                    title: '',
+                    amount: 0,
+                    points_delta: 0
+                },
+                isHistoryModalOpen: false,
+                selectedMemberHistory: null,
+                memberRecordsList: [],
+                isLoadingRecords: false,
 
                 async init() {
                     await this.checkAuth();
+                    this.initWeek();
                 },
 
                 get totalQty() {
@@ -1104,9 +2099,68 @@
                 },
 
                 get todayBookingsCount() {
-                    const today = new Date().toISOString().slice(0, 10);
+                    const today = this.formatDate(new Date());
                     return this.bookings.filter(b => b.booking_date === today).length;
                 },
+
+                get weekDays() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = (this.weekStartDate || this.formatDate(new Date())).split('-');
+                    const base = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    const days = [];
+                    const namesKo = ['일', '월', '화', '수', '목', '금', '토'];
+                    const namesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const today = this.formatDate(new Date());
+
+                    for (let i = 0; i < 7; i++) {
+                        const d = new Date(base);
+                        d.setDate(base.getDate() + i);
+                        const dateStr = this.formatDate(d);
+                        const dayOfWeek = d.getDay();
+                        const dayBookings = this.bookings.filter(b => b.booking_date === dateStr);
+                        days.push({
+                            dateStr: dateStr,
+                            nameKo: namesKo[dayOfWeek],
+                            nameEn: namesEn[dayOfWeek],
+                            monthDay: String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'),
+                            isToday: dateStr === today,
+                            bookingsCount: dayBookings.length,
+                            confirmedCount: dayBookings.filter(b => b.status === 'Confirmed').length,
+                            pendingCount: dayBookings.filter(b => b.status === 'Pending').length
+                        });
+                    }
+                    return days;
+                },
+
+                get weekRangeLabel() {
+                    const days = this.weekDays;
+                    if (!days || days.length === 0) return '';
+                    return `${days[0].dateStr} (${days[0].nameEn}) ~ ${days[6].dateStr} (${days[6].nameEn})`;
+                },
+
+                get weekTotalBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date)).length;
+                },
+
+                get weekConfirmedBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date) && b.status === 'Confirmed').length;
+                },
+
+                get weekPendingBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date) && b.status === 'Pending').length;
+                },
+
+                timeSlots: [
+                    '08:00', '09:00', '10:00', '11:00', '12:00', 
+                    '13:00', '14:00', '15:00', '16:00', '17:00', 
+                    '18:00', '19:00', '20:00'
+                ],
 
                 get filteredBookings() {
                     let list = this.bookings;
@@ -1208,6 +2262,7 @@
                             await this.loadItems();
                             await this.loadAiStyles();
                             await this.loadBookings();
+                            await this.loadMembers();
                         } else {
                             this.isAuthenticated = false;
                         }
@@ -1235,6 +2290,7 @@
                             await this.loadItems();
                             await this.loadAiStyles();
                             await this.loadBookings();
+                            await this.loadMembers();
                         } else {
                             this.loginError = data.message || 'Login failed.';
                         }
@@ -1809,6 +2865,1670 @@
                     const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${datesParam}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}`;
                     window.open(gcalUrl, '_blank');
                     this.showToast(`Google Calendar link opened for #${b.id}!`);
+                },
+
+                initWeek() {
+                    this.goToMondayWeek();
+                },
+
+                formatDate(d) {
+                    if (!d) return '';
+                    const dateObj = (d instanceof Date) ? d : new Date(d);
+                    const year = dateObj.getFullYear();
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+
+                getMonday(d) {
+                    const date = new Date(d);
+                    const day = date.getDay(); // 0 is Sun, 1 is Mon...
+                    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+                    return new Date(date.setDate(diff));
+                },
+
+                setStartDate(val) {
+                    if (!val) return;
+                    this.weekStartDate = val;
+                },
+
+                goToTodayWeek() {
+                    this.weekStartDate = this.formatDate(new Date());
+                },
+
+                goToMondayWeek() {
+                    const now = new Date();
+                    this.weekStartDate = this.formatDate(this.getMonday(now));
+                },
+
+                prevWeek() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = this.weekStartDate.split('-');
+                    const current = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    current.setDate(current.getDate() - 7);
+                    this.weekStartDate = this.formatDate(current);
+                },
+
+                nextWeek() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = this.weekStartDate.split('-');
+                    const current = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    current.setDate(current.getDate() + 7);
+                    this.weekStartDate = this.formatDate(current);
+                },
+
+                jumpToDate(val) {
+                    this.setStartDate(val);
+                },
+
+                handleDragStart(e, b) {
+                    this.draggedBooking = b;
+                    if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'move';
+                        try {
+                            e.dataTransfer.setData('text/plain', String(b.id));
+                        } catch (err) {}
+                    }
+                },
+
+                handleDragEnd(e) {
+                    this.draggedBooking = null;
+                    this.dragOverCell = '';
+                },
+
+                handleDragOver(e, dateStr, slot) {
+                    e.preventDefault();
+                    if (e.dataTransfer) {
+                        e.dataTransfer.dropEffect = 'move';
+                    }
+                    const key = dateStr + '_' + slot;
+                    if (this.dragOverCell !== key) {
+                        this.dragOverCell = key;
+                    }
+                },
+
+                handleDragLeave(e, dateStr, slot) {
+                    if (e.currentTarget && e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+                        return;
+                    }
+                    const key = dateStr + '_' + slot;
+                    if (this.dragOverCell === key) {
+                        this.dragOverCell = '';
+                    }
+                },
+
+                async handleDrop(e, targetDate, targetSlot) {
+                    e.preventDefault();
+                    this.dragOverCell = '';
+                    if (!this.draggedBooking) return;
+
+                    const b = this.draggedBooking;
+                    const oldDate = b.booking_date;
+                    const oldTime = b.booking_time;
+                    const newTime = this.convertSlotToAmPm(targetSlot);
+
+                    // If dropped on the exact same slot, reset
+                    if (oldDate === targetDate && oldTime === newTime) {
+                        this.draggedBooking = null;
+                        return;
+                    }
+
+                    const confirmMsg = `[Reschedule Appointment]\n\nCustomer: ${b.customer_name} (#FIT-${b.id})\n\nFrom: ${oldDate} ${oldTime}\nTo: ${targetDate} ${newTime}\n\nDo you want to move this appointment to the new date and time?`;
+                    if (!confirm(confirmMsg)) {
+                        this.draggedBooking = null;
+                        return;
+                    }
+
+                    // Optimistic UI update
+                    b.booking_date = targetDate;
+                    b.booking_time = newTime;
+                    const bookingId = b.id;
+                    this.draggedBooking = null;
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', bookingId);
+                        formData.append('booking_date', targetDate);
+                        formData.append('booking_time', newTime);
+
+                        const res = await fetch('/api_booking.php?action=reschedule_booking', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ Booking #${bookingId} rescheduled to ${targetDate} ${newTime}`);
+                        } else {
+                            // Revert on error
+                            b.booking_date = oldDate;
+                            b.booking_time = oldTime;
+                            alert(data.message || 'Failed to reschedule appointment');
+                        }
+                    } catch (err) {
+                        // Revert on network error
+                        b.booking_date = oldDate;
+                        b.booking_time = oldTime;
+                        alert('Network error rescheduling appointment: ' + err.message);
+                    }
+                },
+
+                formatSlotLabel(slot) {
+                    const h = parseInt(slot.split(':')[0], 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+                    return `${displayH}:00 ${ampm}`;
+                },
+
+                parseBookingHour(timeStr) {
+                    if (!timeStr) return null;
+                    const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+                    if (!match) return null;
+                    let h = parseInt(match[1], 10);
+                    const ampm = match[3] ? match[3].toUpperCase() : '';
+                    if (ampm === 'PM' && h < 12) h += 12;
+                    if (ampm === 'AM' && h === 12) h = 0;
+                    return String(h).padStart(2, '0') + ':00';
+                },
+
+                getBookingsForSlot(dateStr, hourSlot) {
+                    let list = this.bookings.filter(b => {
+                        if (b.booking_date !== dateStr) return false;
+                        const bHour = this.parseBookingHour(b.booking_time);
+                        return bHour === hourSlot;
+                    });
+
+                    const query = (this.bookingSearchQuery || '').toLowerCase().trim();
+                    if (query) {
+                        list = list.filter(b => 
+                            (b.customer_name && b.customer_name.toLowerCase().includes(query)) ||
+                            (b.phone && b.phone.toLowerCase().includes(query)) ||
+                            (b.service_type && b.service_type.toLowerCase().includes(query)) ||
+                            (b.notes && b.notes.toLowerCase().includes(query)) ||
+                            ('fit-' + b.id).includes(query)
+                        );
+                    }
+                    if (this.bookingStatusFilter !== 'All') {
+                        list = list.filter(b => b.status === this.bookingStatusFilter);
+                    }
+                    return list;
+                },
+
+                openBookingDetail(b) {
+                    if (this.draggedBooking) return;
+                    this.selectedBooking = { ...b };
+                    this.bookingDetailModalOpen = true;
+                },
+
+                closeBookingDetail() {
+                    this.bookingDetailModalOpen = false;
+                    this.selectedBooking = null;
+                },
+
+                async saveSelectedBookingNotes() {
+                    if (!this.selectedBooking) return;
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', this.selectedBooking.id);
+                        formData.append('status', this.selectedBooking.status);
+                        formData.append('notes', this.selectedBooking.notes || '');
+                        const res = await fetch('/api_booking.php?action=update_status', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            const b = this.bookings.find(x => x.id == this.selectedBooking.id);
+                            if (b) {
+                                b.status = this.selectedBooking.status;
+                                b.notes = this.selectedBooking.notes;
+                            }
+                            this.showToast(`Booking #${this.selectedBooking.id} notes saved!`);
+                        } else {
+                            alert(data.message || 'Update failed');
+                        }
+                    } catch (e) {
+                        alert('Server error saving booking notes.');
+                    }
+                },
+
+                openNewBookingModal(dateStr = '', timeSlot = '') {
+                    this.newBookingForm = {
+                        customer_name: '',
+                        phone: '',
+                        email: '',
+                        service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                        booking_date: dateStr || this.formatDate(new Date()),
+                        booking_time: timeSlot ? this.convertSlotToAmPm(timeSlot) : '11:00 AM',
+                        notes: ''
+                    };
+                    this.newBookingModalOpen = true;
+                },
+
+                convertSlotToAmPm(slot) {
+                    const h = parseInt(slot.split(':')[0], 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+                    return `${String(displayH).padStart(2, '0')}:00 ${ampm}`;
+                },
+
+                async submitNewBooking() {
+                    if (!this.newBookingForm.customer_name || !this.newBookingForm.phone || !this.newBookingForm.booking_date || !this.newBookingForm.booking_time) {
+                        alert('Please enter customer name, phone number, booking date, and time.');
+                        return;
+                    }
+                    try {
+                        const formData = new FormData();
+                        formData.append('customer_name', this.newBookingForm.customer_name);
+                        formData.append('phone', this.newBookingForm.phone);
+                        formData.append('email', this.newBookingForm.email || '');
+                        formData.append('service_type', this.newBookingForm.service_type);
+                        formData.append('booking_date', this.newBookingForm.booking_date);
+                        formData.append('booking_time', this.newBookingForm.booking_time);
+                        formData.append('notes', this.newBookingForm.notes || '');
+
+                        const res = await fetch('/api_booking.php?action=create_booking', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ New fitting appointment (#FIT-${data.booking_id}) registered!`);
+                            this.newBookingModalOpen = false;
+                            await this.loadBookings();
+                        } else {
+                            alert(data.message || 'Failed to register appointment');
+                        }
+                    } catch (e) {
+                        alert('Network error registering appointment');
+                    }
+                },
+
+                // Membership Getters & Computed
+                get filteredMembers() {
+                    let list = this.members;
+                    const query = (this.memberSearchQuery || '').toLowerCase().trim();
+                    if (query) {
+                        list = list.filter(m => 
+                            (m.full_name && m.full_name.toLowerCase().includes(query)) ||
+                            (m.email && m.email.toLowerCase().includes(query)) ||
+                            (m.phone && m.phone.toLowerCase().includes(query)) ||
+                            (m.member_code && m.member_code.toLowerCase().includes(query)) ||
+                            (m.referral_code && m.referral_code.toLowerCase().includes(query)) ||
+                            (m.hair_system_type && m.hair_system_type.toLowerCase().includes(query))
+                        );
+                    }
+                    if (this.memberTierFilter !== 'All') {
+                        list = list.filter(m => m.tier === this.memberTierFilter);
+                    }
+                    if (this.memberStatusFilter !== 'All') {
+                        list = list.filter(m => m.status === this.memberStatusFilter);
+                    }
+                    return list;
+                },
+
+                get vipAndGoldCount() {
+                    return this.members.filter(m => m.tier === 'VIP Partner' || m.tier === 'Gold').length;
+                },
+
+                get totalMembersSpent() {
+                    return this.members.reduce((sum, m) => sum + parseFloat(m.total_spent || 0), 0);
+                },
+
+                get totalMembersPoints() {
+                    return this.members.reduce((sum, m) => sum + parseInt(m.points || 0), 0);
+                },
+
+                // Membership Methods
+                async loadMembers() {
+                    this.isLoadingMembers = true;
+                    try {
+                        const res = await fetch('/api_members.php?action=list&t=' + Date.now());
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.members = data.data || [];
+                        } else {
+                            console.error('Failed to load members:', data.message);
+                        }
+                    } catch (err) {
+                        console.error('Network error loading members:', err);
+                    } finally {
+                        this.isLoadingMembers = false;
+                    }
+                },
+
+                openMemberModal(mode, member = null) {
+                    this.memberModalMode = mode;
+                    if (mode === 'edit' && member) {
+                        this.memberForm = {
+                            id: member.id,
+                            member_code: member.member_code,
+                            full_name: member.full_name,
+                            email: member.email,
+                            password: '',
+                            phone: member.phone || '',
+                            hair_system_type: member.hair_system_type || 'Full Skin System (0.03mm)',
+                            tier: member.tier || 'Bronze',
+                            points: parseInt(member.points || 0),
+                            total_spent: parseFloat(member.total_spent || 0),
+                            visit_count: parseInt(member.visit_count || 0),
+                            referral_code: member.referral_code || '',
+                            referred_by: member.referred_by || '',
+                            status: member.status || 'Active',
+                            notes: member.notes || ''
+                        };
+                    } else {
+                        const rnd = Math.floor(100 + Math.random() * 900);
+                        this.memberForm = {
+                            id: null,
+                            member_code: 'DH-M' + (100 + this.members.length + 1),
+                            full_name: '',
+                            email: '',
+                            password: '',
+                            phone: '',
+                            hair_system_type: 'Full Skin System (0.03mm)',
+                            tier: 'Bronze',
+                            points: 100,
+                            total_spent: 0,
+                            visit_count: 0,
+                            referral_code: '',
+                            referred_by: '',
+                            status: 'Active',
+                            notes: ''
+                        };
+                    }
+                    this.isMemberModalOpen = true;
+                },
+
+                async saveMember() {
+                    if (!this.memberForm.full_name || !this.memberForm.email) {
+                        alert('Please fill in Full Name and Email Address.');
+                        return;
+                    }
+                    try {
+                        const formData = new FormData();
+                        formData.append('full_name', this.memberForm.full_name);
+                        formData.append('email', this.memberForm.email);
+                        if (this.memberForm.password) {
+                            formData.append('password', this.memberForm.password);
+                        }
+                        formData.append('phone', this.memberForm.phone || '');
+                        formData.append('hair_system_type', this.memberForm.hair_system_type || '');
+                        formData.append('tier', this.memberForm.tier);
+                        formData.append('points', this.memberForm.points || 0);
+                        formData.append('total_spent', this.memberForm.total_spent || 0);
+                        formData.append('visit_count', this.memberForm.visit_count || 0);
+                        formData.append('referral_code', this.memberForm.referral_code || '');
+                        formData.append('referred_by', this.memberForm.referred_by || '');
+                        formData.append('status', this.memberForm.status);
+                        formData.append('notes', this.memberForm.notes || '');
+
+                        let url = '/api_members.php?action=create';
+                        if (this.memberModalMode === 'edit') {
+                            url = '/api_members.php?action=update';
+                            formData.append('id', this.memberForm.id);
+                        }
+
+                        const res = await fetch(url, { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ Member ${this.memberForm.full_name} ${this.memberModalMode === 'edit' ? 'updated' : 'created'} successfully!`);
+                            this.isMemberModalOpen = false;
+                            await this.loadMembers();
+                        } else {
+                            alert(data.message || 'Operation failed');
+                        }
+                    } catch (err) {
+                        alert('Network error saving member: ' + err.message);
+                    }
+                },
+
+                async deleteMember(member) {
+                    if (!confirm(`Are you sure you want to remove member "${member.full_name}" (${member.member_code})?`)) {
+                        return;
+                    }
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', member.id);
+                        const res = await fetch('/api_members.php?action=delete', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ Member ${member.full_name} deleted.`);
+                            await this.loadMembers();
+                        } else {
+                            alert(data.message || 'Failed to delete member');
+                        }
+                    } catch (err) {
+                        alert('Network error deleting member');
+                    }
+                },
+
+                openRecordModal(member) {
+                    this.selectedMemberForRecord = member;
+                    this.recordForm = {
+                        type: 'purchase',
+                        title: member.hair_system_type || 'Hairpiece Purchase',
+                        amount: 550,
+                        points_delta: 50
+                    };
+                    this.isRecordModalOpen = true;
+                },
+
+                async submitMemberRecord() {
+                    if (!this.selectedMemberForRecord) return;
+                    if (!this.recordForm.title) {
+                        alert('Please enter a description or service title.');
+                        return;
+                    }
+                    try {
+                        const formData = new FormData();
+                        formData.append('member_id', this.selectedMemberForRecord.id);
+                        formData.append('type', this.recordForm.type);
+                        formData.append('title', this.recordForm.title);
+                        formData.append('amount', this.recordForm.amount || 0);
+                        formData.append('points_delta', this.recordForm.points_delta || 0);
+
+                        const res = await fetch('/api_members.php?action=add_record', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ Activity recorded for ${this.selectedMemberForRecord.full_name}! (Tier: ${data.tier})`);
+                            this.isRecordModalOpen = false;
+                            await this.loadMembers();
+                        } else {
+                            alert(data.message || 'Failed to record activity');
+                        }
+                    } catch (err) {
+                        alert('Network error submitting record');
+                    }
+                },
+
+                async openHistoryModal(member) {
+                    this.selectedMemberHistory = member;
+                    this.isHistoryModalOpen = true;
+                    this.isLoadingRecords = true;
+                    this.memberRecordsList = [];
+                    try {
+                        const res = await fetch('/api_members.php?action=records&member_id=' + member.id + '&t=' + Date.now());
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.memberRecordsList = data.data || [];
+                        } else {
+                            alert(data.message || 'Failed to load history');
+                        }
+                    } catch (err) {
+                        console.error('Error fetching member records:', err);
+                    } finally {
+                        this.isLoadingRecords = false;
+                    }
+                },
+
+                closeHistoryModal() {
+                    this.isHistoryModalOpen = false;
+                    this.selectedMemberHistory = null;
+                    this.memberRecordsList = [];
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+ + Number(r.amount).toFixed(2) : '-'"></td>
+                                        <td class="py-2.5 px-3 text-right font-mono font-bold" :class="Number(r.points_delta) >= 0 ? 'text-emerald-400' : 'text-rose-400'" x-text="(Number(r.points_delta) >= 0 ? '+' : '') + Number(r.points_delta)"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <div class="flex justify-end pt-2 border-t border-brand-border">
+                <button type="button" @click="closeHistoryModal()" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALPINE LOGIC -->
+    <script>
+        function stockManagerApp() {
+            return {
+                activeTab: 'stock',
+                isAuthenticated: false,
+                isLoggingIn: false,
+                loginError: '',
+                lang: localStorage.getItem('dh_lang') || 'en',
+                setLang(l) {
+                    this.lang = l;
+                    localStorage.setItem('dh_lang', l);
+                },
+                currentUser: '',
+                showPassword: false,
+                loginForm: { email: 'shc9607@gmail.com', password: '' },
+
+                items: [],
+                searchQuery: '',
+                selectedCategory: 'All',
+
+                // Sorting state (name, category, size, price, stockQty)
+                sortColumn: '',
+                sortDirection: 'asc',
+
+                // Inline row edit state
+                editingRowId: null,
+                inlineForm: {},
+                inlineSaving: false,
+                inlineSelectedFile: null,
+                inlineImagePreview: '',
+                toastMessage: '',
+                toastTimeout: null,
+
+                isModalOpen: false,
+                modalMode: 'add',
+                copiedNotice: '',
+                form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '', description: '', badge: '' },
+                selectedFile: null,
+                imagePreview: '',
+
+                // AI Hairstyles state
+                aiStyles: [],
+                aiModalOpen: false,
+                aiModalMode: 'add',
+                aiForm: { id: null, name: '', tag: '', gender: 'Men', overlay_url: '' },
+                aiSelectedFile: null,
+                aiSelectedFileName: '',
+                previousOverlayUrl: '',
+                aiImagePreview: '',
+
+                // Fitting Bookings state
+                bookings: [],
+                bookingViewMode: 'week', // 'week' or 'list'
+                weekStartDate: '', // Starting date for 7-day display
+                draggedBooking: null,
+                dragOverCell: '',
+                get currentWeekMonday() { return this.weekStartDate; },
+                set currentWeekMonday(val) { this.weekStartDate = val; },
+                bookingSearchQuery: '',
+                bookingStatusFilter: 'All',
+                bookingDateFilter: 'All',
+                isLoadingBookings: false,
+                bookingDetailModalOpen: false,
+                selectedBooking: null,
+                newBookingModalOpen: false,
+                newBookingForm: {
+                    customer_name: '',
+                    phone: '',
+                    email: '',
+                    service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                    booking_date: '',
+                    booking_time: '11:00 AM',
+                    notes: ''
+                },
+
+                async init() {
+                    await this.checkAuth();
+                    this.initWeek();
+                },
+
+                get totalQty() {
+                    return this.items.reduce((sum, item) => sum + parseInt(item.stockQty || 0), 0);
+                },
+
+                get pendingBookingsCount() {
+                    return this.bookings.filter(b => b.status === 'Pending').length;
+                },
+
+                get confirmedBookingsCount() {
+                    return this.bookings.filter(b => b.status === 'Confirmed').length;
+                },
+
+                get todayBookingsCount() {
+                    const today = this.formatDate(new Date());
+                    return this.bookings.filter(b => b.booking_date === today).length;
+                },
+
+                get weekDays() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = (this.weekStartDate || this.formatDate(new Date())).split('-');
+                    const base = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    const days = [];
+                    const namesKo = ['일', '월', '화', '수', '목', '금', '토'];
+                    const namesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const today = this.formatDate(new Date());
+
+                    for (let i = 0; i < 7; i++) {
+                        const d = new Date(base);
+                        d.setDate(base.getDate() + i);
+                        const dateStr = this.formatDate(d);
+                        const dayOfWeek = d.getDay();
+                        const dayBookings = this.bookings.filter(b => b.booking_date === dateStr);
+                        days.push({
+                            dateStr: dateStr,
+                            nameKo: namesKo[dayOfWeek],
+                            nameEn: namesEn[dayOfWeek],
+                            monthDay: String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'),
+                            isToday: dateStr === today,
+                            bookingsCount: dayBookings.length,
+                            confirmedCount: dayBookings.filter(b => b.status === 'Confirmed').length,
+                            pendingCount: dayBookings.filter(b => b.status === 'Pending').length
+                        });
+                    }
+                    return days;
+                },
+
+                get weekRangeLabel() {
+                    const days = this.weekDays;
+                    if (!days || days.length === 0) return '';
+                    return `${days[0].dateStr} (${days[0].nameEn}) ~ ${days[6].dateStr} (${days[6].nameEn})`;
+                },
+
+                get weekTotalBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date)).length;
+                },
+
+                get weekConfirmedBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date) && b.status === 'Confirmed').length;
+                },
+
+                get weekPendingBookingsCount() {
+                    const days = this.weekDays;
+                    const dates = new Set(days.map(d => d.dateStr));
+                    return this.bookings.filter(b => dates.has(b.booking_date) && b.status === 'Pending').length;
+                },
+
+                timeSlots: [
+                    '08:00', '09:00', '10:00', '11:00', '12:00', 
+                    '13:00', '14:00', '15:00', '16:00', '17:00', 
+                    '18:00', '19:00', '20:00'
+                ],
+
+                get filteredBookings() {
+                    let list = this.bookings;
+                    const query = (this.bookingSearchQuery || '').toLowerCase().trim();
+                    if (query) {
+                        list = list.filter(b => 
+                            (b.customer_name && b.customer_name.toLowerCase().includes(query)) ||
+                            (b.phone && b.phone.toLowerCase().includes(query)) ||
+                            (b.service_type && b.service_type.toLowerCase().includes(query)) ||
+                            (b.notes && b.notes.toLowerCase().includes(query)) ||
+                            ('fit-' + b.id).includes(query)
+                        );
+                    }
+                    if (this.bookingStatusFilter !== 'All') {
+                        list = list.filter(b => b.status === this.bookingStatusFilter);
+                    }
+                    if (this.bookingDateFilter === 'Today') {
+                        const today = new Date().toISOString().slice(0, 10);
+                        list = list.filter(b => b.booking_date === today);
+                    } else if (this.bookingDateFilter === 'Upcoming') {
+                        const today = new Date().toISOString().slice(0, 10);
+                        list = list.filter(b => b.booking_date >= today);
+                    }
+                    return list;
+                },
+
+                get filteredItems() {
+                    let result = this.items.filter(item => {
+                        const matchesCategory = this.selectedCategory === 'All' || item.category === this.selectedCategory;
+                        const query = this.searchQuery.toLowerCase();
+                        const matchesQuery = !query || 
+                            item.name.toLowerCase().includes(query) || 
+                            item.sku.toLowerCase().includes(query) || 
+                            item.base.toLowerCase().includes(query);
+                        return matchesCategory && matchesQuery;
+                    });
+
+                    if (this.sortColumn) {
+                        const col = this.sortColumn;
+                        const dir = this.sortDirection === 'asc' ? 1 : -1;
+
+                        result = [...result].sort((a, b) => {
+                            let valA = a[col];
+                            let valB = b[col];
+
+                            // 숫자형 정렬: price, stockQty
+                            if (col === 'price' || col === 'stockQty') {
+                                valA = parseFloat(valA) || 0;
+                                valB = parseFloat(valB) || 0;
+                                return (valA - valB) * dir;
+                            }
+
+                            // 문자열 정렬: name, category, size
+                            valA = (valA || '').toString().toLowerCase();
+                            valB = (valB || '').toString().toLowerCase();
+                            return valA.localeCompare(valB) * dir;
+                        });
+                    }
+
+                    return result;
+                },
+
+                sortBy(col) {
+                    if (this.sortColumn === col) {
+                        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        this.sortColumn = col;
+                        this.sortDirection = (col === 'price' || col === 'stockQty') ? 'desc' : 'asc';
+                    }
+                },
+
+                getSortIcon(col) {
+                    if (this.sortColumn !== col) {
+                        return 'fa-sort text-slate-500 opacity-40 group-hover:opacity-100';
+                    }
+                    return this.sortDirection === 'asc' 
+                        ? 'fa-sort-up text-brand-tealLight scale-125' 
+                        : 'fa-sort-down text-brand-tealLight scale-125';
+                },
+
+                applySelectSort(val) {
+                    if (val === 'id-desc') {
+                        this.sortColumn = '';
+                        this.sortDirection = 'asc';
+                        return;
+                    }
+                    const [col, dir] = val.split('-');
+                    this.sortColumn = col;
+                    this.sortDirection = dir;
+                },
+
+                async checkAuth() {
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=check_auth');
+                        const data = await res.json();
+                        if (data.status === 'authenticated') {
+                            this.isAuthenticated = true;
+                            this.currentUser = data.user;
+                            await this.loadItems();
+                            await this.loadAiStyles();
+                            await this.loadBookings();
+                            await this.loadMembers();
+                        } else {
+                            this.isAuthenticated = false;
+                        }
+                    } catch (e) {
+                        this.isAuthenticated = false;
+                    }
+                },
+
+                async login() {
+                    this.isLoggingIn = true;
+                    this.loginError = '';
+
+                    const formData = new FormData();
+                    formData.append('action', 'login');
+                    formData.append('email', this.loginForm.email);
+                    formData.append('password', this.loginForm.password);
+
+                    try {
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.isAuthenticated = true;
+                            this.currentUser = data.user;
+                            this.loginForm.password = '';
+                            await this.loadItems();
+                            await this.loadAiStyles();
+                            await this.loadBookings();
+                            await this.loadMembers();
+                        } else {
+                            this.loginError = data.message || 'Login failed.';
+                        }
+                    } catch (e) {
+                        this.loginError = 'Network error during login.';
+                    } finally {
+                        this.isLoggingIn = false;
+                    }
+                },
+
+                async logout() {
+                    try {
+                        await fetch('/admin_stock_api.php?action=logout');
+                        this.isAuthenticated = false;
+                        this.currentUser = '';
+                        this.items = [];
+                    } catch (e) {
+                        this.isAuthenticated = false;
+                    }
+                },
+
+                async loadItems() {
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=list');
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.items = data.data;
+                        }
+                    } catch (e) {
+                        console.log('Error loading items:', e);
+                    }
+                },
+
+                async loadAiStyles() {
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=list_ai_styles&t=' + Date.now());
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.aiStyles = data.data;
+                        }
+                    } catch (e) {
+                        console.log('Error loading AI styles:', e);
+                    }
+                },
+
+                openModal(mode, item = null) {
+                    this.modalMode = mode;
+                    this.selectedFile = null;
+                    this.copiedNotice = '';
+                    if (mode === 'edit' && item) {
+                        this.form = { ...item, image_url: item.image, description: item.description || '', badge: item.badge || '' };
+                        this.imagePreview = item.image;
+                    } else {
+                        this.form = {
+                            id: null,
+                            sku: 'SKU-DH-' + (100 + this.items.length + 1),
+                            name: '', category: "Men's Toupees", type: "Skin Systems",
+                            base: "0.03mm Skin", size: '8x10"', density: '90%',
+                            color: '#1B Off Black', price: 450, stockQty: 10, image_url: '',
+                            description: '', badge: ''
+                        };
+                        this.imagePreview = '';
+                    }
+                    this.isModalOpen = true;
+                },
+
+                copyAsNewProduct() {
+                    if (!this.form.name && !this.form.sku) {
+                        alert('복사할 제품 정보가 없습니다.');
+                        return;
+                    }
+
+                    const originalSku = this.form.sku || 'SKU';
+                    const originalName = this.form.name || 'Product';
+
+                    // Generate unique new SKU
+                    let newSku = `${originalSku}-COPY`;
+                    let counter = 1;
+                    while (this.items.some(item => item.sku && item.sku.toLowerCase() === newSku.toLowerCase())) {
+                        counter++;
+                        newSku = `${originalSku}-COPY-${counter}`;
+                    }
+
+                    // New name
+                    let newName = originalName;
+                    if (!newName.includes('(Copy)')) {
+                        newName = `${newName} (Copy)`;
+                    }
+
+                    // Convert modal to Add New mode with copied specs
+                    this.modalMode = 'add';
+                    this.form.id = null; // Important: Clear ID so backend performs INSERT, not UPDATE
+                    this.form.sku = newSku;
+                    this.form.name = newName;
+                    if (!this.form.image_url && this.imagePreview) {
+                        this.form.image_url = this.imagePreview;
+                    }
+                    this.selectedFile = null;
+
+                    this.copiedNotice = `"${originalSku}" 제품 정보가 복사되었습니다. SKU 및 세부 사양을 검토/수정한 후 저장하세요.`;
+                },
+
+                copyItemFromTable(item) {
+                    this.openModal('edit', item);
+                    this.copyAsNewProduct();
+                },
+
+                handleFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.selectedFile = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.imagePreview = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                async saveStockItem() {
+                    const formData = new FormData();
+                    formData.append('action', 'save');
+                    if (this.form.id) formData.append('id', this.form.id);
+                    formData.append('sku', this.form.sku);
+                    formData.append('name', this.form.name);
+                    formData.append('category', this.form.category);
+                    formData.append('type', this.form.type);
+                    formData.append('base', this.form.base);
+                    formData.append('size', this.form.size);
+                    formData.append('density', this.form.density);
+                    formData.append('color', this.form.color);
+                    formData.append('price', this.form.price);
+                    formData.append('stockQty', this.form.stockQty);
+                    formData.append('description', this.form.description || '');
+                    formData.append('badge', this.form.badge || '');
+                    formData.append('image_url', this.form.image_url);
+                    if (this.selectedFile) formData.append('image_file', this.selectedFile);
+
+                    try {
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (result.status === 'success') {
+                            alert(result.message);
+                            this.isModalOpen = false;
+                            this.copiedNotice = '';
+                            await this.loadItems();
+                        } else {
+                            alert('Error: ' + result.message);
+                        }
+                    } catch (e) {
+                        alert('Network error saving stock item.');
+                    }
+                },
+
+                async deleteItem(item) {
+                    if (confirm(`Delete "${item.name}" (${item.sku})?`)) {
+                        try {
+                            const res = await fetch(`/admin_stock_api.php?action=delete&id=${item.id}`);
+                            const result = await res.json();
+                            if (result.status === 'success') {
+                                alert(result.message);
+                                await this.loadItems();
+                            }
+                        } catch (e) { alert('Network error deleting item.'); }
+                    }
+                },
+
+                showToast(msg) {
+                    this.toastMessage = msg;
+                    if (this.toastTimeout) clearTimeout(this.toastTimeout);
+                    this.toastTimeout = setTimeout(() => { this.toastMessage = ''; }, 3500);
+                },
+
+                startInlineEdit(item) {
+                    this.editingRowId = item.id;
+                    this.inlineSelectedFile = null;
+                    this.inlineImagePreview = item.image || '';
+                    this.inlineForm = { 
+                        ...item, 
+                        price: parseFloat(item.price) || 0,
+                        stockQty: parseInt(item.stockQty) || 0,
+                        description: item.description || '',
+                        badge: item.badge || '',
+                        image_url: item.image || ''
+                    };
+                },
+
+                cancelInlineEdit() {
+                    this.editingRowId = null;
+                    this.inlineSelectedFile = null;
+                    this.inlineImagePreview = '';
+                    this.inlineForm = {};
+                },
+
+                handleInlineFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.inlineSelectedFile = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.inlineImagePreview = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                async saveInlineEdit() {
+                    if (!this.inlineForm.sku || !this.inlineForm.name) {
+                        alert('SKU와 제품명을 입력해주세요.');
+                        return;
+                    }
+                    this.inlineSaving = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', 'save');
+                        formData.append('id', this.inlineForm.id);
+                        formData.append('sku', this.inlineForm.sku);
+                        formData.append('name', this.inlineForm.name);
+                        formData.append('category', this.inlineForm.category);
+                        formData.append('type', this.inlineForm.type || '');
+                        formData.append('base', this.inlineForm.base);
+                        formData.append('size', this.inlineForm.size);
+                        formData.append('density', this.inlineForm.density);
+                        formData.append('color', this.inlineForm.color);
+                        formData.append('price', this.inlineForm.price);
+                        formData.append('stockQty', this.inlineForm.stockQty);
+                        formData.append('description', this.inlineForm.description || '');
+                        formData.append('badge', this.inlineForm.badge || '');
+                        formData.append('image_url', this.inlineForm.image_url || this.inlineForm.image || '');
+                        if (this.inlineSelectedFile) {
+                            formData.append('image_file', this.inlineSelectedFile);
+                        }
+
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (result.status === 'success') {
+                            this.showToast(`✅ [${this.inlineForm.sku}] "${this.inlineForm.name}" 정보 및 사진이 저장되었습니다.`);
+                            this.editingRowId = null;
+                            this.inlineSelectedFile = null;
+                            this.inlineImagePreview = '';
+                            await this.loadItems();
+                        } else {
+                            alert('저장 실패: ' + result.message);
+                        }
+                    } catch (e) {
+                        alert('네트워크 오류가 발생했습니다.');
+                    } finally {
+                        this.inlineSaving = false;
+                    }
+                },
+
+                async quickUploadImage(item, event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append('action', 'save');
+                    formData.append('id', item.id);
+                    formData.append('sku', item.sku);
+                    formData.append('name', item.name);
+                    formData.append('category', item.category);
+                    formData.append('type', item.type || '');
+                    formData.append('base', item.base);
+                    formData.append('size', item.size);
+                    formData.append('density', item.density);
+                    formData.append('color', item.color);
+                    formData.append('price', item.price);
+                    formData.append('stockQty', item.stockQty);
+                    formData.append('description', item.description || '');
+                    formData.append('badge', item.badge || '');
+                    formData.append('image_file', file);
+
+                    this.showToast(`📸 [${item.sku}] 새 사진을 업로드하는 중...`);
+
+                    try {
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (result.status === 'success') {
+                            this.showToast(`✅ [${item.sku}] 사진이 즉시 변경되었습니다!`);
+                            await this.loadItems();
+                        } else {
+                            alert('사진 업로드 실패: ' + result.message);
+                        }
+                    } catch (e) {
+                        alert('네트워크 오류로 사진 업로드 실패');
+                    }
+                },
+
+                async quickUpdateStockQty(item, delta) {
+                    const newQty = Math.max(0, parseInt(item.stockQty || 0) + delta);
+                    if (newQty === parseInt(item.stockQty)) return;
+                    
+                    const oldQty = item.stockQty;
+                    item.stockQty = newQty; // UI 즉시 반영
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', 'save');
+                        formData.append('id', item.id);
+                        formData.append('sku', item.sku);
+                        formData.append('name', item.name);
+                        formData.append('category', item.category);
+                        formData.append('type', item.type || '');
+                        formData.append('base', item.base);
+                        formData.append('size', item.size);
+                        formData.append('density', item.density);
+                        formData.append('color', item.color);
+                        formData.append('price', item.price);
+                        formData.append('stockQty', newQty);
+                        formData.append('description', item.description || '');
+                        formData.append('badge', item.badge || '');
+                        formData.append('image_url', item.image || '');
+
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (result.status === 'success') {
+                            this.showToast(`📦 [${item.sku}] 재고가 ${newQty}개로 변경되었습니다.`);
+                        } else {
+                            item.stockQty = oldQty;
+                            alert('재고 변경 실패: ' + result.message);
+                        }
+                    } catch (e) {
+                        item.stockQty = oldQty;
+                        alert('네트워크 오류');
+                    }
+                },
+
+                getBadgeClass(badge) {
+                    switch (badge) {
+                        case 'New':
+                            return 'bg-cyan-500/90 text-slate-950 border-cyan-400 font-black';
+                        case 'Best Seller':
+                            return 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 border-amber-300 font-black';
+                        case "MD's Pick":
+                            return 'bg-purple-600 text-white border-purple-400 font-black';
+                        case 'Limited':
+                            return 'bg-rose-600 text-white border-rose-400 font-black';
+                        case 'Promotion':
+                            return 'bg-emerald-500 text-slate-950 border-emerald-300 font-black';
+                        default:
+                            return 'bg-slate-800 text-slate-200 border-slate-700';
+                    }
+                },
+
+                getBadgeIcon(badge) {
+                    switch (badge) {
+                        case 'New': return 'fa-solid fa-star';
+                        case 'Best Seller': return 'fa-solid fa-fire';
+                        case "MD's Pick": return 'fa-solid fa-crown';
+                        case 'Limited': return 'fa-solid fa-bolt';
+                        case 'Promotion': return 'fa-solid fa-tag';
+                        default: return 'fa-solid fa-tag';
+                    }
+                },
+
+                openAiModal(mode, style = null) {
+                    this.aiModalMode = mode;
+                    this.aiSelectedFile = null;
+                    this.aiSelectedFileName = '';
+                    this.previousOverlayUrl = '';
+                    const fileInput = document.getElementById('aiFileInput');
+                    if (fileInput) fileInput.value = '';
+
+                    if (mode === 'edit' && style) {
+                        this.aiForm = { ...style, overlay_url: style.overlay };
+                        this.previousOverlayUrl = style.overlay || '';
+                        this.aiImagePreview = style.overlay;
+                    } else {
+                        this.aiForm = { id: null, name: '', tag: '', gender: 'Men', overlay_url: '' };
+                        this.aiImagePreview = '';
+                    }
+                    this.aiModalOpen = true;
+                },
+
+                handleAiFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.aiSelectedFile = file;
+                        this.aiSelectedFileName = file.name;
+                        if (this.aiForm.overlay_url) {
+                            this.previousOverlayUrl = this.aiForm.overlay_url;
+                        }
+                        this.aiForm.overlay_url = '';
+
+                        const reader = new FileReader();
+                        reader.onload = (e) => { 
+                            this.aiImagePreview = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        this.clearAiSelectedFile();
+                    }
+                },
+
+                clearAiSelectedFile() {
+                    this.aiSelectedFile = null;
+                    this.aiSelectedFileName = '';
+                    const fileInput = document.getElementById('aiFileInput');
+                    if (fileInput) fileInput.value = '';
+
+                    if (this.previousOverlayUrl) {
+                        this.aiForm.overlay_url = this.previousOverlayUrl;
+                        this.aiImagePreview = this.previousOverlayUrl;
+                    } else {
+                        this.aiForm.overlay_url = '';
+                        this.aiImagePreview = '';
+                    }
+                },
+
+                async saveAiStyle() {
+                    const formData = new FormData();
+                    formData.append('action', 'save_ai_style');
+                    if (this.aiForm.id) formData.append('id', this.aiForm.id);
+                    formData.append('name', this.aiForm.name || '');
+                    formData.append('tag', this.aiForm.tag || '');
+                    formData.append('gender', this.aiForm.gender || 'Men');
+                    
+                    if (this.aiSelectedFile) {
+                        formData.append('overlay_file', this.aiSelectedFile);
+                    } else {
+                        formData.append('overlay_url', this.aiForm.overlay_url || this.previousOverlayUrl || '');
+                    }
+
+                    try {
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const text = await res.text();
+                        let result;
+                        try {
+                            result = JSON.parse(text);
+                        } catch(parseErr) {
+                            alert('Server response error: ' + text.substring(0, 150));
+                            return;
+                        }
+
+                        if (result && result.status === 'success') {
+                            alert(result.message || 'AI Hairstyle saved successfully.');
+                            this.aiModalOpen = false;
+                            this.aiSelectedFile = null;
+                            this.aiSelectedFileName = '';
+                            this.previousOverlayUrl = '';
+                            await this.loadAiStyles();
+                        } else {
+                            alert('Error: ' + (result?.message || 'Failed to save AI Hairstyle.'));
+                        }
+                    } catch (e) {
+                        alert('Network error saving AI style: ' + e.message);
+                    }
+                },
+
+                async deleteAiStyle(style) {
+                    if (confirm(`Delete AI Hairstyle "${style.name}"?`)) {
+                        try {
+                            const res = await fetch(`/admin_stock_api.php?action=delete_ai_style&id=${style.id}`);
+                            const text = await res.text();
+                            let result = JSON.parse(text);
+                            if (result && result.status === 'success') {
+                                alert(result.message || 'AI Hairstyle deleted.');
+                                await this.loadAiStyles();
+                            } else {
+                                alert('Error: ' + (result?.message || 'Could not delete style.'));
+                            }
+                        } catch (e) { alert('Error deleting AI hairstyle.'); }
+                    }
+                },
+
+                isDateToday(dateStr) {
+                    if (!dateStr) return false;
+                    const today = new Date().toISOString().slice(0, 10);
+                    return dateStr === today;
+                },
+
+                async loadBookings() {
+                    this.isLoadingBookings = true;
+                    try {
+                        const res = await fetch('/api_booking.php?action=list_bookings');
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.bookings = data.data || [];
+                        }
+                    } catch (e) {
+                        console.error('Failed to load bookings:', e);
+                    } finally {
+                        this.isLoadingBookings = false;
+                    }
+                },
+
+                async updateBookingStatus(id, newStatus) {
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', id);
+                        formData.append('status', newStatus);
+                        const res = await fetch('/api_booking.php?action=update_status', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            const b = this.bookings.find(x => x.id == id);
+                            if (b) b.status = newStatus;
+                            this.showToast(`Booking #${id} status changed to ${newStatus}`);
+                        } else {
+                            alert(data.message || 'Status update failed.');
+                        }
+                    } catch (e) {
+                        alert('Server error updating status.');
+                    }
+                },
+
+                async deleteBooking(b) {
+                    if (!confirm(`Delete booking #${b.id} for ${b.customer_name}?`)) return;
+                    try {
+                        const res = await fetch(`/api_booking.php?action=delete_booking&id=${b.id}`);
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.bookings = this.bookings.filter(x => x.id !== b.id);
+                            this.showToast(`Booking #${b.id} deleted.`);
+                        } else {
+                            alert(data.message || 'Failed to delete booking.');
+                        }
+                    } catch (e) {
+                        alert('Error deleting booking.');
+                    }
+                },
+
+                formatWhatsAppPhone(phone) {
+                    if (!phone) return '';
+                    let clean = phone.replace(/[^0-9]/g, '');
+                    if (clean.startsWith('0') && clean.length === 10) {
+                        clean = '61' + clean.substring(1);
+                    } else if (clean.startsWith('61')) {
+                        // already has 61
+                    } else if (clean.length === 9 && clean.startsWith('4')) {
+                        clean = '61' + clean;
+                    }
+                    return clean;
+                },
+
+                async confirmAndWhatsApp(b) {
+                    // 1. If status is not Confirmed, update it in DB
+                    if (b.status !== 'Confirmed') {
+                        await this.updateBookingStatus(b.id, 'Confirmed');
+                    }
+
+                    // 2. Prepare WhatsApp message
+                    const cleanPhone = this.formatWhatsAppPhone(b.phone);
+                    const msg = `Hi ${b.customer_name}, this is David Hair Studio Springvale.\n\nYour fitting appointment has been CONFIRMED:\n📅 Date: ${b.booking_date}\n⏰ Time: ${b.booking_time}\n✂️ Service: ${b.service_type}\n📍 Studio: David Hair Studio, Springvale VIC, Melbourne\n\nPlease let us know if you have any questions or need to reschedule. See you soon!`;
+
+                    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+                    window.open(url, '_blank');
+                    this.showToast(`Booking #${b.id} Confirmed & WhatsApp launched!`);
+                },
+
+                addToGoogleCalendar(b) {
+                    // Parse time to hours (e.g. 11:00 AM, 01:00 PM)
+                    let match = (b.booking_time || '').match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                    let startH = 11;
+                    let endH = 12;
+                    if (match) {
+                        let h = parseInt(match[1]);
+                        let ampm = match[3] ? match[3].toUpperCase() : '';
+                        if (ampm === 'PM' && h < 12) h += 12;
+                        if (ampm === 'AM' && h === 12) h = 0;
+                        startH = h;
+                        endH = h + 1;
+                    }
+
+                    const dateClean = (b.booking_date || '').replace(/[^0-9]/g, '');
+                    const startStr = dateClean + 'T' + String(startH).padStart(2, '0') + '0000';
+                    const endStr = dateClean + 'T' + String(endH).padStart(2, '0') + '0000';
+                    const datesParam = `${startStr}/${endStr}`;
+
+                    const title = `[David Hair Fitting] ${b.customer_name} (${b.booking_time})`;
+                    const details = `Customer: ${b.customer_name}\nPhone: ${b.phone}\nService: ${b.service_type}\nBooking ID: #FIT-${b.id}\nStatus: ${b.status}\nNotes: ${b.notes || 'None'}`;
+                    const location = `David Hair Fitting Studio, Springvale VIC, Melbourne, Australia`;
+
+                    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${datesParam}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}`;
+                    window.open(gcalUrl, '_blank');
+                    this.showToast(`Google Calendar link opened for #${b.id}!`);
+                },
+
+                initWeek() {
+                    this.goToMondayWeek();
+                },
+
+                formatDate(d) {
+                    if (!d) return '';
+                    const dateObj = (d instanceof Date) ? d : new Date(d);
+                    const year = dateObj.getFullYear();
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+
+                getMonday(d) {
+                    const date = new Date(d);
+                    const day = date.getDay(); // 0 is Sun, 1 is Mon...
+                    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+                    return new Date(date.setDate(diff));
+                },
+
+                setStartDate(val) {
+                    if (!val) return;
+                    this.weekStartDate = val;
+                },
+
+                goToTodayWeek() {
+                    this.weekStartDate = this.formatDate(new Date());
+                },
+
+                goToMondayWeek() {
+                    const now = new Date();
+                    this.weekStartDate = this.formatDate(this.getMonday(now));
+                },
+
+                prevWeek() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = this.weekStartDate.split('-');
+                    const current = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    current.setDate(current.getDate() - 7);
+                    this.weekStartDate = this.formatDate(current);
+                },
+
+                nextWeek() {
+                    if (!this.weekStartDate) this.initWeek();
+                    const parts = this.weekStartDate.split('-');
+                    const current = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    current.setDate(current.getDate() + 7);
+                    this.weekStartDate = this.formatDate(current);
+                },
+
+                jumpToDate(val) {
+                    this.setStartDate(val);
+                },
+
+                handleDragStart(e, b) {
+                    this.draggedBooking = b;
+                    if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'move';
+                        try {
+                            e.dataTransfer.setData('text/plain', String(b.id));
+                        } catch (err) {}
+                    }
+                },
+
+                handleDragEnd(e) {
+                    this.draggedBooking = null;
+                    this.dragOverCell = '';
+                },
+
+                handleDragOver(e, dateStr, slot) {
+                    e.preventDefault();
+                    if (e.dataTransfer) {
+                        e.dataTransfer.dropEffect = 'move';
+                    }
+                    const key = dateStr + '_' + slot;
+                    if (this.dragOverCell !== key) {
+                        this.dragOverCell = key;
+                    }
+                },
+
+                handleDragLeave(e, dateStr, slot) {
+                    if (e.currentTarget && e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+                        return;
+                    }
+                    const key = dateStr + '_' + slot;
+                    if (this.dragOverCell === key) {
+                        this.dragOverCell = '';
+                    }
+                },
+
+                async handleDrop(e, targetDate, targetSlot) {
+                    e.preventDefault();
+                    this.dragOverCell = '';
+                    if (!this.draggedBooking) return;
+
+                    const b = this.draggedBooking;
+                    const oldDate = b.booking_date;
+                    const oldTime = b.booking_time;
+                    const newTime = this.convertSlotToAmPm(targetSlot);
+
+                    // If dropped on the exact same slot, reset
+                    if (oldDate === targetDate && oldTime === newTime) {
+                        this.draggedBooking = null;
+                        return;
+                    }
+
+                    const confirmMsg = `[Reschedule Appointment]\n\nCustomer: ${b.customer_name} (#FIT-${b.id})\n\nFrom: ${oldDate} ${oldTime}\nTo: ${targetDate} ${newTime}\n\nDo you want to move this appointment to the new date and time?`;
+                    if (!confirm(confirmMsg)) {
+                        this.draggedBooking = null;
+                        return;
+                    }
+
+                    // Optimistic UI update
+                    b.booking_date = targetDate;
+                    b.booking_time = newTime;
+                    const bookingId = b.id;
+                    this.draggedBooking = null;
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', bookingId);
+                        formData.append('booking_date', targetDate);
+                        formData.append('booking_time', newTime);
+
+                        const res = await fetch('/api_booking.php?action=reschedule_booking', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ Booking #${bookingId} rescheduled to ${targetDate} ${newTime}`);
+                        } else {
+                            // Revert on error
+                            b.booking_date = oldDate;
+                            b.booking_time = oldTime;
+                            alert(data.message || 'Failed to reschedule appointment');
+                        }
+                    } catch (err) {
+                        // Revert on network error
+                        b.booking_date = oldDate;
+                        b.booking_time = oldTime;
+                        alert('Network error rescheduling appointment: ' + err.message);
+                    }
+                },
+
+                formatSlotLabel(slot) {
+                    const h = parseInt(slot.split(':')[0], 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+                    return `${displayH}:00 ${ampm}`;
+                },
+
+                parseBookingHour(timeStr) {
+                    if (!timeStr) return null;
+                    const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+                    if (!match) return null;
+                    let h = parseInt(match[1], 10);
+                    const ampm = match[3] ? match[3].toUpperCase() : '';
+                    if (ampm === 'PM' && h < 12) h += 12;
+                    if (ampm === 'AM' && h === 12) h = 0;
+                    return String(h).padStart(2, '0') + ':00';
+                },
+
+                getBookingsForSlot(dateStr, hourSlot) {
+                    let list = this.bookings.filter(b => {
+                        if (b.booking_date !== dateStr) return false;
+                        const bHour = this.parseBookingHour(b.booking_time);
+                        return bHour === hourSlot;
+                    });
+
+                    const query = (this.bookingSearchQuery || '').toLowerCase().trim();
+                    if (query) {
+                        list = list.filter(b => 
+                            (b.customer_name && b.customer_name.toLowerCase().includes(query)) ||
+                            (b.phone && b.phone.toLowerCase().includes(query)) ||
+                            (b.service_type && b.service_type.toLowerCase().includes(query)) ||
+                            (b.notes && b.notes.toLowerCase().includes(query)) ||
+                            ('fit-' + b.id).includes(query)
+                        );
+                    }
+                    if (this.bookingStatusFilter !== 'All') {
+                        list = list.filter(b => b.status === this.bookingStatusFilter);
+                    }
+                    return list;
+                },
+
+                openBookingDetail(b) {
+                    if (this.draggedBooking) return;
+                    this.selectedBooking = { ...b };
+                    this.bookingDetailModalOpen = true;
+                },
+
+                closeBookingDetail() {
+                    this.bookingDetailModalOpen = false;
+                    this.selectedBooking = null;
+                },
+
+                async saveSelectedBookingNotes() {
+                    if (!this.selectedBooking) return;
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', this.selectedBooking.id);
+                        formData.append('status', this.selectedBooking.status);
+                        formData.append('notes', this.selectedBooking.notes || '');
+                        const res = await fetch('/api_booking.php?action=update_status', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            const b = this.bookings.find(x => x.id == this.selectedBooking.id);
+                            if (b) {
+                                b.status = this.selectedBooking.status;
+                                b.notes = this.selectedBooking.notes;
+                            }
+                            this.showToast(`Booking #${this.selectedBooking.id} notes saved!`);
+                        } else {
+                            alert(data.message || 'Update failed');
+                        }
+                    } catch (e) {
+                        alert('Server error saving booking notes.');
+                    }
+                },
+
+                openNewBookingModal(dateStr = '', timeSlot = '') {
+                    this.newBookingForm = {
+                        customer_name: '',
+                        phone: '',
+                        email: '',
+                        service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                        booking_date: dateStr || this.formatDate(new Date()),
+                        booking_time: timeSlot ? this.convertSlotToAmPm(timeSlot) : '11:00 AM',
+                        notes: ''
+                    };
+                    this.newBookingModalOpen = true;
+                },
+
+                convertSlotToAmPm(slot) {
+                    const h = parseInt(slot.split(':')[0], 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+                    return `${String(displayH).padStart(2, '0')}:00 ${ampm}`;
+                },
+
+                async submitNewBooking() {
+                    if (!this.newBookingForm.customer_name || !this.newBookingForm.phone || !this.newBookingForm.booking_date || !this.newBookingForm.booking_time) {
+                        alert('Please enter customer name, phone number, booking date, and time.');
+                        return;
+                    }
+                    try {
+                        const formData = new FormData();
+                        formData.append('customer_name', this.newBookingForm.customer_name);
+                        formData.append('phone', this.newBookingForm.phone);
+                        formData.append('email', this.newBookingForm.email || '');
+                        formData.append('service_type', this.newBookingForm.service_type);
+                        formData.append('booking_date', this.newBookingForm.booking_date);
+                        formData.append('booking_time', this.newBookingForm.booking_time);
+                        formData.append('notes', this.newBookingForm.notes || '');
+
+                        const res = await fetch('/api_booking.php?action=create_booking', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`✅ New fitting appointment (#FIT-${data.booking_id}) registered!`);
+                            this.newBookingModalOpen = false;
+                            await this.loadBookings();
+                        } else {
+                            alert(data.message || 'Failed to register appointment');
+                        }
+                    } catch (e) {
+                        alert('Network error registering appointment');
+                    }
                 }
             }
         }
