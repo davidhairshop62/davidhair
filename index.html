@@ -1044,9 +1044,6 @@
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded-md border border-brand-border"
                                     x-text="'Stock: ' + item.stockQty + ' pcs'"></div>
-                                <div
-                                    class="absolute top-3 right-3 bg-emerald-950 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-800">
-                                    Express Ship</div>
 
                                 <!-- Badge Tag Overlay (New, Best Seller, MD's Pick, Limited, Promotion) -->
                                 <template x-if="item.badge">
@@ -1306,7 +1303,7 @@
                 <div class="grid lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
                     <!-- LEFT COLUMN: 3:4 Photo Area & Before/After Comparison Result -->
-                    <div class="lg:col-span-6 relative space-y-4">
+                    <div class="lg:col-span-6 relative space-y-4 flex flex-col justify-center">
 
                         <!-- AI Processing Loader -->
                         <div x-show="isProcessing" x-cloak
@@ -1321,77 +1318,79 @@
                         </div>
 
                         <!-- LIVE CAMERA CAPTURE MODE (3:4 Ratio with Facial Alignment Contour Overlay) -->
-                        <div x-show="isCameraActive" x-cloak
-                            class="relative w-full aspect-[3/4] bg-black rounded-xl overflow-hidden shadow-2xl border-2 border-brand-teal flex items-center justify-center">
-                            <video x-ref="cameraVideo" autoplay playsinline
-                                class="w-full h-full object-cover -scale-x-100"></video>
-
-                            <!-- Facial Alignment Guide Contour Overlay (SVG) -->
+                        <div x-show="isCameraActive" x-cloak class="w-full flex items-center justify-center py-1">
                             <div
-                                class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-2">
-                                <svg class="w-full h-full max-w-[92%] max-h-[92%] opacity-85" viewBox="0 0 400 533"
-                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Outer Contour (Head, Chin, Jaw) -->
-                                    <path
-                                        d="M200,50 C110,50 75,140 75,250 C75,370 125,455 200,455 C275,455 325,370 325,250 C325,140 290,50 200,50 Z"
-                                        stroke="#14B8A6" stroke-width="2.5" stroke-dasharray="6,4" />
-                                    <!-- Hairline Curve -->
-                                    <path d="M105,150 C135,100 200,95 265,100 C295,150 295,150 295,150" stroke="#F59E0B"
-                                        stroke-width="2.5" stroke-dasharray="4,3" />
-                                    <!-- Eyebrows -->
-                                    <path d="M120,180 C140,170 165,175 180,180" stroke="#14B8A6" stroke-width="2" />
-                                    <path d="M220,180 C235,175 260,170 280,180" stroke="#14B8A6" stroke-width="2" />
-                                    <!-- Eyes Ellipses & Center Dots -->
-                                    <ellipse cx="150" cy="200" rx="22" ry="12" stroke="#38BDF8" stroke-width="1.8" />
-                                    <ellipse cx="250" cy="200" rx="22" ry="12" stroke="#38BDF8" stroke-width="1.8" />
-                                    <circle cx="150" cy="200" r="4" fill="#38BDF8" />
-                                    <circle cx="250" cy="200" r="4" fill="#38BDF8" />
-                                    <!-- Nose Outline -->
-                                    <path d="M200,195 L200,265 L188,280 C195,288 205,288 212,280 L200,265"
-                                        stroke="#14B8A6" stroke-width="2" />
-                                    <!-- Mouth Outline -->
-                                    <path d="M160,335 Q200,325 240,335 Q200,355 160,335 Z" stroke="#F59E0B"
-                                        stroke-width="2" />
-                                    <!-- Ears Outlines -->
-                                    <path d="M72,190 C58,210 58,255 72,275" stroke="#14B8A6" stroke-width="2"
-                                        stroke-dasharray="3,3" />
-                                    <path d="M328,190 C342,210 342,255 328,275" stroke="#14B8A6" stroke-width="2"
-                                        stroke-dasharray="3,3" />
-                                    <!-- Neck Lines -->
-                                    <path d="M130,435 L130,490" stroke="#14B8A6" stroke-width="2"
-                                        stroke-dasharray="4,4" />
-                                    <path d="M270,435 L270,490" stroke="#14B8A6" stroke-width="2"
-                                        stroke-dasharray="4,4" />
-                                    <!-- Crosshair Center Axis -->
-                                    <line x1="200" y1="30" x2="200" y2="475" stroke="rgba(20, 184, 166, 0.35)"
-                                        stroke-width="1" stroke-dasharray="3,3" />
-                                    <line x1="50" y1="200" x2="350" y2="200" stroke="rgba(20, 184, 166, 0.35)"
-                                        stroke-width="1" stroke-dasharray="3,3" />
-                                </svg>
+                                class="relative w-full max-w-[420px] aspect-[3/4] mx-auto bg-black rounded-xl overflow-hidden shadow-2xl border-2 border-brand-teal flex items-center justify-center">
+                                <video x-ref="cameraVideo" autoplay playsinline
+                                    class="w-full h-full object-cover -scale-x-100"></video>
 
+                                <!-- Facial Alignment Guide Contour Overlay (SVG) -->
                                 <div
-                                    class="mt-2 bg-brand-darkBg/95 backdrop-blur text-brand-tealLight text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-full border border-teal-500/60 shadow-xl text-center">
-                                    <i class="fa-solid fa-crosshairs text-amber-400 mr-1 animate-pulse"></i>
-                                    윤곽 라인에 맞춰 얼굴 위치 조절 (~90% 일치 추천)
-                                </div>
-                            </div>
+                                    class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-2">
+                                    <svg class="w-full h-full max-w-[92%] max-h-[92%] opacity-85" viewBox="0 0 400 533"
+                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <!-- Outer Contour (Head, Chin, Jaw) -->
+                                        <path
+                                            d="M200,50 C110,50 75,140 75,250 C75,370 125,455 200,455 C275,455 325,370 325,250 C325,140 290,50 200,50 Z"
+                                            stroke="#14B8A6" stroke-width="2.5" stroke-dasharray="6,4" />
+                                        <!-- Hairline Curve -->
+                                        <path d="M105,150 C135,100 200,95 265,100 C295,150 295,150 295,150" stroke="#F59E0B"
+                                            stroke-width="2.5" stroke-dasharray="4,3" />
+                                        <!-- Eyebrows -->
+                                        <path d="M120,180 C140,170 165,175 180,180" stroke="#14B8A6" stroke-width="2" />
+                                        <path d="M220,180 C235,175 260,170 280,180" stroke="#14B8A6" stroke-width="2" />
+                                        <!-- Eyes Ellipses & Center Dots -->
+                                        <ellipse cx="150" cy="200" rx="22" ry="12" stroke="#38BDF8" stroke-width="1.8" />
+                                        <ellipse cx="250" cy="200" rx="22" ry="12" stroke="#38BDF8" stroke-width="1.8" />
+                                        <circle cx="150" cy="200" r="4" fill="#38BDF8" />
+                                        <circle cx="250" cy="200" r="4" fill="#38BDF8" />
+                                        <!-- Nose Outline -->
+                                        <path d="M200,195 L200,265 L188,280 C195,288 205,288 212,280 L200,265"
+                                            stroke="#14B8A6" stroke-width="2" />
+                                        <!-- Mouth Outline -->
+                                        <path d="M160,335 Q200,325 240,335 Q200,355 160,335 Z" stroke="#F59E0B"
+                                            stroke-width="2" />
+                                        <!-- Ears Outlines -->
+                                        <path d="M72,190 C58,210 58,255 72,275" stroke="#14B8A6" stroke-width="2"
+                                            stroke-dasharray="3,3" />
+                                        <path d="M328,190 C342,210 342,255 328,275" stroke="#14B8A6" stroke-width="2"
+                                            stroke-dasharray="3,3" />
+                                        <!-- Neck Lines -->
+                                        <path d="M130,435 L130,490" stroke="#14B8A6" stroke-width="2"
+                                            stroke-dasharray="4,4" />
+                                        <path d="M270,435 L270,490" stroke="#14B8A6" stroke-width="2"
+                                            stroke-dasharray="4,4" />
+                                        <!-- Crosshair Center Axis -->
+                                        <line x1="200" y1="30" x2="200" y2="475" stroke="rgba(20, 184, 166, 0.35)"
+                                            stroke-width="1" stroke-dasharray="3,3" />
+                                        <line x1="50" y1="200" x2="350" y2="200" stroke="rgba(20, 184, 166, 0.35)"
+                                            stroke-width="1" stroke-dasharray="3,3" />
+                                    </svg>
 
-                            <!-- Camera Buttons -->
-                            <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between z-20">
-                                <button @click="stopCamera()" type="button"
-                                    class="bg-slate-900/90 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-600 shadow-md">
-                                    <i class="fa-solid fa-xmark mr-1"></i> 취소
-                                </button>
-                                <button @click="captureCameraPhoto()" type="button"
-                                    class="teal-gradient text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
-                                    <i class="fa-solid fa-camera text-sm"></i> 사진 찍기 (Capture)
-                                </button>
+                                    <div
+                                        class="mt-2 bg-brand-darkBg/95 backdrop-blur text-brand-tealLight text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-full border border-teal-500/60 shadow-xl text-center">
+                                        <i class="fa-solid fa-crosshairs text-amber-400 mr-1 animate-pulse"></i>
+                                        윤곽 라인에 맞춰 얼굴 위치 조절 (~90% 일치 추천)
+                                    </div>
+                                </div>
+
+                                <!-- Camera Buttons -->
+                                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between z-20">
+                                    <button @click="stopCamera()" type="button"
+                                        class="bg-slate-900/90 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-600 shadow-md">
+                                        <i class="fa-solid fa-xmark mr-1"></i> 취소
+                                    </button>
+                                    <button @click="captureCameraPhoto()" type="button"
+                                        class="teal-gradient text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+                                        <i class="fa-solid fa-camera text-sm"></i> 사진 찍기 (Capture)
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <!-- RESULT CARD WITH 3:4 ASPECT RATIO PHOTO BOX -->
                         <div x-show="!isCameraActive"
-                            class="bg-brand-darkBg border border-brand-border rounded-2xl p-4 space-y-3 eye-shadow">
+                            class="bg-brand-darkBg border border-brand-border rounded-2xl p-4 space-y-3 eye-shadow flex flex-col justify-between">
                             <div class="flex justify-between items-center border-b border-brand-border pb-3">
                                 <div>
                                     <span class="text-xs font-bold text-white"
@@ -1431,71 +1430,73 @@
                             </div>
 
                             <!-- Photo Box (Clean 3:4 Canvas for Direct Manipulation) -->
-                            <div class="relative min-h-[360px] sm:min-h-[460px] max-h-[560px] aspect-[3/4] rounded-xl overflow-hidden select-none bg-slate-950 flex items-center justify-center border-2 transition-colors duration-200 shadow-2xl cursor-grab active:cursor-grabbing"
-                                 :class="activeControlTab === 'hair' ? 'border-brand-teal' : 'border-sky-500'"
-                                 @mousedown="startDrag($event, 'move')"
-                                 @mousemove="onDrag($event)"
-                                 @mouseup="endDrag()"
-                                 @mouseleave="endDrag()"
-                                 @touchstart="startDrag($event, 'move')"
-                                 @touchmove="onDrag($event)"
-                                 @touchend="endDrag()"
-                                 @wheel.prevent="onWheel($event)">
+                            <div class="w-full flex items-center justify-center my-auto py-1">
+                                <div class="relative w-full max-w-[420px] min-h-[360px] sm:min-h-[460px] max-h-[560px] aspect-[3/4] mx-auto rounded-xl overflow-hidden select-none bg-slate-950 flex items-center justify-center border-2 transition-colors duration-200 shadow-2xl cursor-grab active:cursor-grabbing"
+                                     :class="activeControlTab === 'hair' ? 'border-brand-teal' : 'border-sky-500'"
+                                     @mousedown="startDrag($event, 'move')"
+                                     @mousemove="onDrag($event)"
+                                     @mouseup="endDrag()"
+                                     @mouseleave="endDrag()"
+                                     @touchstart="startDrag($event, 'move')"
+                                     @touchmove="onDrag($event)"
+                                     @touchend="endDrag()"
+                                     @wheel.prevent="onWheel($event)">
 
-                                <!-- Base Layer: Original Face Photo -->
-                                <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none">
-                                    <img :src="userFacePhoto"
-                                        class="max-w-full max-h-full object-contain rounded-lg select-none"
-                                        :style="getFaceTransform()">
-                                </div>
-
-                                <!-- Top Layer: Transformed Photo with Hairpiece Overlay (Clipped to Right Side) -->
-                                <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none select-none"
-                                    :style="`clip-path: inset(0 0 0 ${sliderPos}%)`">
-                                    <!-- Base Face Photo -->
-                                    <img :src="userFacePhoto"
-                                        class="max-w-full max-h-full object-contain rounded-lg select-none"
-                                        :style="getFaceTransform()">
-                                    <!-- Hairpiece Overlay -->
-                                    <div class="absolute inset-x-0 top-3 sm:top-5 flex justify-center transition-transform duration-75"
-                                        :style="getHairTransform()">
-                                        <img :src="getHairOverlayUrl()"
-                                            class="w-3/4 sm:w-2/3 h-48 sm:h-64 object-contain drop-shadow-2xl select-none">
+                                    <!-- Base Layer: Original Face Photo -->
+                                    <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none">
+                                        <img :src="userFacePhoto"
+                                            class="max-w-full max-h-full object-contain rounded-lg select-none"
+                                            :style="getFaceTransform()">
                                     </div>
-                                </div>
 
-                                <!-- Direct Manipulation Interactive Bounding Box Overlay for Hairpiece -->
-                                <div x-show="activeControlTab === 'hair'" 
-                                     class="absolute inset-x-0 top-3 sm:top-5 pointer-events-none flex justify-center z-15"
-                                     :style="getHairTransform()">
-                                    <div class="w-3/4 sm:w-2/3 h-48 sm:h-64 relative pointer-events-auto border-2 border-dashed border-amber-300 ring-2 ring-teal-400/50 rounded-2xl group shadow-2xl bg-teal-400/10 transition-all">
-                                        <!-- Corner Resize Handles (Scale) -->
-                                        <div @mousedown.stop="startDrag($event, 'se')" @touchstart.stop="startDrag($event, 'se')" 
-                                             class="absolute -bottom-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-se-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↘</div>
-                                        <div @mousedown.stop="startDrag($event, 'sw')" @touchstart.stop="startDrag($event, 'sw')" 
-                                             class="absolute -bottom-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-sw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↙</div>
-                                        <div @mousedown.stop="startDrag($event, 'ne')" @touchstart.stop="startDrag($event, 'ne')" 
-                                             class="absolute -top-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-ne-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↗</div>
-                                        <div @mousedown.stop="startDrag($event, 'nw')" @touchstart.stop="startDrag($event, 'nw')" 
-                                             class="absolute -top-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-nw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↖</div>
-
-                                        <!-- Side Handles (Width & Height) -->
-                                        <div @mousedown.stop="startDrag($event, 'e')" @touchstart.stop="startDrag($event, 'e')" 
-                                             class="absolute top-1/2 -right-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-e-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
-                                        <div @mousedown.stop="startDrag($event, 'w')" @touchstart.stop="startDrag($event, 'w')" 
-                                             class="absolute top-1/2 -left-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-w-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
-                                        <div @mousedown.stop="startDrag($event, 's')" @touchstart.stop="startDrag($event, 's')" 
-                                             class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-s-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
-                                        <div @mousedown.stop="startDrag($event, 'n')" @touchstart.stop="startDrag($event, 'n')" 
-                                             class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-n-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
+                                    <!-- Top Layer: Transformed Photo with Hairpiece Overlay (Clipped to Right Side) -->
+                                    <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none select-none"
+                                        :style="`clip-path: inset(0 0 0 ${sliderPos}%)`">
+                                        <!-- Base Face Photo -->
+                                        <img :src="userFacePhoto"
+                                            class="max-w-full max-h-full object-contain rounded-lg select-none"
+                                            :style="getFaceTransform()">
+                                        <!-- Hairpiece Overlay -->
+                                        <div class="absolute inset-x-0 top-3 sm:top-5 flex justify-center transition-transform duration-75"
+                                            :style="getHairTransform()">
+                                            <img :src="getHairOverlayUrl()"
+                                                class="w-3/4 sm:w-2/3 h-48 sm:h-64 object-contain drop-shadow-2xl select-none">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Comparison Divider Slider Line -->
-                                <div class="absolute top-0 bottom-0 w-1 bg-white/90 shadow-2xl pointer-events-none z-10 slider-divider"
-                                    :style="`left: ${sliderPos}%`">
-                                    <div class="w-8 h-8 rounded-full teal-gradient absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center text-white text-[10px] shadow-2xl border-2 border-white">
-                                        <i class="fa-solid fa-arrows-left-right"></i>
+                                    <!-- Direct Manipulation Interactive Bounding Box Overlay for Hairpiece -->
+                                    <div x-show="activeControlTab === 'hair'" 
+                                         class="absolute inset-x-0 top-3 sm:top-5 pointer-events-none flex justify-center z-15"
+                                         :style="getHairTransform()">
+                                        <div class="w-3/4 sm:w-2/3 h-48 sm:h-64 relative pointer-events-auto border-2 border-dashed border-amber-300 ring-2 ring-teal-400/50 rounded-2xl group shadow-2xl bg-teal-400/10 transition-all">
+                                            <!-- Corner Resize Handles (Scale) -->
+                                            <div @mousedown.stop="startDrag($event, 'se')" @touchstart.stop="startDrag($event, 'se')" 
+                                                 class="absolute -bottom-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-se-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↘</div>
+                                            <div @mousedown.stop="startDrag($event, 'sw')" @touchstart.stop="startDrag($event, 'sw')" 
+                                                 class="absolute -bottom-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-sw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↙</div>
+                                            <div @mousedown.stop="startDrag($event, 'ne')" @touchstart.stop="startDrag($event, 'ne')" 
+                                                 class="absolute -top-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-ne-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↗</div>
+                                            <div @mousedown.stop="startDrag($event, 'nw')" @touchstart.stop="startDrag($event, 'nw')" 
+                                                 class="absolute -top-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-nw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↖</div>
+
+                                            <!-- Side Handles (Width & Height) -->
+                                            <div @mousedown.stop="startDrag($event, 'e')" @touchstart.stop="startDrag($event, 'e')" 
+                                                 class="absolute top-1/2 -right-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-e-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
+                                            <div @mousedown.stop="startDrag($event, 'w')" @touchstart.stop="startDrag($event, 'w')" 
+                                                 class="absolute top-1/2 -left-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-w-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
+                                            <div @mousedown.stop="startDrag($event, 's')" @touchstart.stop="startDrag($event, 's')" 
+                                                 class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-s-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
+                                            <div @mousedown.stop="startDrag($event, 'n')" @touchstart.stop="startDrag($event, 'n')" 
+                                                 class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-n-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Comparison Divider Slider Line -->
+                                    <div class="absolute top-0 bottom-0 w-1 bg-white/90 shadow-2xl pointer-events-none z-10 slider-divider"
+                                        :style="`left: ${sliderPos}%`">
+                                        <div class="w-8 h-8 rounded-full teal-gradient absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex items-center justify-center text-white text-[10px] shadow-2xl border-2 border-white">
+                                            <i class="fa-solid fa-arrows-left-right"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1940,69 +1941,209 @@
         </div>
     </section>
 
-    <!-- BOOKING MODAL -->
+    <!-- BOOKING SPRINGVALE FITTING MODAL -->
     <div x-show="isBookingModalOpen" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-transition>
+        class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto" x-transition>
         <div @click.away="isBookingModalOpen = false"
-            class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-5 sm:space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl relative my-6 max-h-[92vh] overflow-y-auto">
             <button @click="isBookingModalOpen = false"
                 class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <div class="text-center">
-                <h3 class="font-heading font-bold text-lg sm:text-xl text-white">Book Springvale Fitting</h3>
-                <p class="text-xs text-brand-textMuted mt-1">Select your preferred date & time for in-person
-                    consultation.</p>
-            </div>
-
-            <form @submit.prevent="submitBooking()" class="space-y-3.5 sm:space-y-4 text-xs">
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Service Type</label>
-                    <select x-model="booking.service"
-                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
-                        <option value="consultation">Free Consultation & Hairline Assessment ($0 Free)</option>
-                        <option value="cutin">New Hairpiece Fitting & Cut-in Styling ($145 AUD)</option>
-                        <option value="maintenance">Re-bond Maintenance & Scalp Clean ($99 AUD)</option>
-                        <option value="adjustment">Minor Adjustment & Perimeter Touch-up ($49 AUD)</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-slate-300 mb-1">Date</label>
-                        <input type="date" x-model="booking.date"
-                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
+            <!-- SUCCESS STATE -->
+            <template x-if="bookingSuccessData">
+                <div class="text-center py-6 space-y-4">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center mx-auto text-3xl shadow-lg">
+                        <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Time Slot</label>
-                        <select x-model="booking.time"
-                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
-                            <option value="10:00">10:00 AM</option>
-                            <option value="12:00">12:00 PM</option>
-                            <option value="14:00">02:00 PM</option>
-                            <option value="16:00">04:00 PM</option>
-                        </select>
+                        <h3 class="font-heading font-extrabold text-xl sm:text-2xl text-white">Fitting Appointment Requested!</h3>
+                        <p class="text-xs text-brand-textMuted mt-1">예약 신청이 성공적으로 접수되었습니다. Springvale 담당자가 WhatsApp으로 신속히 확정해 드립니다.</p>
+                    </div>
+
+                    <div class="bg-brand-inner border border-brand-border rounded-xl p-4 text-left max-w-md mx-auto space-y-2 text-xs">
+                        <div class="flex justify-between border-b border-brand-border/60 pb-1.5">
+                            <span class="text-brand-textMuted">Booking ID</span>
+                            <span class="font-mono text-brand-tealLight font-bold" x-text="'#FIT-' + bookingSuccessData.id"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-brand-border/60 pb-1.5">
+                            <span class="text-brand-textMuted">Date & Time</span>
+                            <span class="text-white font-bold" x-text="bookingSuccessData.date + ' @ ' + bookingSuccessData.time"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-brand-border/60 pb-1.5">
+                            <span class="text-brand-textMuted">Service</span>
+                            <span class="text-slate-200 font-medium truncate max-w-[200px]" x-text="bookingSuccessData.service"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-brand-textMuted">Studio Location</span>
+                            <span class="text-slate-200">Springvale Fitting Studio, Melbourne</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
+                        <a :href="'https://wa.me/61413813959?text=' + encodeURIComponent('Hi David Hair, I just requested a Springvale fitting appointment #' + bookingSuccessData.id + ' on ' + bookingSuccessData.date + ' at ' + bookingSuccessData.time)" target="_blank"
+                           class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 px-5 rounded-xl shadow flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp으로 바로 문의
+                        </a>
+                        <button type="button" @click="resetBookingForm(); isBookingModalOpen = false;"
+                                class="bg-brand-inner hover:bg-slate-700 text-slate-200 font-semibold text-xs py-3 px-5 rounded-xl transition-all border border-brand-border">
+                            닫기 (Close)
+                        </button>
                     </div>
                 </div>
+            </template>
 
+            <!-- FORM STATE -->
+            <template x-if="!bookingSuccessData">
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Full Name</label>
-                    <input type="text" x-model="booking.name" required placeholder="John Doe"
-                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
-                </div>
+                    <div class="text-center mb-5">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-brand-tealLight bg-brand-teal/20 px-2.5 py-0.5 rounded-full border border-brand-teal/30">Melbourne In-Person Studio</span>
+                        <h3 class="font-heading font-extrabold text-xl sm:text-2xl text-white mt-1">Book Springvale Fitting</h3>
+                        <p class="text-xs text-brand-textMuted mt-1">날짜 캘린더에서 원하시는 일자를 선택하고 11:00 AM ~ 5:00 PM 사이의 시간을 예약하세요.</p>
+                    </div>
 
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Phone Number</label>
-                    <input type="tel" x-model="booking.phone" required placeholder="+61 400 000 000"
-                        class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2.5 text-white outline-none focus:border-brand-teal min-h-[44px]">
-                </div>
+                    <form @submit.prevent="submitBooking()" class="space-y-4 text-xs">
+                        <!-- Service Selection -->
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Select Service</label>
+                            <select x-model="booking.service" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-medium">
+                                <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
+                                <option value="New Hairpiece Fitting & Cut-in Styling ($145 AUD)">New Hairpiece Fitting & Cut-in Styling ($145 AUD)</option>
+                                <option value="Re-bond Maintenance & Scalp Clean ($99 AUD)">Re-bond Maintenance & Scalp Clean ($99 AUD)</option>
+                                <option value="Minor Adjustment & Perimeter Touch-up ($49 AUD)">Minor Adjustment & Perimeter Touch-up ($49 AUD)</option>
+                            </select>
+                        </div>
 
-                <button type="submit"
-                    class="w-full teal-gradient py-3.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-95 min-h-[48px]">
-                    Confirm Reservation Request
-                </button>
-            </form>
+                        <!-- 2-COLUMN: CALENDAR ON LEFT, TIME SLOTS ON RIGHT -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 bg-brand-inner/60 p-3 sm:p-4 rounded-xl border border-brand-border">
+                            <!-- CALENDAR (md:col-span-7) -->
+                            <div class="md:col-span-7 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" @click="changeCalendarMonth(-1)" class="w-7 h-7 rounded bg-brand-darkBg border border-brand-border text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+                                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                                        </button>
+                                        <span class="font-bold text-white text-xs sm:text-sm font-heading" x-text="calendarMonthLabel"></span>
+                                        <button type="button" @click="changeCalendarMonth(1)" class="w-7 h-7 rounded bg-brand-darkBg border border-brand-border text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+                                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <!-- DOT LEGEND -->
+                                    <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>여유</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span>마감임박</span>
+                                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span>마감</span>
+                                    </div>
+                                </div>
+
+                                <!-- Weekdays -->
+                                <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] text-brand-textMuted py-1 border-b border-brand-border/60">
+                                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                                </div>
+
+                                <!-- Calendar Day Grid -->
+                                <div class="grid grid-cols-7 gap-1">
+                                    <template x-for="(d, idx) in calendarDays" :key="idx">
+                                        <div class="h-10 sm:h-11">
+                                            <template x-if="d.day">
+                                                <button type="button" 
+                                                        @click="selectCalendarDate(d.dateStr, d.isPast)"
+                                                        :disabled="d.isPast"
+                                                        class="w-full h-full rounded-lg border transition-all flex flex-col items-center justify-center relative p-0.5"
+                                                        :class="{
+                                                            'opacity-30 cursor-not-allowed border-transparent bg-transparent text-slate-600': d.isPast,
+                                                            'border-brand-teal bg-teal-950/80 text-white font-bold shadow-md scale-105': booking.date === d.dateStr,
+                                                            'border-brand-border/60 bg-brand-darkBg hover:border-slate-500 text-slate-200': !d.isPast && booking.date !== d.dateStr
+                                                        }">
+                                                    <span class="text-xs leading-none" x-text="d.day"></span>
+                                                    
+                                                    <!-- Status Dots (그린, 옐로우, 레드) -->
+                                                    <template x-if="d.dot === 'green'">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1 shadow-sm" title="예약 여유"></span>
+                                                    </template>
+                                                    <template x-if="d.dot === 'yellow'">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1 shadow-sm" title="70% 이상 예약됨"></span>
+                                                    </template>
+                                                    <template x-if="d.dot === 'red'">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1 shadow-sm" title="예약 풀 마감"></span>
+                                                    </template>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- TIME SLOTS (md:col-span-5) -->
+                            <div class="md:col-span-5 border-t md:border-t-0 md:border-l border-brand-border pt-3 md:pt-0 md:pl-4 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                                        <i class="fa-regular fa-clock text-brand-tealLight"></i> Available Time
+                                    </span>
+                                    <span class="text-[10px] text-brand-tealLight font-mono font-bold" x-text="booking.date || '날짜 선택 필요'"></span>
+                                </div>
+
+                                <template x-if="!booking.date">
+                                    <div class="p-6 text-center text-slate-400 text-[11px] bg-brand-darkBg/60 rounded-lg border border-dashed border-brand-border">
+                                        <i class="fa-regular fa-calendar-days text-2xl mb-1 text-slate-500 block"></i>
+                                        좌측 캘린더에서 원하시는 날짜를 먼저 클릭해주세요.
+                                    </div>
+                                </template>
+
+                                <template x-if="booking.date">
+                                    <div class="space-y-1.5">
+                                        <div class="text-[10px] text-slate-400">11:00 AM - 5:00 PM (1시간 간격)</div>
+                                        <div class="grid grid-cols-2 gap-1.5">
+                                            <template x-for="slot in selectedDateSlots" :key="slot.time">
+                                                <button type="button" 
+                                                        @click="if(slot.available) booking.time = slot.time"
+                                                        :disabled="!slot.available"
+                                                        class="py-2 px-1 rounded-lg text-xs font-semibold border transition-all text-center"
+                                                        :class="{
+                                                            'opacity-35 cursor-not-allowed bg-slate-900 border-slate-800 text-slate-600 line-through': !slot.available,
+                                                            'teal-gradient text-white font-bold border-transparent shadow': booking.time === slot.time,
+                                                            'bg-brand-darkBg text-slate-200 border-brand-border hover:border-brand-teal': slot.available && booking.time !== slot.time
+                                                        }">
+                                                    <span x-text="slot.time"></span>
+                                                    <span x-show="!slot.available" class="block text-[8px] font-normal uppercase text-rose-400">Booked</span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Customer Info Form -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <label class="block font-bold text-slate-300 mb-1">Your Name (성함) *</label>
+                                <input type="text" x-model="booking.name" required placeholder="e.g. David Chang" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-300 mb-1">WhatsApp / Phone *</label>
+                                <input type="tel" x-model="booking.phone" required placeholder="e.g. +61 413 813 959" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Special Notes / 요청사항 (선택사항)</label>
+                            <input type="text" x-model="booking.notes" placeholder="e.g. Thin skin 0.03mm consultation, first-time toupee wearer..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal text-xs">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" 
+                                :disabled="!booking.date || !booking.time || isBookingSubmitting"
+                                :class="(!booking.date || !booking.time || isBookingSubmitting) ? 'opacity-50 cursor-not-allowed bg-slate-700' : 'teal-gradient hover:opacity-95 shadow-lg'"
+                                class="w-full py-3.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-spinner fa-spin" x-show="isBookingSubmitting"></i>
+                            <i class="fa-solid fa-calendar-check" x-show="!isBookingSubmitting"></i>
+                            <span x-text="isBookingSubmitting ? '예약 신청 처리 중...' : (booking.date && booking.time ? `Confirm ${booking.date} @ ${booking.time} Fitting` : '날짜와 시간을 선택해주세요')"></span>
+                        </button>
+                    </form>
+                </div>
+            </template>
         </div>
     </div>
 
@@ -2338,6 +2479,12 @@
                     } catch (e) {
                         console.log('Loaded default stock fallback:', e);
                     }
+                    this.$watch('isBookingModalOpen', (val) => {
+                        if (val) {
+                            this.fetchMonthStatus();
+                        }
+                    });
+                    this.fetchMonthStatus();
                 },
 
                 stepTitles: [
@@ -2401,12 +2548,19 @@
                     customerPhone: ''
                 },
 
+                calendarYear: new Date().getFullYear(),
+                calendarMonth: new Date().getMonth() + 1,
+                calendarMonthStatus: {},
+                selectedDateSlots: [],
+                isBookingSubmitting: false,
+                bookingSuccessData: null,
                 booking: {
-                    service: 'consultation',
+                    service: 'Free Consultation & Hairline Assessment ($0 Free)',
                     date: '',
-                    time: '10:00',
+                    time: '',
                     name: '',
-                    phone: ''
+                    phone: '',
+                    notes: ''
                 },
 
                 b2bForm: {
@@ -2560,8 +2714,164 @@
                 },
 
                 bookStockFit(item) {
-                    this.booking.service = 'cutin';
+                    this.booking.service = `New Hairpiece Fitting & Cut-in Styling (${item.name})`;
                     this.isBookingModalOpen = true;
+                    this.fetchMonthStatus();
+                },
+
+                get calendarMonthLabel() {
+                    const d = new Date(this.calendarYear, this.calendarMonth - 1, 1);
+                    return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                },
+
+                get calendarDays() {
+                    const year = this.calendarYear;
+                    const month = this.calendarMonth;
+                    const firstDayIndex = new Date(year, month - 1, 1).getDay(); // 0 for Sun
+                    const totalDays = new Date(year, month, 0).getDate();
+                    const days = [];
+
+                    for (let i = 0; i < firstDayIndex; i++) {
+                        days.push({ day: null, dateStr: '', isPast: true, dot: null });
+                    }
+
+                    const today = new Date();
+                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+                    for (let day = 1; day <= totalDays; day++) {
+                        const mStr = String(month).padStart(2, '0');
+                        const dStr = String(day).padStart(2, '0');
+                        const dateStr = `${year}-${mStr}-${dStr}`;
+                        const isPast = dateStr < todayStr;
+                        let dot = null;
+                        if (!isPast) {
+                            const statusInfo = this.calendarMonthStatus[dateStr];
+                            if (statusInfo && statusInfo.dot) {
+                                dot = statusInfo.dot; // 'green', 'yellow', 'red'
+                            } else {
+                                dot = 'green'; // 기본 여유 상태
+                            }
+                        }
+                        days.push({ day, dateStr, isPast, dot });
+                    }
+                    return days;
+                },
+
+                async changeCalendarMonth(delta) {
+                    let newM = this.calendarMonth + delta;
+                    let newY = this.calendarYear;
+                    if (newM < 1) {
+                        newM = 12;
+                        newY -= 1;
+                    } else if (newM > 12) {
+                        newM = 1;
+                        newY += 1;
+                    }
+                    this.calendarMonth = newM;
+                    this.calendarYear = newY;
+                    await this.fetchMonthStatus();
+                },
+
+                async fetchMonthStatus() {
+                    try {
+                        const monthStr = `${this.calendarYear}-${String(this.calendarMonth).padStart(2, '0')}`;
+                        const res = await fetch(`/api_booking.php?action=get_month_status&month=${monthStr}`);
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.calendarMonthStatus = data.data || {};
+                        }
+                    } catch (e) {
+                        console.error('Failed to load month status:', e);
+                    }
+                },
+
+                async selectCalendarDate(dateStr, isPast) {
+                    if (isPast) return;
+                    this.booking.date = dateStr;
+                    this.booking.time = '';
+                    await this.fetchDaySlots(dateStr);
+                },
+
+                async fetchDaySlots(dateStr) {
+                    try {
+                        const res = await fetch(`/api_booking.php?action=get_day_slots&date=${dateStr}`);
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.selectedDateSlots = data.slots || [];
+                        } else {
+                            this.selectedDateSlots = [
+                                { time: '11:00 AM', available: true },
+                                { time: '12:00 PM', available: true },
+                                { time: '01:00 PM', available: true },
+                                { time: '02:00 PM', available: true },
+                                { time: '03:00 PM', available: true },
+                                { time: '04:00 PM', available: true },
+                                { time: '05:00 PM', available: true }
+                            ];
+                        }
+                    } catch (e) {
+                        console.error('Failed to load day slots:', e);
+                    }
+                },
+
+                async submitBooking() {
+                    if (!this.booking.name || !this.booking.phone || !this.booking.date || !this.booking.time) {
+                        alert('Please fill in your name, contact phone, date, and preferred time.');
+                        return;
+                    }
+                    this.isBookingSubmitting = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('customer_name', this.booking.name);
+                        formData.append('phone', this.booking.phone);
+                        formData.append('service_type', this.booking.service);
+                        formData.append('booking_date', this.booking.date);
+                        formData.append('booking_time', this.booking.time);
+                        formData.append('notes', this.booking.notes || '');
+
+                        const res = await fetch('/api_booking.php?action=create_booking', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await res.json();
+                        if (result.status === 'success') {
+                            this.bookingSuccessData = {
+                                id: result.booking_id,
+                                name: this.booking.name,
+                                phone: this.booking.phone,
+                                date: this.booking.date,
+                                time: this.booking.time,
+                                service: this.booking.service
+                            };
+                            await this.fetchMonthStatus();
+                            await this.fetchDaySlots(this.booking.date);
+                        } else {
+                            alert(result.message || 'Booking submission failed. Please try again.');
+                        }
+                    } catch (e) {
+                        alert('Server error occurred during booking. Please try again.');
+                    } finally {
+                        this.isBookingSubmitting = false;
+                    }
+                },
+
+                resetBookingForm() {
+                    this.bookingSuccessData = null;
+                    this.booking = {
+                        service: 'Free Consultation & Hairline Assessment ($0 Free)',
+                        date: '',
+                        time: '',
+                        name: '',
+                        phone: '',
+                        notes: ''
+                    };
+                    this.selectedDateSlots = [];
+                    this.fetchMonthStatus();
+                },
+
+                openBookingModal() {
+                    this.isBookingModalOpen = true;
+                    this.fetchMonthStatus();
                 },
 
                 getStockBadgeClass(badge) {
@@ -2605,11 +2915,6 @@
 
                 submitOrder() {
                     alert(`Thank you, ${this.builder.customerName || 'Valued Customer'}! Your custom order specification has been received. Our Springvale specialist will contact you via WhatsApp shortly.`);
-                },
-
-                submitBooking() {
-                    alert(`Appointment booked for ${this.booking.name} on ${this.booking.date} at ${this.booking.time}. Confirmation sent to ${this.booking.phone}.`);
-                    this.isBookingModalOpen = false;
                 },
 
                 submitB2BForm() {

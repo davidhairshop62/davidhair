@@ -1,33 +1,51 @@
-# David Hair - 자동 서버 동기화 및 GitHub 자동 배포 안내서
+# David Hair - 초고속 서버 동기화 및 수동 Git 관리 가이드
 
-## 1. 설정 완료된 내역
-1. **자동 동기화 스크립트 및 Git Hook 구축**
-   - `scripts/sync.sh`: 로컬 변경사항 스테이징, 커밋, GitHub 푸시 및 웹 서버(`/var/www/davidhair`) 자동 업데이트 수행.
-   - `.git/hooks/post-commit`: `git commit` 시 자동으로 GitHub 푸시 및 서버 업데이트 실행.
-
-2. **운영 서버 비밀번호 없는 SSH 자동 연동**
-   - Mac의 SSH 키(`~/.ssh/id_ed25519_davidhair`)를 이용하여 `root@187.127.96.101` 서버 연동 완료.
-   - 터미널 단축 명령어: `ssh davidhair` 입력 시 바로 `/var/www/davidhair` 디렉토리로 이동 접속.
-
-3. **AI 지원 자동화**
-   - 대화 중 파일이 추가/수정될 때마다 AI가 자동으로 GitHub 및 운영 서버(`/var/www/davidhair`)에 반영합니다.
+## 1. 변경 요약 (기존 문제 해결)
+- **기존 문제**: 파일 하나 수정할 때마다 [로컬 Git 커밋 -> GitHub Push -> SSH 접속 -> 서버에서 GitHub Pull]의 3단계를 거치느라 10~20초 이상 걸리고 매우 느렸습니다.
+- **개선 결과**:
+  1. **초고속 서버 반영 (약 1초)**: Git과 GitHub를 거치지 않고, Mac에서 운영 서버(`/var/www/davidhair`)로 직접 변경된 파일만 `rsync` 전송합니다.
+  2. **Git 수동 관리**: 자동 커밋/푸시를 전면 중단했습니다. Git은 하루에 1~2회(아침 다운로드, 저녁 업로드) 또는 원할 때만 수동으로 실행합니다.
+  3. **확인 URL 항상 제공**: 파일 수정 작업이 끝나면 항상 `https://davidhair.atozhair.shop` 이동 링크를 제공합니다.
 
 ---
 
-## 2. GitHub 비밀번호 없이 자동 푸시 1회성 설정 (SSH 전환)
+## 2. 주요 사용 명령어
 
-1. [GitHub SSH Keys 설정 페이지](https://github.com/settings/keys) 접속 후 **New SSH key** 클릭
-2. 아래 공개키(Public Key)를 복사하여 붙여넣고 저장:
+### ① 서버 즉시 배포 (수정 파일 1초 반영)
+터미널에서 아래 명령어 중 하나를 실행하면 변경된 파일만 1초 만에 서버에 배포됩니다.
+(AI에게 수정을 요청할 때도 AI가 알아서 이 스크립트를 즉시 실행합니다.)
+```bash
+./scripts/deploy.sh
+# 또는
+npm run deploy
+```
 
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICPmtE4bj8ZjrIPQUPYO6EX5FXB+mVSJ7ZxpDGvqkx2f davidheonchang@MacBook-Pro.local
+### ② 파일 저장 시 실시간 자동 업로드 (선택 사항)
+터미널에 켜두면 Mac에서 파일을 저장할 때마다 자동으로 감지하여 0.5초 만에 서버로 전송합니다.
+```bash
+npm run watch
+# 또는
+./scripts/watch.sh
+```
+(종료하려면 터미널에서 Ctrl + C)
 
-3. 터미널에서 원격 저장소 주소를 SSH로 변경:
-   git remote set-url origin git@github.com:davidhairshop62/davidhair.git
+### ③ Git 작업 (하루 1~2회 또는 원할 때만 수동 실행)
+- **GitHub에서 최신 코드 내려받기 (아침 출근 시 등)**:
+  ```bash
+  npm run git:pull
+  # 또는
+  ./scripts/git_pull.sh
+  ```
+- **GitHub로 오늘 작업 내용 백업/업로드 (퇴근 시 등)**:
+  ```bash
+  npm run git:push
+  # 또는
+  ./scripts/git_push.sh "오늘 작업 내용 요약"
+  ```
 
 ---
 
-## 3. 수동 동기화 실행 방법
-
-터미널에서 아래 명령어를 실행하여 언제든지 서버와 GitHub에 일괄 업데이트할 수 있습니다:
-
-./scripts/sync.sh "커밋 메시지"
+## 3. 웹사이트 바로가기
+- 메인 홈페이지: https://davidhair.atozhair.shop
+- 재고 관리자: https://davidhair.atozhair.shop/stock_manager.php
+- DB 테스트: https://davidhair.atozhair.shop/db_test.php

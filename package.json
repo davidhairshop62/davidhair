@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "deploy": "./scripts/deploy.sh",
+    "watch": "./scripts/watch.sh",
+    "git:push": "./scripts/git_push.sh",
+    "git:pull": "./scripts/git_pull.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
