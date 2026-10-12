@@ -906,7 +906,73 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                 <!-- 8. Tape-in hair Extension -->
                 <div x-show="activeCatalogTab === 'all' || activeCatalogTab === 'extensions'"
                     class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 sm:p-7 shadow-xl hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-5 group">
-                    <div class="space-y-3.5">
+                                        <div class="space-y-4">
+                        <!-- 1:1 Aspect Ratio Image Carousel (Auto-playing) -->
+                        <div x-data="{
+                                currentSlide: 0,
+                                totalSlides: 2,
+                                timer: null,
+                                touchStartX: 0,
+                                startAutoPlay() {
+                                    this.stopAutoPlay();
+                                    this.timer = setInterval(() => { this.next() }, 3500);
+                                },
+                                stopAutoPlay() {
+                                    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+                                },
+                                next() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides },
+                                prev() { this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides },
+                                goTo(idx) { this.currentSlide = idx; this.startAutoPlay(); }
+                            }"
+                            x-init="startAutoPlay()"
+                            @mouseenter="stopAutoPlay()"
+                            @mouseleave="startAutoPlay()"
+                            @touchstart="stopAutoPlay(); touchStartX = $event.changedTouches[0].screenX"
+                            @touchend="if ($event.changedTouches[0].screenX - touchStartX > 40) prev(); else if (touchStartX - $event.changedTouches[0].screenX > 40) next(); startAutoPlay();"
+                            class="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-950 border border-brand-border/70 group/carousel select-none shadow-md">
+                            
+                            <!-- Slide Track (1:1 Ratio) -->
+                            <div class="flex h-full w-full transition-transform duration-500 ease-out"
+                                :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/tape1.jpg" alt="Tape-In Hair Extension - Seamless Invisiblend"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/tape2.jpeg" alt="Tape-In Hair Extension - Flat Polymer Skin Tabs"
+                                        class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            <!-- Slide Counter Badge -->
+                            <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[10px] font-mono text-white/90 border border-white/10 z-10 pointer-events-none">
+                                <span x-text="currentSlide + 1">1</span> / 2
+                            </div>
+
+                            <!-- Prev / Next Navigation Arrows -->
+                            <button type="button" @click.stop="prev(); startAutoPlay()"
+                                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Previous Slide">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button type="button" @click.stop="next(); startAutoPlay()"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Next Slide">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+
+                            <!-- Navigation Dots Indicator -->
+                            <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                                <button type="button" @click.stop="goTo(0)"
+                                    :class="currentSlide === 0 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 1"></button>
+                                <button type="button" @click.stop="goTo(1)"
+                                    :class="currentSlide === 1 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 2"></button>
+                            </div>
+                        </div>
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
                                 Extension Method #1
@@ -960,7 +1026,73 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                 <!-- 9. Fusion hair extensions -->
                 <div x-show="activeCatalogTab === 'all' || activeCatalogTab === 'extensions'"
                     class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 sm:p-7 shadow-xl hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-5 group">
-                    <div class="space-y-3.5">
+                                        <div class="space-y-4">
+                        <!-- 1:1 Aspect Ratio Image Carousel (Auto-playing) -->
+                        <div x-data="{
+                                currentSlide: 0,
+                                totalSlides: 2,
+                                timer: null,
+                                touchStartX: 0,
+                                startAutoPlay() {
+                                    this.stopAutoPlay();
+                                    this.timer = setInterval(() => { this.next() }, 3500);
+                                },
+                                stopAutoPlay() {
+                                    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+                                },
+                                next() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides },
+                                prev() { this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides },
+                                goTo(idx) { this.currentSlide = idx; this.startAutoPlay(); }
+                            }"
+                            x-init="startAutoPlay()"
+                            @mouseenter="stopAutoPlay()"
+                            @mouseleave="startAutoPlay()"
+                            @touchstart="stopAutoPlay(); touchStartX = $event.changedTouches[0].screenX"
+                            @touchend="if ($event.changedTouches[0].screenX - touchStartX > 40) prev(); else if (touchStartX - $event.changedTouches[0].screenX > 40) next(); startAutoPlay();"
+                            class="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-950 border border-brand-border/70 group/carousel select-none shadow-md">
+                            
+                            <!-- Slide Track (1:1 Ratio) -->
+                            <div class="flex h-full w-full transition-transform duration-500 ease-out"
+                                :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/fusion1.jpeg" alt="Fusion Hair Extensions - Keratin Bond Tips"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/fusion2.jpeg" alt="Fusion Hair Extensions - 360 Degree Styling"
+                                        class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            <!-- Slide Counter Badge -->
+                            <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[10px] font-mono text-white/90 border border-white/10 z-10 pointer-events-none">
+                                <span x-text="currentSlide + 1">1</span> / 2
+                            </div>
+
+                            <!-- Prev / Next Navigation Arrows -->
+                            <button type="button" @click.stop="prev(); startAutoPlay()"
+                                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Previous Slide">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button type="button" @click.stop="next(); startAutoPlay()"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Next Slide">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+
+                            <!-- Navigation Dots Indicator -->
+                            <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                                <button type="button" @click.stop="goTo(0)"
+                                    :class="currentSlide === 0 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 1"></button>
+                                <button type="button" @click.stop="goTo(1)"
+                                    :class="currentSlide === 1 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 2"></button>
+                            </div>
+                        </div>
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
                                 Extension Method #2
@@ -1014,7 +1146,73 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                 <!-- 10. Weaving hair Extension -->
                 <div x-show="activeCatalogTab === 'all' || activeCatalogTab === 'extensions'"
                     class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 sm:p-7 shadow-xl hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-5 group">
-                    <div class="space-y-3.5">
+                                        <div class="space-y-4">
+                        <!-- 1:1 Aspect Ratio Image Carousel (Auto-playing) -->
+                        <div x-data="{
+                                currentSlide: 0,
+                                totalSlides: 2,
+                                timer: null,
+                                touchStartX: 0,
+                                startAutoPlay() {
+                                    this.stopAutoPlay();
+                                    this.timer = setInterval(() => { this.next() }, 3500);
+                                },
+                                stopAutoPlay() {
+                                    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+                                },
+                                next() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides },
+                                prev() { this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides },
+                                goTo(idx) { this.currentSlide = idx; this.startAutoPlay(); }
+                            }"
+                            x-init="startAutoPlay()"
+                            @mouseenter="stopAutoPlay()"
+                            @mouseleave="startAutoPlay()"
+                            @touchstart="stopAutoPlay(); touchStartX = $event.changedTouches[0].screenX"
+                            @touchend="if ($event.changedTouches[0].screenX - touchStartX > 40) prev(); else if (touchStartX - $event.changedTouches[0].screenX > 40) next(); startAutoPlay();"
+                            class="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-950 border border-brand-border/70 group/carousel select-none shadow-md">
+                            
+                            <!-- Slide Track (1:1 Ratio) -->
+                            <div class="flex h-full w-full transition-transform duration-500 ease-out"
+                                :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/weaving.jpeg" alt="Weaving Hair Extension - Traditional Weft Method"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/weaving1.jpeg" alt="Weaving Hair Extension - Safe Fast Installation"
+                                        class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            <!-- Slide Counter Badge -->
+                            <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[10px] font-mono text-white/90 border border-white/10 z-10 pointer-events-none">
+                                <span x-text="currentSlide + 1">1</span> / 2
+                            </div>
+
+                            <!-- Prev / Next Navigation Arrows -->
+                            <button type="button" @click.stop="prev(); startAutoPlay()"
+                                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Previous Slide">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button type="button" @click.stop="next(); startAutoPlay()"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Next Slide">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+
+                            <!-- Navigation Dots Indicator -->
+                            <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                                <button type="button" @click.stop="goTo(0)"
+                                    :class="currentSlide === 0 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 1"></button>
+                                <button type="button" @click.stop="goTo(1)"
+                                    :class="currentSlide === 1 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 2"></button>
+                            </div>
+                        </div>
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
                                 Extension Method #3
