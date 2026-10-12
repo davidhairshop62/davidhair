@@ -294,11 +294,11 @@
                 ],
 
                 stockItems: [
-                    { id: 10, sku: 'SKU-DH-102-Small-Xtra', name: "Swiss Net +  PU Perimeter  Small  Xtra", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '6x7"', density: '80%', color: '#Natural', price: 450, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: "A Swiss Net + PU Perimeter man's toupee combines the ultra-natural appearance of fine lace with the durability and secure bonding of polyurethane (PU). It is widely regarded as one of the best hybrid base designs for a realistic yet manageable hair replacement system." },
-                    { id: 9, sku: 'SKU-DH-102-Small', name: "Swiss Net +  PU Perimeter  Small", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '6x8"', density: '80%', color: '#Natural', price: 500, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: '' },
-                    { id: 8, sku: 'SKU-DH-102-Medium', name: "Swiss Net +  PU Perimeter  Medium", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '80%', color: '#Natural', price: 550, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
-                    { id: 7, sku: 'SKU-DH-102-Large', name: "Swiss Net +  PU Perimeter  Large", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '8x10"', density: '80%', color: '#Natural', price: 600, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
-                    { id: 1, sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '100%', color: '#1B Off Black', price: 650, stockQty: 3, image: '/uploads/stock_1791608690_1661.jpg', badge: 'Best Seller', description: 'Ultra-thin 0.03mm invisible skin base with direct knotless V-loop injection.' }
+                    { id: 10, sku: 'SKU-DH-102-Small-Xtra', name: "Swiss Net +  PU Perimeter  Small  Xtra", category: "Men's Toupee", type: "Swiss Lace", base: "Lace Front + PU", size: '6x7"', density: '80%', color: '#Natural', price: 450, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: "A Swiss Net + PU Perimeter man's toupee combines the ultra-natural appearance of fine lace with the durability and secure bonding of polyurethane (PU). It is widely regarded as one of the best hybrid base designs for a realistic yet manageable hair replacement system." },
+                    { id: 9, sku: 'SKU-DH-102-Small', name: "Swiss Net +  PU Perimeter  Small", category: "Men's Toupee", type: "Swiss Lace", base: "Lace Front + PU", size: '6x8"', density: '80%', color: '#Natural', price: 500, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: '' },
+                    { id: 8, sku: 'SKU-DH-102-Medium', name: "Swiss Net +  PU Perimeter  Medium", category: "Men's Toupee", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '80%', color: '#Natural', price: 550, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
+                    { id: 7, sku: 'SKU-DH-102-Large', name: "Swiss Net +  PU Perimeter  Large", category: "Men's Toupee", type: "Swiss Lace", base: "Lace Front + PU", size: '8x10"', density: '80%', color: '#Natural', price: 600, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
+                    { id: 1, sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupee", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '100%', color: '#1B Off Black', price: 650, stockQty: 3, image: '/uploads/stock_1791608690_1661.jpg', badge: 'Best Seller', description: 'Ultra-thin 0.03mm invisible skin base with direct knotless V-loop injection.' }
                 ],
 
                 builder: {
@@ -349,25 +349,25 @@
 
                 get filteredStockItems() {
                     let items = this.stockItems;
-                    if (this.stockFilter === "Men's Toupees") {
-                        items = this.stockItems.filter(i => i.category === "Men's Toupees");
-                    } else if (this.stockFilter === "Women's Toppers") {
-                        items = this.stockItems.filter(i => i.category === "Women's Toppers");
-                    } else if (this.stockFilter === 'Skin Systems') {
-                        items = this.stockItems.filter(i => i.type === "Skin Systems" || (i.base && i.base.includes("Skin")));
-                    } else if (this.stockFilter === 'Swiss Lace') {
-                        items = this.stockItems.filter(i => i.type === "Swiss Lace" || (i.base && i.base.includes("Lace")));
-                    } else if (this.stockFilter === 'PU Perimeter') {
-                        items = this.stockItems.filter(i => i.type === "PU Perimeter" || (i.base && i.base.includes("PU")));
+                    if (this.stockFilter === "Men's Toupee" || this.stockFilter === "Men's Toupees") {
+                        items = this.stockItems.filter(i => i.category === "Men's Toupee" || i.category === "Men's Toupees");
+                    } else if (this.stockFilter === "Women's topper" || this.stockFilter === "Women's Toppers" || this.stockFilter === "Women's Topper") {
+                        items = this.stockItems.filter(i => (i.category || '').toLowerCase().includes('topper'));
+                    } else if (this.stockFilter === "Wig") {
+                        items = this.stockItems.filter(i => (i.category || '').toLowerCase() === 'wig');
+                    } else if (this.stockFilter === "Hair Extension") {
+                        items = this.stockItems.filter(i => (i.category || '').toLowerCase().includes('extension'));
                     }
 
                     // Sort by Category, then Product Name (A-Z)
                     const catOrder = {
+                        "Men's Toupee": 1,
                         "Men's Toupees": 1,
+                        "Women's topper": 2,
+                        "Women's Topper": 2,
                         "Women's Toppers": 2,
-                        "Skin Systems": 3,
-                        "Swiss Lace": 4,
-                        "PU Perimeter": 5
+                        "Wig": 3,
+                        "Hair Extension": 4
                     };
 
                     return [...items].sort((a, b) => {
@@ -2337,7 +2337,7 @@
             <!-- Filter Tabs -->
             <div class="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-12">
                 <template
-                    x-for="cat in ['All', 'Men\'s Toupees', 'Women\'s Toppers', 'Skin Systems', 'Swiss Lace', 'PU Perimeter']"
+                    x-for="cat in ['All', 'Men\'s Toupee', 'Women\'s topper', 'Wig', 'Hair Extension']"
                     :key="cat">
                     <button @click="stockFilter = cat"
                         :class="stockFilter === cat ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 border border-brand-border hover:border-slate-500'"

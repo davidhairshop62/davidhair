@@ -18,9 +18,14 @@ try {
 
     // 조건별 SQL 쿼리 나열
     if ($category !== 'All' && !empty($category)) {
-        if ($category === "Men's Toupees" || $category === "Women's Toppers") {
-            $sql .= " WHERE category = :category";
-            $params[':category'] = $category;
+        if ($category === "Men's Toupee" || $category === "Men's Toupees") {
+            $sql .= " WHERE (category = 'Men\'s Toupee' OR category = 'Men\'s Toupees')";
+        } elseif (strcasecmp($category, "Women's topper") === 0 || strcasecmp($category, "Women's Toppers") === 0) {
+            $sql .= " WHERE (category = 'Women\'s topper' OR category = 'Women\'s Topper' OR category = 'Women\'s Toppers')";
+        } elseif (strcasecmp($category, "Wig") === 0) {
+            $sql .= " WHERE category = 'Wig'";
+        } elseif (strcasecmp($category, "Hair Extension") === 0) {
+            $sql .= " WHERE (category = 'Hair Extension' OR category LIKE '%Extension%')";
         } elseif ($category === 'Skin Systems') {
             $sql .= " WHERE type = 'Skin Systems' OR base LIKE '%Skin%'";
         } elseif ($category === 'Swiss Lace') {

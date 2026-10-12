@@ -135,7 +135,7 @@ try {
         $id = !empty($_POST['id']) ? intval($_POST['id']) : null;
         $sku = trim($_POST['sku'] ?? '');
         $name = trim($_POST['name'] ?? '');
-        $category = trim($_POST['category'] ?? "Men's Toupees");
+        $category = trim($_POST['category'] ?? "Men's Toupee");
         $type = trim($_POST['type'] ?? "Skin Systems");
         $base = trim($_POST['base'] ?? '');
         $size = trim($_POST['size'] ?? '8x10"');
