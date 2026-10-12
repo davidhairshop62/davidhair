@@ -65,7 +65,62 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                 <!-- 1. Human Hair Wig -->
                 <div x-show="activeCatalogTab === 'all' || activeCatalogTab === 'wigs'"
                     class="bg-brand-cardBg border border-brand-border rounded-2xl p-6 sm:p-7 shadow-xl hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-5 group">
-                    <div class="space-y-3.5">
+                    <div class="space-y-4">
+                        <!-- 1:1 Aspect Ratio Image Carousel -->
+                        <div x-data="{
+                                currentSlide: 0,
+                                totalSlides: 2,
+                                touchStartX: 0,
+                                next() { this.currentSlide = (this.currentSlide + 1) % this.totalSlides },
+                                prev() { this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides }
+                            }"
+                            @touchstart="touchStartX = $event.changedTouches[0].screenX"
+                            @touchend="if ($event.changedTouches[0].screenX - touchStartX > 40) prev(); else if (touchStartX - $event.changedTouches[0].screenX > 40) next();"
+                            class="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-950 border border-brand-border/70 group/carousel select-none shadow-md">
+                            
+                            <!-- Slide Track (1:1 Ratio) -->
+                            <div class="flex h-full w-full transition-transform duration-500 ease-out"
+                                :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/humanwig1.png" alt="Human Hair Wig - 100% Super REMY Custom-Make"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <div class="w-full h-full flex-shrink-0 relative">
+                                    <img src="videos/humanwig2.jpeg" alt="Human Hair Wig - Hand-Tied Monofilament Craftsmanship"
+                                        class="w-full h-full object-cover">
+                                </div>
+                            </div>
+
+                            <!-- Slide Counter Badge -->
+                            <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[10px] font-mono text-white/90 border border-white/10 z-10 pointer-events-none">
+                                <span x-text="currentSlide + 1">1</span> / 2
+                            </div>
+
+                            <!-- Prev / Next Navigation Arrows -->
+                            <button type="button" @click.stop="prev()"
+                                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Previous Slide">
+                                <i class="fa-solid fa-chevron-left text-xs"></i>
+                            </button>
+                            <button type="button" @click.stop="next()"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-teal-500 text-white/90 hover:text-white flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-lg transition-all opacity-80 sm:opacity-0 sm:group-hover/carousel:opacity-100 cursor-pointer z-10"
+                                aria-label="Next Slide">
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+
+                            <!-- Navigation Dots Indicator -->
+                            <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                                <button type="button" @click.stop="currentSlide = 0"
+                                    :class="currentSlide === 0 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 1"></button>
+                                <button type="button" @click.stop="currentSlide = 1"
+                                    :class="currentSlide === 1 ? 'w-4 bg-teal-400' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+                                    class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                    aria-label="Slide 2"></button>
+                            </div>
+                        </div>
+
                         <div class="flex items-center justify-between">
                             <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30 uppercase tracking-wider">
                                 Medical &amp; Alopecia

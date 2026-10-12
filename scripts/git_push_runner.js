@@ -16,7 +16,7 @@ if (!hasChanges) {
   console.log('ℹ️  No changes to commit.');
 } else {
   console.log(`📝 Committing: "${commitMsg}"`);
-  spawnSync('git', ['commit', '-m', commitMsg], { stdio: 'inherit', shell: true });
+  spawnSync('git', ['commit', '-m', commitMsg], { stdio: 'inherit', shell: false });
 }
 
 console.log('==========================================================');
