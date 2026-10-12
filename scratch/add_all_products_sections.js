@@ -94,11 +94,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/humanwig1.png" alt="Human Hair Wig - 100% Super REMY Custom-Make"
+                                    <img decoding="async" loading="lazy" src="videos/humanwig1.webp" alt="Human Hair Wig - 100% Super REMY Custom-Make"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/humanwig2.jpeg" alt="Human Hair Wig - Hand-Tied Monofilament Craftsmanship"
+                                    <img decoding="async" loading="lazy" src="videos/humanwig2.webp" alt="Human Hair Wig - Hand-Tied Monofilament Craftsmanship"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -215,11 +215,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/synwig1.png" alt="Synthetic Hair Wig - Ready to Wear"
+                                    <img decoding="async" loading="lazy" src="videos/synwig1.webp" alt="Synthetic Hair Wig - Ready to Wear"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/synwig2.png" alt="Synthetic Hair Wig - Shake & Wear Style"
+                                    <img decoding="async" loading="lazy" src="videos/synwig2.webp" alt="Synthetic Hair Wig - Shake & Wear Style"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -335,11 +335,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/pin1.jpeg" alt="Pin Point Hair Link - Strand-by-Strand Technique"
+                                    <img decoding="async" loading="lazy" src="videos/pin1.webp" alt="Pin Point Hair Link - Strand-by-Strand Technique"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/pin2.png" alt="Pin Point Hair Link - Micro-Link Non-Surgical Method"
+                                    <img decoding="async" loading="lazy" src="videos/pin2.webp" alt="Pin Point Hair Link - Micro-Link Non-Surgical Method"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -455,11 +455,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/mini1.jpeg" alt="Mini Hair Filler - Featherweight Natural Volume"
+                                    <img decoding="async" loading="lazy" src="videos/mini1.webp" alt="Mini Hair Filler - Featherweight Natural Volume"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/mini2.jpg" alt="Mini Hair Filler - Micro-Clip Crown Coverage"
+                                    <img decoding="async" loading="lazy" src="videos/mini2.webp" alt="Mini Hair Filler - Micro-Clip Crown Coverage"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -575,11 +575,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/top1.jpeg" alt="Hair Topper - Crown Volume Enhancement"
+                                    <img decoding="async" loading="lazy" src="videos/top1.webp" alt="Hair Topper - Crown Volume Enhancement"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/top2.jpeg" alt="Hair Topper - Silk Parting Natural Blending"
+                                    <img decoding="async" loading="lazy" src="videos/top2.webp" alt="Hair Topper - Silk Parting Natural Blending"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -695,11 +695,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/skin1.jpeg" alt="Hair Contacts - 0.02mm Silicon Skin Base"
+                                    <img decoding="async" loading="lazy" src="videos/skin1.webp" alt="Hair Contacts - 0.02mm Silicon Skin Base"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/skin2.jpeg" alt="Hair Contacts - Bald Patch Seamless Blending"
+                                    <img decoding="async" loading="lazy" src="videos/skin2.webp" alt="Hair Contacts - Bald Patch Seamless Blending"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -815,11 +815,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/toupee1.jpeg" alt="Men's Hair System - Bespoke Toupee Transformation"
+                                    <img decoding="async" loading="lazy" src="videos/toupee1.webp" alt="Men's Hair System - Bespoke Toupee Transformation"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/toupee2.jpeg" alt="Men's Hair System - Undetectable Hairline Fit"
+                                    <img decoding="async" loading="lazy" src="videos/toupee2.webp" alt="Men's Hair System - Undetectable Hairline Fit"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -935,11 +935,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/tape1.jpg" alt="Tape-In Hair Extension - Seamless Invisiblend"
+                                    <img decoding="async" loading="lazy" src="videos/tape1.webp" alt="Tape-In Hair Extension - Seamless Invisiblend"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/tape2.jpeg" alt="Tape-In Hair Extension - Flat Polymer Skin Tabs"
+                                    <img decoding="async" loading="lazy" src="videos/tape2.webp" alt="Tape-In Hair Extension - Flat Polymer Skin Tabs"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -1055,11 +1055,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/fusion1.jpeg" alt="Fusion Hair Extensions - Keratin Bond Tips"
+                                    <img decoding="async" loading="lazy" src="videos/fusion1.webp" alt="Fusion Hair Extensions - Keratin Bond Tips"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/fusion2.jpeg" alt="Fusion Hair Extensions - 360 Degree Styling"
+                                    <img decoding="async" loading="lazy" src="videos/fusion2.webp" alt="Fusion Hair Extensions - 360 Degree Styling"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -1175,11 +1175,11 @@ const productsSection = `<!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/weaving.jpeg" alt="Weaving Hair Extension - Traditional Weft Method"
+                                    <img decoding="async" loading="lazy" src="videos/weaving.webp" alt="Weaving Hair Extension - Traditional Weft Method"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/weaving1.jpeg" alt="Weaving Hair Extension - Safe Fast Installation"
+                                    <img decoding="async" loading="lazy" src="videos/weaving1.webp" alt="Weaving Hair Extension - Safe Fast Installation"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>

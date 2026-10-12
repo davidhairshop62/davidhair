@@ -840,7 +840,7 @@
 
         function aiTryOnSimulator() {
             return {
-                userFacePhoto: 'images/TransMan.png',
+                userFacePhoto: 'images/TransMan.webp',
                 selectedStyle: 'Crew cut',
                 selectedColor: '#1B Off Black',
                 selectedCategory: 'Man', // 'All', 'Man', 'Woman', 'Unisex'
@@ -1104,11 +1104,11 @@
                 selectCategory(cat) {
                     this.selectedCategory = cat;
                     if (cat === 'Man') {
-                        this.userFacePhoto = 'images/TransMan.png';
+                        this.userFacePhoto = 'images/TransMan.webp';
                     } else if (cat === 'Woman' || cat === 'Unisex') {
-                        this.userFacePhoto = 'images/transwoman.png';
+                        this.userFacePhoto = 'images/transwoman.webp';
                     } else if (cat === 'All') {
-                        this.userFacePhoto = 'images/TransMan.png';
+                        this.userFacePhoto = 'images/TransMan.webp';
                     }
                     const available = this.filteredStyles;
                     if (available.length > 0 && !available.some(s => s.name === this.selectedStyle)) {
@@ -1562,7 +1562,7 @@
                 <div class="lg:col-span-5 relative mt-4 lg:mt-0">
                     <div
                         class="relative mx-auto max-w-md rounded-2xl overflow-hidden border border-brand-border shadow-2xl bg-brand-cardBg">
-                        <video autoplay muted loop playsinline
+                        <video preload="metadata" autoplay muted loop playsinline
                             class="w-full h-72 sm:h-[420px] lg:h-[460px] object-cover">
                             <source src="videos/Runing.mp4" type="video/mp4">
                         </video>
@@ -1614,7 +1614,7 @@
             }
         }">
         <!-- Background Video -->
-        <video x-ref="bgVideo" :src="videos[currentIdx]" autoplay muted playsinline @ended="playNext()"
+        <video preload="metadata" x-ref="bgVideo" :src="videos[currentIdx]" autoplay muted playsinline @ended="playNext()"
             x-init="$nextTick(() => { if ($refs.bgVideo) { $refs.bgVideo.play().catch(() => {}); } })"
             class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 transition-all duration-700">
         </video>
@@ -1689,7 +1689,7 @@
                 <div class="lg:col-span-5 relative mt-4 lg:mt-0">
                     <div
                         class="relative mx-auto max-w-md rounded-2xl overflow-hidden border border-brand-border shadow-2xl bg-brand-cardBg">
-                        <video x-ref="cardVideo" :src="videos[currentIdx]" autoplay muted playsinline
+                        <video preload="metadata" x-ref="cardVideo" :src="videos[currentIdx]" autoplay muted playsinline
                             @ended="playNext()" class="w-full h-72 sm:h-[420px] lg:h-[460px] object-cover">
                         </video>
                         <div
@@ -2333,7 +2333,7 @@
                         class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden eye-shadow flex flex-col justify-between group hover:border-brand-teal transition-all">
                         <div>
                             <div class="relative aspect-square w-full overflow-hidden bg-brand-inner">
-                                <img :src="item.image" :alt="item.name"
+                                <img decoding="async" loading="lazy" :src="item.image" :alt="item.name"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded-md border border-brand-border"
                                     x-text="'Stock: ' + item.stockQty + ' pcs'"></div>
@@ -2500,7 +2500,7 @@
 
                 <div class="lg:col-span-6 mt-4 lg:mt-0">
                     <div class="rounded-2xl border border-brand-border overflow-hidden bg-brand-cardBg shadow-xl">
-                        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
+                        <img decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
                             alt="Springvale Salon Interior" class="w-full h-64 sm:h-80 object-cover">
                         <div class="p-5 sm:p-6">
                             <div
@@ -2575,7 +2575,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/man1_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/man1_after.webp"
                             alt="Men Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2584,7 +2584,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/man1_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/man1_before.webp"
                                 alt="Men Hair Loss Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_m1 ? $refs.slider_m1.clientWidth : 380)}px`">
@@ -2635,7 +2635,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/man2_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/man2_after.webp"
                             alt="Men Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2644,7 +2644,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/man2_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/man2_before.webp"
                                 alt="Men Hair Loss Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_m2 ? $refs.slider_m2.clientWidth : 380)}px`">
@@ -2695,7 +2695,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/man3_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/man3_after.webp"
                             alt="Men Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2704,7 +2704,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/man3_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/man3_before.webp"
                                 alt="Men Hair Loss Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_m3 ? $refs.slider_m3.clientWidth : 380)}px`">
@@ -2774,7 +2774,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/woman1_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/woman1_after.webp"
                             alt="Women Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2783,7 +2783,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/woman1_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/woman1_before.webp"
                                 alt="Women Thinning Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_w1 ? $refs.slider_w1.clientWidth : 380)}px`">
@@ -2834,7 +2834,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/woman2_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/woman2_after.webp"
                             alt="Women Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2843,7 +2843,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/woman2_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/woman2_before.webp"
                                 alt="Women Thinning Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_w2 ? $refs.slider_w2.clientWidth : 380)}px`">
@@ -2894,7 +2894,7 @@
                         @touchmove="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, (($event.touches[0].clientX - $el.getBoundingClientRect().left) / $el.clientWidth) * 100))"
                         @click="containerW = $el.clientWidth; sliderPos = Math.max(0, Math.min(100, ($event.offsetX / $el.clientWidth) * 100))">
                         <!-- After Image -->
-                        <img src="images/transformations/woman3_after.jpg"
+                        <img decoding="async" loading="lazy" src="images/transformations/woman3_after.webp"
                             alt="Women Hair Transformation After"
                             class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none">
                         <div class="absolute bottom-3 right-3 bg-black/75 backdrop-blur text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/20 select-none shadow">
@@ -2903,7 +2903,7 @@
 
                         <!-- Before Image Overlay -->
                         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none" :style="`width: ${sliderPos}%`">
-                            <img src="images/transformations/woman3_before.jpg"
+                            <img decoding="async" loading="lazy" src="images/transformations/woman3_before.webp"
                                 alt="Women Thinning Before"
                                 class="absolute inset-0 h-full object-cover max-w-none pointer-events-none select-none"
                                 :style="`width: ${containerW || ($refs.slider_w3 ? $refs.slider_w3.clientWidth : 380)}px`">
@@ -2997,7 +2997,7 @@
                         <div x-show="isCameraActive" x-cloak class="w-full flex items-center justify-center py-1">
                             <div
                                 class="relative w-full max-w-[420px] aspect-[3/4] mx-auto bg-black rounded-xl overflow-hidden shadow-2xl border-2 border-brand-teal flex items-center justify-center">
-                                <video x-ref="cameraVideo" autoplay playsinline
+                                <video preload="metadata" x-ref="cameraVideo" autoplay playsinline
                                     class="w-full h-full object-cover -scale-x-100"></video>
 
                                 <!-- Facial Alignment Guide Contour Overlay (SVG) -->
@@ -3120,7 +3120,7 @@
 
                                     <!-- Base Layer: Original Face Photo -->
                                     <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none">
-                                        <img :src="userFacePhoto"
+                                        <img decoding="async" loading="lazy" :src="userFacePhoto"
                                             class="max-w-full max-h-full object-contain rounded-lg select-none"
                                             :style="getFaceTransform()">
                                     </div>
@@ -3129,13 +3129,13 @@
                                     <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none select-none"
                                         :style="`clip-path: inset(0 0 0 ${sliderPos}%)`">
                                         <!-- Base Face Photo -->
-                                        <img :src="userFacePhoto"
+                                        <img decoding="async" loading="lazy" :src="userFacePhoto"
                                             class="max-w-full max-h-full object-contain rounded-lg select-none"
                                             :style="getFaceTransform()">
                                         <!-- Hairpiece Overlay -->
                                         <div class="absolute inset-x-0 top-3 sm:top-5 flex justify-center transition-transform duration-75"
                                             :style="getHairTransform()">
-                                            <img :src="getHairOverlayUrl()"
+                                            <img decoding="async" loading="lazy" :src="getHairOverlayUrl()"
                                                 class="w-3/4 sm:w-2/3 h-48 sm:h-64 object-contain drop-shadow-2xl select-none">
                                         </div>
                                     </div>
@@ -3245,10 +3245,10 @@
                             <div class="flex items-center gap-2 pt-1">
                                 <span class="text-[10px] text-brand-textMuted font-medium">Or try sample:</span>
                                 <button
-                                    @click="setSampleFace('images/TransMan.png')"
+                                    @click="setSampleFace('images/TransMan.webp')"
                                     class="text-[10px] text-brand-tealLight underline font-bold">Sample 1 (Man)</button>
                                 <button
-                                    @click="setSampleFace('images/transwoman.png')"
+                                    @click="setSampleFace('images/transwoman.webp')"
                                     class="text-[10px] text-brand-tealLight underline font-bold">Sample 2 (Woman)</button>
                             </div>
                         </div>
@@ -3432,11 +3432,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/humanwig1.png" alt="Human Hair Wig - 100% Super REMY Custom-Make"
+                                    <img decoding="async" loading="lazy" src="videos/humanwig1.webp" alt="Human Hair Wig - 100% Super REMY Custom-Make"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/humanwig2.jpeg" alt="Human Hair Wig - Hand-Tied Monofilament Craftsmanship"
+                                    <img decoding="async" loading="lazy" src="videos/humanwig2.webp" alt="Human Hair Wig - Hand-Tied Monofilament Craftsmanship"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -3553,11 +3553,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/synwig1.png" alt="Synthetic Hair Wig - Ready to Wear"
+                                    <img decoding="async" loading="lazy" src="videos/synwig1.webp" alt="Synthetic Hair Wig - Ready to Wear"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/synwig2.png" alt="Synthetic Hair Wig - Shake & Wear Style"
+                                    <img decoding="async" loading="lazy" src="videos/synwig2.webp" alt="Synthetic Hair Wig - Shake & Wear Style"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -3673,11 +3673,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/pin1.jpeg" alt="Pin Point Hair Link - Strand-by-Strand Technique"
+                                    <img decoding="async" loading="lazy" src="videos/pin1.webp" alt="Pin Point Hair Link - Strand-by-Strand Technique"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/pin2.png" alt="Pin Point Hair Link - Micro-Link Non-Surgical Method"
+                                    <img decoding="async" loading="lazy" src="videos/pin2.webp" alt="Pin Point Hair Link - Micro-Link Non-Surgical Method"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -3793,11 +3793,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/mini1.jpeg" alt="Mini Hair Filler - Featherweight Natural Volume"
+                                    <img decoding="async" loading="lazy" src="videos/mini1.webp" alt="Mini Hair Filler - Featherweight Natural Volume"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/mini2.jpg" alt="Mini Hair Filler - Micro-Clip Crown Coverage"
+                                    <img decoding="async" loading="lazy" src="videos/mini2.webp" alt="Mini Hair Filler - Micro-Clip Crown Coverage"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -3913,11 +3913,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/top1.jpeg" alt="Hair Topper - Crown Volume Enhancement"
+                                    <img decoding="async" loading="lazy" src="videos/top1.webp" alt="Hair Topper - Crown Volume Enhancement"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/top2.jpeg" alt="Hair Topper - Silk Parting Natural Blending"
+                                    <img decoding="async" loading="lazy" src="videos/top2.webp" alt="Hair Topper - Silk Parting Natural Blending"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -4033,11 +4033,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/skin1.jpeg" alt="Hair Contacts - 0.02mm Silicon Skin Base"
+                                    <img decoding="async" loading="lazy" src="videos/skin1.webp" alt="Hair Contacts - 0.02mm Silicon Skin Base"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/skin2.jpeg" alt="Hair Contacts - Bald Patch Seamless Blending"
+                                    <img decoding="async" loading="lazy" src="videos/skin2.webp" alt="Hair Contacts - Bald Patch Seamless Blending"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -4153,11 +4153,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/toupee1.jpeg" alt="Men's Hair System - Bespoke Toupee Transformation"
+                                    <img decoding="async" loading="lazy" src="videos/toupee1.webp" alt="Men's Hair System - Bespoke Toupee Transformation"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/toupee2.jpeg" alt="Men's Hair System - Undetectable Hairline Fit"
+                                    <img decoding="async" loading="lazy" src="videos/toupee2.webp" alt="Men's Hair System - Undetectable Hairline Fit"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -4273,11 +4273,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/tape1.jpg" alt="Tape-In Hair Extension - Seamless Invisiblend"
+                                    <img decoding="async" loading="lazy" src="videos/tape1.webp" alt="Tape-In Hair Extension - Seamless Invisiblend"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/tape2.jpeg" alt="Tape-In Hair Extension - Flat Polymer Skin Tabs"
+                                    <img decoding="async" loading="lazy" src="videos/tape2.webp" alt="Tape-In Hair Extension - Flat Polymer Skin Tabs"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -4393,11 +4393,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/fusion1.jpeg" alt="Fusion Hair Extensions - Keratin Bond Tips"
+                                    <img decoding="async" loading="lazy" src="videos/fusion1.webp" alt="Fusion Hair Extensions - Keratin Bond Tips"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/fusion2.jpeg" alt="Fusion Hair Extensions - 360 Degree Styling"
+                                    <img decoding="async" loading="lazy" src="videos/fusion2.webp" alt="Fusion Hair Extensions - 360 Degree Styling"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
@@ -4513,11 +4513,11 @@
                             <div class="flex h-full w-full transition-transform duration-500 ease-out"
                                 :style="'transform: translateX(-' + (currentSlide * 100) + '%)'">
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/weaving.jpeg" alt="Weaving Hair Extension - Traditional Weft Method"
+                                    <img decoding="async" loading="lazy" src="videos/weaving.webp" alt="Weaving Hair Extension - Traditional Weft Method"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="w-full h-full flex-shrink-0 relative">
-                                    <img src="videos/weaving1.jpeg" alt="Weaving Hair Extension - Safe Fast Installation"
+                                    <img decoding="async" loading="lazy" src="videos/weaving1.webp" alt="Weaving Hair Extension - Safe Fast Installation"
                                         class="w-full h-full object-cover">
                                 </div>
                             </div>
