@@ -214,13 +214,24 @@
                     }
 
                     try {
-                        const res = await fetch('/api_get_stock.php');
+                        let res = await fetch('/api_get_stock.php?t=' + Date.now(), { cache: 'no-store' });
+                        if (!res.ok) {
+                            res = await fetch('https://davidhair.atozhair.shop/api_get_stock.php?t=' + Date.now());
+                        }
                         const result = await res.json();
                         if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
                             this.stockItems = result.data;
                         }
                     } catch (e) {
-                        console.log('Loaded default stock fallback:', e);
+                        try {
+                            const res = await fetch('https://davidhair.atozhair.shop/api_get_stock.php?t=' + Date.now());
+                            const result = await res.json();
+                            if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
+                                this.stockItems = result.data;
+                            }
+                        } catch (err2) {
+                            console.log('Loaded default stock fallback:', err2);
+                        }
                     }
                     this.$watch('isBookingModalOpen', (val) => {
                         if (val) {
@@ -283,11 +294,11 @@
                 ],
 
                 stockItems: [
-                    { sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '90%', color: '#1B Off Black', price: 420, stockQty: 12, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80', badge: 'Best Seller', description: 'Invisible knotless skin system with ultra-realistic hairline.' },
-                    { sku: 'SKU-DH-102', name: "French Lace Front + PU Perimeter", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '100%', color: '#2 Dark Brown', price: 450, stockQty: 8, image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', badge: "MD's Pick", description: 'Breathable French lace front with durable poly perimeter bonding.' },
-                    { sku: 'SKU-DH-103', name: "Silk Top Topper 12 Inch", category: "Women's Toppers", type: "Silk Top", base: "Silk Top Lace", size: '6x6"', density: '110%', color: '#4 Med Brown', price: 540, stockQty: 5, image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80', badge: 'New', description: 'Triple-layer realistic silk scalp topper for thinning crown volume.' },
-                    { sku: 'SKU-DH-104', name: "All-Swiss Breathable Full Lace", category: "Men's Toupees", type: "Swiss Lace", base: "Swiss Lace", size: '8x10"', density: '85%', color: '#1 Jet Black', price: 440, stockQty: 15, image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80', badge: 'Limited', description: 'Maximum heat dissipation and undetectable Swiss lace hairline.' },
-                    { sku: 'SKU-DH-105', name: "PU Perimeter Hand-Tied Toupee", category: "Men's Toupees", type: "PU Perimeter", base: "PU Perimeter", size: '8x10"', density: '95%', color: '#1B Off Black', price: 460, stockQty: 10, image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80', badge: 'Promotion', description: 'Durable PU base for active sports and long-lasting adhesive bond.' }
+                    { id: 10, sku: 'SKU-DH-102-Small-Xtra', name: "Swiss Net +  PU Perimeter  Small  Xtra", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '6x7"', density: '80%', color: '#Natural', price: 450, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: "A Swiss Net + PU Perimeter man's toupee combines the ultra-natural appearance of fine lace with the durability and secure bonding of polyurethane (PU). It is widely regarded as one of the best hybrid base designs for a realistic yet manageable hair replacement system." },
+                    { id: 9, sku: 'SKU-DH-102-Small', name: "Swiss Net +  PU Perimeter  Small", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '6x8"', density: '80%', color: '#Natural', price: 500, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: 'Limited', description: '' },
+                    { id: 8, sku: 'SKU-DH-102-Medium', name: "Swiss Net +  PU Perimeter  Medium", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '7x9"', density: '80%', color: '#Natural', price: 550, stockQty: 3, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
+                    { id: 7, sku: 'SKU-DH-102-Large', name: "Swiss Net +  PU Perimeter  Large", category: "Men's Toupees", type: "Swiss Lace", base: "Lace Front + PU", size: '8x10"', density: '80%', color: '#Natural', price: 600, stockQty: 2, image: '/uploads/stock_1791609994_1983.jpg', badge: '', description: '' },
+                    { id: 1, sku: 'SKU-DH-101', name: "Ultra-Thin Skin 0.03mm Toupee", category: "Men's Toupees", type: "Skin Systems", base: "0.03mm Skin", size: '8x10"', density: '100%', color: '#1B Off Black', price: 650, stockQty: 3, image: '/uploads/stock_1791608690_1661.jpg', badge: 'Best Seller', description: 'Ultra-thin 0.03mm invisible skin base with direct knotless V-loop injection.' }
                 ],
 
                 builder: {
@@ -669,6 +680,15 @@
                         default:
                             return 'fa-solid fa-star';
                     }
+                },
+
+                getStockImageUrl(img) {
+                    if (!img) return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
+                    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+                    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        return 'https://davidhair.atozhair.shop' + (img.startsWith('/') ? img : '/' + img);
+                    }
+                    return img;
                 },
 
                 openB2BModal(tierName) {
@@ -2333,7 +2353,7 @@
                         class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden eye-shadow flex flex-col justify-between group hover:border-brand-teal transition-all">
                         <div>
                             <div class="relative aspect-square w-full overflow-hidden bg-brand-inner">
-                                <img decoding="async" loading="lazy" :src="item.image" :alt="item.name"
+                                <img decoding="async" loading="lazy" :src="getStockImageUrl(item.image)" :alt="item.name"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded-md border border-brand-border"
                                     x-text="'Stock: ' + item.stockQty + ' pcs'"></div>
@@ -2394,6 +2414,25 @@
                                     Book Salon Fit
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Empty State Message if category has 0 in-stock pieces -->
+                <template x-if="filteredStockItems.length === 0">
+                    <div class="col-span-full text-center py-12 px-6 bg-brand-cardBg/60 border border-brand-border/60 rounded-2xl space-y-3">
+                        <div class="w-12 h-12 rounded-full bg-teal-500/10 border border-teal-500/30 flex items-center justify-center mx-auto text-brand-tealLight text-xl">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-base">No In-Stock Pieces in This Category</h3>
+                        <p class="text-brand-textMuted text-xs max-w-md mx-auto leading-relaxed">
+                            All pre-made stock pieces in <span class="text-white font-semibold" x-text="stockFilter"></span> are currently allocated or reserved for Melbourne salon fittings. You can craft a custom bespoke order directly with our factory.
+                        </p>
+                        <div class="pt-2">
+                            <a href="#builder" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl teal-gradient text-white text-xs font-bold shadow-md hover:opacity-95 transition-all">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Build Custom Hairpiece</span>
+                            </a>
                         </div>
                     </div>
                 </template>

@@ -58,8 +58,15 @@
     </FilesMatch>
 
     # HTML Cache-Control (allow quick updates)
-    <FilesMatch "\.(html|htm|php)$">
+    <FilesMatch "\.(html|htm)$">
         Header set Cache-Control "max-age=3600, public, must-revalidate"
+    </FilesMatch>
+
+    # API endpoints & dynamic PHP scripts - Never cache to guarantee instant database sync
+    <FilesMatch "^(api_.*|admin_.*)\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
     </FilesMatch>
 
     # Security & Performance Headers
