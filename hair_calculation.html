@@ -1,0 +1,2697 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bespoke Hair System Calculator & Ordering Module | David Hair Melbourne</title>
+    <meta name="description" content="Custom Men's Toupee & Women's Hair Topper specification configurator and automated pricing calculator for David Hair Springvale, Melbourne.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #070d1e;
+            --bg-card: #121b33;
+            --bg-card-inner: #182342;
+            --bg-card-hover: #1e2c52;
+            --border-color: #26355d;
+            --border-focus: #14b8a6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --teal: #0d9488;
+            --teal-light: #14b8a6;
+            --teal-glow: rgba(20, 184, 166, 0.25);
+            --gold: #f59e0b;
+            --gold-hover: #d97706;
+            --gold-glow: rgba(245, 158, 11, 0.2);
+            --rose: #f43f5e;
+            --indigo: #6366f1;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 25px rgba(20, 184, 166, 0.2);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(20, 184, 166, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(7, 13, 30, 0.95) 0%, rgba(11, 19, 43, 1) 100%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, select, textarea {
+            font-family: inherit;
+        }
+
+        /* Top Header */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(11, 19, 43, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 24px;
+        }
+
+        .header-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--teal-light), #0284c7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            box-shadow: 0 4px 15px var(--teal-glow);
+        }
+
+        .brand-text h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            color: var(--teal-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .header-pill i {
+            color: var(--gold);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-reset:hover {
+            border-color: var(--rose);
+            color: var(--rose);
+        }
+
+        /* Main App Layout */
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Progress Steps Bar */
+        .steps-nav {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            overflow-x: auto;
+            gap: 8px;
+            scrollbar-width: none;
+        }
+
+        .steps-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .step-item.active {
+            background: var(--bg-card-inner);
+            color: #fff;
+        }
+
+        .step-item.active .step-num {
+            background: var(--teal);
+            border-color: var(--teal-light);
+            color: #fff;
+            box-shadow: 0 0 10px var(--teal-glow);
+        }
+
+        .step-item.completed .step-num {
+            background: var(--bg-card-inner);
+            border-color: var(--teal-light);
+            color: var(--teal-light);
+        }
+
+        /* Configurator Card Container */
+        .config-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .step-section {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .step-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--teal-light);
+            font-size: 1.25rem;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: rgba(20, 184, 166, 0.15);
+            color: var(--teal-light);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            font-weight: 600;
+        }
+
+        /* Form Sub-Group */
+        .sub-group {
+            margin-bottom: 28px;
+        }
+
+        .sub-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sub-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Interactive Grid Options (Radio Cards) */
+        .grid-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .option-card {
+            background: var(--bg-card-inner);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .option-card:hover {
+            border-color: rgba(20, 184, 166, 0.5);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .option-card.active {
+            border-color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.08);
+            box-shadow: 0 0 16px var(--teal-glow);
+        }
+
+        .option-card .check-circle {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 10px;
+            transition: var(--transition);
+        }
+
+        .option-card.active .check-circle {
+            background: var(--teal-light);
+            border-color: var(--teal-light);
+            color: #fff;
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            color: var(--teal-light);
+            margin-bottom: 4px;
+        }
+
+        .option-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .option-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .option-tag {
+            align-self: flex-start;
+            margin-top: auto;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Specialized Gender Selector */
+        .gender-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .gender-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gender-card {
+            background: var(--bg-card-inner);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .gender-card:hover {
+            border-color: var(--teal-light);
+            transform: translateY(-3px);
+        }
+
+        .gender-card.active {
+            border-color: var(--teal-light);
+            background: linear-gradient(180deg, rgba(20, 184, 166, 0.12) 0%, rgba(18, 27, 51, 1) 100%);
+            box-shadow: 0 0 25px var(--teal-glow);
+        }
+
+        .gender-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--teal-light);
+            transition: var(--transition);
+        }
+
+        .gender-card.active .gender-avatar {
+            border-color: var(--teal-light);
+            box-shadow: 0 0 15px var(--teal-glow);
+        }
+
+        .gender-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .gender-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .gender-price-badge {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--gold);
+            background: rgba(245, 158, 11, 0.12);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* Dimension Tabs & Custom Dimension */
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .dim-card {
+            background: var(--bg-card-inner);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dim-card:hover {
+            border-color: var(--teal-light);
+        }
+
+        .dim-card.active {
+            border-color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.15);
+            color: #fff;
+        }
+
+        .dim-card .size-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .dim-card .size-type {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .dim-card .size-fee {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .custom-dimension-box {
+            background: var(--bg-card-inner);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .custom-dimension-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .input-control {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-control:focus {
+            border-color: var(--teal-light);
+            box-shadow: 0 0 0 2px var(--teal-glow);
+        }
+
+        /* Sliders with Value Badges */
+        .range-container {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+        }
+
+        .range-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .range-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .range-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--teal-light);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-card);
+            border-radius: 9999px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--teal-light);
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px var(--teal-glow);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Granular Multi-zone Grey Hair Control */
+        .grey-mode-toggle {
+            display: flex;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background: var(--teal);
+            color: #fff;
+        }
+
+        .granular-zones-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .granular-zones-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Color Swatches Grid */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+
+        .color-swatch-card {
+            background: var(--bg-card-inner);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-swatch-card:hover {
+            border-color: var(--teal-light);
+        }
+
+        .color-swatch-card.active {
+            border-color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.1);
+        }
+
+        .color-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        .color-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .color-code {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Navigation Buttons Bottom */
+        .form-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-prev {
+            background: var(--bg-card-inner);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-prev:hover {
+            color: #fff;
+            border-color: var(--text-muted);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--teal-light), var(--teal));
+            color: #fff;
+            box-shadow: 0 4px 15px var(--teal-glow);
+        }
+
+        .btn-next:hover {
+            background: linear-gradient(135deg, #10b981, var(--teal));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--gold-hover));
+            color: #0b132b;
+            font-weight: 700;
+            box-shadow: 0 4px 15px var(--gold-glow);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Sticky Pricing Summary Panel */
+        .summary-panel {
+            position: sticky;
+            top: 90px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-header h3 i {
+            color: var(--gold);
+        }
+
+        /* 2D Interactive Visualizer Canvas / SVG */
+        .visualizer-box {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .visualizer-title {
+            font-size: 0.78rem;
+            color: var(--teal-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .visual-canvas {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scalp-diagram {
+            width: 130px;
+            height: 160px;
+            border-radius: 50% 50% 45% 45%;
+            background: radial-gradient(circle at 50% 40%, #1e293b 0%, #0f172a 100%);
+            border: 2px dashed var(--teal);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .scalp-inner-base {
+            width: 80%;
+            height: 80%;
+            border-radius: 50% 50% 45% 45%;
+            background: rgba(20, 184, 166, 0.15);
+            border: 2px solid var(--teal-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .scalp-inner-base.silk-active {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--gold);
+        }
+
+        .scalp-dim-tag {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .scalp-part-line {
+            position: absolute;
+            top: 20px;
+            bottom: 30px;
+            width: 2px;
+            background: #fff;
+            box-shadow: 0 0 6px #fff;
+            transition: var(--transition);
+        }
+
+        .visual-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .mini-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* Formula Display Card */
+        .formula-callout {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--teal-light);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            line-height: 1.5;
+        }
+
+        /* Price Breakdown Table */
+        .breakdown-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .breakdown-row.highlight {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .breakdown-row .val {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .breakdown-row .multiplier-badge {
+            font-size: 0.72rem;
+            color: var(--gold);
+            background: rgba(245, 158, 11, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        .divider-dashed {
+            border-top: 1px dashed var(--border-color);
+            margin: 6px 0;
+        }
+
+        /* Total Price Box */
+        .total-price-box {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(245, 158, 11, 0.1));
+            border: 1.5px solid var(--teal-light);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px var(--teal-glow);
+        }
+
+        .total-label {
+            font-size: 0.8rem;
+            color: var(--teal-light);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .total-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .currency-symbol {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        .total-aud {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .delivery-estimate {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Order / Consultation Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 620px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            border-color: var(--rose);
+        }
+
+        .spec-summary-box {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-size: 0.85rem;
+            margin: 16px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+
+        /* Salon Banner */
+        .salon-info-card {
+            background: rgba(18, 27, 51, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .salon-info-card i {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        .salon-info-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .salon-info-text strong {
+            color: #fff;
+            display: block;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--teal);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 150;
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .site-header, .steps-nav, .form-nav, .action-buttons, .modal-close {
+                display: none !important;
+            }
+            .app-container {
+                display: block !important;
+                padding: 0 !important;
+            }
+            .summary-panel, .config-card {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .step-section {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <div class="brand-logo">
+                <div class="brand-icon" aria-hidden="true">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>DAVID HAIR</h2>
+                    <p>Springvale Melbourne Flagship & Factory Bespoke</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="header-pill">
+                    <i class="fa-solid fa-award"></i>
+                    <span>Antigravity Hair System Spec v2.4</span>
+                </div>
+                <button type="button" class="btn-reset" id="btnResetAll" title="Reset all selections">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="app-container" role="main">
+        
+        <!-- Left: Step-by-Step Configurator -->
+        <section class="left-config-column" aria-label="Hair System Specification Form">
+            
+            <!-- Step Navigation Tracker -->
+            <nav class="steps-nav" aria-label="Configuration Steps">
+                <button type="button" class="step-item active" data-step="1" id="stepNav1">
+                    <span class="step-num">1</span>
+                    <span>Gender & Type</span>
+                </button>
+                <button type="button" class="step-item" data-step="2" id="stepNav2">
+                    <span class="step-num">2</span>
+                    <span>Base & Sizing</span>
+                </button>
+                <button type="button" class="step-item" data-step="3" id="stepNav3">
+                    <span class="step-num">3</span>
+                    <span>Style & Scalp</span>
+                </button>
+                <button type="button" class="step-item" data-step="4" id="stepNav4">
+                    <span class="step-num">4</span>
+                    <span>Hair Specs</span>
+                </button>
+                <button type="button" class="step-item" data-step="5" id="stepNav5">
+                    <span class="step-num">5</span>
+                    <span>Head Mold & Wrap</span>
+                </button>
+            </nav>
+
+            <div class="config-card">
+                
+                <!-- STEP 1: Customer Gender & Product Category -->
+                <article class="step-section active" id="stepSection1" aria-labelledby="stepTitle1">
+                    <header class="section-header">
+                        <div>
+                            <h1 class="section-title" id="stepTitle1">
+                                <i class="fa-solid fa-user-tag"></i>
+                                Step 1: Customer Gender & Category
+                            </h1>
+                            <p class="section-desc">Select customer profile to configure bespoke toupee or topper specifications.</p>
+                        </div>
+                        <span class="badge-pill"><i class="fa-solid fa-lock"></i> Baseline Entry</span>
+                    </header>
+
+                    <div class="gender-selector" role="radiogroup" aria-label="Gender Category Selection">
+                        <!-- Male Toupee Card -->
+                        <div class="gender-card active" id="genderMaleCard" role="radio" aria-checked="true" tabindex="0">
+                            <div class="gender-avatar">
+                                <i class="fa-solid fa-mars"></i>
+                            </div>
+                            <h3>Male (Custom Toupee)</h3>
+                            <p>남성 맞춤 가발 — Tailored hair system for male pattern hairloss, recession, or crown thinning.</p>
+                            <span class="gender-price-badge">Base AUD $1,000 (6" Standard)</span>
+                        </div>
+
+                        <!-- Female Topper Card -->
+                        <div class="gender-card" id="genderFemaleCard" role="radio" aria-checked="false" tabindex="0">
+                            <div class="gender-avatar">
+                                <i class="fa-solid fa-venus"></i>
+                            </div>
+                            <h3>Female (Hair Topper / Topis)</h3>
+                            <p>여성 맞춤 헤어 토퍼 — Micro-partings to full crown coverage toppers with multi-tone coloring.</p>
+                            <span class="gender-price-badge">Base AUD $1,200 (Mini/Standard Baseline)</span>
+                        </div>
+                    </div>
+
+                    <div class="salon-info-card">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <div class="salon-info-text">
+                            <strong>Factory-Direct Hand-Tied Craftsmanship</strong>
+                            All bespoke pieces are hand-tied with 100% Remy human hair and calibrated at our Springvale, Melbourne salon.
+                        </div>
+                    </div>
+
+                    <footer class="form-nav">
+                        <div></div>
+                        <button type="button" class="btn btn-next" onclick="goToStep(2)">
+                            <span>Continue to Base & Sizing</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- STEP 2: Attachment Method & Base Sizing -->
+                <article class="step-section" id="stepSection2" aria-labelledby="stepTitle2">
+                    <header class="section-header">
+                        <div>
+                            <h2 class="section-title" id="stepTitle2">
+                                <i class="fa-solid fa-ruler-combined"></i>
+                                Step 2: Attachment & Base Sizing
+                            </h2>
+                            <p class="section-desc">Design attachment mechanics and base dimensions tailored to hairloss zone.</p>
+                        </div>
+                        <span class="badge-pill" id="genderContextBadge">Male Toupee</span>
+                    </header>
+
+                    <!-- Attachment Method Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Attachment Type & Hairloss Phase</span>
+                            <span class="sub-hint" id="attachmentNoticeText">Bonding = Exact Hairloss Area | Clip = +1cm Margin</span>
+                        </div>
+                        
+                        <div class="grid-options" id="attachmentOptionsContainer">
+                            <!-- Male Attachment Options -->
+                            <div class="option-card active" data-group="attachment" data-val="bonding" id="optAttachBonding">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-droplet option-icon"></i>
+                                <div class="option-name">Bonding (부착식)</div>
+                                <div class="option-desc">Measured precisely to match the exact hairless boundary for seamless liquid/tape bonding.</div>
+                                <span class="option-tag">Exact Fit (0cm Margin)</span>
+                            </div>
+
+                            <div class="option-card" data-group="attachment" data-val="clip" id="optAttachClip">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-paperclip option-icon"></i>
+                                <div class="option-name">Clip (클립식)</div>
+                                <div class="option-desc">Designed approx 1cm larger than the actual hairless area to ensure stable clip anchoring on healthy hair.</div>
+                                <span class="option-tag">+1 cm Safety Margin</span>
+                            </div>
+
+                            <!-- Female Specialized Option (Headband Type) -->
+                            <div class="option-card" data-group="attachment" data-val="headband" id="optAttachHeadband" style="display: none;">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-ribbon option-icon"></i>
+                                <div class="option-name">Headband Type (Specialized)</div>
+                                <div class="option-desc">Ideal for Frontal Fibrosing Alopecia (FFA). Hybrid elastic retention band + micro-clips.</div>
+                                <span class="option-tag">+$90 Accessory Fee</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Base Material & Construction Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Base Material & Hairline Style Recommendation</span>
+                            <span class="sub-hint">Natural hairline or perimeter longevity</span>
+                        </div>
+
+                        <div class="grid-options" id="baseMaterialContainer">
+                            <div class="option-card active" data-group="baseMaterial" data-val="lace-front-pu">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-feather option-icon"></i>
+                                <div class="option-name">Lace Front + PU Perimeter</div>
+                                <div class="option-desc">Hyper-natural undetectable hairline with durable polyurethane perimeter for easy tape cleaning.</div>
+                                <span class="option-tag">Best-Seller Standard</span>
+                            </div>
+
+                            <div class="option-card" data-group="baseMaterial" data-val="full-lace">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-wind option-icon"></i>
+                                <div class="option-name">Full Swiss Lace</div>
+                                <div class="option-desc">Maximum breathability and 360° natural scalp appearance. Lightweight and comfortable in hot weather.</div>
+                                <span class="option-tag">Ultimate Breathable</span>
+                            </div>
+
+                            <div class="option-card" data-group="baseMaterial" data-val="thin-skin-pu">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-layer-group option-icon"></i>
+                                <div class="option-name">Thin Skin + PU</div>
+                                <div class="option-desc">Ultra-thin translucent skin membrane that adheres like a second scalp layer. Effortless maintenance.</div>
+                                <span class="option-tag">Second-Skin Feel</span>
+                            </div>
+
+                            <div class="option-card" data-group="baseMaterial" data-val="mpu-type">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-shield-cat option-icon"></i>
+                                <div class="option-name">MPU Type (Fringe Down)</div>
+                                <div class="option-desc">Features ~4mm micro-lace front edge with PU surrounding perimeter. Engineered for bangs/fringe-down styles.</div>
+                                <span class="option-tag">Bangs / Fringe Focus</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Base Standard Dimensions Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Base Standard Dimensions & Stock Sizes (Inches)</span>
+                            <span class="sub-hint">Core stock, Intermediate & Extended size tiers</span>
+                        </div>
+
+                        <!-- Dimension Select Cards -->
+                        <div class="dimension-grid" id="dimensionPresetsContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <!-- Custom Dimension Inputs -->
+                        <div class="custom-dimension-box" id="customDimBox">
+                            <div class="input-group">
+                                <label for="inputCustomWidth">Custom Width (Inches)</label>
+                                <input type="number" id="inputCustomWidth" class="input-control" min="2" max="12" step="0.5" value="7.0">
+                            </div>
+                            <div class="input-group">
+                                <label for="inputCustomLength">Custom Length (Inches)</label>
+                                <input type="number" id="inputCustomLength" class="input-control" min="4" max="14" step="0.5" value="9.0">
+                            </div>
+                            <button type="button" class="btn btn-prev" id="btnApplyCustomDim" style="align-self: flex-end; padding: 10px 16px;">
+                                <i class="fa-solid fa-calculator"></i> Apply Custom
+                            </button>
+                        </div>
+                    </div>
+
+                    <footer class="form-nav">
+                        <button type="button" class="btn btn-prev" onclick="goToStep(1)">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-next" onclick="goToStep(3)">
+                            <span>Continue to Style & Scalp</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- STEP 3: Parting, Knotting & Scalp Simulation -->
+                <article class="step-section" id="stepSection3" aria-labelledby="stepTitle3">
+                    <header class="section-header">
+                        <div>
+                            <h2 class="section-title" id="stepTitle3">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                Step 3: Parting, Knotting & Scalp Simulation
+                            </h2>
+                            <p class="section-desc">Replicate authentic human scalp growth and directional parting lines.</p>
+                        </div>
+                        <span class="badge-pill">Precision Crafting</span>
+                    </header>
+
+                    <!-- Parting & Styling Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Parting Direction & Hair Style</span>
+                            <span class="sub-hint">Directional hair flow or unrestricted flexibility</span>
+                        </div>
+
+                        <div class="grid-options" id="partingOptionsContainer">
+                            <div class="option-card active" data-group="partingStyle" data-val="free-style">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-arrows-up-down-left-right option-icon"></i>
+                                <div class="option-name">Free Style</div>
+                                <div class="option-desc">Unrestricted multi-directional hair movement. Comb back, side, or forward freely.</div>
+                                <span class="option-tag">Most Versatile</span>
+                            </div>
+
+                            <div class="option-card" data-group="partingStyle" data-val="left-part">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-arrow-turn-right option-icon"></i>
+                                <div class="option-name">Left Part</div>
+                                <div class="option-desc">Pre-defined elegant left-side part line with graduated density around the separation.</div>
+                                <span class="option-tag">Classic Gentleman</span>
+                            </div>
+
+                            <div class="option-card" data-group="partingStyle" data-val="right-part">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-arrow-turn-down option-icon"></i>
+                                <div class="option-name">Right Part</div>
+                                <div class="option-desc">Tailored right-side hair parting with natural scalp exposure and clean graduation.</div>
+                                <span class="option-tag">Right Parted</span>
+                            </div>
+
+                            <div class="option-card" data-group="partingStyle" data-val="center-part">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-arrows-left-right option-icon"></i>
+                                <div class="option-name">Center Part</div>
+                                <div class="option-desc">Symmetrical center separation favored in modern textured fringe & female toppers.</div>
+                                <span class="option-tag">Center Defined</span>
+                            </div>
+
+                            <div class="option-card" data-group="partingStyle" data-val="pompadour">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-arrow-up-from-bracket option-icon"></i>
+                                <div class="option-name">Pompadour</div>
+                                <div class="option-desc">High lift at root hairline with backward flow for voluminous swept-back executive styles.</div>
+                                <span class="option-tag">Voluminous Lift</span>
+                            </div>
+
+                            <div class="option-card" data-group="partingStyle" data-val="spike">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-bolt option-icon"></i>
+                                <div class="option-name">Spike / Textured</div>
+                                <div class="option-desc">Upright hair tie angle enabling modern textured, messy spiky, or crop fringe styles.</div>
+                                <span class="option-tag">Youthful Dynamic</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clear Part Feature Toggle -->
+                    <div class="sub-group">
+                        <div class="range-container" style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                            <div>
+                                <div class="range-label" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-eye" style="color: var(--teal-light);"></i>
+                                    Clear Part Option (Transparent Parting Line)
+                                </div>
+                                <div class="sub-hint" style="margin-top: 4px;">Installs a completely clear/transparent parting line for ultra-realistic close-up inspection.</div>
+                            </div>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
+                                <input type="checkbox" id="chkClearPart" style="opacity: 0; width: 0; height: 0;">
+                                <span id="toggleClearPartBg" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 34px;"></span>
+                                <span id="toggleClearPartKnob" style="position: absolute; content: ''; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Knotting Methods & Advanced Scalp Simulation (Silk Multiplier) -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Knotting Methods & Scalp Simulation (Silk Series)</span>
+                            <span class="sub-hint" style="color: var(--gold); font-weight: 600;">Silk Series: Multiplier ×1.85 ~ ×2.0 (Double production time)</span>
+                        </div>
+
+                        <div class="grid-options" id="knottingOptionsContainer">
+                            <div class="option-card active" data-group="knotting" data-val="semi-double" data-silk="false">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-diagram-project option-icon"></i>
+                                <div class="option-name">Standard Semi-Double Knotting</div>
+                                <div class="option-desc">Standard hand-tied knotting on Swiss Net [Primary], Fine Mono, French Net, or Skin Cap. Minimal shedding.</div>
+                                <span class="option-tag">Multiplier ×1.0 (Standard)</span>
+                            </div>
+
+                            <div class="option-card" data-group="knotting" data-val="silk-top" data-silk="true" data-mult="2.0">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-crown option-icon" style="color: var(--gold);"></i>
+                                <div class="option-name">Silk Top Series (Triple Layer)</div>
+                                <div class="option-desc">Pure optical scalp simulation. Knots hidden beneath silk layer. Replicates human follicles perfectly.</div>
+                                <span class="option-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--gold);">Multiplier ×2.0 (Premium)</span>
+                            </div>
+
+                            <div class="option-card" data-group="knotting" data-val="silk-part" data-silk="true" data-mult="1.85">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-gem option-icon" style="color: var(--gold);"></i>
+                                <div class="option-name">Silk Part Series (Targeted Scalp)</div>
+                                <div class="option-desc">Targeted silk membrane along the parting line with breathable base surrounding. Exceptional realism.</div>
+                                <span class="option-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--gold);">Multiplier ×1.85 (Labor Intensive)</span>
+                            </div>
+
+                            <div class="option-card" data-group="knotting" data-val="silk-front" data-silk="true" data-mult="1.85">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-sparkles option-icon" style="color: var(--gold);"></i>
+                                <div class="option-name">Silk Front Series (Forehead Hairline)</div>
+                                <div class="option-desc">Silk integration across the front hairline for slicked-back styling with undetectable hair emergence.</div>
+                                <span class="option-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--gold);">Multiplier ×1.85 (Labor Intensive)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="form-nav">
+                        <button type="button" class="btn btn-prev" onclick="goToStep(2)">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-next" onclick="goToStep(4)">
+                            <span>Continue to Hair Specifications</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- STEP 4: Hair Specifications (Texture, Color, Grey, Length, Density) -->
+                <article class="step-section" id="stepSection4" aria-labelledby="stepTitle4">
+                    <header class="section-header">
+                        <div>
+                            <h2 class="section-title" id="stepTitle4">
+                                <i class="fa-solid fa-palette"></i>
+                                Step 4: Hair Specifications & Formulation
+                            </h2>
+                            <p class="section-desc">100% Remy human hair parameters: texture, length, density, and multi-zone grey ratio.</p>
+                        </div>
+                        <span class="badge-pill">100% Human Remy</span>
+                    </header>
+
+                    <!-- Hair Texture Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Hair Texture / Curl Pattern</span>
+                            <span class="sub-hint">Match biological natural texture</span>
+                        </div>
+                        <div class="grid-options" id="textureOptionsContainer">
+                            <div class="option-card active" data-group="texture" data-val="straight">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-bars option-icon"></i>
+                                <div class="option-name">Straight</div>
+                                <div class="option-desc">Natural straight hair with subtle natural body, easy to heat-style and maintain.</div>
+                                <span class="option-tag">Standard Straight</span>
+                            </div>
+
+                            <div class="option-card" data-group="texture" data-val="wave">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-water option-icon"></i>
+                                <div class="option-name">Natural Wave (Body Wave)</div>
+                                <div class="option-desc">Soft 25-30mm wave adding volume and effortless movement without styling tools.</div>
+                                <span class="option-tag">Soft Texture</span>
+                            </div>
+
+                            <div class="option-card" data-group="texture" data-val="curl">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-circle-notch option-icon"></i>
+                                <div class="option-name">Medium Curl</div>
+                                <div class="option-desc">Defined 15-20mm curls for structured, lively curls and blending with permed hair.</div>
+                                <span class="option-tag">Defined Curls</span>
+                            </div>
+
+                            <div class="option-card" data-group="texture" data-val="afro-curl">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-asterisk option-icon"></i>
+                                <div class="option-name">Afro Curl / Tight Kink</div>
+                                <div class="option-desc">High-density coiled texture specifically crafted for textured ethnic hair profiles.</div>
+                                <span class="option-tag">Tight Textured</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color Swatches Sub-group -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Hair Color Swatch</span>
+                            <span class="sub-hint" id="colorSpectrumHint">Male Standard Spectrum (Tone 1 ~ 6)</span>
+                        </div>
+                        <div class="color-grid" id="colorSwatchesContainer">
+                            <!-- Populated dynamically based on gender -->
+                        </div>
+                    </div>
+
+                    <!-- Hair Length Slider & Surcharge -->
+                    <div class="sub-group">
+                        <div class="range-container">
+                            <div class="range-header">
+                                <div>
+                                    <span class="range-label">Hair Length (Inches)</span>
+                                    <div class="sub-hint" id="lengthBaselineHint">Male Baseline: 6 Inches (Standard popular). Over 6" applies +$50/inch.</div>
+                                </div>
+                                <span class="range-val" id="lengthDisplayVal">6 Inches</span>
+                            </div>
+                            <input type="range" id="rangeLength" min="4" max="12" step="2" value="6">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 6px;" id="lengthTicks">
+                                <span>4"</span>
+                                <span>6" (Baseline)</span>
+                                <span>8"</span>
+                                <span>10"</span>
+                                <span>12"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hair Density Slider & Multiplier -->
+                    <div class="sub-group">
+                        <div class="range-container">
+                            <div class="range-header">
+                                <div>
+                                    <span class="range-label">Hair Density (%)</span>
+                                    <div class="sub-hint">80% is our primary natural standard. Densities >100% incur ×1.15 multiplier.</div>
+                                </div>
+                                <span class="range-val" id="densityDisplayVal">80% (Standard)</span>
+                            </div>
+                            <input type="range" id="rangeDensity" min="0" max="4" step="1" value="2">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 6px;">
+                                <span>60% Light</span>
+                                <span>70% Light-Med</span>
+                                <span style="color: var(--teal-light); font-weight: 700;">80% Standard</span>
+                                <span>100% Med</span>
+                                <span style="color: var(--gold);">120% Heavy (×1.15)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grey Hair (White Hair) Ratio: Overall vs Granular Multi-zone -->
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Grey Hair (White Hair) Ratio Distribution</span>
+                            <span class="sub-hint">Uniform overall or granular multi-zone control</span>
+                        </div>
+
+                        <!-- Toggle Mode Buttons -->
+                        <div class="grey-mode-toggle">
+                            <button type="button" class="mode-btn active" id="btnModeUniform" onclick="setGreyMode('uniform')">
+                                <i class="fa-solid fa-arrows-split-up-and-left"></i> Uniform Overall (0-100%)
+                            </button>
+                            <button type="button" class="mode-btn" id="btnModeGranular" onclick="setGreyMode('granular')">
+                                <i class="fa-solid fa-shapes"></i> Granular 4-Zone Surcharge (+$80)
+                            </button>
+                        </div>
+
+                        <!-- Uniform Mode Container -->
+                        <div id="uniformGreyContainer" class="range-container">
+                            <div class="range-header">
+                                <span class="range-label">Overall Grey Hair Ratio</span>
+                                <span class="range-val" id="uniformGreyDisplayVal">0% Grey</span>
+                            </div>
+                            <input type="range" id="rangeUniformGrey" min="0" max="100" step="5" value="0">
+                        </div>
+
+                        <!-- Granular 4-Zone Container (Sides, Back, Front, Crown) -->
+                        <div id="granularGreyContainer" style="display: none;">
+                            <div class="formula-callout" style="margin-bottom: 12px;">
+                                <i class="fa-solid fa-circle-info" style="color: var(--teal-light);"></i>
+                                Granular Control applies individual grey hair blends across Front, Sides, Back, and Crown (+AUD $80 hand-tie sorting surcharge).
+                            </div>
+                            
+                            <div class="granular-zones-grid">
+                                <div class="range-container">
+                                    <div class="range-header">
+                                        <span class="range-label"><i class="fa-solid fa-heading" style="color: var(--teal-light);"></i> Front (Hairline)</span>
+                                        <span class="range-val" id="zoneFrontVal">0%</span>
+                                    </div>
+                                    <input type="range" id="rangeZoneFront" min="0" max="100" step="5" value="0" oninput="updateZoneVal('Front', this.value)">
+                                </div>
+
+                                <div class="range-container">
+                                    <div class="range-header">
+                                        <span class="range-label"><i class="fa-solid fa-ear-listen" style="color: var(--teal-light);"></i> Sides (Temples)</span>
+                                        <span class="range-val" id="zoneSidesVal">15%</span>
+                                    </div>
+                                    <input type="range" id="rangeZoneSides" min="0" max="100" step="5" value="15" oninput="updateZoneVal('Sides', this.value)">
+                                </div>
+
+                                <div class="range-container">
+                                    <div class="range-header">
+                                        <span class="range-label"><i class="fa-solid fa-arrows-down-to-line" style="color: var(--teal-light);"></i> Back (Occipital)</span>
+                                        <span class="range-val" id="zoneBackVal">10%</span>
+                                    </div>
+                                    <input type="range" id="rangeZoneBack" min="0" max="100" step="5" value="10" oninput="updateZoneVal('Back', this.value)">
+                                </div>
+
+                                <div class="range-container">
+                                    <div class="range-header">
+                                        <span class="range-label"><i class="fa-solid fa-crown" style="color: var(--teal-light);"></i> Crown (Vertex)</span>
+                                        <span class="range-val" id="zoneCrownVal">5%</span>
+                                    </div>
+                                    <input type="range" id="rangeZoneCrown" min="0" max="100" step="5" value="5" oninput="updateZoneVal('Crown', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="form-nav">
+                        <button type="button" class="btn btn-prev" onclick="goToStep(3)">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-next" onclick="goToStep(5)">
+                            <span>Continue to Head Mold & Wrap</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- STEP 5: Head Measurement & Wrapping Guide -->
+                <article class="step-section" id="stepSection5" aria-labelledby="stepTitle5">
+                    <header class="section-header">
+                        <div>
+                            <h2 class="section-title" id="stepTitle5">
+                                <i class="fa-solid fa-head-side-mask"></i>
+                                Step 5: Head Wrapping & Precision Molding
+                            </h2>
+                            <p class="section-desc">Physical head shaping/wrapping protocol before factory master transmission.</p>
+                        </div>
+                        <span class="badge-pill">Melbourne Flagship</span>
+                    </header>
+
+                    <div class="sub-group">
+                        <div class="sub-title">
+                            <span>Head Measurement Protocol</span>
+                            <span class="sub-hint">Springvale Salon Fitting or Custom Mold Kit Delivery</span>
+                        </div>
+
+                        <div class="grid-options">
+                            <div class="option-card active" data-group="headWrap" data-val="in-salon">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-store option-icon"></i>
+                                <div class="option-name">Springvale Salon Wrap (Recommended)</div>
+                                <div class="option-desc">Visit our Melbourne flagship salon for 3D plaster/pliable film head wrapping, density mapping, and hair sample matching.</div>
+                                <span class="option-tag">Complimentary with Order</span>
+                            </div>
+
+                            <div class="option-card" data-group="headWrap" data-val="postal-kit">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-box-archive option-icon"></i>
+                                <div class="option-name">Remote DIY Mold Kit Delivery</div>
+                                <div class="option-desc">Receive our medical-grade cling wrap & tape template molding kit with 1-on-1 video call guidance across Australia.</div>
+                                <span class="option-tag">Australia-Wide Postage</span>
+                            </div>
+
+                            <div class="option-card" data-group="headWrap" data-val="existing-mold">
+                                <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                <i class="fa-solid fa-clone option-icon"></i>
+                                <div class="option-name">Reorder on Existing Client File</div>
+                                <div class="option-desc">Use your archived 3D head mold already safely stored in our Melbourne facility or overseas factory archives.</div>
+                                <span class="option-tag">Existing Client VIP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Notes Text Area -->
+                    <div class="sub-group">
+                        <div class="input-group">
+                            <label for="clientOrderNotes">Custom Hairline & Styling Notes (Optional)</label>
+                            <textarea id="clientOrderNotes" class="input-control" rows="3" placeholder="e.g., Graduated soft recession at left temple, extra feathering along fringe edge, sensitive scalp considerations..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="salon-info-card">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div class="salon-info-text">
+                            <strong>Melbourne Flagship Salon: Springvale, VIC 3171</strong>
+                            Physical wrapping ensures accurate curvature of skull contours and front hairline graduation before production lines start.
+                        </div>
+                    </div>
+
+                    <footer class="form-nav">
+                        <button type="button" class="btn btn-prev" onclick="goToStep(4)">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <button type="button" class="btn btn-gold" onclick="openOrderModal()">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Generate Official Quote & Order
+                        </button>
+                    </footer>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Right: Real-time Live Price Calculation & Spec Summary Sidebar -->
+        <aside class="summary-panel" aria-label="Live Quotation Summary">
+            
+            <header class="summary-header">
+                <h3>
+                    <i class="fa-solid fa-calculator"></i>
+                    Live Quotation
+                </h3>
+                <span class="badge-pill" id="quoteCategoryPill">MALE TOUPEE</span>
+            </header>
+
+            <!-- 2D Interactive Scalp & Base Visualizer -->
+            <div class="visualizer-box">
+                <div class="visualizer-title">
+                    <span>Base & Scalp Visualizer</span>
+                    <span id="visualAttachLabel" style="color: #cbd5e1; font-weight: 500;">Bonding (Exact)</span>
+                </div>
+                
+                <div class="visual-canvas">
+                    <div class="scalp-diagram" id="scalpDiagram">
+                        <div class="scalp-inner-base" id="scalpInnerBase">
+                            <span class="scalp-dim-tag" id="scalpDimTag">7" × 9"</span>
+                            <span style="font-size: 0.65rem; color: var(--text-muted);" id="scalpBaseTypeTag">Lace Front + PU</span>
+                        </div>
+                        <div class="scalp-part-line" id="scalpPartLine"></div>
+                    </div>
+                </div>
+
+                <div class="visual-badges">
+                    <span class="mini-badge" id="badgeVisualTexture">Straight</span>
+                    <span class="mini-badge" id="badgeVisualDensity">80% Standard</span>
+                    <span class="mini-badge" id="badgeVisualGrey">0% Grey</span>
+                    <span class="mini-badge" id="badgeVisualLength">6" Length</span>
+                </div>
+            </div>
+
+            <!-- Mathematical Formula Specification Callout -->
+            <div class="formula-callout" title="Price formula from specification">
+                <strong>Formula representation:</strong><br>
+                Total = (Base + SizeFee + LengthFee) × DensityMult × SilkMult + GreyFee + AccFee
+            </div>
+
+            <!-- Detailed Breakdown Rows -->
+            <div class="breakdown-list">
+                <div class="breakdown-row">
+                    <span>Baseline Hairpiece</span>
+                    <span class="val" id="rowBasePrice">AUD $1,000</span>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Size Surcharge / Tier</span>
+                    <span class="val" id="rowSizeFee">+AUD $0</span>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Length Fee</span>
+                    <span class="val" id="rowLengthFee">+AUD $0</span>
+                </div>
+
+                <div class="divider-dashed"></div>
+
+                <div class="breakdown-row highlight">
+                    <span>Subtotal Before Multipliers</span>
+                    <span class="val" id="rowSubtotalBeforeMult">AUD $1,000</span>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>
+                        Density Factor
+                        <span class="multiplier-badge" id="badgeDensityMult">×1.0</span>
+                    </span>
+                    <span class="val" id="rowDensityFactor">Standard</span>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>
+                        Scalp Knotting Factor
+                        <span class="multiplier-badge" id="badgeSilkMult">×1.0</span>
+                    </span>
+                    <span class="val" id="rowSilkFactor">Standard Net</span>
+                </div>
+
+                <div class="divider-dashed"></div>
+
+                <div class="breakdown-row">
+                    <span>Grey Hair Formulation Fee</span>
+                    <span class="val" id="rowGreyFee">+AUD $0</span>
+                </div>
+
+                <div class="breakdown-row">
+                    <span>Accessory Component Fee</span>
+                    <span class="val" id="rowAccessoryFee">+AUD $0</span>
+                </div>
+            </div>
+
+            <!-- Grand Total Price Display -->
+            <div class="total-price-box">
+                <div class="total-label">Estimated Total Price</div>
+                <div class="total-number">
+                    <span class="currency-symbol">$</span>
+                    <span id="grandTotalVal">1,000</span>
+                    <span class="total-aud">AUD</span>
+                </div>
+                <div class="delivery-estimate">
+                    <i class="fa-solid fa-clock"></i>
+                    <span id="estProductionTime">Crafting: 4 - 6 Weeks (Factory Direct)</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn btn-gold btn-full" onclick="openOrderModal()">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Order / Consultation
+                </button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button type="button" class="btn btn-prev" onclick="copyQuoteSpecs()" title="Copy entire specification to clipboard">
+                        <i class="fa-solid fa-copy"></i> Copy Quote
+                    </button>
+                    <button type="button" class="btn btn-prev" onclick="window.print()" title="Print / Save PDF quotation">
+                        <i class="fa-solid fa-print"></i> Print PDF
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- Order Submission & Specification Modal -->
+    <div class="modal-overlay" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-card">
+            <button type="button" class="modal-close" onclick="closeOrderModal()" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 id="modalTitle" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-file-signature" style="color: var(--teal-light);"></i>
+                Bespoke Order Specification Sheet
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+                Review the exact technical parameters formulated for your bespoke hair system before submission to David Hair Melbourne.
+            </p>
+
+            <!-- Specification Summary Output -->
+            <div class="spec-summary-box" id="modalSpecSummaryText">Generating summary...</div>
+
+            <form id="orderCustomerForm" onsubmit="handleOrderSubmit(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="input-group">
+                        <label for="custName">Client Name *</label>
+                        <input type="text" id="custName" class="input-control" required placeholder="Full Name">
+                    </div>
+                    <div class="input-group">
+                        <label for="custPhone">Phone Number *</label>
+                        <input type="tel" id="custPhone" class="input-control" required placeholder="04xx xxx xxx">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label for="custEmail">Email Address *</label>
+                    <input type="email" id="custEmail" class="input-control" required placeholder="email@example.com">
+                </div>
+
+                <div class="input-group" style="margin-bottom: 18px;">
+                    <label for="custLocation">Preferred Appointment / Consultation</label>
+                    <select id="custLocation" class="input-control">
+                        <option value="springvale">Springvale Melbourne Salon (Flagship Visit)</option>
+                        <option value="video">Online Video Consultation + Wrap Kit Delivery</option>
+                        <option value="reorder">Existing Client File / Remote Production</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-prev" onclick="closeOrderModal()">Cancel</button>
+                    <button type="submit" class="btn btn-gold">
+                        <i class="fa-solid fa-check"></i> Confirm & Send to Salon
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Feedback Element -->
+    <div class="toast" id="toastNotification" role="alert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMessage">Action completed successfully</span>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        /**
+         * Hair System Calculation & Ordering Module Logic
+         * Implements specifications defined in hair_calculation_module_specification.md
+         */
+
+        // Current Configurator State
+        const state = {
+            step: 1,
+            gender: 'male', // 'male' | 'female'
+            attachment: 'bonding', // 'bonding' | 'clip' | 'headband'
+            baseMaterial: 'lace-front-pu',
+            baseDimensionType: 'preset', // 'preset' | 'custom'
+            dimensionPreset: '7x9',
+            customWidth: 7.0,
+            customLength: 9.0,
+            partingStyle: 'free-style',
+            clearPart: false,
+            knotting: 'semi-double',
+            isSilk: false,
+            silkMultiplier: 1.0,
+            texture: 'straight',
+            color: '1B',
+            colorName: '#1B Off Black',
+            length: 6,
+            densityIndex: 2, // 0: 60%, 1: 70%, 2: 80%, 3: 100%, 4: 120%
+            greyMode: 'uniform', // 'uniform' | 'granular'
+            uniformGreyRatio: 0,
+            zones: {
+                front: 0,
+                sides: 15,
+                back: 10,
+                crown: 5
+            },
+            headWrap: 'in-salon',
+            notes: ''
+        };
+
+        // Male Presets Dimensions
+        const MALE_DIMENSION_PRESETS = [
+            { id: '6x8', label: '6" × 8"', category: 'Core Stock', fee: 0, width: 6, length: 8 },
+            { id: '7x9', label: '7" × 9"', category: 'Core Stock', fee: 0, width: 7, length: 9 },
+            { id: '8x10', label: '8" × 10"', category: 'Core Stock', fee: 0, width: 8, length: 10 },
+            { id: '6.5x8', label: '6.5" × 8"', category: 'Intermediate', fee: 50, width: 6.5, length: 8 },
+            { id: '7.5x9', label: '7.5" × 9"', category: 'Intermediate', fee: 50, width: 7.5, length: 9 },
+            { id: '8.5x10', label: '8.5" × 10"', category: 'Intermediate', fee: 100, width: 8.5, length: 10 },
+            { id: '6x8.5', label: '6" × 8.5"', category: 'Extended', fee: 60, width: 6, length: 8.5 },
+            { id: '7x9.5', label: '7" × 9.5"', category: 'Extended', fee: 60, width: 7, length: 9.5 },
+            { id: '8x10.5', label: '8" × 10.5"', category: 'Extended', fee: 120, width: 8, length: 10.5 }
+        ];
+
+        // Female Presets Dimensions
+        const FEMALE_DIMENSION_PRESETS = [
+            { id: '2x4', label: '2" × 4"', category: 'Micro-Parting', fee: -100, width: 2, length: 4 },
+            { id: '4x5', label: '4" × 5"', category: 'Crown Mini', fee: 0, width: 4, length: 5 },
+            { id: '5x6', label: '5" × 6"', category: 'Standard Crown', fee: 0, width: 5, length: 6 },
+            { id: '6x7', label: '6" × 7"', category: 'Extended Crown', fee: 50, width: 6, length: 7 },
+            { id: '7x8', label: '7" × 8"', category: 'Large Coverage', fee: 100, width: 7, length: 8 },
+            { id: '8x9', label: '8" × 9"', category: 'Full Crown', fee: 150, width: 8, length: 9 }
+        ];
+
+        // Male Color Spectrum
+        const MALE_COLORS = [
+            { code: '1', name: '#1 Jet Black', hex: '#0a0a0a' },
+            { code: '1B', name: '#1B Off Black', hex: '#1c1917' },
+            { code: '2', name: '#2 Darkest Brown', hex: '#271b12' },
+            { code: '4', name: '#4 Medium Brown', hex: '#452b1b' },
+            { code: '6', name: '#6 Light Brown', hex: '#63422d' }
+        ];
+
+        // Female Color Spectrum (Expanded)
+        const FEMALE_COLORS = [
+            { code: '1B', name: 'Natural Black', hex: '#171717' },
+            { code: '2', name: 'Dark Chocolate', hex: '#261b17' },
+            { code: '4', name: 'Chestnut Brown', hex: '#42281d' },
+            { code: '6', name: 'Warm Mocha', hex: '#5c3d2e' },
+            { code: '8', name: 'Caramel Honey', hex: '#85593c' },
+            { code: '10', name: 'Ash Brown', hex: '#78695d' },
+            { code: '24', name: 'Honey Blonde', hex: '#bfa06b' },
+            { code: '60', name: 'Platinum Ice', hex: '#e2e8f0' }
+        ];
+
+        const DENSITY_VALUES = [
+            { percent: 60, label: '60% (Light)', mult: 1.0 },
+            { percent: 70, label: '70% (Light-Medium)', mult: 1.0 },
+            { percent: 80, label: '80% (Standard Standard)', mult: 1.0 },
+            { percent: 100, label: '100% (Medium Full)', mult: 1.0 },
+            { percent: 120, label: '120% (Heavy Volume)', mult: 1.15 }
+        ];
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            initGenderSelector();
+            initOptionGroupListeners();
+            initPresetDimensions();
+            initColorSwatches();
+            initRangeInputs();
+            initClearPartToggle();
+            calculatePrice();
+        });
+
+        // Step Navigation Control
+        function goToStep(stepNum) {
+            state.step = stepNum;
+
+            // Update Step Section Visibility
+            document.querySelectorAll('.step-section').forEach(sec => sec.classList.remove('active'));
+            const targetSection = document.getElementById(`stepSection${stepNum}`);
+            if (targetSection) targetSection.classList.add('active');
+
+            // Update Progress Steps Nav
+            document.querySelectorAll('.step-item').forEach(item => {
+                const s = parseInt(item.getAttribute('data-step'));
+                item.classList.remove('active');
+                if (s === stepNum) {
+                    item.classList.add('active');
+                } else if (s < stepNum) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+
+            // Smooth scroll up on step change
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Attach Step Tab clicks
+        document.querySelectorAll('.step-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const step = parseInt(btn.getAttribute('data-step'));
+                goToStep(step);
+            });
+        });
+
+        // Initialize Gender Switcher
+        function initGenderSelector() {
+            const maleCard = document.getElementById('genderMaleCard');
+            const femaleCard = document.getElementById('genderFemaleCard');
+
+            maleCard.addEventListener('click', () => setGender('male'));
+            femaleCard.addEventListener('click', () => setGender('female'));
+        }
+
+        function setGender(gender) {
+            state.gender = gender;
+            const maleCard = document.getElementById('genderMaleCard');
+            const femaleCard = document.getElementById('genderFemaleCard');
+            const quoteCategoryPill = document.getElementById('quoteCategoryPill');
+            const genderBadge = document.getElementById('genderContextBadge');
+            const optHeadband = document.getElementById('optAttachHeadband');
+            const lengthBaselineHint = document.getElementById('lengthBaselineHint');
+            const rangeLength = document.getElementById('rangeLength');
+            const lengthTicks = document.getElementById('lengthTicks');
+            const colorSpectrumHint = document.getElementById('colorSpectrumHint');
+
+            if (gender === 'male') {
+                maleCard.classList.add('active');
+                maleCard.setAttribute('aria-checked', 'true');
+                femaleCard.classList.remove('active');
+                femaleCard.setAttribute('aria-checked', 'false');
+                quoteCategoryPill.textContent = 'MALE TOUPEE';
+                genderBadge.textContent = 'Male Toupee';
+                optHeadband.style.display = 'none';
+
+                // Length bounds for male
+                rangeLength.min = 4;
+                rangeLength.max = 12;
+                rangeLength.step = 2;
+                if (state.length > 12) state.length = 6;
+                rangeLength.value = state.length;
+                lengthBaselineHint.textContent = 'Male Baseline: 6 Inches (Standard popular). Over 6" applies +$50/inch.';
+                lengthTicks.innerHTML = '<span>4"</span><span>6" (Baseline)</span><span>8"</span><span>10"</span><span>12"</span>';
+                colorSpectrumHint.textContent = 'Male Standard Spectrum (Tone 1 ~ 6)';
+
+                // Default dimension
+                state.dimensionPreset = '7x9';
+            } else {
+                femaleCard.classList.add('active');
+                femaleCard.setAttribute('aria-checked', 'true');
+                maleCard.classList.remove('active');
+                maleCard.setAttribute('aria-checked', 'false');
+                quoteCategoryPill.textContent = 'FEMALE TOPPER';
+                genderBadge.textContent = 'Female Topper / Topis';
+                optHeadband.style.display = 'flex';
+
+                // Length bounds for female
+                rangeLength.min = 6;
+                rangeLength.max = 20;
+                rangeLength.step = 2;
+                if (state.length < 6) state.length = 10;
+                rangeLength.value = state.length;
+                lengthBaselineHint.textContent = 'Female Baseline: 6 Inches (Mini/Standard baseline). Over 6" applies +$40/inch.';
+                lengthTicks.innerHTML = '<span>6" (Base)</span><span>10"</span><span>14"</span><span>18"</span><span>20"</span>';
+                colorSpectrumHint.textContent = 'Female Expanded Color Palette & Balayage Highlights';
+
+                // Default dimension for female
+                state.dimensionPreset = '5x6';
+            }
+
+            document.getElementById('lengthDisplayVal').textContent = `${state.length} Inches`;
+            initPresetDimensions();
+            initColorSwatches();
+            calculatePrice();
+        }
+
+        // Initialize Preset Dimension Cards based on Gender
+        function initPresetDimensions() {
+            const container = document.getElementById('dimensionPresetsContainer');
+            container.innerHTML = '';
+            const presets = state.gender === 'male' ? MALE_DIMENSION_PRESETS : FEMALE_DIMENSION_PRESETS;
+
+            presets.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `dim-card ${state.dimensionPreset === p.id && state.baseDimensionType === 'preset' ? 'active' : ''}`;
+                card.id = `dimPreset_${p.id}`;
+                card.innerHTML = `
+                    <div class="size-num">${p.label}</div>
+                    <div class="size-type">${p.category}</div>
+                    <div class="size-fee">${p.fee > 0 ? `+AUD $${p.fee}` : (p.fee < 0 ? `-AUD $${Math.abs(p.fee)}` : 'Standard')}</div>
+                `;
+                card.addEventListener('click', () => {
+                    state.baseDimensionType = 'preset';
+                    state.dimensionPreset = p.id;
+                    state.customWidth = p.width;
+                    state.customLength = p.length;
+                    document.getElementById('inputCustomWidth').value = p.width;
+                    document.getElementById('inputCustomLength').value = p.length;
+                    document.querySelectorAll('.dim-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    calculatePrice();
+                });
+                container.appendChild(card);
+            });
+
+            // Set default dimension values into custom boxes
+            const currentPresetObj = presets.find(p => p.id === state.dimensionPreset) || presets[0];
+            state.customWidth = currentPresetObj.width;
+            state.customLength = currentPresetObj.length;
+            document.getElementById('inputCustomWidth').value = currentPresetObj.width;
+            document.getElementById('inputCustomLength').value = currentPresetObj.length;
+        }
+
+        // Apply Custom Dimension Action
+        document.getElementById('btnApplyCustomDim').addEventListener('click', () => {
+            const w = parseFloat(document.getElementById('inputCustomWidth').value) || 7.0;
+            const l = parseFloat(document.getElementById('inputCustomLength').value) || 9.0;
+            state.baseDimensionType = 'custom';
+            state.customWidth = w;
+            state.customLength = l;
+            document.querySelectorAll('.dim-card').forEach(c => c.classList.remove('active'));
+            showToast(`Custom dimensions applied: ${w}" × ${l}"`);
+            calculatePrice();
+        });
+
+        // Initialize Color Swatches
+        function initColorSwatches() {
+            const container = document.getElementById('colorSwatchesContainer');
+            container.innerHTML = '';
+            const colors = state.gender === 'male' ? MALE_COLORS : FEMALE_COLORS;
+
+            // Set default color if out of bounds
+            if (!colors.some(c => c.code === state.color)) {
+                state.color = colors[0].code;
+                state.colorName = colors[0].name;
+            }
+
+            colors.forEach(c => {
+                const card = document.createElement('div');
+                card.className = `color-swatch-card ${state.color === c.code ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="color-circle" style="background-color: ${c.hex};"></div>
+                    <div class="color-name">${c.name}</div>
+                    <div class="color-code">Tone #${c.code}</div>
+                `;
+                card.addEventListener('click', () => {
+                    state.color = c.code;
+                    state.colorName = c.name;
+                    document.querySelectorAll('.color-swatch-card').forEach(el => el.classList.remove('active'));
+                    card.classList.add('active');
+                    calculatePrice();
+                });
+                container.appendChild(card);
+            });
+        }
+
+        // Range inputs and Sliders
+        function initRangeInputs() {
+            // Length Range
+            const rangeLength = document.getElementById('rangeLength');
+            rangeLength.addEventListener('input', (e) => {
+                state.length = parseInt(e.target.value);
+                document.getElementById('lengthDisplayVal').textContent = `${state.length} Inches`;
+                calculatePrice();
+            });
+
+            // Density Range
+            const rangeDensity = document.getElementById('rangeDensity');
+            rangeDensity.addEventListener('input', (e) => {
+                state.densityIndex = parseInt(e.target.value);
+                const item = DENSITY_VALUES[state.densityIndex];
+                document.getElementById('densityDisplayVal').textContent = item.label;
+                calculatePrice();
+            });
+
+            // Uniform Grey Range
+            const rangeUniformGrey = document.getElementById('rangeUniformGrey');
+            rangeUniformGrey.addEventListener('input', (e) => {
+                state.uniformGreyRatio = parseInt(e.target.value);
+                document.getElementById('uniformGreyDisplayVal').textContent = `${state.uniformGreyRatio}% Grey`;
+                calculatePrice();
+            });
+        }
+
+        // Grey Hair Mode Toggle
+        function setGreyMode(mode) {
+            state.greyMode = mode;
+            const btnUniform = document.getElementById('btnModeUniform');
+            const btnGranular = document.getElementById('btnModeGranular');
+            const uniformBox = document.getElementById('uniformGreyContainer');
+            const granularBox = document.getElementById('granularGreyContainer');
+
+            if (mode === 'uniform') {
+                btnUniform.classList.add('active');
+                btnGranular.classList.remove('active');
+                uniformBox.style.display = 'block';
+                granularBox.style.display = 'none';
+            } else {
+                btnGranular.classList.add('active');
+                btnUniform.classList.remove('active');
+                uniformBox.style.display = 'none';
+                granularBox.style.display = 'block';
+            }
+            calculatePrice();
+        }
+
+        function updateZoneVal(zone, val) {
+            const v = parseInt(val);
+            if (zone === 'Front') {
+                state.zones.front = v;
+                document.getElementById('zoneFrontVal').textContent = `${v}%`;
+            } else if (zone === 'Sides') {
+                state.zones.sides = v;
+                document.getElementById('zoneSidesVal').textContent = `${v}%`;
+            } else if (zone === 'Back') {
+                state.zones.back = v;
+                document.getElementById('zoneBackVal').textContent = `${v}%`;
+            } else if (zone === 'Crown') {
+                state.zones.crown = v;
+                document.getElementById('zoneCrownVal').textContent = `${v}%`;
+            }
+            calculatePrice();
+        }
+
+        // Clear Part Toggle
+        function initClearPartToggle() {
+            const chk = document.getElementById('chkClearPart');
+            const bg = document.getElementById('toggleClearPartBg');
+            const knob = document.getElementById('toggleClearPartKnob');
+
+            chk.addEventListener('change', () => {
+                state.clearPart = chk.checked;
+                if (chk.checked) {
+                    bg.style.backgroundColor = 'var(--teal-light)';
+                    knob.style.transform = 'translateX(24px)';
+                } else {
+                    bg.style.backgroundColor = 'var(--border-color)';
+                    knob.style.transform = 'translateX(0)';
+                }
+                calculatePrice();
+            });
+        }
+
+        // Generic Option Group Listeners
+        function initOptionGroupListeners() {
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const group = card.getAttribute('data-group');
+                    const val = card.getAttribute('data-val');
+
+                    if (!group || !val) return;
+
+                    // Deselect siblings in the same group
+                    document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    // Update State according to group
+                    if (group === 'attachment') {
+                        state.attachment = val;
+                    } else if (group === 'baseMaterial') {
+                        state.baseMaterial = val;
+                    } else if (group === 'partingStyle') {
+                        state.partingStyle = val;
+                    } else if (group === 'knotting') {
+                        state.knotting = val;
+                        state.isSilk = card.getAttribute('data-silk') === 'true';
+                        state.silkMultiplier = parseFloat(card.getAttribute('data-mult')) || 1.0;
+                    } else if (group === 'texture') {
+                        state.texture = val;
+                    } else if (group === 'headWrap') {
+                        state.headWrap = val;
+                    }
+
+                    calculatePrice();
+                });
+            });
+        }
+
+        // Reset Everything
+        document.getElementById('btnResetAll').addEventListener('click', () => {
+            if (confirm('Reset all selections to default specifications?')) {
+                setGender('male');
+                goToStep(1);
+                showToast('Configurator reset to factory defaults');
+            }
+        });
+
+        /**
+         * Automated Pricing Calculation Logic & Formula
+         * Formula from Specification Section 4:
+         * Total Price = (Base Price + Size Fee + Length Fee) * Density Multiplier * Silk Multiplier + Grey Hair Fee + Accessory Fee
+         */
+        function calculatePrice() {
+            // 1. Base Price
+            const basePrice = state.gender === 'male' ? 1000 : 1200;
+
+            // 2. Size Fee Calculation
+            let sizeFee = 0;
+            let sizeLabel = '';
+            if (state.baseDimensionType === 'preset') {
+                const presets = state.gender === 'male' ? MALE_DIMENSION_PRESETS : FEMALE_DIMENSION_PRESETS;
+                const p = presets.find(item => item.id === state.dimensionPreset) || presets[0];
+                sizeFee = p.fee;
+                sizeLabel = p.label;
+            } else {
+                // Custom Area size fee
+                const area = state.customWidth * state.customLength;
+                if (area > 80) {
+                    sizeFee = 150;
+                } else if (area > 63) {
+                    sizeFee = 80;
+                } else {
+                    sizeFee = 50; // Custom tailoring surcharge
+                }
+                sizeLabel = `${state.customWidth}" × ${state.customLength}" (Custom)`;
+            }
+
+            // 3. Length Fee Calculation
+            let lengthFee = 0;
+            const baselineLength = 6; // Both male and female baseline at 6"
+            if (state.length > baselineLength) {
+                const extraInches = state.length - baselineLength;
+                const ratePerInch = state.gender === 'male' ? 50 : 40;
+                lengthFee = extraInches * ratePerInch;
+            }
+
+            // Subtotal before multipliers
+            const subtotalBeforeMult = basePrice + sizeFee + lengthFee;
+
+            // 4. Density Multiplier
+            const densityObj = DENSITY_VALUES[state.densityIndex];
+            const densityMult = densityObj.mult; // 1.0 or 1.15
+
+            // 5. Silk Scalp Multiplier
+            const silkMult = state.isSilk ? state.silkMultiplier : 1.0;
+
+            // 6. Grey Hair Fee
+            let greyFee = 0;
+            if (state.greyMode === 'granular') {
+                greyFee = 80; // Multi-zone labor surcharge
+            }
+
+            // 7. Accessory Fee
+            let accessoryFee = 0;
+            if (state.attachment === 'headband') {
+                accessoryFee = 90; // FFA specialized elastic band + clip combo
+            }
+
+            // FINAL FORMULA EXECUTION
+            const calculatedTotal = Math.round((subtotalBeforeMult * densityMult * silkMult) + greyFee + accessoryFee);
+
+            // Update UI Elements
+            document.getElementById('rowBasePrice').textContent = `AUD $${basePrice.toLocaleString()}`;
+            document.getElementById('rowSizeFee').textContent = sizeFee >= 0 ? `+AUD $${sizeFee}` : `-AUD $${Math.abs(sizeFee)}`;
+            document.getElementById('rowLengthFee').textContent = `+AUD $${lengthFee}`;
+            document.getElementById('rowSubtotalBeforeMult').textContent = `AUD $${subtotalBeforeMult.toLocaleString()}`;
+
+            document.getElementById('badgeDensityMult').textContent = `×${densityMult.toFixed(2)}`;
+            document.getElementById('rowDensityFactor').textContent = densityObj.label;
+
+            document.getElementById('badgeSilkMult').textContent = `×${silkMult.toFixed(2)}`;
+            document.getElementById('rowSilkFactor').textContent = state.isSilk ? (silkMult === 2.0 ? 'Silk Top (Triple Layer)' : 'Silk Series') : 'Standard Net';
+
+            document.getElementById('rowGreyFee').textContent = `+AUD $${greyFee}`;
+            document.getElementById('rowAccessoryFee').textContent = `+AUD $${accessoryFee}`;
+
+            document.getElementById('grandTotalVal').textContent = calculatedTotal.toLocaleString();
+
+            // Production Time Notice
+            const estProdTime = document.getElementById('estProductionTime');
+            if (state.isSilk) {
+                estProdTime.textContent = 'Crafting: 6 - 8 Weeks (Double Labor Silk Series)';
+                estProdTime.style.color = 'var(--gold)';
+            } else {
+                estProdTime.textContent = 'Crafting: 4 - 6 Weeks (Factory Direct Hand-Tied)';
+                estProdTime.style.color = 'var(--text-muted)';
+            }
+
+            // Update 2D Visualizer
+            updateVisualizer(sizeLabel);
+        }
+
+        // Update 2D Scalp Diagram
+        function updateVisualizer(sizeLabel) {
+            const scalpDimTag = document.getElementById('scalpDimTag');
+            const scalpBaseTypeTag = document.getElementById('scalpBaseTypeTag');
+            const scalpInnerBase = document.getElementById('scalpInnerBase');
+            const visualAttachLabel = document.getElementById('visualAttachLabel');
+            const scalpPartLine = document.getElementById('scalpPartLine');
+
+            scalpDimTag.textContent = sizeLabel;
+            
+            // Format base material name for tag
+            let matText = 'Lace Front + PU';
+            if (state.baseMaterial === 'full-lace') matText = 'Full Swiss Lace';
+            if (state.baseMaterial === 'thin-skin-pu') matText = 'Thin Skin + PU';
+            if (state.baseMaterial === 'mpu-type') matText = 'MPU Fringe Down';
+            scalpBaseTypeTag.textContent = matText;
+
+            // Silk Active state
+            if (state.isSilk) {
+                scalpInnerBase.classList.add('silk-active');
+            } else {
+                scalpInnerBase.classList.remove('silk-active');
+            }
+
+            // Attachment notice in visualizer
+            if (state.attachment === 'bonding') {
+                visualAttachLabel.textContent = 'Bonding (Exact Fit)';
+            } else if (state.attachment === 'clip') {
+                visualAttachLabel.textContent = 'Clip (+1cm Margin)';
+            } else {
+                visualAttachLabel.textContent = 'Headband Hybrid (FFA)';
+            }
+
+            // Parting Line Position in Diagram
+            if (state.partingStyle === 'left-part') {
+                scalpPartLine.style.display = 'block';
+                scalpPartLine.style.left = '32%';
+            } else if (state.partingStyle === 'right-part') {
+                scalpPartLine.style.display = 'block';
+                scalpPartLine.style.left = '68%';
+            } else if (state.partingStyle === 'center-part') {
+                scalpPartLine.style.display = 'block';
+                scalpPartLine.style.left = '50%';
+            } else {
+                scalpPartLine.style.display = 'none';
+            }
+
+            // Bottom Mini Badges
+            document.getElementById('badgeVisualTexture').textContent = state.texture.toUpperCase();
+            document.getElementById('badgeVisualDensity').textContent = DENSITY_VALUES[state.densityIndex].label.split(' ')[0];
+            document.getElementById('badgeVisualLength').textContent = `${state.length}" Length`;
+
+            const greyBadge = document.getElementById('badgeVisualGrey');
+            if (state.greyMode === 'uniform') {
+                greyBadge.textContent = `${state.uniformGreyRatio}% Grey`;
+            } else {
+                greyBadge.textContent = `Granular 4-Zone Grey`;
+            }
+        }
+
+        // Generate Specification Summary String
+        function generateSpecificationText() {
+            const total = document.getElementById('grandTotalVal').textContent;
+            const dimStr = state.baseDimensionType === 'preset' ? state.dimensionPreset : `${state.customWidth}x${state.customLength} (Custom)`;
+            const density = DENSITY_VALUES[state.densityIndex].label;
+            const greyStr = state.greyMode === 'uniform' 
+                ? `Uniform ${state.uniformGreyRatio}%`
+                : `Multi-Zone [Front: ${state.zones.front}%, Sides: ${state.zones.sides}%, Back: ${state.zones.back}%, Crown: ${state.zones.crown}%]`;
+
+            return `=====================================================
+DAVID HAIR MELBOURNE - BESPOKE SYSTEM SPECIFICATION
+=====================================================
+Product Category   : ${state.gender === 'male' ? "Men's Custom Toupee" : "Women's Hair Topper (Topis)"}
+Base Dimensions    : ${dimStr} Inches
+Attachment Type    : ${state.attachment.toUpperCase()} ${state.attachment === 'clip' ? '(+1cm Margin Applied)' : ''}
+Base Construction  : ${state.baseMaterial.toUpperCase()}
+Parting & Style    : ${state.partingStyle.toUpperCase()} ${state.clearPart ? '(Clear Transparent Part Line)' : ''}
+Scalp Simulation   : ${state.isSilk ? `SILK SERIES (Multiplier ×${state.silkMultiplier})` : 'Semi-Double Knotting (Standard)'}
+
+HAIR SPECIFICATIONS:
+Texture            : ${state.texture.toUpperCase()}
+Base Hair Color    : ${state.colorName} (#${state.color})
+Hair Length        : ${state.length} Inches
+Hair Density       : ${density}
+Grey Hair Ratio    : ${greyStr}
+
+MEASUREMENT / PROTOCOL:
+Head Molding Method: ${state.headWrap.toUpperCase()}
+Client Notes       : ${document.getElementById('clientOrderNotes').value || 'None specified'}
+
+PRICE FORMULATION BREAKDOWN (AUD):
+Base Price         : ${document.getElementById('rowBasePrice').textContent}
+Size Surcharge     : ${document.getElementById('rowSizeFee').textContent}
+Length Surcharge   : ${document.getElementById('rowLengthFee').textContent}
+Density Multiplier : ${document.getElementById('badgeDensityMult').textContent}
+Silk Multiplier    : ${document.getElementById('badgeSilkMult').textContent}
+Grey Ratio Fee     : ${document.getElementById('rowGreyFee').textContent}
+Accessory Fee      : ${document.getElementById('rowAccessoryFee').textContent}
+-----------------------------------------------------
+TOTAL ESTIMATED QUOTE : AUD $${total}
+=====================================================`;
+        }
+
+        // Modal Handlers
+        function openOrderModal() {
+            const summaryBox = document.getElementById('modalSpecSummaryText');
+            summaryBox.textContent = generateSpecificationText();
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        function copyQuoteSpecs() {
+            const text = generateSpecificationText();
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Specification summary copied to clipboard!');
+            }).catch(() => {
+                showToast('Please copy from the order dialog');
+            });
+        }
+
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const email = document.getElementById('custEmail').value;
+            const loc = document.getElementById('custLocation').value;
+
+            closeOrderModal();
+            showToast(`Thank you ${name}! Your specification has been logged for David Hair Melbourne.`);
+            console.log('Order Submitted:', { name, phone, email, loc, spec: state });
+        }
+
+        // Toast Feedback helper
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            msgEl.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
