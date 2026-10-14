@@ -122,6 +122,20 @@ try {
     if ($action === 'list_ai_styles') {
         $stmt = $conn->query("SELECT * FROM ai_hairstyles ORDER BY sort_order ASC, id ASC");
         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($items as &$it) {
+            $g = strtolower(trim($it['gender'] ?? ''));
+            if ($g === 'women' || $g === 'woman' || str_contains($g, 'wom')) {
+                $it['category'] = 'Woman';
+                $it['gender'] = 'Women';
+            } elseif ($g === 'unisex') {
+                $it['category'] = 'Unisex';
+                $it['gender'] = 'Unisex';
+            } else {
+                $it['category'] = 'Man';
+                $it['gender'] = 'Men';
+            }
+        }
+        unset($it);
         sendJsonResponse(['status' => 'success', 'data' => $items]);
     }
 

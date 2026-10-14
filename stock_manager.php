@@ -519,8 +519,8 @@
                             <template x-for="st in aiStyles" :key="st.id">
                                 <tr class="hover:bg-brand-inner/50 transition-colors">
                                     <td class="py-3 px-4">
-                                        <div class="w-14 h-14 rounded-lg border border-brand-border bg-slate-950 p-1 flex items-center justify-center">
-                                            <img :src="st.overlay" :alt="st.name" class="max-w-full max-h-full object-contain">
+                                        <div class="w-[200px] h-[200px] min-w-[200px] min-h-[200px] rounded-lg border border-brand-border bg-white p-2 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                            <img :src="st.overlay" :alt="st.name" class="w-full h-full object-contain">
                                         </div>
                                     </td>
                                     <td class="py-3 px-4 font-bold text-white text-sm" x-text="st.name"></td>
@@ -1503,7 +1503,7 @@
                 </div>
 
                 <div x-show="aiImagePreview || aiForm.overlay_url" class="p-3 bg-slate-950 border border-brand-border rounded-xl flex items-center gap-3">
-                    <div class="w-16 h-16 rounded bg-black p-1 flex items-center justify-center border border-brand-border">
+                    <div class="w-16 h-16 rounded bg-white p-1 flex items-center justify-center border border-brand-border">
                         <img :src="aiImagePreview || aiForm.overlay_url" class="max-w-full max-h-full object-contain">
                     </div>
                     <div class="text-[11px] text-slate-300 font-bold">Transparent Hair Overlay Preview</div>

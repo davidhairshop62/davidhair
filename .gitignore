@@ -16,3 +16,5 @@ yarn-debug.log*
 node_modules/
 .vscode/
 .idea/
+.deploy_cache.json
+scratch/
