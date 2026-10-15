@@ -12,6 +12,9 @@ echo "🚀 [Deploy] Syncing local files directly to /var/www/davidhair..."
 
 rsync -avz \
   --exclude='.git/' \
+  --exclude='.agents/' \
+  --exclude='scratch/' \
+  --exclude='.deploy_cache.json' \
   --exclude='.DS_Store' \
   --exclude='node_modules/' \
   --exclude='uploads/' \
