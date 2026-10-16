@@ -1660,7 +1660,7 @@
                             }
                         });
                     } catch (e) {
-                        alert('카메라 접근 권한이 없거나 지원되지 않는 기기입니다. 브라우저 설정에서 카메라 권한을 확인해주세요.');
+                        alert('Camera access denied or device not supported. Please allow camera permissions in your browser settings.');
                         console.error('Camera access error:', e);
                     }
                 },
@@ -5396,20 +5396,20 @@
                                     </div>
                                 </div>
 
-                                <!-- Top Toolbar: Switch Camera & Guide Gender -->
+                                <!-- Top Toolbar: Switch Guide Gender & Switch Camera -->
                                 <div class="absolute top-3 inset-x-3 flex items-center justify-between z-20 pointer-events-auto">
                                     <button type="button" 
                                             @click="toggleCameraGuideGender()" 
                                             class="bg-slate-900/85 backdrop-blur hover:bg-slate-800 text-teal-300 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-teal-500/50 shadow flex items-center gap-1.5 active:scale-95 transition-all">
                                         <i class="fa-solid fa-venus-mars text-xs"></i>
-                                        <span x-text="cameraGuideGender === 'Woman' ? '여성 가이드' : '남성 가이드'"></span>
+                                        <span x-text="cameraGuideGender === 'Woman' ? 'Women Guide' : 'Men Guide'"></span>
                                     </button>
 
                                     <button type="button" 
                                             @click="switchCamera()" 
                                             class="bg-slate-900/85 backdrop-blur hover:bg-slate-800 text-amber-300 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-amber-500/50 shadow flex items-center gap-1.5 active:scale-95 transition-all">
                                         <i class="fa-solid fa-camera-rotate text-xs"></i>
-                                        <span x-text="cameraFacingMode === 'user' ? '전방 (Front)' : '후방 (Rear)'"></span>
+                                        <span x-text="cameraFacingMode === 'user' ? 'Front Camera' : 'Rear Camera'"></span>
                                     </button>
                                 </div>
 
@@ -5417,7 +5417,7 @@
                                 <div class="absolute top-12 inset-x-3 flex justify-center z-20 pointer-events-none">
                                     <span class="bg-black/80 backdrop-blur text-teal-300 text-[10px] sm:text-[11px] font-bold px-3 py-1 rounded-full border border-teal-500/50 shadow text-center">
                                         <i class="fa-solid fa-crosshairs text-amber-400 mr-1 animate-pulse"></i>
-                                        반투명 가이드에 얼굴 윤곽을 맞춰 1:1로 촬영하세요
+                                        Align your face within the guide overlay (1:1 Ratio)
                                     </span>
                                 </div>
 
@@ -5425,19 +5425,19 @@
                                 <div class="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2 z-20 pointer-events-auto">
                                     <button @click="stopCamera()" type="button"
                                         class="bg-slate-900/90 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-600 shadow-md">
-                                        <i class="fa-solid fa-xmark mr-1"></i> 취소
+                                        <i class="fa-solid fa-xmark mr-1"></i> Cancel
                                     </button>
 
                                     <button type="button" 
                                             @click="cycleGuideOpacity()" 
                                             class="bg-slate-900/90 hover:bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl border border-slate-600 shadow-md flex items-center gap-1.5">
                                         <i class="fa-solid fa-eye text-teal-400 text-xs"></i>
-                                        <span x-text="cameraGuideOpacity === 0 ? '가이드 끔' : `투명도 ${Math.round((1 - cameraGuideOpacity) * 100)}%`"></span>
+                                        <span x-text="cameraGuideOpacity === 0 ? 'Guide Off' : `Opacity ${Math.round((1 - cameraGuideOpacity) * 100)}%`"></span>
                                     </button>
 
                                     <button @click="captureCameraPhoto()" type="button"
                                         class="teal-gradient text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
-                                        <i class="fa-solid fa-camera text-sm"></i> 1:1 촬영 (Capture)
+                                        <i class="fa-solid fa-camera text-sm"></i> Take Photo (1:1)
                                     </button>
                                 </div>
                             </div>
@@ -5464,23 +5464,23 @@
                                     <button @click="activeControlTab = 'hair'" 
                                             :class="activeControlTab === 'hair' ? 'bg-brand-teal text-white border-brand-tealLight font-bold shadow-md scale-105' : 'bg-slate-800 text-slate-300 border-slate-700 opacity-80 hover:opacity-100'"
                                             class="px-3 py-1.5 rounded-lg text-xs border transition-all flex items-center gap-1.5 cursor-pointer">
-                                        <i class="fa-solid fa-scissors"></i> 가발 조작
+                                        <i class="fa-solid fa-scissors"></i> Hairpiece Controls
                                     </button>
                                     <button @click="activeControlTab = 'photo'" 
                                             :class="activeControlTab === 'photo' ? 'bg-sky-600 text-white border-sky-400 font-bold shadow-md scale-105' : 'bg-slate-800 text-slate-300 border-slate-700 opacity-80 hover:opacity-100'"
                                             class="px-3 py-1.5 rounded-lg text-xs border transition-all flex items-center gap-1.5 cursor-pointer">
-                                        <i class="fa-solid fa-image"></i> 사진 조작
+                                        <i class="fa-solid fa-image"></i> Photo Controls
                                     </button>
                                     <button @click="resetTransform()" 
-                                            title="위치·크기 초기화"
+                                            title="Reset Position & Scale"
                                             class="px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all flex items-center gap-1 cursor-pointer">
-                                        <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">초기화</span>
+                                        <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">Reset</span>
                                     </button>
                                 </div>
                                 
                                 <div class="bg-brand-darkBg border border-brand-border text-brand-tealLight text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
                                     <span class="w-2 h-2 rounded-full" :class="activeControlTab === 'hair' ? 'bg-teal-400 animate-pulse' : 'bg-sky-400 animate-pulse'"></span>
-                                    <span x-text="activeControlTab === 'hair' ? `가발: ${hairScale}% (W:${hairWidth}% H:${hairHeight}%)` : `사진: ${faceScale}%`"></span>
+                                    <span x-text="activeControlTab === 'hair' ? `Hair: ${hairScale}% (W:${hairWidth}% H:${hairHeight}%)` : `Photo: ${faceScale}%`"></span>
                                 </div>
                             </div>
 
@@ -5528,28 +5528,28 @@
                                          class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden p-2 pointer-events-none z-15">
                                         <div class="w-full h-full flex items-center justify-center transition-transform duration-75"
                                              :style="getHairTransform()">
-                                            <div class="relative pointer-events-auto border-2 border-dashed border-amber-300 ring-2 ring-teal-400/50 rounded-2xl group shadow-2xl bg-teal-400/10 transition-all flex items-center justify-center"
-                                                 :style="`width: 100%; aspect-ratio: ${photoAspect}; max-width: 100%; max-height: 100%;`">
-                                                <!-- Corner Resize Handles (Scale) -->
-                                                <div @mousedown.stop="startDrag($event, 'se')" @touchstart.stop="startDrag($event, 'se')" 
-                                                     class="absolute -bottom-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-se-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↘</div>
-                                                <div @mousedown.stop="startDrag($event, 'sw')" @touchstart.stop="startDrag($event, 'sw')" 
-                                                     class="absolute -bottom-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-sw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↙</div>
-                                                <div @mousedown.stop="startDrag($event, 'ne')" @touchstart.stop="startDrag($event, 'ne')" 
-                                                     class="absolute -top-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-ne-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↗</div>
-                                                <div @mousedown.stop="startDrag($event, 'nw')" @touchstart.stop="startDrag($event, 'nw')" 
-                                                     class="absolute -top-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-nw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↖</div>
+                                             <div class="relative pointer-events-auto border-2 border-dashed border-amber-300 ring-2 ring-teal-400/50 rounded-2xl group shadow-2xl bg-teal-400/10 transition-all flex items-center justify-center"
+                                                  :style="`width: 100%; aspect-ratio: ${photoAspect}; max-width: 100%; max-height: 100%;`">
+                                                 <!-- Corner Resize Handles (Scale) -->
+                                                 <div @mousedown.stop="startDrag($event, 'se')" @touchstart.stop="startDrag($event, 'se')" 
+                                                      class="absolute -bottom-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-se-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↘</div>
+                                                 <div @mousedown.stop="startDrag($event, 'sw')" @touchstart.stop="startDrag($event, 'sw')" 
+                                                      class="absolute -bottom-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-sw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↙</div>
+                                                 <div @mousedown.stop="startDrag($event, 'ne')" @touchstart.stop="startDrag($event, 'ne')" 
+                                                      class="absolute -top-3 -right-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-ne-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↗</div>
+                                                 <div @mousedown.stop="startDrag($event, 'nw')" @touchstart.stop="startDrag($event, 'nw')" 
+                                                      class="absolute -top-3 -left-3 w-7 h-7 bg-teal-300 border-2 border-slate-900 rounded-full cursor-nw-resize shadow-xl hover:scale-125 transition-transform flex items-center justify-center text-[9px] text-slate-950 font-black z-20">↖</div>
 
-                                                <!-- Side Handles (Width & Height) -->
-                                                <div @mousedown.stop="startDrag($event, 'e')" @touchstart.stop="startDrag($event, 'e')" 
-                                                     class="absolute top-1/2 -right-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-e-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
-                                                <div @mousedown.stop="startDrag($event, 'w')" @touchstart.stop="startDrag($event, 'w')" 
-                                                     class="absolute top-1/2 -left-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-w-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
-                                                <div @mousedown.stop="startDrag($event, 's')" @touchstart.stop="startDrag($event, 's')" 
-                                                     class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-s-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
-                                                <div @mousedown.stop="startDrag($event, 'n')" @touchstart.stop="startDrag($event, 'n')" 
-                                                     class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-n-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
-                                            </div>
+                                                 <!-- Side Handles (Width & Height) -->
+                                                 <div @mousedown.stop="startDrag($event, 'e')" @touchstart.stop="startDrag($event, 'e')" 
+                                                      class="absolute top-1/2 -right-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-e-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
+                                                 <div @mousedown.stop="startDrag($event, 'w')" @touchstart.stop="startDrag($event, 'w')" 
+                                                      class="absolute top-1/2 -left-3.5 -translate-y-1/2 w-6 h-8 bg-amber-400 border-2 border-slate-900 rounded-md cursor-w-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↔</div>
+                                                 <div @mousedown.stop="startDrag($event, 's')" @touchstart.stop="startDrag($event, 's')" 
+                                                      class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-s-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
+                                                 <div @mousedown.stop="startDrag($event, 'n')" @touchstart.stop="startDrag($event, 'n')" 
+                                                      class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-6 bg-amber-400 border-2 border-slate-900 rounded-md cursor-n-resize shadow-xl hover:scale-110 transition-transform flex items-center justify-center text-[11px] text-slate-950 font-black z-20">↕</div>
+                                             </div>
                                         </div>
                                     </div>
 
@@ -5566,7 +5566,7 @@
                             <!-- OPERATING INSTRUCTIONS BANNER (OUTSIDE PHOTO CANVAS BOX) -->
                             <div class="bg-brand-inner/90 text-slate-200 text-xs font-semibold py-2 px-3 rounded-xl border border-brand-border text-center flex items-center justify-center gap-2 shadow-sm">
                                 <i class="fa-solid fa-hand-pointer text-brand-tealLight animate-bounce"></i>
-                                <span x-text="activeControlTab === 'hair' ? '사진을 직접 드래그해 가발 이동 | 핸들로 크기·넓이·길이 조절 | 휠로 확대' : '사진을 직접 드래그해 원본 사진 이동 | 휠로 사진 확대/축소'"></span>
+                                <span x-text="activeControlTab === 'hair' ? 'Drag canvas to reposition hair | Use handles to adjust width & length | Scroll to zoom' : 'Drag canvas to reposition photo | Scroll wheel to zoom in/out'"></span>
                             </div>
 
                             <!-- Before / After Slider Control -->
@@ -5616,7 +5616,7 @@
                                 <button @click="startCamera()" type="button"
                                     class="teal-gradient text-white font-bold text-xs p-3 rounded-xl shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2 min-h-[50px]">
                                     <i class="fa-solid fa-camera text-base"></i>
-                                    <span>카메라로 촬영 (Camera)</span>
+                                    <span>Take Photo (Camera)</span>
                                 </button>
                                 <!-- File Upload Trigger -->
                                 <div
@@ -5624,7 +5624,7 @@
                                     <input type="file" accept="image/*" @change="handleFaceUpload($event)"
                                         class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
                                     <i class="fa-solid fa-upload text-sm text-brand-tealLight"></i>
-                                    <span class="text-xs font-bold text-white">사진 업로드 (Upload)</span>
+                                    <span class="text-xs font-bold text-white">Upload Photo</span>
                                 </div>
                             </div>
                             <!-- Sample Face Options -->
@@ -5650,17 +5650,17 @@
                                 <button type="button" @click="selectCategory('Man')"
                                     :class="selectedCategory === 'Man' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
-                                    👨 Man (남성)
+                                    👨 Men
                                 </button>
                                 <button type="button" @click="selectCategory('Woman')"
                                     :class="selectedCategory === 'Woman' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
-                                    👩 Woman (여성)
+                                    👩 Women
                                 </button>
                                 <button type="button" @click="selectCategory('Unisex')"
                                     :class="selectedCategory === 'Unisex' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
-                                    👫 Unisex (공용)
+                                    👫 Unisex
                                 </button>
                                 <button type="button" @click="selectCategory('All')"
                                     :class="selectedCategory === 'All' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
@@ -5678,7 +5678,7 @@
                                         <div>
                                             <div class="text-xs font-bold" x-text="st.name"></div>
                                             <div class="text-[10px] text-brand-textMuted"
-                                                x-text="st.tag || (st.gender === 'Women' || st.category === 'Woman' ? '여성 헤어' : '남성 헤어')"></div>
+                                                x-text="st.tag || (st.gender === 'Women' || st.category === 'Woman' ? 'Women Hairstyle' : 'Men Hairstyle')"></div>
                                         </div>
                                         <i class="fa-solid fa-scissors text-xs"
                                             :class="selectedStyle === st.name ? 'text-brand-tealLight' : 'text-slate-500'"></i>
@@ -5686,7 +5686,7 @@
                                 </template>
                                 <div x-show="filteredStyles.length === 0" class="col-span-2 py-6 text-center text-slate-400 text-xs bg-brand-inner/40 rounded-xl border border-dashed border-brand-border">
                                     <i class="fa-solid fa-sparkles text-brand-tealLight text-sm mb-1.5 block"></i>
-                                    <span class="font-medium">해당 카테고리에 등록된 스타일이 없습니다</span>
+                                    <span class="font-medium">No styles registered in this category</span>
                                 </div>
                             </div>
                         </div>
@@ -5700,7 +5700,7 @@
                             <div class="bg-brand-inner/60 border border-brand-border/80 p-3.5 rounded-xl space-y-2.5">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-palette text-brand-tealLight"></i> Hair Color & Blend (모발 색상)
+                                        <i class="fa-solid fa-palette text-brand-tealLight"></i> Hair Color & Blend
                                     </span>
                                     <span class="text-[11px] font-mono text-brand-tealLight font-bold" x-text="selectedColor"></span>
                                 </div>
@@ -5730,8 +5730,7 @@
                         <button @click="runTransformation()" :disabled="isProcessing"
                             class="w-full teal-gradient text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all min-h-[48px] flex items-center justify-center gap-2 disabled:opacity-50">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span
-                                x-text="isProcessing ? 'AI Mapping Scalp & Fitting...' : 'Save Hairstyle Specs (선택 헤어스타일 저장)'"></span>
+                            <span x-text="isProcessing ? 'AI Mapping Scalp & Fitting...' : 'Save Hairstyle Specs'"></span>
                         </button>
                     </div>
                 </div>
