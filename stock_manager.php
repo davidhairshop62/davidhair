@@ -213,6 +213,11 @@
                         <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
                     </template>
                 </button>
+                <button @click="activeTab = 'sections'; loadSections()" 
+                        :class="activeTab === 'sections' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
+                    <i class="fa-solid fa-layer-group text-sky-400"></i> Section &amp; Menu Manager
+                </button>
             </div>
 
             <!-- TAB 1: STOCK INVENTORY MANAGER -->
@@ -1228,6 +1233,141 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: SECTIONS & MENU MANAGER -->
+            <div x-show="activeTab === 'sections'" x-cloak class="space-y-6">
+                <!-- Summary Stats Bar -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Sections</div>
+                        <div class="text-2xl font-extrabold text-white mt-1" x-text="sections.length"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Visible on Site</div>
+                        <div class="text-2xl font-extrabold text-emerald-400 mt-1 flex items-center gap-2">
+                            <span x-text="visibleSectionsCount"></span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Hidden Sections</div>
+                        <div class="text-2xl font-extrabold text-slate-400 mt-1" x-text="hiddenSectionsCount"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">In Navigation Menu</div>
+                        <div class="text-2xl font-extrabold text-brand-tealLight mt-1" x-text="inMenuSectionsCount"></div>
+                    </div>
+                </div>
+
+                <!-- Toolbar: Filter & Actions -->
+                <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+                        <template x-for="cat in ['All', 'Interactive & AI', 'Products & Ordering', 'Salon & Services', 'Brand & Trust']" :key="cat">
+                            <button type="button" @click="activeSectionFilter = cat"
+                                :class="activeSectionFilter === cat ? 'bg-brand-teal text-white font-bold shadow' : 'bg-brand-inner text-slate-300 hover:text-white border border-brand-border'"
+                                class="px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer"
+                                x-text="cat">
+                            </button>
+                        </template>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+                        <a href="section_manager.php" target="_blank"
+                            class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5" title="Open Dedicated Page">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-sky-400"></i>
+                            <span class="hidden sm:inline">Standalone Page</span>
+                        </a>
+
+                        <button type="button" @click="resetAllSectionsToVisible()" :disabled="isSavingSections"
+                            class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-eye text-emerald-400"></i>
+                            <span>Show All</span>
+                        </button>
+
+                        <button type="button" @click="saveAllSections()" :disabled="isSavingSections"
+                            class="teal-gradient hover:opacity-95 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50">
+                            <i class="fa-solid fa-floppy-disk" :class="{ 'fa-spin': isSavingSections }"></i>
+                            <span x-text="isSavingSections ? 'Saving...' : 'Save All Changes'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sections Cards List -->
+                <div class="space-y-3.5">
+                    <template x-for="sec in filteredSectionsList" :key="sec.id">
+                        <div class="bg-brand-cardBg border rounded-xl p-4 sm:p-5 transition-all shadow-sm"
+                             :class="sec.is_visible ? 'border-brand-border hover:border-teal-500/50' : 'border-rose-900/40 bg-[#161B2E]/60 opacity-80'">
+                            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                                <div class="flex items-start gap-3.5 flex-1 min-w-0">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 mt-0.5 shadow-sm"
+                                         :class="sec.is_visible ? 'teal-gradient' : 'bg-slate-800 text-slate-400 border border-slate-700'">
+                                        <i :class="sec.menu_icon || 'fa-solid fa-layer-group'"></i>
+                                    </div>
+                                    <div class="space-y-1 min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="font-heading font-bold text-sm sm:text-base text-white tracking-tight" x-text="sec.name"></h3>
+                                            <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold"
+                                                  :class="{
+                                                      'bg-sky-500/20 text-sky-300 border border-sky-500/30': sec.category === 'Interactive & AI',
+                                                      'bg-amber-500/20 text-amber-300 border border-amber-500/30': sec.category === 'Products & Ordering',
+                                                      'bg-purple-500/20 text-purple-300 border border-purple-500/30': sec.category === 'Salon & Services',
+                                                      'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30': sec.category === 'Brand & Trust'
+                                                  }" x-text="sec.category"></span>
+                                            <span class="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-slate-400 font-mono" x-text="'#' + sec.section_key"></span>
+                                        </div>
+                                        <p class="text-xs text-brand-textMuted line-clamp-2" x-text="sec.description"></p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-4 sm:gap-6 w-full lg:w-auto justify-between lg:justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-brand-border/60">
+                                    <!-- Toggle 1: Show on Homepage -->
+                                    <div class="flex items-center gap-2.5">
+                                        <button type="button" @click="toggleSectionVisibility(sec)"
+                                            :class="sec.is_visible ? 'bg-emerald-500' : 'bg-slate-700'"
+                                            class="w-13 h-7 rounded-full p-1 transition-colors duration-200 relative flex-shrink-0 cursor-pointer focus:outline-none">
+                                            <div :class="sec.is_visible ? 'translate-x-6' : 'translate-x-0'"
+                                                 class="w-5 h-5 rounded-full bg-white transition-transform duration-200 shadow-md"></div>
+                                        </button>
+                                        <div class="text-left leading-tight">
+                                            <span class="text-xs font-bold block" :class="sec.is_visible ? 'text-emerald-400' : 'text-slate-400'"
+                                                  x-text="sec.is_visible ? 'Visible' : 'Hidden'"></span>
+                                            <span class="text-[10px] text-brand-textMuted">On Homepage</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Toggle 2: Show in Navigation Menu -->
+                                    <div class="flex items-center gap-2.5">
+                                        <button type="button" @click="toggleSectionMenu(sec)"
+                                            :class="sec.in_menu ? 'bg-brand-teal' : 'bg-slate-700'"
+                                            class="w-13 h-7 rounded-full p-1 transition-colors duration-200 relative flex-shrink-0 cursor-pointer focus:outline-none">
+                                            <div :class="sec.in_menu ? 'translate-x-6' : 'translate-x-0'"
+                                                 class="w-5 h-5 rounded-full bg-white transition-transform duration-200 shadow-md"></div>
+                                        </button>
+                                        <div class="text-left leading-tight">
+                                            <span class="text-xs font-bold block" :class="sec.in_menu ? 'text-brand-tealLight' : 'text-slate-400'"
+                                                  x-text="sec.in_menu ? 'In Nav' : 'No Nav'"></span>
+                                            <span class="text-[10px] text-brand-textMuted">Top &amp; Mobile</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Menu Title Input -->
+                                    <div class="w-32 hidden sm:block">
+                                        <label class="text-[10px] text-slate-400 block mb-0.5">Nav Label</label>
+                                        <input type="text" x-model="sec.menu_title" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-brand-teal">
+                                    </div>
+
+                                    <!-- Quick Jump -->
+                                    <a :href="'/#' + sec.section_key" target="_blank"
+                                       class="w-8 h-8 rounded-lg bg-brand-inner hover:bg-slate-800 border border-brand-border flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                                       title="Preview Section on Live Site">
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -2389,6 +2529,7 @@
                             await this.loadAiStyles();
                             await this.loadBookings();
                             await this.loadMembers();
+                            await this.loadSections();
                         } else {
                             this.isAuthenticated = false;
                         }
@@ -2417,6 +2558,7 @@
                             await this.loadAiStyles();
                             await this.loadBookings();
                             await this.loadMembers();
+                            await this.loadSections();
                         } else {
                             this.loginError = data.message || 'Login failed.';
                         }
@@ -3408,6 +3550,121 @@
                     }
 
                     return { isClosed: false, reason: '' };
+                },
+
+                // ==========================================
+                // SECTION & MENU MANAGER METHODS
+                // ==========================================
+                sections: [],
+                activeSectionFilter: 'All',
+                isSavingSections: false,
+
+                get filteredSectionsList() {
+                    if (this.activeSectionFilter === 'All') return this.sections;
+                    return this.sections.filter(s => s.category === this.activeSectionFilter);
+                },
+
+                get visibleSectionsCount() {
+                    return this.sections.filter(s => s.is_visible == 1).length;
+                },
+
+                get hiddenSectionsCount() {
+                    return this.sections.filter(s => s.is_visible == 0).length;
+                },
+
+                get inMenuSectionsCount() {
+                    return this.sections.filter(s => s.in_menu == 1).length;
+                },
+
+                async loadSections() {
+                    try {
+                        const res = await fetch('api_sections.php?action=get_public_sections&t=' + Date.now());
+                        const data = await res.json();
+                        if (data.status === 'success' && Array.isArray(data.sections)) {
+                            this.sections = data.sections;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load sections:', e);
+                    }
+                },
+
+                async toggleSectionVisibility(sec) {
+                    const nextVal = sec.is_visible ? 0 : 1;
+                    sec.is_visible = nextVal;
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', sec.id);
+                        formData.append('section_key', sec.section_key);
+                        formData.append('is_visible', nextVal);
+
+                        const res = await fetch('api_sections.php?action=toggle_visibility', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`"${sec.name}" is now ${nextVal ? 'Visible' : 'Hidden'} on homepage.`);
+                        }
+                    } catch (e) {
+                        this.showToast('Error saving visibility: ' + e.message);
+                    }
+                },
+
+                async toggleSectionMenu(sec) {
+                    const nextVal = sec.in_menu ? 0 : 1;
+                    sec.in_menu = nextVal;
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', sec.id);
+                        formData.append('section_key', sec.section_key);
+                        formData.append('in_menu', nextVal);
+
+                        const res = await fetch('api_sections.php?action=toggle_menu', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(`"${sec.menu_title}" ${nextVal ? 'added to' : 'removed from'} navigation menu.`);
+                        }
+                    } catch (e) {
+                        this.showToast('Error saving menu setting: ' + e.message);
+                    }
+                },
+
+                async saveAllSections() {
+                    this.isSavingSections = true;
+                    try {
+                        const res = await fetch('api_sections.php?action=bulk_update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sections: this.sections })
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast('All section & menu configurations saved to database!');
+                        } else {
+                            this.showToast(data.message || 'Save failed.');
+                        }
+                    } catch (e) {
+                        this.showToast('Failed to save changes: ' + e.message);
+                    } finally {
+                        this.isSavingSections = false;
+                    }
+                },
+
+                async resetAllSectionsToVisible() {
+                    if (!confirm('Do you want to reset and show all sections on the homepage?')) return;
+                    try {
+                        const res = await fetch('api_sections.php?action=reset_defaults', { method: 'POST' });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.sections.forEach(s => s.is_visible = 1);
+                            this.showToast('All sections are now set to visible.');
+                        }
+                    } catch (e) {
+                        this.showToast('Reset failed: ' + e.message);
+                    }
                 }
             }
         }
