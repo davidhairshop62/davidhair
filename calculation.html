@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Hair System Quote & Cost Calculator (AUD / USD) | David Hair Melbourne</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --text: #334155;
+      --success: #059669;
+      --warning: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Top Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 18px 24px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header h1 {
+      font-size: 1.35rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-admin-auth {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-admin-auth:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+      border-color: #cbd5e1;
+    }
+
+    .admin-auth-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #92400e;
+      cursor: pointer;
+      user-select: none;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .admin-toggle-wrap:hover {
+      background: #fde68a;
+    }
+
+    .admin-toggle-wrap input {
+      accent-color: #d97706;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .admin-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .btn-logout-small {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .btn-logout-small:hover {
+      background: #fee2e2;
+    }
+
+    /* Admin Login Modal */
+    .login-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .login-modal-card {
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      animation: modalPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPopIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .login-modal-header {
+      padding: 20px 24px;
+      background: #0f172a;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .login-modal-header .lock-icon {
+      font-size: 1.6rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      border-radius: 10px;
+      line-height: 1;
+    }
+
+    .login-modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .login-modal-header p {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin: 2px 0 0 0;
+    }
+
+    .btn-close-modal {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .btn-close-modal:hover {
+      color: #fff;
+    }
+
+    .login-form {
+      padding: 22px 24px 16px 24px;
+    }
+
+    .login-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+
+    .input-field-group {
+      margin-bottom: 16px;
+    }
+
+    .input-field-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .input-field-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      color: var(--primary);
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+
+    .input-field-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
+
+    .password-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-eye-toggle {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #64748b;
+      padding: 4px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-modal-submit {
+      flex: 2;
+      padding: 11px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-modal-submit:hover {
+      background: #0f766e;
+    }
+
+    .btn-modal-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .modal-footer-note {
+      text-align: center;
+      padding: 10px 24px 16px 24px;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    /* Layout Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    /* Tab / Button Group */
+    .btn-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+    }
+
+    .btn-option {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-option:hover {
+      border-color: #94a3b8;
+    }
+
+    .btn-option.active {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-option small {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .btn-option.active small {
+      color: var(--accent);
+    }
+
+    /* Size Inputs */
+    .size-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      background: #fff;
+      flex: 1;
+    }
+
+    .input-box span {
+      font-size: 0.85rem;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .input-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: right;
+      padding-right: 6px;
+      color: var(--primary);
+    }
+
+    .preset-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .chip:hover, .chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    select.select-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    /* Checkbox Grid */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1.5px solid var(--border);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .check-item input {
+      accent-color: var(--accent);
+      margin-right: 8px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .check-price {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    /* Hair Color Checkbox Grid */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .color-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: #fff;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .color-item:hover {
+      border-color: #94a3b8;
+    }
+
+    .color-item.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .color-item input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.25);
+      flex-shrink: 0;
+      display: inline-block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .color-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .color-code {
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    .color-desc {
+      font-size: 0.68rem;
+      color: #64748b;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .color-surcharge-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 1px 4px;
+      border-radius: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    /* Hair Texture Radio Grid */
+    .texture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .texture-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1.5px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fff;
+      transition: all 0.15s ease;
+      user-select: none;
+      position: relative;
+      min-height: 70px;
+    }
+
+    .texture-item:hover {
+      border-color: #94a3b8;
+    }
+
+    .texture-item.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .texture-item input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .texture-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .texture-name {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .texture-item.active .texture-name {
+      color: var(--accent);
+    }
+
+    .texture-sub {
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+
+    .texture-price {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 6px;
+    }
+
+    /* Right Result Panel */
+    .result-card {
+      position: sticky;
+      top: 20px;
+    }
+
+    .price-banner {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .price-banner .label {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .price-banner .aud-price {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: -0.5px;
+    }
+
+    .price-banner .sub-compare {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      background: rgba(255,255,255,0.1);
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+
+    .breakdown-list {
+      list-style: none;
+      margin-bottom: 18px;
+    }
+
+    .breakdown-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.9rem;
+    }
+
+    .breakdown-list li strong {
+      color: var(--primary);
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      display: none;
+      background: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .admin-panel.show {
+      display: block;
+    }
+
+    .admin-header {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      padding: 5px 0;
+      color: #78350f;
+    }
+
+    .admin-row.highlight {
+      border-top: 1px dashed #fbbf24;
+      margin-top: 6px;
+      padding-top: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--success);
+    }
+
+    .fx-input {
+      width: 65px;
+      padding: 2px 6px;
+      border: 1px solid #d97706;
+      border-radius: 4px;
+      font-weight: 700;
+      text-align: right;
+      font-size: 0.82rem;
+    }
+
+    .action-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-action {
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: #f8fafc;
+      color: var(--primary);
+    }
+
+    .btn-action.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Top Header -->
+  <div class="header">
+    <h1>💇‍♂️ Hair System Quote & Cost Calculator (AUD / USD)</h1>
+    <div class="header-right">
+      <!-- Admin Login Button (Visible when NOT logged in) -->
+      <button type="button" class="btn-admin-auth" id="btnAdminLogin" onclick="openLoginModal()">
+        <span>🔒 Admin Login</span>
+      </button>
+
+      <!-- Admin Controls (Visible ONLY after login) -->
+      <div class="admin-auth-group" id="adminToggleWrap" style="display: none;">
+        <label class="admin-toggle-wrap">
+          <input type="checkbox" id="adminToggle" onchange="toggleAdmin()">
+          <span>🔒 Admin Factory Cost (USD) & Margin</span>
+        </label>
+        <div class="admin-user-pill">
+          <span id="adminUserTag">Admin</span>
+          <button type="button" class="btn-logout-small" onclick="logoutAdmin()" title="Logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- Left: Options Panel -->
+    <div class="card">
+      <!-- 1. Gender / Product Category -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>1. Product Category (Gender Preset)</span>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn-option active" id="btnMen" onclick="setCategory('men')">
+            Men's Toupee
+            <small>Default: 7"×9" / 6" Length</small>
+          </button>
+          <button type="button" class="btn-option" id="btnWomen" onclick="setCategory('women')">
+            Women's Hair Topper
+            <small>Default: 4"×4" / 10" Length</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Order Type -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>2. Order Type</span>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn-option active" id="btnReady" onclick="setOrderType('ready')">
+            Ready-made (In-Stock)
+            <small>Instant salon fitting & styling ($0)</small>
+          </button>
+          <button type="button" class="btn-option" id="btnCustom" onclick="setOrderType('custom')">
+            Custom Bespoke Order
+            <small>Head template moulding & custom order (+$200 AUD)</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Base Dimensions -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>3. Base Size (Width × Length inches)</span>
+          <span id="areaDisplay" style="color:var(--accent); font-size:0.9rem;">Size: 16" (7+9)</span>
+        </div>
+        <div class="preset-chips">
+          <span class="chip" onclick="setSize(2, 3)">2" × 3" (5" · Filler)</span>
+          <span class="chip" onclick="setSize(2, 4)">2" × 4" (6" · Filler)</span>
+          <span class="chip" onclick="setSize(3, 4)">3" × 4" (7" · Mini Part)</span>
+          <span class="chip" onclick="setSize(4, 4)">4" × 4" (8" · Women's Std)</span>
+          <span class="chip" onclick="setSize(5, 5)">5" × 5" (10" · Part / Mini)</span>
+          <span class="chip" onclick="setSize(6, 6)">6" × 6" (12" · Women's Medium)</span>
+          <span class="chip" onclick="setSize(6, 8)">6" × 8" (14" · Men's Small)</span>
+          <span class="chip active" onclick="setSize(7, 9)">7" × 9" (16" · Men's Standard)</span>
+          <span class="chip" onclick="setSize(8, 10)">8" × 10" (18" · Men's Large)</span>
+          <span class="chip" onclick="setSize(10, 12)">10" × 12" (22" · Full Cap)</span>
+        </div>
+        <div class="size-inputs">
+          <div class="input-box">
+            <span>Width(W)</span>
+            <input type="number" id="sizeW" value="7" min="2" max="15" step="1" oninput="calculate()">
+            <span>"</span>
+          </div>
+          <span style="font-weight:700;">×</span>
+          <div class="input-box">
+            <span>Length(L)</span>
+            <input type="number" id="sizeL" value="9" min="2" max="15" step="1" oninput="calculate()">
+            <span>"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Hair Length & Cap Construction -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>4. Hair Length & Base Cap Construction</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size:0.82rem; color:#64748b; display:block; margin-bottom:4px;">Hair Length (Inches / Factor)</label>
+            <select id="hairLength" class="select-input" onchange="calculate()">
+              <option value="6" selected>6 inch (1.0x - Men's Default)</option>
+              <option value="8">8 inch (1.5x)</option>
+              <option value="10">10 inch (1.8x - Women's Default)</option>
+              <option value="12">12 inch (2.0x)</option>
+              <option value="14">14 inch (4.0x)</option>
+              <option value="16">16 inch (6.0x)</option>
+              <option value="18">18 inch (8.0x)</option>
+              <option value="20">20 inch (10.0x)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; color:#64748b; display:block; margin-bottom:4px;">Cap Construction (Factor)</label>
+            <select id="capType" class="select-input" onchange="calculate()">
+              <option value="1.0" selected>PU+Swiss Net 1.0 (Standard)</option>
+              <option value="1.1">MPU+PU+Swiss Net 1.1</option>
+              <option value="1.3">MPU+PU+Part+Swiss Net 1.3</option>
+              <option value="1.5">MPU+PU+BPT Part + Swiss Net 1.5</option>
+              <option value="1.2">LaceFront+PU+Swiss Net 1.2</option>
+              <option value="1.4">LaceFront+PU+Part+Swiss Net 1.4</option>
+              <option value="1.6">LaceFront+PU+BPT Part + Swiss Net 1.6</option>
+              <option value="1.3">Full HD Lace Net 1.3</option>
+              <option value="2.0">Full Injection Skin 2</option>
+              <option value="2.0">Full BPT Top 2</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Hair Density & Quality Grade -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>5. Hair Density & Quality Grade</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size:0.82rem; color:#64748b; display:block; margin-bottom:4px;">Hair Density</label>
+            <select id="density" class="select-input" onchange="calculate()">
+              <option value="1.0" selected>80% Light Natural (1.0x - Standard)</option>
+              <option value="1.1">90% Medium-Light (1.1x)</option>
+              <option value="1.2">100% Medium (1.2x)</option>
+              <option value="1.3">110% Medium-Heavy (1.3x)</option>
+              <option value="1.4">120% Heavy Full (1.4x)</option>
+              <option value="1.5">130% Extra Heavy (1.5x)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.82rem; color:#64748b; display:block; margin-bottom:4px;">Hair Grade / Fiber</label>
+            <select id="hairType" class="select-input" onchange="calculate()">
+              <option value="remy" selected>100% Natural Remy Hair (Salon Standard)</option>
+              <option value="standard">Standard Human Hair (Budget)</option>
+              <option value="virgin">Premium Virgin Cuticle Hair (Top Grade)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Hair Color Selection (Multi-select) -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>6. Hair Color Selection (Multi-select)</span>
+          <span id="colorCountBadge" style="font-size:0.8rem; color:var(--accent); font-weight:700;">1 Shade Selected</span>
+        </div>
+        <p style="font-size:0.75rem; color:#64748b; margin-top:-6px; margin-bottom:10px;">
+          • 1 color: <strong>#6 &amp; below = +$0</strong>, <strong>#8 &amp; above = +$50 AUD</strong><br>
+          • 2+ colors: <strong>+$20 AUD per selected color</strong> (+ $50 if blonde/grey included)
+        </p>
+        <div class="color-grid">
+          <!-- #1 -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#1" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#080808;"></span>
+            <div class="color-info">
+              <span class="color-code">#1</span>
+              <span class="color-desc">Jet Black</span>
+            </div>
+          </label>
+          <!-- #1B -->
+          <label class="color-item active">
+            <input type="checkbox" name="hairColor" value="#1B" checked onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#181818;"></span>
+            <div class="color-info">
+              <span class="color-code">#1B</span>
+              <span class="color-desc">Natural Black</span>
+            </div>
+          </label>
+          <!-- #Natural -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#Natural" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#251815;"></span>
+            <div class="color-info">
+              <span class="color-code">#Natural</span>
+              <span class="color-desc">Virgin Brown</span>
+            </div>
+          </label>
+          <!-- #2 -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#2" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#38241c;"></span>
+            <div class="color-info">
+              <span class="color-code">#2</span>
+              <span class="color-desc">Dark Brown</span>
+            </div>
+          </label>
+          <!-- #3A -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#3A" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#4a2e22;"></span>
+            <div class="color-info">
+              <span class="color-code">#3A</span>
+              <span class="color-desc">Med-Dark Brown</span>
+            </div>
+          </label>
+          <!-- #4 -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#4" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#5c3826;"></span>
+            <div class="color-info">
+              <span class="color-code">#4</span>
+              <span class="color-desc">Medium Brown</span>
+            </div>
+          </label>
+          <!-- #6 -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#6" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#7a4c33;"></span>
+            <div class="color-info">
+              <span class="color-code">#6</span>
+              <span class="color-desc">Chestnut Brown</span>
+            </div>
+          </label>
+          <!-- #8 (+$50) -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#8" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#9d7550;"></span>
+            <div class="color-info">
+              <span class="color-code">#8</span>
+              <span class="color-desc">Ash Brown/Blonde</span>
+            </div>
+            <span class="color-surcharge-badge">+$50</span>
+          </label>
+          <!-- #18 (+$50) -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#18" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#c7ad82;"></span>
+            <div class="color-info">
+              <span class="color-code">#18</span>
+              <span class="color-desc">Ash Blonde</span>
+            </div>
+            <span class="color-surcharge-badge">+$50</span>
+          </label>
+          <!-- #613 (+$50) -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#613" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#faea99; border: 1px solid #d4c172;"></span>
+            <div class="color-info">
+              <span class="color-code">#613</span>
+              <span class="color-desc">Platinum Blonde</span>
+            </div>
+            <span class="color-surcharge-badge">+$50</span>
+          </label>
+          <!-- #60 (+$50) -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#60" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:#fafaf5; border: 1px solid #cbd5e1;"></span>
+            <div class="color-info">
+              <span class="color-code">#60</span>
+              <span class="color-desc">Pure White/Blonde</span>
+            </div>
+            <span class="color-surcharge-badge">+$50</span>
+          </label>
+          <!-- #Silver (+$50) -->
+          <label class="color-item">
+            <input type="checkbox" name="hairColor" value="#Silver" onchange="toggleColorItem(this)">
+            <span class="color-dot" style="background:linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);"></span>
+            <div class="color-info">
+              <span class="color-code">#Silver</span>
+              <span class="color-desc">Silver Grey</span>
+            </div>
+            <span class="color-surcharge-badge">+$50</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 7. Hair Texture & Wave Pattern (Single selection) -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>7. Hair Texture &amp; Wave Pattern (Single selection)</span>
+          <span id="textureDisplay" style="font-size:0.8rem; color:var(--accent); font-weight:700;">Straight (+$0 AUD)</span>
+        </div>
+        <div class="texture-grid">
+          <!-- Straight -->
+          <div class="texture-item active" onclick="selectTexture('straight')">
+            <input type="radio" name="hairTexture" value="straight" checked>
+            <div class="texture-top">
+              <span class="texture-name">Straight</span>
+            </div>
+            <span class="texture-sub">스트레이트 (Natural Straight)</span>
+            <span class="texture-price">+$0 AUD</span>
+          </div>
+
+          <!-- Natural Wave -->
+          <div class="texture-item" onclick="selectTexture('natural_wave')">
+            <input type="radio" name="hairTexture" value="natural_wave">
+            <div class="texture-top">
+              <span class="texture-name">Natural Wave</span>
+            </div>
+            <span class="texture-sub">네추럴웨이브 (Soft Movement)</span>
+            <span class="texture-price">+$10 AUD</span>
+          </div>
+
+          <!-- Body Wave -->
+          <div class="texture-item" onclick="selectTexture('body_wave')">
+            <input type="radio" name="hairTexture" value="body_wave">
+            <div class="texture-top">
+              <span class="texture-name">Body Wave</span>
+            </div>
+            <span class="texture-sub">바디웨이브 (Voluminous S-Wave)</span>
+            <span class="texture-price">+$30 AUD</span>
+          </div>
+
+          <!-- Deep Wave -->
+          <div class="texture-item" onclick="selectTexture('deep_wave')">
+            <input type="radio" name="hairTexture" value="deep_wave">
+            <div class="texture-top">
+              <span class="texture-name">Deep Wave</span>
+            </div>
+            <span class="texture-sub">딮웨이브 (Flowing Ripples)</span>
+            <span class="texture-price">+$50 AUD</span>
+          </div>
+
+          <!-- Curl -->
+          <div class="texture-item" onclick="selectTexture('curl')">
+            <input type="radio" name="hairTexture" value="curl">
+            <div class="texture-top">
+              <span class="texture-name">Curl</span>
+            </div>
+            <span class="texture-sub">컬 (Classic Spiral Curls)</span>
+            <span class="texture-price">+$50 AUD</span>
+          </div>
+
+          <!-- Tight Curl -->
+          <div class="texture-item" onclick="selectTexture('tight_curl')">
+            <input type="radio" name="hairTexture" value="tight_curl">
+            <div class="texture-top">
+              <span class="texture-name">Tight Curl</span>
+            </div>
+            <span class="texture-sub">타이트컬 (Afro / Tight Coil)</span>
+            <span class="texture-price">+$100 AUD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Salon Services & Craft Add-ons -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>8. Salon Services &amp; Craft Add-ons</span>
+        </div>
+        <div class="checkbox-grid">
+          <label class="check-item">
+            <span><input type="checkbox" id="optInstall" checked onchange="calculate()">Cut-in &amp; Professional Install (Bonding / Clip)</span>
+            <span class="check-price">Included ($160)</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optBleach" onchange="calculate()">Bleached Knots (Natural Frontal Hairline)</span>
+            <span class="check-price">+$35 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optRoot" onchange="calculate()">Root Shadowing / Transition Color</span>
+            <span class="check-price">+$40 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optRush" onchange="calculate()">Rush Factory Production (5~6 Weeks)</span>
+            <span class="check-price">+$80 AUD</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Live Quote & Cost Breakdown -->
+    <div class="card result-card">
+      <div class="price-banner">
+        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Salon Fitting Included</div>
+        <div class="aud-price" id="finalAudPrice">$700 AUD</div>
+        <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $900 AUD</div>
+      </div>
+
+      <div class="section-title">📋 Itemized Customer Quotation (AUD)</div>
+      <ul class="breakdown-list">
+        <li>
+          <span>Base &amp; Cap Construction (<span id="lblArea">8×10"</span>, <span id="lblCap">Silk Part</span>)</span>
+          <strong id="valBaseAud">$420 AUD</strong>
+        </li>
+        <li>
+          <span>Hair Length Option (<span id="lblLength">6"</span>)</span>
+          <strong id="valLengthAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Hair Quality Grade (<span id="lblHairType">Remy</span>)</span>
+          <strong id="valHairTypeAud">$120 AUD</strong>
+        </li>
+        <li>
+          <span>Hair Density (<span id="lblDensity">80%</span>)</span>
+          <strong id="valDensityAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Hair Color / Multi-Shade (<span id="lblColor">#1B</span>)</span>
+          <strong id="valColorAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Hair Texture / Wave (<span id="lblTexture">Straight</span>)</span>
+          <strong id="valTextureAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Salon Cut-in &amp; Fitting (Bonding / Clip)</span>
+          <strong id="valInstallAud">$160 AUD</strong>
+        </li>
+        <li>
+          <span>Custom Bespoke Craft &amp; Options</span>
+          <strong id="valExtraAud">$0 AUD</strong>
+        </li>
+      </ul>
+
+      <!-- Admin Factory Cost / Margin Panel (Hidden by default) -->
+      <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+          <span>🏭 Factory Production Cost (USD) & Margin Analysis</span>
+          <span>
+            FX Rate (1 USD = $
+            <input type="number" id="fxRate" class="fx-input" value="1.52" step="0.01" oninput="calculate()"> AUD)
+          </span>
+        </div>
+        <div class="admin-row">
+          <span>• Estimated Hair Weight (40g baseline):</span>
+          <strong id="valHairGrams">66.7 g</strong>
+        </div>
+        <div class="admin-row">
+          <span>• Raw Hair Material Cost ($100/kg base):</span>
+          <strong id="valRawHairUsd">$3.70 USD</strong>
+        </div>
+        <div class="admin-row">
+          <span>• Factory / Wholesale Unit Cost ($100 base formula):</span>
+          <strong id="valFactoryUsd">$180.00 USD</strong>
+        </div>
+        <div class="admin-row">
+          <span>• Converted Factory Cost (AUD):</span>
+          <strong id="valFactoryAud">$274 AUD</strong>
+        </div>
+        <div class="admin-row highlight">
+          <span>💰 Estimated Salon Gross Profit (incl. Services):</span>
+          <span id="valNetProfit">$426 AUD (60.9%)</span>
+        </div>
+      </div>
+
+      <div class="action-btns">
+        <button class="btn-action" onclick="resetDefaults()">🔄 Reset to Defaults</button>
+        <button class="btn-action primary" onclick="copyEstimate()">📋 Copy Quote Summary</button>
+      </div>
+    </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div class="login-modal-overlay" id="loginModalOverlay" style="display: none;" onclick="handleModalBackdropClick(event)">
+  <div class="login-modal-card" onclick="event.stopPropagation()">
+    <div class="login-modal-header">
+      <div class="lock-icon">🔒</div>
+      <div>
+        <h3>David Hair Admin Authentication</h3>
+        <p>Sign in to view factory wholesale costs & margin analysis.</p>
+      </div>
+      <button type="button" class="btn-close-modal" onclick="closeLoginModal()">&times;</button>
+    </div>
+
+    <form onsubmit="handleLoginSubmit(event)" class="login-form">
+      <div id="loginErrorMsg" class="login-error" style="display: none;"></div>
+
+      <div class="input-field-group">
+        <label for="adminEmailInput">Admin Email (ID)</label>
+        <input type="email" id="adminEmailInput" value="shc9607@gmail.com" placeholder="shc9607@gmail.com" required autocomplete="username">
+      </div>
+
+      <div class="input-field-group">
+        <label for="adminPasswordInput">Password</label>
+        <div class="password-wrap">
+          <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" required autocomplete="current-password">
+          <button type="button" class="btn-eye-toggle" onclick="togglePasswordVisibility()" title="Show/Hide Password">👁</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeLoginModal()">Cancel</button>
+        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin">Sign In</button>
+      </div>
+    </form>
+    <div class="modal-footer-note">Authorized Personnel Only · David Hair Systems Pty Ltd</div>
+  </div>
+</div>
+
+<script>
+  // State management
+  let currentCategory = 'men';   // 'men' or 'women'
+  let currentOrderType = 'ready'; // 'ready' or 'custom'
+
+  // Hair length weight factor table
+  const lengthWeights = {
+    6: 1.0,
+    8: 1.5,
+    10: 1.8,
+    12: 2.0,
+    14: 4.0,
+    16: 6.0,
+    18: 8.0,
+    20: 10.0
+  };
+
+  // Hair weight scaling factor by length (6 inch = 1.0 baseline)
+  const lengthGramFactor = {
+    6: 1.0,
+    8: 1.35,
+    10: 1.7,
+    12: 2.1,
+    14: 2.6,
+    16: 3.2,
+    18: 3.8,
+    20: 4.5
+  };
+
+  // Authentication State
+  let isAdminAuthenticated = false;
+
+  async function checkAdminAuth() {
+    try {
+      const res = await fetch('admin_stock_api.php?action=check_auth', { cache: 'no-store' });
+      const data = await res.json();
+      if (data && data.status === 'authenticated') {
+        setAdminAuthState(true, data.user);
+        return;
+      }
+    } catch (e) {
+      console.log('Admin check_auth status:', e);
+    }
+    setAdminAuthState(false);
+  }
+
+  function setAdminAuthState(isAuthed, userEmail) {
+    isAdminAuthenticated = !!isAuthed;
+    const btnLogin = document.getElementById('btnAdminLogin');
+    const toggleWrap = document.getElementById('adminToggleWrap');
+    const adminToggle = document.getElementById('adminToggle');
+    const userTag = document.getElementById('adminUserTag');
+    const panel = document.getElementById('adminPanel');
+
+    if (isAuthed) {
+      if (btnLogin) btnLogin.style.display = 'none';
+      if (toggleWrap) toggleWrap.style.display = 'inline-flex';
+      if (userTag) userTag.textContent = userEmail || 'Admin';
+    } else {
+      if (btnLogin) btnLogin.style.display = 'inline-flex';
+      if (toggleWrap) toggleWrap.style.display = 'none';
+      if (adminToggle) adminToggle.checked = false;
+      if (panel) panel.classList.remove('show');
+    }
+  }
+
+  function openLoginModal() {
+    const modal = document.getElementById('loginModalOverlay');
+    const errBox = document.getElementById('loginErrorMsg');
+    const passInput = document.getElementById('adminPasswordInput');
+    if (errBox) {
+      errBox.style.display = 'none';
+      errBox.textContent = '';
+    }
+    if (passInput) passInput.value = '';
+    if (modal) modal.style.display = 'flex';
+    setTimeout(() => { if (passInput) passInput.focus(); }, 100);
+  }
+
+  function closeLoginModal() {
+    const modal = document.getElementById('loginModalOverlay');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function handleModalBackdropClick(event) {
+    if (event.target === document.getElementById('loginModalOverlay')) {
+      closeLoginModal();
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const passInput = document.getElementById('adminPasswordInput');
+    if (passInput) {
+      passInput.type = passInput.type === 'password' ? 'text' : 'password';
+    }
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault();
+    const emailInput = document.getElementById('adminEmailInput');
+    const passInput = document.getElementById('adminPasswordInput');
+    const errBox = document.getElementById('loginErrorMsg');
+    const submitBtn = document.getElementById('btnSubmitLogin');
+
+    const email = (emailInput ? emailInput.value : '').trim();
+    const password = passInput ? passInput.value : '';
+
+    if (!email || !password) {
+      if (errBox) {
+        errBox.textContent = 'Please enter both Admin ID and Password.';
+        errBox.style.display = 'block';
+      }
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Authenticating...';
+    }
+    if (errBox) errBox.style.display = 'none';
+
+    try {
+      const formData = new FormData();
+      formData.append('action', 'login');
+      formData.append('email', email);
+      formData.append('password', password);
+
+      const res = await fetch('admin_stock_api.php', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+
+      if (data && data.status === 'success') {
+        closeLoginModal();
+        setAdminAuthState(true, data.user || email);
+        // Automatically check and show admin panel on successful login
+        const adminToggle = document.getElementById('adminToggle');
+        if (adminToggle) {
+          adminToggle.checked = true;
+          toggleAdmin();
+        }
+      } else {
+        if (errBox) {
+          errBox.textContent = (data && data.message) ? data.message : 'Invalid Admin ID or Password.';
+          errBox.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      if (errBox) {
+        errBox.textContent = 'Network error connecting to authentication service.';
+        errBox.style.display = 'block';
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    }
+  }
+
+  async function logoutAdmin() {
+    try {
+      await fetch('admin_stock_api.php?action=logout');
+    } catch (e) {
+      console.log('Logout error:', e);
+    }
+    setAdminAuthState(false);
+  }
+
+  // Keyboard shortcut: Escape to close modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLoginModal();
+  });
+
+  function toggleAdmin() {
+    if (!isAdminAuthenticated) {
+      const adminToggle = document.getElementById('adminToggle');
+      if (adminToggle) adminToggle.checked = false;
+      const panel = document.getElementById('adminPanel');
+      if (panel) panel.classList.remove('show');
+      openLoginModal();
+      return;
+    }
+    const isChecked = document.getElementById('adminToggle').checked;
+    const panel = document.getElementById('adminPanel');
+    if (isChecked) {
+      panel.classList.add('show');
+    } else {
+      panel.classList.remove('show');
+    }
+  }
+
+  function setCategory(cat) {
+    currentCategory = cat;
+    document.getElementById('btnMen').classList.toggle('active', cat === 'men');
+    document.getElementById('btnWomen').classList.toggle('active', cat === 'women');
+
+    if (cat === 'men') {
+      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Remy hair, salon cut-in included
+      setSize(7, 9);
+      document.getElementById('hairLength').value = '6';
+      document.getElementById('capType').value = '1.0';
+      document.getElementById('density').value = '1.0';
+      document.getElementById('hairType').value = 'remy';
+      document.getElementById('optInstall').checked = true;
+    } else {
+      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Remy hair, salon cut-in included
+      setSize(4, 4);
+      document.getElementById('hairLength').value = '10';
+      document.getElementById('capType').value = '1.0';
+      document.getElementById('density').value = '1.0';
+      document.getElementById('hairType').value = 'remy';
+      document.getElementById('optInstall').checked = true;
+    }
+    calculate();
+  }
+
+  function setOrderType(type) {
+    currentOrderType = type;
+    document.getElementById('btnReady').classList.toggle('active', type === 'ready');
+    document.getElementById('btnCustom').classList.toggle('active', type === 'custom');
+    calculate();
+  }
+
+  function setSize(w, l) {
+    document.getElementById('sizeW').value = w;
+    document.getElementById('sizeL').value = l;
+    updateChips(w, l);
+    calculate();
+  }
+
+  function updateChips(w, l) {
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach(chip => {
+      chip.classList.remove('active');
+      if (chip.textContent.startsWith(`${w}" × ${l}"`)) {
+        chip.classList.add('active');
+      }
+    });
+  }
+
+  function toggleColorItem(checkbox) {
+    const parent = checkbox.closest('.color-item');
+    if (parent) {
+      parent.classList.toggle('active', checkbox.checked);
+    }
+    calculate();
+  }
+
+  function selectTexture(textureVal) {
+    const radio = document.querySelector(`input[name="hairTexture"][value="${textureVal}"]`);
+    if (radio) {
+      radio.checked = true;
+    }
+    document.querySelectorAll('.texture-item').forEach(item => {
+      const input = item.querySelector('input[name="hairTexture"]');
+      if (input) {
+        item.classList.toggle('active', input.value === textureVal);
+      }
+    });
+    calculate();
+  }
+
+  function resetDefaults() {
+    document.getElementById('optBleach').checked = false;
+    document.getElementById('optRoot').checked = false;
+    document.getElementById('optRush').checked = false;
+
+    // Reset Hair Colors: uncheck all, check #1B
+    document.querySelectorAll('input[name="hairColor"]').forEach(cb => {
+      cb.checked = (cb.value === '#1B');
+      const parent = cb.closest('.color-item');
+      if (parent) parent.classList.toggle('active', cb.checked);
+    });
+
+    // Reset Hair Texture: select 'straight'
+    selectTexture('straight');
+
+    setOrderType('ready');
+    setCategory(currentCategory);
+  }
+
+  function calculate() {
+    const w = parseFloat(document.getElementById('sizeW').value) || 0;
+    const l = parseFloat(document.getElementById('sizeL').value) || 0;
+    const sizeSum = w + l; // Wig industry standard: Combined size (W + L in inches, e.g. 5+5=10, 8+10=18)
+    document.getElementById('areaDisplay').textContent = `Size: ${sizeSum}" (${w}" + ${l}")`;
+    updateChips(w, l);
+
+    const hairLen = parseInt(document.getElementById('hairLength').value, 10);
+    const wLength = lengthWeights[hairLen];
+    const wCap = parseFloat(document.getElementById('capType').value);
+    const wDensity = parseFloat(document.getElementById('density').value);
+    const hairType = document.getElementById('hairType').value;
+
+    const hasInstall = document.getElementById('optInstall').checked;
+    const hasBleach = document.getElementById('optBleach').checked;
+    const hasRoot = document.getElementById('optRoot').checked;
+    const hasRush = document.getElementById('optRush').checked;
+
+    // Hair Color calculation
+    // High colors (#8 & above): #8, #18, #613, #60, #Silver
+    // Low colors (#6 & below): #1, #1B, #Natural, #2, #3A, #4, #6
+    const highColors = ['#8', '#18', '#613', '#60', '#Silver'];
+    const checkedColorInputs = Array.from(document.querySelectorAll('input[name="hairColor"]:checked'));
+    const checkedColors = checkedColorInputs.map(cb => cb.value);
+    const colorCount = checkedColors.length;
+    const hasHighColor = checkedColors.some(c => highColors.includes(c));
+
+    let colorAddAud = 0;
+    if (colorCount === 0) {
+      colorAddAud = 0;
+    } else if (colorCount === 1) {
+      colorAddAud = hasHighColor ? 50 : 0;
+    } else {
+      // 2개 이상 선택시 선택갯수 * $20, #8 이상 포함시 +$50
+      colorAddAud = (hasHighColor ? 50 : 0) + (colorCount * 20);
+    }
+
+    // Hair Texture calculation (Single select)
+    // Straight $0, Natural Wave $10, Body Wave $30, Deep Wave $50, Curl $50, Tight Curl $100
+    const texturePrices = {
+      'straight': 0,
+      'natural_wave': 10,
+      'body_wave': 30,
+      'deep_wave': 50,
+      'curl': 50,
+      'tight_curl': 100
+    };
+    const textureNames = {
+      'straight': 'Straight',
+      'natural_wave': 'Natural Wave',
+      'body_wave': 'Body Wave',
+      'deep_wave': 'Deep Wave',
+      'curl': 'Curl',
+      'tight_curl': 'Tight Curl'
+    };
+    const checkedTextureInput = document.querySelector('input[name="hairTexture"]:checked');
+    const textureVal = checkedTextureInput ? checkedTextureInput.value : 'straight';
+    const textureAddAud = texturePrices[textureVal] !== undefined ? texturePrices[textureVal] : 0;
+    const textureDisplayName = textureNames[textureVal] || 'Straight';
+
+    // 1. Factory base cost (USD) calculation ($10 USD / $30 AUD per inch of combined size)
+    // Men's 7x9 (16") standard base cap = $140 USD ($420 AUD) -> Total $700 AUD
+    // Women's 4x4 (8") standard base cap = $60 USD ($180 AUD) -> Total $500 AUD
+    const baseCapUsd = Math.max(20.0, (10.0 * sizeSum - 20.0)) * wCap;
+
+    // Hair length surcharge (USD): 6"=0, 10"(1.8) -> $13.33 USD ($40 AUD)
+    const lengthAddUsd = (wLength - 1.0) * 16.6667;
+
+    // Hair material upgrade surcharge (USD)
+    let hairTypeUsd = 0;
+    if (hairType === 'remy') hairTypeUsd = 40.0;
+    if (hairType === 'virgin') hairTypeUsd = 90.0;
+
+    // Subtotal before density factor (USD)
+    const subTotalUsd = baseCapUsd + lengthAddUsd + hairTypeUsd;
+    const densityAddUsd = subTotalUsd * (wDensity - 1.0);
+
+    // Additional craftsmanship options (USD factory cost base)
+    const extraOptionsUsd = (hasBleach ? 12 : 0) + (hasRoot ? 14 : 0) + (hasRush ? 27 : 0);
+    const colorAddUsd = colorAddAud > 0 ? (colorAddAud / 3.0) : 0;
+    const textureAddUsd = textureAddAud > 0 ? (textureAddAud / 3.0) : 0;
+
+    // Total factory cost (USD)
+    const totalFactoryUsd = subTotalUsd + densityAddUsd + extraOptionsUsd + colorAddUsd + textureAddUsd;
+
+    // 2. Retail sales price (AUD) calculation (3.0x markup + install $160 + custom fee $200)
+    const retailMultiplier = 3.0;
+    const baseCapAud = Math.round(baseCapUsd * retailMultiplier);
+    const lengthAddAud = Math.round(lengthAddUsd * retailMultiplier);
+    const hairTypeAud = Math.round(hairTypeUsd * retailMultiplier);
+    const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
+
+    const installAud = hasInstall ? 160 : 0;
+    const customFeeAud = (currentOrderType === 'custom') ? 200 : 0;
+    const extraOptionsAud = (hasBleach ? 35 : 0) + (hasRoot ? 40 : 0) + (hasRush ? 80 : 0);
+
+    // Rounding to nearest $10
+    const rawProductAud = (baseCapUsd + lengthAddUsd + hairTypeUsd + densityAddUsd) * retailMultiplier;
+    const roundedProductAud = Math.round(rawProductAud / 10) * 10;
+
+    const finalAud = roundedProductAud + installAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud;
+
+    // Comparison price for alternative order type
+    const altAud = (currentOrderType === 'ready') ? (finalAud + 200) : (finalAud - 200);
+
+    // 3. Hair grams and raw material cost estimation (14" baseline with 40g)
+    const estimatedGrams = 40.0 * (sizeSum / 14.0) * lengthGramFactor[hairLen] * wDensity;
+    const rawHairCostUsd = estimatedGrams * 0.0556 * wLength;
+
+    // 4. UI updates
+    const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
+    const orderName = currentOrderType === 'ready' ? "Ready-made (In-Stock)" : "Custom Bespoke Order";
+    const installName = hasInstall ? "Salon Fitting Included" : "Hairpiece Only";
+
+    document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${installName}`;
+    document.getElementById('finalAudPrice').textContent = `$${finalAud.toLocaleString()} AUD`;
+    document.getElementById('compareTypeText').textContent =
+      currentOrderType === 'ready'
+        ? `💡 Custom Bespoke Order: $${altAud.toLocaleString()} AUD`
+        : `💡 Ready-made Order: $${altAud.toLocaleString()} AUD`;
+
+    // Color & Texture badge updates
+    const colorCountBadge = document.getElementById('colorCountBadge');
+    if (colorCountBadge) {
+      if (colorCount === 0) {
+        colorCountBadge.textContent = 'None Selected (+$0 AUD)';
+      } else if (colorCount === 1) {
+        colorCountBadge.textContent = `${checkedColors[0]} (+$${colorAddAud} AUD)`;
+      } else {
+        colorCountBadge.textContent = `${colorCount} Shades (${checkedColors.join('+')}, +$${colorAddAud} AUD)`;
+      }
+    }
+
+    const textureDisplay = document.getElementById('textureDisplay');
+    if (textureDisplay) {
+      textureDisplay.textContent = `${textureDisplayName} (+$${textureAddAud} AUD)`;
+    }
+
+    // Breakdown label updates
+    const capSelect = document.getElementById('capType');
+    const capText = capSelect.options[capSelect.selectedIndex].text.split('(')[0].trim();
+    const denSelect = document.getElementById('density');
+    const denText = denSelect.options[denSelect.selectedIndex].text.split('(')[0].trim();
+    const hairSelect = document.getElementById('hairType');
+    const hairText = hairSelect.options[hairSelect.selectedIndex].text.split('(')[0].trim();
+
+    document.getElementById('lblArea').textContent = `${w}×${l}" (${sizeSum}")`;
+    document.getElementById('lblCap').textContent = capText;
+    document.getElementById('lblLength').textContent = `${hairLen}"`;
+    document.getElementById('lblHairType').textContent = hairText;
+    document.getElementById('lblDensity').textContent = denText;
+
+    const lblColor = document.getElementById('lblColor');
+    if (lblColor) lblColor.textContent = colorCount > 0 ? checkedColors.join(', ') : 'None';
+    const valColorAud = document.getElementById('valColorAud');
+    if (valColorAud) valColorAud.textContent = `+$${colorAddAud.toLocaleString()} AUD`;
+
+    const lblTexture = document.getElementById('lblTexture');
+    if (lblTexture) lblTexture.textContent = textureDisplayName;
+    const valTextureAud = document.getElementById('valTextureAud');
+    if (valTextureAud) valTextureAud.textContent = `+$${textureAddAud.toLocaleString()} AUD`;
+
+    document.getElementById('valBaseAud').textContent = `$${baseCapAud.toLocaleString()} AUD`;
+    document.getElementById('valLengthAud').textContent = `+$${lengthAddAud.toLocaleString()} AUD`;
+    document.getElementById('valHairTypeAud').textContent = `+$${hairTypeAud.toLocaleString()} AUD`;
+    document.getElementById('valDensityAud').textContent = `+$${densityAddAud.toLocaleString()} AUD`;
+    document.getElementById('valInstallAud').textContent = `$${installAud.toLocaleString()} AUD`;
+    document.getElementById('valExtraAud').textContent = `+$${(customFeeAud + extraOptionsAud).toLocaleString()} AUD`;
+
+    // Admin panel updates
+    const fxRate = parseFloat(document.getElementById('fxRate').value) || 1.52;
+    const factoryCostAud = Math.round(totalFactoryUsd * fxRate);
+    const netProfitAud = finalAud - factoryCostAud;
+    const marginPercent = finalAud > 0 ? ((netProfitAud / finalAud) * 100).toFixed(1) : 0;
+
+    document.getElementById('valHairGrams').textContent = `approx. ${estimatedGrams.toFixed(1)} g`;
+    document.getElementById('valRawHairUsd').textContent = `$${rawHairCostUsd.toFixed(2)} USD`;
+    document.getElementById('valFactoryUsd').textContent = `$${totalFactoryUsd.toFixed(2)} USD`;
+    document.getElementById('valFactoryAud').textContent = `approx. $${factoryCostAud.toLocaleString()} AUD`;
+    document.getElementById('valNetProfit').textContent = `$${netProfitAud.toLocaleString()} AUD (${marginPercent}%)`;
+  }
+
+  function copyEstimate() {
+    const w = document.getElementById('sizeW').value;
+    const l = document.getElementById('sizeL').value;
+    const sizeSum = (parseFloat(w) || 0) + (parseFloat(l) || 0);
+    const hairLen = document.getElementById('hairLength').value;
+    const capSelect = document.getElementById('capType');
+    const capText = capSelect.options[capSelect.selectedIndex].text.split('(')[0].trim();
+    const denSelect = document.getElementById('density');
+    const denText = denSelect.options[denSelect.selectedIndex].text.split('(')[0].trim();
+    const hairSelect = document.getElementById('hairType');
+    const hairText = hairSelect.options[hairSelect.selectedIndex].text.split('(')[0].trim();
+
+    const highColors = ['#8', '#18', '#613', '#60', '#Silver'];
+    const checkedColorInputs = Array.from(document.querySelectorAll('input[name="hairColor"]:checked'));
+    const checkedColors = checkedColorInputs.map(cb => cb.value);
+    const colorCount = checkedColors.length;
+    const hasHighColor = checkedColors.some(c => highColors.includes(c));
+    let colorAddAud = 0;
+    if (colorCount === 1) colorAddAud = hasHighColor ? 50 : 0;
+    else if (colorCount >= 2) colorAddAud = (hasHighColor ? 50 : 0) + (colorCount * 20);
+    const colorText = colorCount > 0 ? `${checkedColors.join(', ')} (+$${colorAddAud} AUD)` : 'Standard (#1B)';
+
+    const texturePrices = { 'straight': 0, 'natural_wave': 10, 'body_wave': 30, 'deep_wave': 50, 'curl': 50, 'tight_curl': 100 };
+    const textureNames = { 'straight': 'Straight', 'natural_wave': 'Natural Wave', 'body_wave': 'Body Wave', 'deep_wave': 'Deep Wave', 'curl': 'Curl', 'tight_curl': 'Tight Curl' };
+    const checkedTextureInput = document.querySelector('input[name="hairTexture"]:checked');
+    const textureVal = checkedTextureInput ? checkedTextureInput.value : 'straight';
+    const textureAddAud = texturePrices[textureVal] !== undefined ? texturePrices[textureVal] : 0;
+    const textureDisplayName = textureNames[textureVal] || 'Straight';
+    const textureText = `${textureDisplayName} (+$${textureAddAud} AUD)`;
+
+    const price = document.getElementById('finalAudPrice').textContent;
+    const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
+    const orderName = currentOrderType === 'ready' ? 'Ready-made (In-Stock)' : 'Custom Bespoke Order';
+    const installText = document.getElementById('optInstall').checked ? 'Included (Cut-in & Fitting)' : 'Excluded (Hairpiece Only)';
+
+    const summary = `[David Hair Melbourne - Quotation Summary]\n` +
+      `• Category: ${catName}\n` +
+      `• Order Type: ${orderName}\n` +
+      `• Base Size: ${w}" × ${l}" (Size: ${sizeSum}")\n` +
+      `• Hair Length: ${hairLen} inch\n` +
+      `• Hair Density: ${denText}\n` +
+      `• Cap Construction: ${capText}\n` +
+      `• Hair Quality: ${hairText}\n` +
+      `• Hair Color: ${colorText}\n` +
+      `• Hair Texture: ${textureText}\n` +
+      `• Salon Service: ${installText}\n` +
+      `----------------------------------------\n` +
+      `▶ Total Quote: ${price}`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(summary).then(() => {
+        alert('Quotation summary copied to clipboard!\nYou can paste it directly into WhatsApp, SMS, or Email.');
+      }).catch(() => {
+        fallbackCopyText(summary);
+      });
+    } else {
+      fallbackCopyText(summary);
+    }
+  }
+
+  function fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('Quotation summary copied to clipboard!\nYou can paste it directly into WhatsApp, SMS, or Email.');
+    } catch (e) {
+      prompt('Copy the quotation text below (Ctrl+C):', text);
+    }
+    document.body.removeChild(ta);
+  }
+
+  // Initial calculation & Admin authentication check
+  calculate();
+  checkAdminAuth();
+</script>
+
+</body>
+</html>

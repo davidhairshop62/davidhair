@@ -67,21 +67,31 @@
                 isB2bModalOpen: false,
                 isWelcomeModalOpen: false,
                 welcomeDontShowToday: false,
+                isCalculatorModalOpen: false,
+                calculatorUrl: 'calculator.html?t=' + Date.now(),
 
                 // Dynamic Homepage Sections & Navigation Menu Visibility
                 sectionsMap: (function() {
                     try {
                         const c = localStorage.getItem('dh_sections_cache');
-                        if (c) return JSON.parse(c).visibility || {};
+                        if (c) {
+                            const p = JSON.parse(c).visibility || {};
+                            p.builder = false;
+                            return p;
+                        }
                     } catch(e) {}
-                    return {};
+                    return { builder: false };
                 })(),
                 sectionsMenuMap: (function() {
                     try {
                         const c = localStorage.getItem('dh_sections_cache');
-                        if (c) return JSON.parse(c).in_menu || {};
+                        if (c) {
+                            const p = JSON.parse(c).in_menu || {};
+                            p.builder = false;
+                            return p;
+                        }
                     } catch(e) {}
-                    return {};
+                    return { builder: false };
                 })(),
                 sectionsOrderMap: (function() {
                     try {
@@ -93,6 +103,7 @@
                 sectionsList: [],
 
                 isSectionVisible(key) {
+                    if (key === 'builder') return false;
                     if (this.sectionsMap && key in this.sectionsMap) {
                         return this.sectionsMap[key] === true;
                     }
@@ -100,6 +111,7 @@
                 },
 
                 isSectionInMenu(key) {
+                    if (key === 'builder') return false;
                     if (this.sectionsMenuMap && key in this.sectionsMenuMap) {
                         return this.sectionsMenuMap[key] === true;
                     }
@@ -119,16 +131,18 @@
 
                 getProductsMenuOrder() {
                     return Math.min(
-                        this.getSectionOrder('builder', 6),
                         this.getSectionOrder('stock', 7),
-                        this.getSectionOrder('products-range', 11)
+                        this.getSectionOrder('salon', 8),
+                        this.getSectionOrder('products-range', 11),
+                        this.getSectionOrder('factory', 12),
+                        this.getSectionOrder('b2b', 13)
                     );
                 },
 
                 isTopSection(key) {
                     let minOrder = 9999;
                     let topKey = 'hero';
-                    const allKeys = ['hero', 'hair-diagnosis-hub', 'lifestyle-performance', 'builder', 'stock', 'salon', 'transformations', 'ai-simulator', 'products-range', 'factory', 'b2b'];
+                    const allKeys = ['hero', 'hair-diagnosis-hub', 'lifestyle-performance', 'stock', 'salon', 'transformations', 'ai-simulator', 'products-range', 'factory', 'b2b'];
                     for (let i = 0; i < allKeys.length; i++) {
                         const k = allKeys[i];
                         if (this.isSectionVisible(k)) {
@@ -156,7 +170,9 @@
                         const data = await res.json();
                         if (data.status === 'success') {
                             this.sectionsMap = data.visibility || {};
+                            this.sectionsMap.builder = false;
                             this.sectionsMenuMap = data.in_menu || {};
+                            this.sectionsMenuMap.builder = false;
                             this.sectionsOrderMap = data.orders || {};
                             this.sectionsList = data.sections || [];
                             try {
@@ -383,6 +399,14 @@
 
                 async init() {
                     this.fetchSectionSettings();
+
+                    // Always ensure fresh calculator.html on modal open
+                    this.$watch('isCalculatorModalOpen', (isOpen) => {
+                        if (isOpen) {
+                            this.calculatorUrl = 'calculator.html?t=' + Date.now();
+                        }
+                    });
+
                     // Smart Welcome Event Popup check (2.2s delay for seamless landing)
                     try {
                         const dismissedUntil = localStorage.getItem('davidhair_welcome_dismissed');
@@ -1991,20 +2015,12 @@
             <nav
                 class="hidden lg:flex items-center gap-5 xl:gap-7 text-xs xl:text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 
-                <!-- 1. Wig Quiz (hair-diagnosis-hub) -->
-                <a href="#hair-diagnosis-hub" x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')"
-                    :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'"
-                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 text-teal-300 font-bold">
-                    <i class="fa-solid fa-clipboard-question text-teal-400"></i>
-                    <span x-text="getMenuTitle('hair-diagnosis-hub', 'Wig Quiz')">Wig Quiz</span>
-                </a>
-
-                <!-- 2. PRODUCTS Dropdown (ORDER & STOCK) -->
+                <!-- ALL ABOUT US Dropdown (Order, Stock, Salon, Solutions, Factory, B2B) -->
                 <div class="relative group" x-data="{ productsOpen: false }" @mouseenter="productsOpen = true" @mouseleave="productsOpen = false"
-                     x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))"
+                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))"
                      :style="'order: ' + getProductsMenuOrder() + ';'">
                     <button type="button" @click="productsOpen = !productsOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer">
-                        <span>Products</span>
+                        <span>ALL ABOUT US</span>
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': productsOpen }"></i>
                     </button>
                     <!-- Dropdown Menu -->
@@ -2015,17 +2031,18 @@
                         x-transition:leave="transition ease-in duration-100"
                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
-                        class="absolute left-0 top-full pt-1 w-56 z-50 normal-case">
+                        class="absolute left-0 top-full pt-1 w-64 z-50 normal-case">
                         <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1 flex flex-col">
-                            <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" :style="'order: ' + getSectionOrder('builder', 6) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <button type="button" @click="isCalculatorModalOpen = true; productsOpen = false;"
+                                class="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item cursor-pointer">
                                 <div class="w-8 h-8 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-brand-tealLight group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-sliders text-xs"></i>
+                                    <i class="fa-solid fa-calculator text-xs"></i>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('builder', 'Order')">Order</div>
-                                    <div class="text-[10px] text-brand-textMuted">Custom Toupee Builder</div>
+                                    <div class="font-bold text-xs uppercase tracking-wider text-teal-300">Calculator</div>
+                                    <div class="text-[10px] text-brand-textMuted">Live Custom Price Quote</div>
                                 </div>
-                            </a>
+                            </button>
                             <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-boxes-stacked text-xs"></i>
@@ -2035,7 +2052,16 @@
                                     <div class="text-[10px] text-brand-textMuted">Ready-to-Ship Inventory</div>
                                 </div>
                             </a>
-                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item border-t border-brand-border/40 mt-1">
+                            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform">
+                                    <i class="fa-solid fa-scissors text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</div>
+                                    <div class="text-[10px] text-brand-textMuted">Melbourne Private Studio</div>
+                                </div>
+                            </a>
+                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-layer-group text-xs"></i>
                                 </div>
@@ -2044,7 +2070,25 @@
                                     <div class="text-[10px] text-brand-textMuted">Wigs, Systems &amp; Extensions</div>
                                 </div>
                             </a>
-                            <a href="#wig-training" :style="'order: ' + (getSectionOrder('products-range', 11) + 1) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item">
+                            <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                                <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover/item:scale-105 transition-transform">
+                                    <i class="fa-solid fa-industry text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('factory', 'Factory')">Factory</div>
+                                    <div class="text-[10px] text-brand-textMuted">Direct Manufacturing &amp; Craft</div>
+                                </div>
+                            </a>
+                            <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover/item:scale-105 transition-transform">
+                                    <i class="fa-solid fa-handshake text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('b2b', 'B2B Wholesale')">B2B Wholesale</div>
+                                    <div class="text-[10px] text-brand-textMuted">Salon &amp; Wholesale Partner</div>
+                                </div>
+                            </a>
+                            <a href="#wig-training" :style="'order: ' + (getSectionOrder('products-range', 11) + 5) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item border-t border-brand-border/40 mt-1">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-graduation-cap text-xs"></i>
                                 </div>
@@ -2057,7 +2101,6 @@
                     </div>
                 </div>
 
-                <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('salon', 'Salon')">Salon</a>
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
                     <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
                     <span x-text="getMenuTitle('transformations', 'Before & After')">Before &amp; After</span>
@@ -2066,12 +2109,27 @@
                     <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
                     <span x-text="getMenuTitle('ai-simulator', 'AI Try-On')">AI Try-On</span>
                 </a>
-                <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('factory', 'Factory')">Factory</a>
-                <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
+
+                <!-- Desktop Nav: Calculator Button -->
+                <button type="button" @click="isCalculatorModalOpen = true"
+                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 text-teal-300 font-bold uppercase tracking-wider cursor-pointer"
+                    title="Live Hair System Price Calculator (calculator.html)">
+                    <i class="fa-solid fa-calculator text-teal-400"></i>
+                    <span>Calculator</span>
+                </button>
             </nav>
 
             <!-- Right Utilities -->
             <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Header Calculation Quick Button (Accessible Everywhere on all devices) -->
+                <button type="button" @click="isCalculatorModalOpen = true"
+                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px] cursor-pointer"
+                    title="Live Hair System Price Calculator (calculator.html)">
+                    <i class="fa-solid fa-calculator text-teal-400"></i>
+                    <span class="hidden sm:inline">Calculator</span>
+                    <span class="sm:hidden">Calc</span>
+                </button>
+
                 <!-- Welcome Event Quick Button -->
                 <button type="button" @click="isWelcomeModalOpen = true"
                     class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px]"
@@ -2204,41 +2262,36 @@
 
             <!-- Mobile Navigation Links (Ordered dynamically via CSS flex order) -->
             <div class="flex flex-col space-y-1">
-                <!-- Mobile Wig Quiz (hair-diagnosis-hub) -->
-                <a href="#hair-diagnosis-hub" @click="mobileMenuOpen = false" x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')"
-                    :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-clipboard-question text-brand-tealLight"></i>
-                        <span x-text="getMenuTitle('hair-diagnosis-hub', 'Wig Quiz / Self-Diagnosis')">Wig Quiz / Self-Diagnosis</span>
-                    </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Quiz</span>
-                </a>
-
-                <!-- Mobile Products Dropdown -->
+                <!-- Mobile ALL ABOUT US Dropdown -->
                 <div x-data="{ mobileProductsOpen: true }" class="border-b border-slate-700/60 pb-2"
-                     x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))"
+                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))"
                      :style="'order: ' + getProductsMenuOrder() + ';'">
                     <button type="button" @click="mobileProductsOpen = !mobileProductsOpen"
                         class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
                         <span class="flex items-center gap-2">
                             <i class="fa-solid fa-box-open text-brand-tealLight text-xs"></i>
-                            <span>Products</span>
+                            <span>ALL ABOUT US</span>
                         </span>
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
                     </button>
                     <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
-                        <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" :style="'order: ' + getSectionOrder('builder', 6) + ';'" @click="mobileMenuOpen = false"
-                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-sliders text-teal-400 text-xs"></i>
-                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('builder', 'Order')">Order</span>
-                            <span class="text-slate-400 text-[10px]">(Custom Toupee Builder)</span>
-                        </a>
+                        <button type="button" @click="isCalculatorModalOpen = true; mobileMenuOpen = false;"
+                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors cursor-pointer">
+                            <i class="fa-solid fa-calculator text-teal-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider text-teal-300">Calculator</span>
+                            <span class="text-slate-400 text-[10px]">(Live Price Estimator)</span>
+                        </button>
                         <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</span>
                             <span class="text-slate-400 text-[10px]">(In-Stock Inventory)</span>
+                        </a>
+                        <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-scissors text-emerald-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</span>
+                            <span class="text-slate-400 text-[10px]">(Melbourne Studio)</span>
                         </a>
                         <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
@@ -2246,28 +2299,41 @@
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions')">All Solutions</span>
                             <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
                         </a>
+                        <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-industry text-purple-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('factory', 'Factory')">Factory</span>
+                            <span class="text-slate-400 text-[10px]">(Direct Craft)</span>
+                        </a>
+                        <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-handshake text-blue-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('b2b', 'B2B Wholesale')">B2B Wholesale</span>
+                            <span class="text-slate-400 text-[10px]">(Salon Partnership)</span>
+                        </a>
                     </div>
                 </div>
 
-                <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
-                    x-text="getMenuTitle('salon', 'Salon')">Salon</a>
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
                     <span x-text="getMenuTitle('transformations', 'Before & After Transformations')">Before &amp; After Transformations</span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
                 </a>
                 <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
                     <span x-text="getMenuTitle('ai-simulator', 'AI Hairstyle Simulator')">AI Hairstyle Simulator</span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Try-On</span>
                 </a>
-                <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
-                    x-text="getMenuTitle('factory', 'Factory')">Factory</a>
-                <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider transition-colors"
-                    x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
+
+                <!-- Mobile Calculation Nav Button -->
+                <button type="button" @click="isCalculatorModalOpen = true; mobileMenuOpen = false;"
+                    class="w-full text-left text-teal-300 font-bold hover:text-white py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors cursor-pointer">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-brand-tealLight"></i>
+                        <span>Calculator</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Live Price</span>
+                </button>
             </div>
         </div>
     </header>
@@ -2324,11 +2390,11 @@
 
                     <div
                         class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4 pt-2">
-                        <a href="#builder"
-                            class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg hover:opacity-95 transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
+                        <button type="button" @click="isCalculatorModalOpen = true"
+                            class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg hover:opacity-95 transition-all text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-sliders"></i>
                             <span>Build Custom Order</span>
-                        </a>
+                        </button>
                         <button @click="isBookingModalOpen = true"
                             class="w-full sm:w-auto bg-brand-cardBg hover:bg-brand-border text-slate-200 border border-brand-border font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-sm transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
                             <i class="fa-solid fa-location-dot text-brand-bronze"></i>
@@ -2457,11 +2523,11 @@
 
                     <div
                         class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4 pt-2">
-                        <a href="#builder"
-                            class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg hover:opacity-95 transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
+                        <button type="button" @click="isCalculatorModalOpen = true"
+                            class="w-full sm:w-auto teal-gradient text-white font-bold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-lg hover:opacity-95 transition-all text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-sliders"></i>
                             <span>Build Custom Order</span>
-                        </a>
+                        </button>
                         <button @click="isBookingModalOpen = true"
                             class="w-full sm:w-auto bg-brand-cardBg hover:bg-brand-border text-slate-200 border border-brand-border font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-sm transition-all text-center min-h-[48px] flex items-center justify-center gap-2">
                             <i class="fa-solid fa-location-dot text-brand-bronze"></i>
@@ -3567,11 +3633,9 @@
         </div>
     </section>
 
-    <!-- 3. INTERACTIVE 6-STEP CUSTOM ORDER BUILDER -->
-    <section id="builder" x-show="isSectionVisible('builder')"
-        :style="'order: ' + getSectionOrder('builder', 6) + ';'"
-        :class="isTopSection('builder') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
-        class="bg-[#0E1733]/60 relative border-y border-brand-border/60">
+    <!-- 3. INTERACTIVE 6-STEP CUSTOM ORDER BUILDER (HIDDEN) -->
+    <div class="hidden !hidden" style="display: none !important;">
+    <section id="builder" class="hidden !hidden" style="display: none !important;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2">Bespoke Customizer</span>
@@ -4797,6 +4861,7 @@
             </div>
         </div>
     </section>
+    </div>
 
     <!-- 4. STOCK PIECES SECTION -->
     <section id="stock" x-show="isSectionVisible('stock')"
@@ -4909,10 +4974,10 @@
                             All pre-made stock pieces in <span class="text-white font-semibold" x-text="stockFilter"></span> are currently allocated or reserved for Melbourne salon fittings. You can craft a custom bespoke order directly with our factory.
                         </p>
                         <div class="pt-2">
-                            <a href="#builder" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl teal-gradient text-white text-xs font-bold shadow-md hover:opacity-95 transition-all">
-                                <i class="fa-solid fa-sliders"></i>
+                            <button type="button" @click="isCalculatorModalOpen = true" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl teal-gradient text-white text-xs font-bold shadow-md hover:opacity-95 transition-all cursor-pointer">
+                                <i class="fa-solid fa-calculator"></i>
                                 <span>Build Custom Hairpiece</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </template>
@@ -5758,10 +5823,10 @@
                                     class="teal-gradient text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md hover:opacity-95 min-h-[44px]">
                                     <i class="fa-regular fa-calendar-check mr-1.5"></i> Book Salon Fitting
                                 </button>
-                                <a href="#builder"
-                                    class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-bold uppercase tracking-wider py-3 rounded-xl text-center flex items-center justify-center min-h-[44px]">
-                                    <i class="fa-solid fa-sliders mr-1.5"></i> Custom Build This Look
-                                </a>
+                                <button type="button" @click="isCalculatorModalOpen = true"
+                                    class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-bold uppercase tracking-wider py-3 rounded-xl text-center flex items-center justify-center min-h-[44px] cursor-pointer">
+                                    <i class="fa-solid fa-calculator mr-1.5"></i> Custom Build This Look
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -6787,11 +6852,11 @@
                             <span class="bg-brand-inner px-2 py-0.5 rounded text-slate-300 border border-brand-border">Thin Skin</span>
                             <span class="bg-brand-inner px-2 py-0.5 rounded text-slate-300 border border-brand-border">Ready &amp; Bespoke</span>
                         </div>
-                        <a href="#builder"
+                        <button type="button" @click="isCalculatorModalOpen = true"
                             class="w-full teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider py-2.5 rounded-xl shadow transition-all flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-sliders"></i>
-                            <span>Configure in 3D Builder</span>
-                        </a>
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Build Custom Order</span>
+                        </button>
                     </div>
                 </div>
 
@@ -9256,6 +9321,66 @@
         </div>
     </div>
 
+    <!-- 8. INTERACTIVE HAIR SYSTEM PRICE CALCULATOR MODAL -->
+    <div x-show="isCalculatorModalOpen" x-cloak
+        @keydown.escape.window="isCalculatorModalOpen = false"
+        class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md overflow-hidden"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95">
+        <div @click.away="isCalculatorModalOpen = false"
+            class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-6xl w-full h-[94vh] flex flex-col shadow-2xl relative overflow-hidden text-left my-auto">
+            
+            <!-- Modal Top Header Bar -->
+            <div class="px-4 sm:px-6 py-3.5 bg-brand-darkBg/95 border-b border-brand-border flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl teal-gradient flex items-center justify-center text-white text-base shadow-sm flex-shrink-0">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-heading font-extrabold text-sm sm:text-base text-white tracking-tight">
+                                Hair System Quote &amp; Cost Calculator
+                            </h3>
+                            <span class="hidden sm:inline-block text-[10px] bg-teal-500/20 text-teal-300 border border-teal-500/40 px-2 py-0.5 rounded-full font-mono font-bold">Live Estimate (AUD)</span>
+                        </div>
+                        <p class="text-[11px] text-brand-textMuted hidden xs:block">
+                            Direct interactive price estimator for Men's Toupee &amp; Women's Hair Topper
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-2">
+                    <a :href="calculatorUrl" href="calculator.html" target="_blank"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                        title="Open in Full Tab">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-brand-tealLight"></i>
+                        <span>Full Page</span>
+                    </a>
+                    <button type="button" @click="isCalculatorModalOpen = false"
+                        class="w-9 h-9 rounded-lg bg-brand-inner hover:bg-rose-950/80 border border-brand-border hover:border-rose-800 text-slate-400 hover:text-rose-200 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Close Calculator">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content Iframe -->
+            <div class="flex-1 w-full h-full bg-[#f8fafc] relative overflow-hidden">
+                <iframe :src="isCalculatorModalOpen ? calculatorUrl : ''"
+                    src="calculator.html"
+                    class="w-full h-full border-0 block"
+                    title="David Hair System Quote &amp; Cost Calculator"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- 9. FOOTER -->
     <footer class="bg-[#060B18] border-t border-brand-border/80 pt-12 sm:pt-16 pb-8 text-xs text-brand-textMuted">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -9300,8 +9425,8 @@
                     <h4 class="font-heading font-bold text-xs sm:text-sm text-white uppercase tracking-wider">Navigation
                     </h4>
                     <ul class="space-y-2 text-slate-300 font-medium">
-                        <li><a href="#builder"
-                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Order</a></li>
+                        <li><button type="button" @click="isCalculatorModalOpen = true"
+                                class="hover:text-brand-tealLight transition-colors inline-block py-0.5 cursor-pointer text-left">Custom Quote</button></li>
                         <li><a href="#salon"
                                 class="hover:text-brand-tealLight transition-colors inline-block py-0.5">Salon</a></li>
                         <li><a href="#stock"

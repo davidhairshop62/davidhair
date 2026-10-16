@@ -47,10 +47,9 @@ function shouldIgnore(relPath) {
   if (norm.startsWith('.agents') || norm.includes('/.agents/')) return true;
   if (norm.startsWith('.vscode') || norm.includes('/.vscode/')) return true;
   if (norm.startsWith('uploads') || norm.includes('/uploads/')) return true;
-  if (norm.startsWith('scripts') && !norm.endsWith('.php')) return true;
-  if (norm.startsWith('scratch') || norm.includes('/scratch/')) return true;
   if (norm.startsWith('videos') || norm.includes('/videos/')) return true;
   if (norm === 'package.json' || norm === 'package-lock.json') return true;
+  if (norm === '.htaccess') return false;
   if (path.basename(norm).startsWith('.')) return true;
   if (norm === 'images' || norm.startsWith('images/')) return false;
   return false;

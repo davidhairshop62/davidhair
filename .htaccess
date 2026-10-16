@@ -62,6 +62,13 @@
         Header set Cache-Control "max-age=3600, public, must-revalidate"
     </FilesMatch>
 
+    # Hair System Calculator HTML - Never cache so updates are immediately visible without browser refresh
+    <FilesMatch "^(calculator|calculation)\.html$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
     # API endpoints & dynamic PHP scripts - Never cache to guarantee instant database sync
     <FilesMatch "^(api_.*|admin_.*)\.php$">
         Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"

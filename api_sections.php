@@ -109,8 +109,8 @@ try {
                 'name' => 'Custom Toupee Order Builder',
                 'category' => 'Products & Ordering',
                 'description' => 'Interactive 6-step custom order configuration wizard with dynamic pricing.',
-                'is_visible' => 1,
-                'in_menu' => 1,
+                'is_visible' => 0,
+                'in_menu' => 0,
                 'menu_title' => 'Order',
                 'menu_icon' => 'fa-sliders',
                 'menu_badge' => 'Bespoke',
@@ -209,6 +209,8 @@ try {
             $ins->execute($sec);
         }
     }
+    // Ensure builder is set to hidden
+    $conn->exec("UPDATE site_sections SET is_visible = 0, in_menu = 0 WHERE section_key = 'builder'");
 } catch (Exception $e) {
     // If creation fails, proceed to try queries
 }
