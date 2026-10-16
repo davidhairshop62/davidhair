@@ -631,6 +631,12 @@
                             <button type="button" @click="bookingDateFilter = 'Upcoming'" :class="bookingDateFilter === 'Upcoming' ? 'bg-brand-teal text-white font-bold' : 'text-slate-300 hover:text-white'" class="px-2 py-1 rounded transition-colors">Upcoming</button>
                         </div>
 
+                        <!-- Holiday & Off-Days Settings -->
+                        <button type="button" @click="openHolidayModal()" class="px-3 py-1.5 bg-brand-inner hover:bg-slate-700 border border-amber-500/40 text-amber-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="Manage Regular Off-Days & Holiday Periods">
+                            <i class="fa-solid fa-calendar-xmark text-amber-400"></i>
+                            <span>Holiday & Off-Days (휴무일 설정)</span>
+                        </button>
+
                         <!-- Refresh -->
                         <button type="button" @click="loadBookings()" class="px-3 py-1.5 bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" title="Refresh Bookings">
                             <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i>
@@ -730,6 +736,9 @@
                                                         <template x-if="day.isToday">
                                                             <span class="px-1.5 py-0.5 text-[9px] rounded font-black uppercase bg-teal-400 text-slate-950 shadow animate-pulse">TODAY</span>
                                                         </template>
+                                                        <template x-if="day.isClosed">
+                                                            <span class="px-1.5 py-0.5 text-[8.5px] rounded font-bold uppercase bg-slate-800 text-amber-400 border border-amber-500/40" :title="day.closureReason" x-text="day.closureReason ? (day.closureReason.includes('Off-Day') ? 'OFF' : 'HOLIDAY') : 'CLOSED'"></span>
+                                                        </template>
                                                     </div>
                                                     <div class="text-[11px] font-mono font-medium text-slate-400" x-text="day.monthDay"></div>
                                                     <template x-if="day.bookingsCount > 0">
@@ -756,6 +765,7 @@
                                                 <td class="p-2 border-r border-brand-border/40 last:border-r-0 align-top min-w-[135px] min-h-[96px] relative group transition-all"
                                                     :class="{
                                                         'bg-teal-950/15': day.isToday && dragOverCell !== (day.dateStr + '_' + slot),
+                                                        'bg-slate-950/40 opacity-75': day.isClosed && !day.isToday && dragOverCell !== (day.dateStr + '_' + slot),
                                                         'ring-2 ring-brand-teal ring-inset bg-teal-900/50 shadow-inner': dragOverCell === (day.dateStr + '_' + slot)
                                                     }"
                                                     @dragover.prevent="handleDragOver($event, day.dateStr, slot)"
@@ -1640,6 +1650,136 @@
         </div>
     </div>
 
+    <!-- SALON HOLIDAY & REGULAR OFF-DAYS MODAL -->
+    <div x-show="isHolidayModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-6" @click.away="isHolidayModalOpen = false">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-base shadow">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-base sm:text-lg">Salon Holiday & Regular Off-Day Settings (휴무일 설정)</h3>
+                        <p class="text-[11px] text-slate-400">Manage weekly recurring closed days and holiday date ranges to block customer bookings.</p>
+                    </div>
+                </div>
+                <button type="button" @click="isHolidayModalOpen = false" class="text-slate-400 hover:text-white p-1.5 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- SECTION 1: WEEKLY REGULAR OFF-DAYS -->
+            <div class="bg-brand-inner/70 border border-brand-border/80 rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-white text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-repeat text-brand-tealLight"></i>
+                            <span>Weekly Regular Off-Days (정기 휴일 설정)</span>
+                        </h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Select days of the week when David Hair Salon is regularly closed:</p>
+                    </div>
+                    <button type="button" @click="saveRegularOffDays()" :disabled="isSavingClosureRules" class="px-3.5 py-1.5 teal-gradient text-white rounded-lg text-xs font-bold shadow hover:opacity-95 flex items-center gap-1.5">
+                        <i class="fa-solid fa-spinner fa-spin" x-show="isSavingClosureRules"></i>
+                        <i class="fa-solid fa-check" x-show="!isSavingClosureRules"></i>
+                        <span>Save Regular Days</span>
+                    </button>
+                </div>
+
+                <!-- 7 Days Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 pt-1">
+                    <template x-for="day in [
+                        { num: 0, en: 'Sun', ko: '일요일' },
+                        { num: 1, en: 'Mon', ko: '월요일' },
+                        { num: 2, en: 'Tue', ko: '화요일' },
+                        { num: 3, en: 'Wed', ko: '수요일' },
+                        { num: 4, en: 'Thu', ko: '목요일' },
+                        { num: 5, en: 'Fri', ko: '금요일' },
+                        { num: 6, en: 'Sat', ko: '토요일' }
+                    ]" :key="day.num">
+                        <button type="button" 
+                                @click="toggleRegularOffDay(day.num)"
+                                class="p-2.5 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-0.5"
+                                :class="isDayRegularOff(day.num) ? 'bg-amber-500/20 border-amber-500/60 text-amber-300 font-bold shadow' : 'bg-brand-darkBg border-brand-border/60 text-slate-400 hover:border-slate-500'">
+                            <span class="text-xs uppercase" x-text="day.en"></span>
+                            <span class="text-[10px]" x-text="day.ko"></span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded mt-1 font-semibold"
+                                  :class="isDayRegularOff(day.num) ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'"
+                                  x-text="isDayRegularOff(day.num) ? 'OFF' : 'OPEN'"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- SECTION 2: SPECIFIC CLOSURE PERIODS -->
+            <div class="bg-brand-inner/70 border border-brand-border/80 rounded-xl p-4 space-y-3">
+                <div>
+                    <h4 class="font-bold text-white text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-days text-amber-400"></i>
+                        <span>Special Closure Periods (특정 휴무 기간: 언제부터 언제까지)</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Block booking for temporary holidays, vacations, or studio renovations:</p>
+                </div>
+
+                <!-- Add Form -->
+                <form @submit.prevent="addClosurePeriod()" class="grid grid-cols-1 sm:grid-cols-12 gap-2 bg-brand-darkBg/80 p-3 rounded-lg border border-brand-border/60 text-xs">
+                    <div class="sm:col-span-3">
+                        <label class="block font-bold text-slate-300 text-[10px] mb-1">Start Date (시작일) *</label>
+                        <input type="date" x-model="newClosurePeriod.start_date" required class="w-full bg-brand-inner border border-brand-border rounded px-2.5 py-1.5 text-white outline-none focus:border-brand-teal text-xs">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block font-bold text-slate-300 text-[10px] mb-1">End Date (종료일) *</label>
+                        <input type="date" x-model="newClosurePeriod.end_date" required class="w-full bg-brand-inner border border-brand-border rounded px-2.5 py-1.5 text-white outline-none focus:border-brand-teal text-xs">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <label class="block font-bold text-slate-300 text-[10px] mb-1">Reason / Note (사유) *</label>
+                        <input type="text" x-model="newClosurePeriod.reason" required placeholder="e.g. Christmas Break, Vacation..." class="w-full bg-brand-inner border border-brand-border rounded px-2.5 py-1.5 text-white outline-none focus:border-brand-teal text-xs">
+                    </div>
+                    <div class="sm:col-span-2 flex items-end">
+                        <button type="submit" :disabled="isSavingClosureRules" class="w-full py-2 bg-brand-teal hover:bg-teal-600 text-white rounded font-bold transition-colors flex items-center justify-center gap-1 shadow">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- List of Active Closure Periods -->
+                <div class="space-y-1.5 max-h-48 overflow-y-auto">
+                    <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Registered Holiday Periods:</div>
+                    
+                    <template x-if="!closureRules.closure_periods || closureRules.closure_periods.length === 0">
+                        <div class="text-center py-4 text-slate-500 text-xs bg-brand-darkBg/50 rounded border border-dashed border-brand-border">
+                            No special closure periods registered. The salon will follow regular weekly off-days.
+                        </div>
+                    </template>
+
+                    <template x-for="p in closureRules.closure_periods" :key="p.id">
+                        <div class="flex items-center justify-between p-2.5 bg-brand-darkBg rounded-lg border border-brand-border text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                <div>
+                                    <span class="font-bold text-white font-mono" x-text="p.start_date + ' ~ ' + p.end_date"></span>
+                                    <span class="text-amber-300 ml-2 font-medium" x-text="p.reason"></span>
+                                </div>
+                            </div>
+                            <button type="button" @click="deleteClosurePeriod(p)" class="px-2 py-1 bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded text-[11px] font-semibold transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-trash-can text-[10px]"></i>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Footer Close -->
+            <div class="flex justify-end pt-2 border-t border-brand-border">
+                <button type="button" @click="isHolidayModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold text-xs">
+                    Close (닫기)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- NEW BOOKING MANUAL MODAL -->
     <div x-show="newBookingModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
         <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-6" @click.away="newBookingModalOpen = false">
@@ -2056,9 +2196,17 @@
                     notes: ''
                 },
 
+                // Salon Holiday & Closure Rules state
+                isHolidayModalOpen: false,
+                isLoadingClosureRules: false,
+                isSavingClosureRules: false,
+                closureRules: { regular_off_days: [0], closure_periods: [] },
+                newClosurePeriod: { start_date: '', end_date: '', reason: '' },
+
                 async init() {
                     await this.checkAuth();
                     this.initWeek();
+                    await this.loadClosureRules();
                 },
 
                 get totalQty() {
@@ -2093,12 +2241,15 @@
                         const dateStr = this.formatDate(d);
                         const dayOfWeek = d.getDay();
                         const dayBookings = this.bookings.filter(b => b.booking_date === dateStr);
+                        const closure = this.checkDateClosed(dateStr);
                         days.push({
                             dateStr: dateStr,
                             nameKo: namesKo[dayOfWeek],
                             nameEn: namesEn[dayOfWeek],
                             monthDay: String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'),
                             isToday: dateStr === today,
+                            isClosed: closure.isClosed,
+                            closureReason: closure.reason,
                             bookingsCount: dayBookings.length,
                             confirmedCount: dayBookings.filter(b => b.status === 'Confirmed').length,
                             pendingCount: dayBookings.filter(b => b.status === 'Pending').length
@@ -2741,6 +2892,7 @@
                         if (data.status === 'success') {
                             this.bookings = data.data || [];
                         }
+                        await this.loadClosureRules();
                     } catch (e) {
                         console.error('Failed to load bookings:', e);
                     } finally {
@@ -2948,6 +3100,14 @@
                         return;
                     }
 
+                    // Check if target date is closed
+                    const closureCheck = this.checkDateClosed(targetDate);
+                    if (closureCheck.isClosed) {
+                        alert(`Cannot move appointment: Selected date (${targetDate}) is closed (${closureCheck.reason}).`);
+                        this.draggedBooking = null;
+                        return;
+                    }
+
                     const confirmMsg = `[Reschedule Appointment]\n\nCustomer: ${b.customer_name} (#FIT-${b.id})\n\nFrom: ${oldDate} ${oldTime}\nTo: ${targetDate} ${newTime}\n\nDo you want to move this appointment to the new date and time?`;
                     if (!confirm(confirmMsg)) {
                         this.draggedBooking = null;
@@ -3116,6 +3276,138 @@
                     } catch (e) {
                         alert('Network error registering appointment');
                     }
+                },
+
+                // Closure & Holiday Rules Management Methods
+                async loadClosureRules() {
+                    this.isLoadingClosureRules = true;
+                    try {
+                        const res = await fetch('/api_booking.php?action=get_closure_rules');
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.closureRules = {
+                                regular_off_days: data.regular_off_days || [0],
+                                closure_periods: data.closure_periods || []
+                            };
+                        }
+                    } catch (e) {
+                        console.error('Failed to load closure rules:', e);
+                    } finally {
+                        this.isLoadingClosureRules = false;
+                    }
+                },
+
+                openHolidayModal() {
+                    this.isHolidayModalOpen = true;
+                    this.loadClosureRules();
+                },
+
+                isDayRegularOff(dayNum) {
+                    return (this.closureRules.regular_off_days || []).includes(dayNum);
+                },
+
+                toggleRegularOffDay(dayNum) {
+                    let list = [...(this.closureRules.regular_off_days || [])];
+                    const idx = list.indexOf(dayNum);
+                    if (idx > -1) {
+                        list.splice(idx, 1);
+                    } else {
+                        list.push(dayNum);
+                    }
+                    list.sort((a, b) => a - b);
+                    this.closureRules.regular_off_days = list;
+                },
+
+                async saveRegularOffDays() {
+                    this.isSavingClosureRules = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('days', JSON.stringify(this.closureRules.regular_off_days || []));
+                        const res = await fetch('/api_booking.php?action=save_regular_off_days', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.closureRules.regular_off_days = data.regular_off_days || [];
+                            this.showToast('✅ Regular off-days (정기휴일) updated successfully.');
+                        } else {
+                            alert(data.message || 'Failed to save regular off-days.');
+                        }
+                    } catch (e) {
+                        alert('Server error saving regular off-days.');
+                    } finally {
+                        this.isSavingClosureRules = false;
+                    }
+                },
+
+                async addClosurePeriod() {
+                    if (!this.newClosurePeriod.start_date || !this.newClosurePeriod.end_date) {
+                        alert('Please select both Start Date and End Date.');
+                        return;
+                    }
+                    this.isSavingClosureRules = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('start_date', this.newClosurePeriod.start_date);
+                        formData.append('end_date', this.newClosurePeriod.end_date);
+                        formData.append('reason', this.newClosurePeriod.reason || 'Salon Holiday');
+
+                        const res = await fetch('/api_booking.php?action=add_closure_period', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.closureRules.closure_periods = data.closure_periods || [];
+                            this.newClosurePeriod = { start_date: '', end_date: '', reason: '' };
+                            this.showToast('✅ Holiday closure period (휴무 기간) registered.');
+                        } else {
+                            alert(data.message || 'Failed to add closure period.');
+                        }
+                    } catch (e) {
+                        alert('Server error adding closure period.');
+                    } finally {
+                        this.isSavingClosureRules = false;
+                    }
+                },
+
+                async deleteClosurePeriod(period) {
+                    if (!confirm(`Delete holiday closure period "${period.reason || 'Holiday'}" (${period.start_date} ~ ${period.end_date})?`)) return;
+                    try {
+                        const res = await fetch(`/api_booking.php?action=delete_closure_period&id=${period.id}`);
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.closureRules.closure_periods = data.closure_periods || [];
+                            this.showToast('✅ Closure period removed.');
+                        } else {
+                            alert(data.message || 'Failed to delete closure period.');
+                        }
+                    } catch (e) {
+                        alert('Error deleting closure period.');
+                    }
+                },
+
+                checkDateClosed(dateStr) {
+                    if (!dateStr) return { isClosed: false, reason: '' };
+                    const parts = dateStr.split('-');
+                    if (parts.length !== 3) return { isClosed: false, reason: '' };
+                    const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    const dayOfWeek = d.getDay();
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+                    if ((this.closureRules.regular_off_days || []).includes(dayOfWeek)) {
+                        return { isClosed: true, reason: `Regular Off-Day (${dayNames[dayOfWeek]})` };
+                    }
+
+                    const periods = this.closureRules.closure_periods || [];
+                    for (const p of periods) {
+                        if (dateStr >= p.start_date && dateStr <= p.end_date) {
+                            return { isClosed: true, reason: p.reason || 'Salon Holiday' };
+                        }
+                    }
+
+                    return { isClosed: false, reason: '' };
                 }
             }
         }
