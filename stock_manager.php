@@ -1294,13 +1294,45 @@
                     </div>
                 </div>
 
+                <!-- Drag & Drop Help / Instruction Hint -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs px-3.5 py-2 text-brand-textMuted bg-brand-cardBg/80 border border-brand-border rounded-xl gap-2 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-teal-500/15 border border-teal-500/30 text-teal-400 flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-arrows-up-down"></i>
+                        </span>
+                        <span><strong>Drag &amp; Drop:</strong> Click &amp; drag any card or grab handle <i class="fa-solid fa-grip-vertical text-teal-400 mx-1"></i> to reorder. Changes auto-save instantly.</span>
+                    </div>
+                    <div class="flex items-center gap-2 font-mono text-[11px] text-slate-400 shrink-0">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Instant Live Sync</span>
+                    </div>
+                </div>
+
                 <!-- Sections Cards List -->
                 <div class="space-y-3.5">
                     <template x-for="sec in filteredSectionsList" :key="sec.id">
-                        <div class="bg-brand-cardBg border rounded-xl p-4 sm:p-5 transition-all shadow-sm"
-                             :class="sec.is_visible ? 'border-brand-border hover:border-teal-500/50' : 'border-rose-900/40 bg-[#161B2E]/60 opacity-80'">
+                        <div class="bg-brand-cardBg border rounded-xl p-4 sm:p-5 transition-all shadow-sm duration-150 relative select-none"
+                             :class="{
+                                 'border-brand-border hover:border-teal-500/50': sec.is_visible && (!draggedSec || draggedSec.id !== sec.id) && dragOverId !== sec.id,
+                                 'border-rose-900/40 bg-[#161B2E]/60 opacity-80': !sec.is_visible && (!draggedSec || draggedSec.id !== sec.id) && dragOverId !== sec.id,
+                                 'opacity-40 border-2 border-dashed border-teal-400 bg-teal-950/30 scale-[0.98]': draggedSec && draggedSec.id === sec.id,
+                                 'border-t-4 border-t-teal-400 bg-[#152347] shadow-2xl scale-[1.01] -translate-y-1': dragOverId === sec.id && draggedSec && draggedSec.id !== sec.id
+                             }"
+                             draggable="true"
+                             @dragstart="onDragStart($event, sec)"
+                             @dragover.prevent="onDragOver($event, sec)"
+                             @dragenter.prevent="onDragEnter($event, sec)"
+                             @dragleave="onDragLeave($event, sec)"
+                             @drop.prevent="onDrop($event, sec)"
+                             @dragend="onDragEnd($event)">
                             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                                <div class="flex items-start gap-3.5 flex-1 min-w-0">
+                                <div class="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
+                                    <!-- Drag Handle -->
+                                    <div class="cursor-grab active:cursor-grabbing text-slate-500 hover:text-teal-400 p-1.5 flex items-center justify-center shrink-0 transition-colors mt-0.5 rounded hover:bg-slate-800"
+                                         title="Drag to reorder section">
+                                        <i class="fa-solid fa-grip-vertical text-base sm:text-lg"></i>
+                                    </div>
+
                                     <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 mt-0.5 shadow-sm"
                                          :class="sec.is_visible ? 'teal-gradient' : 'bg-slate-800 text-slate-400 border border-slate-700'">
                                         <i :class="sec.menu_icon || 'fa-solid fa-layer-group'"></i>
@@ -1321,7 +1353,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-wrap items-center gap-3 sm:gap-5 w-full lg:w-auto justify-between lg:justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-brand-border/60">
+                                <div class="flex flex-wrap items-center gap-3 sm:gap-5 w-full lg:w-auto justify-between lg:justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-brand-border/60" draggable="false" @dragstart.stop.prevent="">
                                     <!-- Display Order Controls (Move Up/Down & Sequence Number) -->
                                     <div class="flex items-center gap-1.5 bg-brand-inner/90 border border-brand-border/80 rounded-xl px-2.5 py-1.5 shadow-inner">
                                         <div class="text-left leading-tight mr-1">
@@ -3581,6 +3613,64 @@
                 sections: [],
                 activeSectionFilter: 'All',
                 isSavingSections: false,
+                draggedSec: null,
+                dragOverId: null,
+
+                onDragStart(evt, sec) {
+                    this.draggedSec = sec;
+                    evt.dataTransfer.effectAllowed = 'move';
+                    evt.dataTransfer.setData('text/plain', sec.id);
+                },
+
+                onDragOver(evt, sec) {
+                    evt.preventDefault();
+                    evt.dataTransfer.dropEffect = 'move';
+                    if (this.draggedSec && this.draggedSec.id !== sec.id) {
+                        this.dragOverId = sec.id;
+                    }
+                },
+
+                onDragEnter(evt, sec) {
+                    if (this.draggedSec && this.draggedSec.id !== sec.id) {
+                        this.dragOverId = sec.id;
+                    }
+                },
+
+                onDragLeave(evt, sec) {
+                    if (this.dragOverId === sec.id) {
+                        this.dragOverId = null;
+                    }
+                },
+
+                onDrop(evt, targetSec) {
+                    evt.preventDefault();
+                    if (!this.draggedSec || this.draggedSec.id === targetSec.id) {
+                        this.draggedSec = null;
+                        this.dragOverId = null;
+                        return;
+                    }
+
+                    this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+
+                    const fromIdx = this.sections.findIndex(s => s.id === this.draggedSec.id);
+                    const toIdx = this.sections.findIndex(s => s.id === targetSec.id);
+
+                    if (fromIdx !== -1 && toIdx !== -1) {
+                        const [moved] = this.sections.splice(fromIdx, 1);
+                        this.sections.splice(toIdx, 0, moved);
+
+                        this.normalizeAndSaveSectionOrders();
+                        this.showToast(`"${moved.name}" moved to position #${toIdx + 1}`);
+                    }
+
+                    this.draggedSec = null;
+                    this.dragOverId = null;
+                },
+
+                onDragEnd(evt) {
+                    this.draggedSec = null;
+                    this.dragOverId = null;
+                },
 
                 get filteredSectionsList() {
                     if (this.activeSectionFilter === 'All') return this.sections;
