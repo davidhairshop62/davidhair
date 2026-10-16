@@ -52,7 +52,7 @@ try {
     // Table exists or error ignored
 }
 
-// Auto-check stock_items table columns for description and badge
+// Auto-check stock_items table columns for description, badge, and is_visible
 try {
     $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('description', $cols)) {
@@ -60,6 +60,9 @@ try {
     }
     if (!in_array('badge', $cols)) {
         $conn->exec("ALTER TABLE stock_items ADD COLUMN badge VARCHAR(50) DEFAULT ''");
+    }
+    if (!in_array('is_visible', $cols)) {
+        $conn->exec("ALTER TABLE stock_items ADD COLUMN is_visible TINYINT(1) NOT NULL DEFAULT 1");
     }
 } catch (Exception $e) {
     // Columns already exist or error ignored
@@ -144,7 +147,35 @@ try {
         sendJsonResponse(['status' => 'error', 'message' => 'Admin authentication required. Please login.'], 401);
     }
 
-    // 6. SAVE STOCK ITEM
+    // 6. TOGGLE STOCK ITEM VISIBILITY (SHOW / HIDE ON MAIN PAGE)
+    if ($action === 'toggle_visibility') {
+        $id = !empty($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+        if ($id <= 0) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid product ID.'], 400);
+        }
+
+        if (isset($_REQUEST['is_visible'])) {
+            $newVal = intval($_REQUEST['is_visible']) ? 1 : 0;
+            $stmt = $conn->prepare("UPDATE stock_items SET is_visible = :vis WHERE id = :id");
+            $stmt->execute([':vis' => $newVal, ':id' => $id]);
+        } else {
+            $stmt = $conn->prepare("UPDATE stock_items SET is_visible = IF(is_visible = 1, 0, 1) WHERE id = :id");
+            $stmt->execute([':id' => $id]);
+        }
+
+        $stmt = $conn->prepare("SELECT is_visible FROM stock_items WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $currentVis = (int)$stmt->fetchColumn();
+
+        sendJsonResponse([
+            'status' => 'success',
+            'message' => $currentVis ? 'Product is now visible on main page.' : 'Product is now hidden from main page.',
+            'id' => $id,
+            'is_visible' => $currentVis
+        ]);
+    }
+
+    // 7. SAVE STOCK ITEM
     if ($action === 'save') {
         $id = !empty($_POST['id']) ? intval($_POST['id']) : null;
         $sku = trim($_POST['sku'] ?? '');
@@ -177,13 +208,14 @@ try {
 
         $description = trim($_POST['description'] ?? '');
         $badge = trim($_POST['badge'] ?? '');
+        $is_visible = isset($_POST['is_visible']) ? (intval($_POST['is_visible']) ? 1 : 0) : 1;
 
         if (empty($sku) || empty($name)) {
             sendJsonResponse(['status' => 'error', 'message' => 'SKU and Name are required fields.']);
         }
 
         if ($id) {
-            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty, description = :description, badge = :badge";
+            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty, description = :description, badge = :badge, is_visible = :is_visible";
             if (!empty($imageUrl)) {
                 $sql .= ", image = :image";
             }
@@ -193,7 +225,9 @@ try {
             $params = [
                 ':sku' => $sku, ':name' => $name, ':category' => $category, ':type' => $type,
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
-                ':price' => $price, ':stockQty' => $stockQty, ':description' => $description, ':badge' => $badge, ':id' => $id
+                ':price' => $price, ':stockQty' => $stockQty, ':description' => $description, ':badge' => $badge,
+                ':is_visible' => $is_visible,
+                ':id' => $id
             ];
             if (!empty($imageUrl)) {
                 $params[':image'] = $imageUrl;
@@ -204,12 +238,13 @@ try {
             if (empty($imageUrl)) {
                 $imageUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
             }
-            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image, description, badge) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image, :description, :badge)");
+            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image, description, badge, is_visible) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image, :description, :badge, :is_visible)");
             $stmt->execute([
                 ':sku' => $sku, ':name' => $name, ':category' => $category, ':type' => $type,
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
                 ':price' => $price, ':stockQty' => $stockQty, ':image' => $imageUrl,
-                ':description' => $description, ':badge' => $badge
+                ':description' => $description, ':badge' => $badge,
+                ':is_visible' => $is_visible
             ]);
             sendJsonResponse(['status' => 'success', 'message' => 'New stock item created successfully.']);
         }

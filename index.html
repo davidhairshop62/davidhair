@@ -740,15 +740,15 @@
                 },
 
                 get filteredStockItems() {
-                    let items = this.stockItems;
+                    let items = (this.stockItems || []).filter(i => i.is_visible === undefined || i.is_visible === null || i.is_visible == 1 || i.is_visible === true || i.is_visible === '1');
                     if (this.stockFilter === "Men's Toupee" || this.stockFilter === "Men's Toupees") {
-                        items = this.stockItems.filter(i => i.category === "Men's Toupee" || i.category === "Men's Toupees");
+                        items = items.filter(i => i.category === "Men's Toupee" || i.category === "Men's Toupees");
                     } else if (this.stockFilter === "Women's topper" || this.stockFilter === "Women's Toppers" || this.stockFilter === "Women's Topper") {
-                        items = this.stockItems.filter(i => (i.category || '').toLowerCase().includes('topper'));
+                        items = items.filter(i => (i.category || '').toLowerCase().includes('topper'));
                     } else if (this.stockFilter === "Wig") {
-                        items = this.stockItems.filter(i => (i.category || '').toLowerCase() === 'wig');
+                        items = items.filter(i => (i.category || '').toLowerCase() === 'wig');
                     } else if (this.stockFilter === "Hair Extension") {
-                        items = this.stockItems.filter(i => (i.category || '').toLowerCase().includes('extension'));
+                        items = items.filter(i => (i.category || '').toLowerCase().includes('extension'));
                     }
 
                     // Sort by Category, then Product Name (A-Z)

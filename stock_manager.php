@@ -223,7 +223,7 @@
             <!-- TAB 1: STOCK INVENTORY MANAGER -->
             <div x-show="activeTab === 'stock'" space-y-6>
                 <!-- Stats Bar -->
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6">
                     <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
                         <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Stock Items</div>
                         <div class="text-2xl font-extrabold text-white mt-1" x-text="items.length"></div>
@@ -232,11 +232,35 @@
                         <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Inventory Qty</div>
                         <div class="text-2xl font-extrabold text-brand-tealLight mt-1" x-text="totalQty"></div>
                     </div>
-                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
-                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Categories</div>
-                        <div class="text-2xl font-extrabold text-brand-bronze mt-1">5</div>
+                    <!-- Visible on Site Stat Card (Clickable Filter) -->
+                    <div class="bg-brand-cardBg border border-brand-border hover:border-emerald-500/60 p-4 rounded-xl shadow-sm cursor-pointer transition-colors group"
+                         @click="selectedVisibility = selectedVisibility === 'visible' ? 'All' : 'visible'"
+                         :class="{ 'ring-2 ring-emerald-500/50 bg-brand-inner': selectedVisibility === 'visible' }"
+                         title="클릭하여 메인페이지 노출 제품만 필터링">
+                        <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Visible on Site</span>
+                            <i class="fa-solid fa-eye text-[11px] group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-emerald-400 mt-1 flex items-baseline gap-1.5">
+                            <span x-text="visibleItemsCount"></span>
+                            <span class="text-xs font-normal text-emerald-400/70">items</span>
+                        </div>
                     </div>
-                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                    <!-- Hidden Stat Card (Clickable Filter) -->
+                    <div class="bg-brand-cardBg border border-brand-border hover:border-amber-500/60 p-4 rounded-xl shadow-sm cursor-pointer transition-colors group"
+                         @click="selectedVisibility = selectedVisibility === 'hidden' ? 'All' : 'hidden'"
+                         :class="{ 'ring-2 ring-amber-500/50 bg-brand-inner': selectedVisibility === 'hidden' }"
+                         title="클릭하여 숨김 제품만 필터링">
+                        <div class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Hidden</span>
+                            <i class="fa-solid fa-eye-slash text-[11px] group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-amber-400 mt-1 flex items-baseline gap-1.5">
+                            <span x-text="hiddenItemsCount"></span>
+                            <span class="text-xs font-normal text-amber-400/70">items</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm col-span-2 sm:col-span-1">
                         <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Database Status</div>
                         <div class="text-xs font-bold text-emerald-400 mt-2 flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> MySQL Connected
@@ -246,7 +270,7 @@
 
                 <!-- Filter & Search Controls -->
                 <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-                    <div class="relative w-full md:w-80">
+                    <div class="relative w-full md:w-72">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="text" x-model="searchQuery" placeholder="Search by SKU, Name, Base..." class="w-full bg-brand-inner border border-brand-border rounded-lg pl-9 pr-4 py-2 text-xs text-white outline-none focus:border-brand-teal">
                     </div>
@@ -261,6 +285,18 @@
                                 <option value="Women's topper">Women's topper</option>
                                 <option value="Wig">Wig</option>
                                 <option value="Hair Extension">Hair Extension</option>
+                            </select>
+                        </div>
+
+                        <!-- Visibility Filter -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-solid fa-eye text-brand-tealLight"></i> Display:
+                            </label>
+                            <select x-model="selectedVisibility" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal font-medium">
+                                <option value="All">All Status (전체)</option>
+                                <option value="visible">Visible Only (노출 중)</option>
+                                <option value="hidden">Hidden Only (숨김)</option>
                             </select>
                         </div>
 
@@ -279,6 +315,8 @@
                                 <option value="price-desc">Price (Highest First ↓)</option>
                                 <option value="stockQty-desc">Stock Qty (Highest First ↓)</option>
                                 <option value="stockQty-asc">Stock Qty (Lowest First ↑)</option>
+                                <option value="is_visible-desc">Display: Visible First (노출 우선)</option>
+                                <option value="is_visible-asc">Display: Hidden First (숨김 우선)</option>
                             </select>
                         </div>
                     </div>
@@ -332,6 +370,14 @@
                                         </div>
                                     </th>
 
+                                    <!-- 6. Sort by Display / Visibility -->
+                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('is_visible')" title="클릭하여 메인 노출 여부 정렬">
+                                        <div class="flex items-center gap-1.5">
+                                            <span>Display (노출)</span>
+                                            <i class="fa-solid" :class="getSortIcon('is_visible')"></i>
+                                        </div>
+                                    </th>
+
                                     <th class="py-3.5 px-4 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -339,7 +385,7 @@
                                 <template x-for="item in filteredItems" :key="item.id">
                                     <tbody class="contents">
                                         <!-- 1. VIEW MODE ROW -->
-                                        <tr x-show="editingRowId !== item.id" class="hover:bg-brand-inner/50 transition-colors group">
+                                        <tr x-show="editingRowId !== item.id" class="hover:bg-brand-inner/50 transition-colors group" :class="{ 'opacity-70': !(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') }">
                                             <td class="py-3 px-4 align-top">
                                                 <!-- 큼직한 사진 박스 (112px ~ 128px) -->
                                                 <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border-2 border-brand-border bg-brand-inner flex-shrink-0 group/img shadow-md">
@@ -368,6 +414,11 @@
                                                             <span x-text="item.badge"></span>
                                                         </span>
                                                     </template>
+                                                    <template x-if="!(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1')">
+                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-amber-950/80 border-amber-700 text-amber-300 flex items-center gap-1">
+                                                            <i class="fa-solid fa-eye-slash text-[9px]"></i> Hidden
+                                                        </span>
+                                                    </template>
                                                 </div>
                                                 <div class="font-bold text-white text-sm mt-0.5" x-text="item.name"></div>
                                                 <div x-show="item.description" class="text-[11px] text-brand-textMuted line-clamp-2 mt-1 bg-brand-inner/40 p-1.5 rounded border border-brand-border/40" x-text="item.description"></div>
@@ -390,6 +441,24 @@
                                                     <span :class="item.stockQty > 5 ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'bg-rose-950 text-rose-400 border-rose-800'" class="px-2.5 py-1 rounded-full text-xs font-bold border inline-block text-center min-w-[58px]" x-text="item.stockQty + ' pcs'"></span>
                                                     <button type="button" @click="quickUpdateStockQty(item, 1)" class="w-6 h-6 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-xs border border-brand-border transition-colors shadow-sm" title="재고 1개 증가">+</button>
                                                 </div>
+                                            </td>
+                                            <!-- 노출 / 숨김 토글 스위치 버튼 -->
+                                            <td class="py-3 px-4 whitespace-nowrap align-top">
+                                                <button type="button" 
+                                                        @click="toggleItemVisibility(item)" 
+                                                        :disabled="togglingItemIds.includes(item.id)"
+                                                        :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') 
+                                                            ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' 
+                                                            : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
+                                                        class="px-2.5 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm cursor-pointer select-none active:scale-95"
+                                                        :title="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '현재 메인페이지 노출 중 (클릭 시 숨김)' : '현재 메인페이지 숨김 상태 (클릭 시 노출)'">
+                                                    <span class="w-2 h-2 rounded-full" 
+                                                          :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'"></span>
+                                                    <i class="fa-solid text-[11px]" 
+                                                       :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                    <span x-text="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '노출 (Visible)' : '숨김 (Hidden)'"></span>
+                                                    <i x-show="togglingItemIds.includes(item.id)" class="fa-solid fa-spinner fa-spin text-[10px] ml-1 text-brand-tealLight"></i>
+                                                </button>
                                             </td>
                                             <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap align-top">
                                                 <button type="button" @click="startInlineEdit(item)" class="bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700 text-xs px-2.5 py-1.5 rounded transition-colors font-bold shadow-sm" title="라인 상에서 바로 수정">
@@ -475,6 +544,17 @@
                                                     <input type="number" x-model="inlineForm.stockQty" class="w-16 bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-white font-mono font-bold text-xs outline-none focus:border-brand-teal">
                                                     <span class="text-slate-400 text-[10px]">pcs</span>
                                                 </div>
+                                            </td>
+                                            <!-- 인라인 수정: 노출 / 숨김 토글 -->
+                                            <td class="py-3 px-3 align-top whitespace-nowrap">
+                                                <button type="button" 
+                                                        @click="inlineForm.is_visible = !inlineForm.is_visible" 
+                                                        :class="inlineForm.is_visible ? 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
+                                                        class="px-2.5 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm">
+                                                    <span class="w-2 h-2 rounded-full" :class="inlineForm.is_visible ? 'bg-emerald-400' : 'bg-slate-500'"></span>
+                                                    <i class="fa-solid text-[11px]" :class="inlineForm.is_visible ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                    <span x-text="inlineForm.is_visible ? '노출' : '숨김'"></span>
+                                                </button>
                                             </td>
                                             <td class="py-3 px-3 align-top text-right space-x-1 whitespace-nowrap">
                                                 <button type="button" @click="saveInlineEdit()" :disabled="inlineSaving" class="bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs px-3 py-1.5 rounded shadow transition-all inline-flex items-center gap-1">
@@ -1497,6 +1577,13 @@
                                     <div class="absolute top-3 left-3 bg-brand-darkBg/90 text-brand-tealLight text-[10px] font-bold px-2.5 py-1 rounded-md border border-brand-border shadow-md"
                                          x-text="'Stock: ' + (form.stockQty || 0) + ' pcs'"></div>
 
+                                    <!-- 노출 / 숨김 상태 배지 (프리뷰) -->
+                                    <template x-if="form.is_visible == 0 || form.is_visible === false || form.is_visible === '0'">
+                                        <div class="absolute top-3 right-3 bg-amber-950/90 text-amber-300 border border-amber-600 text-[10px] font-bold px-2 py-0.5 rounded shadow flex items-center gap-1 z-10">
+                                            <i class="fa-solid fa-eye-slash text-[9px]"></i>
+                                            <span>Hidden (미노출)</span>
+                                        </div>
+                                    </template>
 
                                     <!-- Badge Tag Overlay (New, Best Seller, MD's Pick, Limited, Promotion) -->
                                     <template x-if="form.badge">
@@ -1557,6 +1644,26 @@
 
                     <!-- RIGHT COLUMN: 입력 및 수정 폼 -->
                     <div class="lg:col-span-7 space-y-3.5">
+                        <!-- 노출 여부 (Website Visibility) 설정 토글 바 -->
+                        <div class="bg-brand-inner/70 p-3 rounded-xl border border-brand-border flex items-center justify-between">
+                            <div>
+                                <label class="block font-bold text-slate-200 text-xs flex items-center gap-1.5">
+                                    <i class="fa-solid" :class="form.is_visible ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                    <span>Website Visibility (메인페이지 노출 여부)</span>
+                                </label>
+                                <p class="text-[11px] text-brand-textMuted mt-0.5">
+                                    <span x-show="form.is_visible" class="text-emerald-300">✅ 메인페이지(index.html) 방문자에게 제품이 표시됩니다.</span>
+                                    <span x-show="!form.is_visible" class="text-amber-300">⚠️ 메인페이지에서 숨겨지며 관리자 콘솔에서만 확인 가능합니다.</span>
+                                </p>
+                            </div>
+                            <button type="button" 
+                                    @click="form.is_visible = form.is_visible ? 0 : 1"
+                                    :class="form.is_visible ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300'"
+                                    class="px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all whitespace-nowrap cursor-pointer">
+                                <span class="w-2 h-2 rounded-full" :class="form.is_visible ? 'bg-white animate-pulse' : 'bg-slate-400'"></span>
+                                <span x-text="form.is_visible ? 'Visible (노출)' : 'Hidden (숨김)'"></span>
+                            </button>
+                        </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block font-bold text-slate-300 mb-1">SKU Code</label>
@@ -2335,8 +2442,10 @@
                 items: [],
                 searchQuery: '',
                 selectedCategory: 'All',
+                selectedVisibility: 'All', // 'All', 'visible', 'hidden'
+                togglingItemIds: [],
 
-                // Sorting state (name, category, size, price, stockQty)
+                // Sorting state (name, category, size, price, stockQty, is_visible)
                 sortColumn: '',
                 sortDirection: 'asc',
 
@@ -2352,7 +2461,7 @@
                 isModalOpen: false,
                 modalMode: 'add',
                 copiedNotice: '',
-                form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '', description: '', badge: '' },
+                form: { id: null, sku: '', name: '', category: '', type: '', base: '', size: '', density: '', color: '', price: 0, stockQty: 0, image_url: '', description: '', badge: '', is_visible: 1 },
                 selectedFile: null,
                 imagePreview: '',
 
@@ -2406,6 +2515,14 @@
 
                 get totalQty() {
                     return this.items.reduce((sum, item) => sum + parseInt(item.stockQty || 0), 0);
+                },
+
+                get visibleItemsCount() {
+                    return this.items.filter(i => i.is_visible === undefined || i.is_visible === null || i.is_visible == 1 || i.is_visible === true || i.is_visible === '1').length;
+                },
+
+                get hiddenItemsCount() {
+                    return this.items.filter(i => i.is_visible !== undefined && i.is_visible !== null && (i.is_visible == 0 || i.is_visible === false || i.is_visible === '0')).length;
                 },
 
                 get pendingBookingsCount() {
@@ -2511,12 +2628,16 @@
                 get filteredItems() {
                     let result = this.items.filter(item => {
                         const matchesCategory = this.selectedCategory === 'All' || item.category === this.selectedCategory;
+                        const isVis = (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1');
+                        const matchesVisibility = this.selectedVisibility === 'All' || 
+                            (this.selectedVisibility === 'visible' && isVis) || 
+                            (this.selectedVisibility === 'hidden' && !isVis);
                         const query = this.searchQuery.toLowerCase();
                         const matchesQuery = !query || 
                             item.name.toLowerCase().includes(query) || 
                             item.sku.toLowerCase().includes(query) || 
                             item.base.toLowerCase().includes(query);
-                        return matchesCategory && matchesQuery;
+                        return matchesCategory && matchesVisibility && matchesQuery;
                     });
 
                     if (this.sortColumn) {
@@ -2526,6 +2647,13 @@
                         result = [...result].sort((a, b) => {
                             let valA = a[col];
                             let valB = b[col];
+
+                            // 노출 상태 정렬: is_visible
+                            if (col === 'is_visible') {
+                                const visA = (a.is_visible === undefined || a.is_visible === null || a.is_visible == 1 || a.is_visible === true || a.is_visible === '1') ? 1 : 0;
+                                const visB = (b.is_visible === undefined || b.is_visible === null || b.is_visible == 1 || b.is_visible === true || b.is_visible === '1') ? 1 : 0;
+                                return (visA - visB) * dir;
+                            }
 
                             // 숫자형 정렬: price, stockQty
                             if (col === 'price' || col === 'stockQty') {
@@ -2549,7 +2677,7 @@
                         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
                     } else {
                         this.sortColumn = col;
-                        this.sortDirection = (col === 'price' || col === 'stockQty') ? 'desc' : 'asc';
+                        this.sortDirection = (col === 'price' || col === 'stockQty' || col === 'is_visible') ? 'desc' : 'asc';
                     }
                 },
 
@@ -2664,7 +2792,8 @@
                     this.selectedFile = null;
                     this.copiedNotice = '';
                     if (mode === 'edit' && item) {
-                        this.form = { ...item, image_url: item.image, description: item.description || '', badge: item.badge || '' };
+                        const isVis = (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 1 : 0;
+                        this.form = { ...item, image_url: item.image, description: item.description || '', badge: item.badge || '', is_visible: isVis };
                         this.imagePreview = item.image;
                     } else {
                         this.form = {
@@ -2673,7 +2802,7 @@
                             name: '', category: "Men's Toupee", type: "Skin Systems",
                             base: "0.03mm Skin", size: '8x10"', density: '90%',
                             color: '#1B Off Black', price: 450, stockQty: 10, image_url: '',
-                            description: '', badge: ''
+                            description: '', badge: '', is_visible: 1
                         };
                         this.imagePreview = '';
                     }
@@ -2747,6 +2876,7 @@
                     formData.append('stockQty', this.form.stockQty);
                     formData.append('description', this.form.description || '');
                     formData.append('badge', this.form.badge || '');
+                    formData.append('is_visible', (this.form.is_visible === undefined || this.form.is_visible === null || this.form.is_visible == 1 || this.form.is_visible === true || this.form.is_visible === '1') ? 1 : 0);
                     formData.append('image_url', this.form.image_url);
                     if (this.selectedFile) formData.append('image_file', this.selectedFile);
 
@@ -2789,13 +2919,15 @@
                     this.editingRowId = item.id;
                     this.inlineSelectedFile = null;
                     this.inlineImagePreview = item.image || '';
+                    const isVis = (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1');
                     this.inlineForm = { 
                         ...item, 
                         price: parseFloat(item.price) || 0,
                         stockQty: parseInt(item.stockQty) || 0,
                         description: item.description || '',
                         badge: item.badge || '',
-                        image_url: item.image || ''
+                        image_url: item.image || '',
+                        is_visible: isVis
                     };
                 },
 
@@ -2838,6 +2970,7 @@
                         formData.append('stockQty', this.inlineForm.stockQty);
                         formData.append('description', this.inlineForm.description || '');
                         formData.append('badge', this.inlineForm.badge || '');
+                        formData.append('is_visible', this.inlineForm.is_visible ? 1 : 0);
                         formData.append('image_url', this.inlineForm.image_url || this.inlineForm.image || '');
                         if (this.inlineSelectedFile) {
                             formData.append('image_file', this.inlineSelectedFile);
@@ -2880,6 +3013,7 @@
                     formData.append('stockQty', item.stockQty);
                     formData.append('description', item.description || '');
                     formData.append('badge', item.badge || '');
+                    formData.append('is_visible', (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 1 : 0);
                     formData.append('image_file', file);
 
                     this.showToast(`📸 [${item.sku}] 새 사진을 업로드하는 중...`);
@@ -2921,6 +3055,7 @@
                         formData.append('stockQty', newQty);
                         formData.append('description', item.description || '');
                         formData.append('badge', item.badge || '');
+                        formData.append('is_visible', (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 1 : 0);
                         formData.append('image_url', item.image || '');
 
                         const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
@@ -2934,6 +3069,43 @@
                     } catch (e) {
                         item.stockQty = oldQty;
                         alert('네트워크 오류');
+                    }
+                },
+
+                async toggleItemVisibility(item) {
+                    if (this.togglingItemIds.includes(item.id)) return;
+                    this.togglingItemIds.push(item.id);
+
+                    const currentVis = (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1');
+                    const nextVis = currentVis ? 0 : 1;
+                    const previousValue = item.is_visible;
+
+                    // Optimistic update
+                    item.is_visible = nextVis;
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', 'toggle_visibility');
+                        formData.append('id', item.id);
+                        formData.append('is_visible', nextVis);
+
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const data = await res.json();
+
+                        if (data.status === 'success') {
+                            item.is_visible = data.is_visible;
+                            const statusText = item.is_visible ? '노출 (Visible)' : '숨김 (Hidden)';
+                            const icon = item.is_visible ? '👁️' : '🙈';
+                            this.showToast(`${icon} [${item.sku}] "${item.name}" 제품이 메인페이지에서 "${statusText}"(으)로 변경되었습니다.`);
+                        } else {
+                            item.is_visible = previousValue; // Revert
+                            alert('노출 설정 변경 실패: ' + (data.message || 'Error'));
+                        }
+                    } catch (err) {
+                        item.is_visible = previousValue; // Revert
+                        alert('네트워크 오류가 발생했습니다.');
+                    } finally {
+                        this.togglingItemIds = this.togglingItemIds.filter(id => id !== item.id);
                     }
                 },
 

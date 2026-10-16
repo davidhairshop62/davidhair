@@ -9,35 +9,48 @@ header('Expires: 0');
 require_once __DIR__ . '/config.php';
 
 try {
+    // Ensure is_visible column exists
+    try {
+        $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
+        if (!in_array('is_visible', $cols)) {
+            $conn->exec("ALTER TABLE stock_items ADD COLUMN is_visible TINYINT(1) NOT NULL DEFAULT 1");
+        }
+    } catch (Exception $e) {}
+
     // 필터링 파라미터 수신 (카테고리 또는 타입 조건)
     $category = isset($_GET['category']) ? trim($_GET['category']) : 'All';
     $sort = isset($_GET['sort']) ? trim($_GET['sort']) : 'default';
 
-    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image, description, badge FROM stock_items";
+    $whereConditions = ["is_visible = 1"];
     $params = [];
 
     // 조건별 SQL 쿼리 나열
     if ($category !== 'All' && !empty($category)) {
         if ($category === "Men's Toupee" || $category === "Men's Toupees") {
-            $sql .= " WHERE (category = 'Men\'s Toupee' OR category = 'Men\'s Toupees')";
+            $whereConditions[] = "(category = 'Men\'s Toupee' OR category = 'Men\'s Toupees')";
         } elseif (strcasecmp($category, "Women's topper") === 0 || strcasecmp($category, "Women's Toppers") === 0) {
-            $sql .= " WHERE (category = 'Women\'s topper' OR category = 'Women\'s Topper' OR category = 'Women\'s Toppers')";
+            $whereConditions[] = "(category = 'Women\'s topper' OR category = 'Women\'s Topper' OR category = 'Women\'s Toppers')";
         } elseif (strcasecmp($category, "Wig") === 0) {
-            $sql .= " WHERE category = 'Wig'";
+            $whereConditions[] = "category = 'Wig'";
         } elseif (strcasecmp($category, "Hair Extension") === 0) {
-            $sql .= " WHERE (category = 'Hair Extension' OR category LIKE '%Extension%')";
+            $whereConditions[] = "(category = 'Hair Extension' OR category LIKE '%Extension%')";
         } elseif ($category === 'Skin Systems') {
-            $sql .= " WHERE type = 'Skin Systems' OR base LIKE '%Skin%'";
+            $whereConditions[] = "(type = 'Skin Systems' OR base LIKE '%Skin%')";
         } elseif ($category === 'Swiss Lace') {
-            $sql .= " WHERE type = 'Swiss Lace' OR base LIKE '%Lace%'";
+            $whereConditions[] = "(type = 'Swiss Lace' OR base LIKE '%Lace%')";
         } elseif ($category === 'PU Perimeter') {
-            $sql .= " WHERE type = 'PU Perimeter' OR base LIKE '%PU%'";
+            $whereConditions[] = "(type = 'PU Perimeter' OR base LIKE '%PU%')";
         } elseif ($category === 'CNC Virgin') {
-            $sql .= " WHERE type = 'CNC Virgin' OR base LIKE '%CNC%'";
+            $whereConditions[] = "(type = 'CNC Virgin' OR base LIKE '%CNC%')";
         } else {
-            $sql .= " WHERE category = :category OR type = :category";
+            $whereConditions[] = "(category = :category OR type = :category)";
             $params[':category'] = $category;
         }
+    }
+
+    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image, description, badge, is_visible FROM stock_items";
+    if (!empty($whereConditions)) {
+        $sql .= " WHERE " . implode(" AND ", $whereConditions);
     }
 
     // 정렬 조건
