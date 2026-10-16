@@ -227,6 +227,7 @@ try {
 
         $visibilityMap = [];
         $menuMap = [];
+        $orderMap = [];
 
         foreach ($sections as &$sec) {
             $sec['is_visible'] = (int)$sec['is_visible'];
@@ -234,6 +235,7 @@ try {
             $sec['sort_order'] = (int)$sec['sort_order'];
             $visibilityMap[$sec['section_key']] = ($sec['is_visible'] === 1);
             $menuMap[$sec['section_key']] = ($sec['in_menu'] === 1);
+            $orderMap[$sec['section_key']] = (int)$sec['sort_order'];
         }
         unset($sec);
 
@@ -242,8 +244,30 @@ try {
             'sections' => $sections,
             'visibility' => $visibilityMap,
             'in_menu' => $menuMap,
+            'orders' => $orderMap,
             'timestamp' => time()
         ]);
+    }
+
+    // 1.1 UPDATE ORDER ACTION
+    if ($action === 'update_order') {
+        $key = trim($_POST['section_key'] ?? $jsonBody['section_key'] ?? '');
+        $id = (int)($_POST['id'] ?? $jsonBody['id'] ?? 0);
+        $sortOrder = (int)($_POST['sort_order'] ?? $jsonBody['sort_order'] ?? 0);
+
+        if (!$key && !$id) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Section key or ID is required.']);
+        }
+
+        if ($id > 0) {
+            $stmt = $conn->prepare("UPDATE site_sections SET sort_order = :ord, updated_at = NOW() WHERE id = :id");
+            $stmt->execute([':ord' => $sortOrder, ':id' => $id]);
+        } else {
+            $stmt = $conn->prepare("UPDATE site_sections SET sort_order = :ord, updated_at = NOW() WHERE section_key = :key");
+            $stmt->execute([':ord' => $sortOrder, ':key' => $key]);
+        }
+
+        sendJsonResponse(['status' => 'success', 'message' => 'Section display order updated successfully.', 'sort_order' => $sortOrder]);
     }
 
     // 2. TOGGLE VISIBILITY (Show / Hide on Homepage)

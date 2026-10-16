@@ -83,6 +83,13 @@
                     } catch(e) {}
                     return {};
                 })(),
+                sectionsOrderMap: (function() {
+                    try {
+                        const c = localStorage.getItem('dh_sections_cache');
+                        if (c) return JSON.parse(c).orders || {};
+                    } catch(e) {}
+                    return {};
+                })(),
                 sectionsList: [],
 
                 isSectionVisible(key) {
@@ -97,6 +104,42 @@
                         return this.sectionsMenuMap[key] === true;
                     }
                     return true;
+                },
+
+                getSectionOrder(key, defaultOrder = 50) {
+                    if (this.sectionsOrderMap && key in this.sectionsOrderMap) {
+                        return Number(this.sectionsOrderMap[key]);
+                    }
+                    if (this.sectionsList && this.sectionsList.length > 0) {
+                        const s = this.sectionsList.find(x => x.section_key === key);
+                        if (s && s.sort_order !== undefined) return Number(s.sort_order);
+                    }
+                    return defaultOrder;
+                },
+
+                getProductsMenuOrder() {
+                    return Math.min(
+                        this.getSectionOrder('builder', 6),
+                        this.getSectionOrder('stock', 7),
+                        this.getSectionOrder('products-range', 11)
+                    );
+                },
+
+                isTopSection(key) {
+                    let minOrder = 9999;
+                    let topKey = 'hero';
+                    const allKeys = ['hero', 'hair-diagnosis-hub', 'lifestyle-performance', 'builder', 'stock', 'salon', 'transformations', 'ai-simulator', 'products-range', 'factory', 'b2b'];
+                    for (let i = 0; i < allKeys.length; i++) {
+                        const k = allKeys[i];
+                        if (this.isSectionVisible(k)) {
+                            const ord = this.getSectionOrder(k, i + 1);
+                            if (ord < minOrder) {
+                                minOrder = ord;
+                                topKey = k;
+                            }
+                        }
+                    }
+                    return topKey === key;
                 },
 
                 getMenuTitle(key, defaultTitle) {
@@ -114,11 +157,13 @@
                         if (data.status === 'success') {
                             this.sectionsMap = data.visibility || {};
                             this.sectionsMenuMap = data.in_menu || {};
+                            this.sectionsOrderMap = data.orders || {};
                             this.sectionsList = data.sections || [];
                             try {
                                 localStorage.setItem('dh_sections_cache', JSON.stringify({
                                     visibility: this.sectionsMap,
-                                    in_menu: this.sectionsMenuMap
+                                    in_menu: this.sectionsMenuMap,
+                                    orders: this.sectionsOrderMap
                                 }));
                             } catch(e) {}
                         }
@@ -1948,6 +1993,7 @@
                 
                 <!-- 1. Wig Quiz (hair-diagnosis-hub) -->
                 <a href="#hair-diagnosis-hub" x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')"
+                    :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'"
                     class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 text-teal-300 font-bold">
                     <i class="fa-solid fa-clipboard-question text-teal-400"></i>
                     <span x-text="getMenuTitle('hair-diagnosis-hub', 'Wig Quiz')">Wig Quiz</span>
@@ -1955,7 +2001,8 @@
 
                 <!-- 2. PRODUCTS Dropdown (ORDER & STOCK) -->
                 <div class="relative group" x-data="{ productsOpen: false }" @mouseenter="productsOpen = true" @mouseleave="productsOpen = false"
-                     x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))">
+                     x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))"
+                     :style="'order: ' + getProductsMenuOrder() + ';'">
                     <button type="button" @click="productsOpen = !productsOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer">
                         <span>Products</span>
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': productsOpen }"></i>
@@ -1969,8 +2016,8 @@
                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                         class="absolute left-0 top-full pt-1 w-56 z-50 normal-case">
-                        <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1">
-                            <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                        <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1 flex flex-col">
+                            <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" :style="'order: ' + getSectionOrder('builder', 6) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-brand-tealLight group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-sliders text-xs"></i>
                                 </div>
@@ -1979,7 +2026,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Custom Toupee Builder</div>
                                 </div>
                             </a>
-                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-boxes-stacked text-xs"></i>
                                 </div>
@@ -1988,7 +2035,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Ready-to-Ship Inventory</div>
                                 </div>
                             </a>
-                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item border-t border-brand-border/40 mt-1">
+                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item border-t border-brand-border/40 mt-1">
                                 <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-layer-group text-xs"></i>
                                 </div>
@@ -1997,7 +2044,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Wigs, Systems &amp; Extensions</div>
                                 </div>
                             </a>
-                            <a href="#wig-training" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item">
+                            <a href="#wig-training" :style="'order: ' + (getSectionOrder('products-range', 11) + 1) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-graduation-cap text-xs"></i>
                                 </div>
@@ -2010,17 +2057,17 @@
                     </div>
                 </div>
 
-                <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('salon', 'Salon')">Salon</a>
-                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
+                <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('salon', 'Salon')">Salon</a>
+                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
                     <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
                     <span x-text="getMenuTitle('transformations', 'Before & After')">Before &amp; After</span>
                 </a>
-                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
+                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
                     <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
                     <span x-text="getMenuTitle('ai-simulator', 'AI Try-On')">AI Try-On</span>
                 </a>
-                <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('factory', 'Factory')">Factory</a>
-                <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
+                <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('factory', 'Factory')">Factory</a>
+                <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" class="hover:text-brand-tealLight transition-colors" x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
             </nav>
 
             <!-- Right Utilities -->
@@ -2155,68 +2202,73 @@
                 </button>
             </div>
 
-            <!-- Mobile Wig Quiz (hair-diagnosis-hub) -->
-            <a href="#hair-diagnosis-hub" @click="mobileMenuOpen = false" x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                <span class="flex items-center gap-2">
-                    <i class="fa-solid fa-clipboard-question text-brand-tealLight"></i>
-                    <span x-text="getMenuTitle('hair-diagnosis-hub', 'Wig Quiz / Self-Diagnosis')">Wig Quiz / Self-Diagnosis</span>
-                </span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Quiz</span>
-            </a>
-
-            <!-- Mobile Products Dropdown -->
-            <div x-data="{ mobileProductsOpen: true }" class="border-b border-slate-700/60 pb-2"
-                 x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))">
-                <button type="button" @click="mobileProductsOpen = !mobileProductsOpen"
-                    class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
+            <!-- Mobile Navigation Links (Ordered dynamically via CSS flex order) -->
+            <div class="flex flex-col space-y-1">
+                <!-- Mobile Wig Quiz (hair-diagnosis-hub) -->
+                <a href="#hair-diagnosis-hub" @click="mobileMenuOpen = false" x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')"
+                    :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
                     <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-box-open text-brand-tealLight text-xs"></i>
-                        <span>Products</span>
+                        <i class="fa-solid fa-clipboard-question text-brand-tealLight"></i>
+                        <span x-text="getMenuTitle('hair-diagnosis-hub', 'Wig Quiz / Self-Diagnosis')">Wig Quiz / Self-Diagnosis</span>
                     </span>
-                    <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
-                </button>
-                <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50">
-                    <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" @click="mobileMenuOpen = false"
-                        class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-sliders text-teal-400 text-xs"></i>
-                        <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('builder', 'Order')">Order</span>
-                        <span class="text-slate-400 text-[10px]">(Custom Toupee Builder)</span>
-                    </a>
-                    <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="mobileMenuOpen = false"
-                        class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
-                        <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</span>
-                        <span class="text-slate-400 text-[10px]">(In-Stock Inventory)</span>
-                    </a>
-                    <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="mobileMenuOpen = false"
-                        class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                        <i class="fa-solid fa-layer-group text-sky-400 text-xs"></i>
-                        <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions')">All Solutions</span>
-                        <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
-                    </a>
-                </div>
-            </div>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Quiz</span>
+                </a>
 
-            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" @click="mobileMenuOpen = false"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
-                x-text="getMenuTitle('salon', 'Salon')">Salon</a>
-            <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" @click="mobileMenuOpen = false"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                <span x-text="getMenuTitle('transformations', 'Before & After Transformations')">Before &amp; After Transformations</span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
-            </a>
-            <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" @click="mobileMenuOpen = false"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                <span x-text="getMenuTitle('ai-simulator', 'AI Hairstyle Simulator')">AI Hairstyle Simulator</span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Try-On</span>
-            </a>
-            <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" @click="mobileMenuOpen = false"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
-                x-text="getMenuTitle('factory', 'Factory')">Factory</a>
-            <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" @click="mobileMenuOpen = false"
-                class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider transition-colors"
-                x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
+                <!-- Mobile Products Dropdown -->
+                <div x-data="{ mobileProductsOpen: true }" class="border-b border-slate-700/60 pb-2"
+                     x-show="(isSectionVisible('builder') && isSectionInMenu('builder')) || (isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('products-range') && isSectionInMenu('products-range'))"
+                     :style="'order: ' + getProductsMenuOrder() + ';'">
+                    <button type="button" @click="mobileProductsOpen = !mobileProductsOpen"
+                        class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-box-open text-brand-tealLight text-xs"></i>
+                            <span>Products</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
+                    </button>
+                    <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
+                        <a href="#builder" x-show="isSectionVisible('builder') && isSectionInMenu('builder')" :style="'order: ' + getSectionOrder('builder', 6) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-sliders text-teal-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('builder', 'Order')">Order</span>
+                            <span class="text-slate-400 text-[10px]">(Custom Toupee Builder)</span>
+                        </a>
+                        <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</span>
+                            <span class="text-slate-400 text-[10px]">(In-Stock Inventory)</span>
+                        </a>
+                        <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-layer-group text-sky-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions')">All Solutions</span>
+                            <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
+                    x-text="getMenuTitle('salon', 'Salon')">Salon</a>
+                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
+                    <span x-text="getMenuTitle('transformations', 'Before & After Transformations')">Before &amp; After Transformations</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
+                </a>
+                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
+                    <span x-text="getMenuTitle('ai-simulator', 'AI Hairstyle Simulator')">AI Hairstyle Simulator</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Try-On</span>
+                </a>
+                <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider transition-colors"
+                    x-text="getMenuTitle('factory', 'Factory')">Factory</a>
+                <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider transition-colors"
+                    x-text="getMenuTitle('b2b', 'B2B')">B2B</a>
+            </div>
         </div>
     </header>
 
@@ -2333,8 +2385,14 @@
         </div>
     </section>
 
+    <!-- MAIN CONTENT FLEX CONTAINER (Dynamic Display Ordering via CSS Flexbox) -->
+    <main id="main-content" class="flex flex-col w-full">
+
     <!-- 2. HERO SECTION WITH VIDEO BACKGROUND -->
-    <section id="hero" x-show="isSectionVisible('hero')" class="relative pt-28 sm:pt-36 pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
+    <section id="hero" x-show="isSectionVisible('hero')"
+        :style="'order: ' + getSectionOrder('hero', 1) + ';'"
+        :class="isTopSection('hero') ? 'pt-28 sm:pt-36' : 'py-16 sm:py-20'"
+        class="relative pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
         x-init="$nextTick(() => { updateVideos(); }); setInterval(() => { playNext(); }, 6000);" x-data="{
             videos: ['videos/Runing.mp4', 'videos/shampoo.mp4', 'videos/swim.mp4', 'videos/windy.mp4'],
             videoNames: ['Running', 'Shampoo', 'Swimming', 'Windy'],
@@ -2479,7 +2537,10 @@
     <!-- [OPTION 1] 4-STEP INTERACTIVE WIZARD                                      -->
     <!-- [OPTION 2] VISUAL DIAGRAM & HAIRLINE MATRIX                               -->
     <!-- ========================================================================= -->
-    <section id="hair-diagnosis-hub" x-show="isSectionVisible('hair-diagnosis-hub')" class="py-16 sm:py-20 bg-gradient-to-b from-brand-darkBg via-[#0D152F] to-brand-darkBg border-y border-brand-border/80 relative overflow-hidden">
+    <section id="hair-diagnosis-hub" x-show="isSectionVisible('hair-diagnosis-hub')"
+        :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'"
+        :class="isTopSection('hair-diagnosis-hub') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="bg-gradient-to-b from-brand-darkBg via-[#0D152F] to-brand-darkBg border-y border-brand-border/80 relative overflow-hidden">
         
         <!-- Ambient Background Glow Effects -->
         <div class="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -3410,7 +3471,10 @@
     </section>
 
     <!-- 2.5 ACTIVE LIFESTYLE & AUSTRALIAN CLIMATE PERFORMANCE -->
-    <section id="lifestyle-performance" x-show="isSectionVisible('lifestyle-performance')" class="py-12 bg-brand-darkBg/95 border-b border-brand-border/60">
+    <section id="lifestyle-performance" x-show="isSectionVisible('lifestyle-performance')"
+        :style="'order: ' + getSectionOrder('lifestyle-performance', 5) + ';'"
+        :class="isTopSection('lifestyle-performance') ? 'pt-28 sm:pt-36 pb-12' : 'py-12'"
+        class="bg-brand-darkBg/95 border-b border-brand-border/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-8">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-1">Engineered for Freedom</span>
@@ -3504,7 +3568,10 @@
     </section>
 
     <!-- 3. INTERACTIVE 6-STEP CUSTOM ORDER BUILDER -->
-    <section id="builder" x-show="isSectionVisible('builder')" class="py-16 sm:py-20 bg-[#0E1733]/60 relative border-y border-brand-border/60">
+    <section id="builder" x-show="isSectionVisible('builder')"
+        :style="'order: ' + getSectionOrder('builder', 6) + ';'"
+        :class="isTopSection('builder') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="bg-[#0E1733]/60 relative border-y border-brand-border/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2">Bespoke Customizer</span>
@@ -4732,7 +4799,10 @@
     </section>
 
     <!-- 4. STOCK PIECES SECTION -->
-    <section id="stock" x-show="isSectionVisible('stock')" class="py-16 sm:py-20 bg-brand-darkBg">
+    <section id="stock" x-show="isSectionVisible('stock')"
+        :style="'order: ' + getSectionOrder('stock', 7) + ';'"
+        :class="isTopSection('stock') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="bg-brand-darkBg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2">Ready-To-Ship
@@ -4851,7 +4921,10 @@
     </section>
 
     <!-- 5. MELBOURNE FLAGSHIP SALON SECTION -->
-    <section id="salon" x-show="isSectionVisible('salon')" class="py-16 sm:py-20 relative bg-[#0E1733]/60 border-y border-brand-border/60">
+    <section id="salon" x-show="isSectionVisible('salon')"
+        :style="'order: ' + getSectionOrder('salon', 8) + ';'"
+        :class="isTopSection('salon') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="relative bg-[#0E1733]/60 border-y border-brand-border/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                 <div class="lg:col-span-6 space-y-5 sm:space-y-6 text-center sm:text-left">
@@ -4971,7 +5044,10 @@
     </section>
 
     <!-- 6. TRANSFORMATIONS (BEFORE & AFTER SHOWCASE) -->
-    <section id="transformations" x-show="isSectionVisible('transformations')" class="py-16 sm:py-24 bg-brand-darkBg border-t border-brand-border/60">
+    <section id="transformations" x-show="isSectionVisible('transformations')"
+        :style="'order: ' + getSectionOrder('transformations', 9) + ';'"
+        :class="isTopSection('transformations') ? 'pt-28 sm:pt-36 pb-16 sm:pb-24' : 'py-16 sm:py-24'"
+        class="bg-brand-darkBg border-t border-brand-border/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block">Proven Transformations • 10-Year Youthful Restoration</span>
@@ -5409,7 +5485,9 @@
 
     <!-- 6.5 AI VIRTUAL HAIRSTYLE FITTING SIMULATOR -->
     <section id="ai-simulator" x-show="isSectionVisible('ai-simulator')"
-        class="py-16 sm:py-20 bg-gradient-to-b from-brand-darkBg via-[#0E1838] to-brand-darkBg border-t border-brand-border/80">
+        :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'"
+        :class="isTopSection('ai-simulator') ? 'pt-28 sm:pt-36 pb-16 sm:py-20' : 'py-16 sm:py-20'"
+        class="bg-gradient-to-b from-brand-darkBg via-[#0E1838] to-brand-darkBg border-t border-brand-border/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="aiTryOnSimulator()">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
                 <div
@@ -5823,7 +5901,10 @@
     </section>
 
     <!-- 6.8 COMPREHENSIVE PRODUCT LINEUP & ACADEMY -->
-    <section id="products-range" x-show="isSectionVisible('products-range')" class="py-16 sm:py-24 bg-brand-darkBg border-t border-brand-border/60" x-data="{ activeCatalogTab: 'all' }">
+    <section id="products-range" x-show="isSectionVisible('products-range')"
+        :style="'order: ' + getSectionOrder('products-range', 11) + ';'"
+        :class="isTopSection('products-range') ? 'pt-28 sm:pt-36 pb-16 sm:pb-24' : 'py-16 sm:py-24'"
+        class="bg-brand-darkBg border-t border-brand-border/60" x-data="{ activeCatalogTab: 'all' }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Section Header -->
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-14 space-y-3">
@@ -7162,7 +7243,10 @@
     </section>
 
     <!-- 7. FACTORY DIRECT ADVANTAGE -->
-    <section id="factory" x-show="isSectionVisible('factory')" class="py-16 sm:py-20 bg-[#0E1733]/60 border-y border-brand-border/60">
+    <section id="factory" x-show="isSectionVisible('factory')"
+        :style="'order: ' + getSectionOrder('factory', 12) + ';'"
+        :class="isTopSection('factory') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="bg-[#0E1733]/60 border-y border-brand-border/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
                 <span class="text-brand-tealLight text-xs font-bold uppercase tracking-widest block mb-2">Direct
@@ -7254,7 +7338,8 @@
     </section>
 
     <!-- 7.5 CLIENT VALUE PERKS & REFERRAL PROGRAM -->
-    <section
+    <section x-show="isSectionVisible('factory')"
+        :style="'order: ' + getSectionOrder('factory', 12) + ';'"
         class="py-12 bg-gradient-to-r from-brand-cardBg via-[#131D38] to-brand-cardBg border-b border-brand-border/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -7298,7 +7383,10 @@
     </section>
 
     <!-- 8. B2B WHOLESALE SECTION -->
-    <section id="b2b" x-show="isSectionVisible('b2b')" class="py-16 sm:py-20 bg-brand-darkBg">
+    <section id="b2b" x-show="isSectionVisible('b2b')"
+        :style="'order: ' + getSectionOrder('b2b', 13) + ';'"
+        :class="isTopSection('b2b') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
+        class="bg-brand-darkBg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
                 <span class="text-brand-bronze text-xs font-bold uppercase tracking-widest block mb-2">Salon &
@@ -7426,6 +7514,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- SMART WELCOME EVENT MODAL (1ST VISIT PRIVATE FITTING + $50 VOUCHER) -->
     <div x-show="isWelcomeModalOpen" x-cloak

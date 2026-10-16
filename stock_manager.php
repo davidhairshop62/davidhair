@@ -1321,7 +1321,30 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-wrap items-center gap-4 sm:gap-6 w-full lg:w-auto justify-between lg:justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-brand-border/60">
+                                <div class="flex flex-wrap items-center gap-3 sm:gap-5 w-full lg:w-auto justify-between lg:justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-brand-border/60">
+                                    <!-- Display Order Controls (Move Up/Down & Sequence Number) -->
+                                    <div class="flex items-center gap-1.5 bg-brand-inner/90 border border-brand-border/80 rounded-xl px-2.5 py-1.5 shadow-inner">
+                                        <div class="text-left leading-tight mr-1">
+                                            <span class="text-[10px] text-brand-textMuted font-bold uppercase tracking-wider block">Order</span>
+                                            <span class="text-xs font-mono font-extrabold text-teal-300" x-text="'#' + sec.sort_order"></span>
+                                        </div>
+                                        <input type="number" min="1" max="99" 
+                                               x-model.number="sec.sort_order" 
+                                               @change="normalizeAndSaveSectionOrders()"
+                                               class="w-12 text-center bg-brand-darkBg border border-brand-border rounded-lg py-1 text-xs font-mono font-bold text-white outline-none focus:border-brand-teal"
+                                               title="Type custom display sequence number">
+                                        <div class="flex flex-col gap-0.5">
+                                            <button type="button" @click="moveSection(sec, -1)" :disabled="isFirstSection(sec)"
+                                                class="w-5 h-4.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-[9px] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer" title="Move Up (Appear Earlier)">
+                                                <i class="fa-solid fa-chevron-up"></i>
+                                            </button>
+                                            <button type="button" @click="moveSection(sec, 1)" :disabled="isLastSection(sec)"
+                                                class="w-5 h-4.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-[9px] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer" title="Move Down (Appear Later)">
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <!-- Toggle 1: Show on Homepage -->
                                     <div class="flex items-center gap-2.5">
                                         <button type="button" @click="toggleSectionVisibility(sec)"
@@ -3581,11 +3604,43 @@
                         const res = await fetch('api_sections.php?action=get_public_sections&t=' + Date.now());
                         const data = await res.json();
                         if (data.status === 'success' && Array.isArray(data.sections)) {
-                            this.sections = data.sections;
+                            this.sections = data.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
                         }
                     } catch (e) {
                         console.error('Failed to load sections:', e);
                     }
+                },
+
+                moveSection(sec, direction) {
+                    this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+                    const currIdx = this.sections.findIndex(s => s.id === sec.id);
+                    if (currIdx === -1) return;
+                    const targetIdx = currIdx + direction;
+                    if (targetIdx < 0 || targetIdx >= this.sections.length) return;
+
+                    const temp = this.sections[currIdx];
+                    this.sections[currIdx] = this.sections[targetIdx];
+                    this.sections[targetIdx] = temp;
+
+                    this.normalizeAndSaveSectionOrders();
+                },
+
+                isFirstSection(sec) {
+                    if (!this.sections.length) return true;
+                    return this.sections[0].id === sec.id;
+                },
+
+                isLastSection(sec) {
+                    if (!this.sections.length) return true;
+                    return this.sections[this.sections.length - 1].id === sec.id;
+                },
+
+                normalizeAndSaveSectionOrders() {
+                    this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+                    this.sections.forEach((s, idx) => {
+                        s.sort_order = idx + 1;
+                    });
+                    this.saveAllSections();
                 },
 
                 async toggleSectionVisibility(sec) {
