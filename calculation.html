@@ -6,7 +6,10 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Hair System Quote & Cost Calculator (AUD / USD) | David Hair Melbourne</title>
+  <title>Hair System Quote &amp; Cost Calculator (AUD) | David Hair Melbourne</title>
+  <meta name="description" content="Calculate bespoke men's toupee and women's hair topper prices in AUD. Instant factory-direct cost estimation for base, hair length, and density | David Hair Melbourne.">
+  <link rel="canonical" href="https://davidhairshop.com/calculator.html">
+  <meta name="robots" content="index, follow">
   <style>
     :root {
       --primary: #1e293b;
@@ -480,6 +483,70 @@
       border-color: var(--primary);
     }
 
+    /* Grey Hair Mix Slider & Controls */
+    .grey-mix-control {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .grey-slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .grey-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .grey-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .grey-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .grey-slider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      cursor: pointer;
+    }
+
+    .grey-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-top: 6px;
+      padding: 0 2px;
+    }
+
     select.select-input {
       width: 100%;
       padding: 11px 14px;
@@ -880,17 +947,17 @@
           <span>3. Base Size (Width × Length inches)</span>
           <span id="areaDisplay" style="color:var(--accent); font-size:0.9rem;">Size: 16" (7+9)</span>
         </div>
-        <div class="preset-chips">
-          <span class="chip" onclick="setSize(2, 3)">2" × 3" (5" · Filler)</span>
-          <span class="chip" onclick="setSize(2, 4)">2" × 4" (6" · Filler)</span>
-          <span class="chip" onclick="setSize(3, 4)">3" × 4" (7" · Mini Part)</span>
-          <span class="chip" onclick="setSize(4, 4)">4" × 4" (8" · Women's Std)</span>
-          <span class="chip" onclick="setSize(5, 5)">5" × 5" (10" · Part / Mini)</span>
-          <span class="chip" onclick="setSize(6, 6)">6" × 6" (12" · Women's Medium)</span>
-          <span class="chip" onclick="setSize(6, 8)">6" × 8" (14" · Men's Small)</span>
-          <span class="chip active" onclick="setSize(7, 9)">7" × 9" (16" · Men's Standard)</span>
-          <span class="chip" onclick="setSize(8, 10)">8" × 10" (18" · Men's Large)</span>
-          <span class="chip" onclick="setSize(10, 12)">10" × 12" (22" · Full Cap)</span>
+        <div class="preset-chips" id="presetChipsContainer">
+          <span class="chip" data-w="2" data-l="3" onclick="setSize(2, 3)">2" × 3" (Filler · $250)</span>
+          <span class="chip" data-w="2" data-l="4" onclick="setSize(2, 4)">2" × 4" (Filler · $280)</span>
+          <span class="chip" data-w="3" data-l="4" onclick="setSize(3, 4)">3" × 4" (Mini Part · $350)</span>
+          <span class="chip" data-w="4" data-l="4" onclick="setSize(4, 4)">4" × 4" (Mini Top · $400)</span>
+          <span class="chip" data-w="5" data-l="5" onclick="setSize(5, 5)">5" × 5" (Crown/Part · $450)</span>
+          <span class="chip" data-w="6" data-l="6" onclick="setSize(6, 6)">6" × 6" (Medium · $500)</span>
+          <span class="chip" data-w="6" data-l="8" onclick="setSize(6, 8)">6" × 8" (Men's Small · $600)</span>
+          <span class="chip active" data-w="7" data-l="9" onclick="setSize(7, 9)">7" × 9" (Men's Std · $420)</span>
+          <span class="chip" data-w="8" data-l="10" onclick="setSize(8, 10)">8" × 10" (Men's Large · $600)</span>
+          <span class="chip" data-w="10" data-l="12" onclick="setSize(10, 12)">10" × 12" (Full Cap · $800)</span>
         </div>
         <div class="size-inputs">
           <div class="input-box">
@@ -964,8 +1031,8 @@
           <div>
             <label style="font-size:0.82rem; color:#64748b; display:block; margin-bottom:4px;">Hair Grade / Fiber</label>
             <select id="hairType" class="select-input" onchange="calculate()">
-              <option value="remy" selected>100% Natural Remy Hair (Salon Standard)</option>
-              <option value="standard">Standard Human Hair (Budget)</option>
+              <option value="remy">100% Natural Remy Hair (Salon Standard)</option>
+              <option value="standard" selected>Standard Human Hair (Budget)</option>
               <option value="virgin">Premium Virgin Cuticle Hair (Top Grade)</option>
             </select>
           </div>
@@ -1099,10 +1166,52 @@
         </div>
       </div>
 
-      <!-- 7. Hair Texture & Wave Pattern (Single selection) -->
+      <!-- 7. Grey Hair Mix (새치 / 백모 혼합 비율) -->
       <div class="form-group">
         <div class="section-title">
-          <span>7. Hair Texture &amp; Wave Pattern (Single selection)</span>
+          <span>7. Grey Hair Mix (새치 / 백모 혼합 비율)</span>
+          <span id="greyDisplayBadge" style="font-size:0.85rem; color:var(--accent); font-weight:700;">0% None (+$0 AUD)</span>
+        </div>
+        <div class="grey-mix-control">
+          <div class="grey-slider-header">
+            <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Grey / White Hair Ratio (0% ~ 100%, +$10/10%)</span>
+            <span id="greySliderValue" style="font-size:1.05rem; font-weight:800; color:var(--primary);">0% (+$0 AUD)</span>
+          </div>
+          <input type="range" id="greyHairMix" min="0" max="100" step="10" value="0" oninput="onGreySliderChange(this.value)" class="grey-slider">
+          <div class="grey-scale-labels">
+            <span>0%</span>
+            <span>10%</span>
+            <span>20%</span>
+            <span>30%</span>
+            <span>40%</span>
+            <span>50%</span>
+            <span>60%</span>
+            <span>70%</span>
+            <span>80%</span>
+            <span>90%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div class="preset-chips grey-chips" id="greyChipsContainer" style="margin-top:12px;">
+          <span class="chip active" data-grey="0" onclick="setGreyMix(0)">0% (None · +$0)</span>
+          <span class="chip" data-grey="10" onclick="setGreyMix(10)">10% (+$10)</span>
+          <span class="chip" data-grey="20" onclick="setGreyMix(20)">20% (+$20)</span>
+          <span class="chip" data-grey="30" onclick="setGreyMix(30)">30% (+$30)</span>
+          <span class="chip" data-grey="40" onclick="setGreyMix(40)">40% (+$40)</span>
+          <span class="chip" data-grey="50" onclick="setGreyMix(50)">50% (+$50)</span>
+          <span class="chip" data-grey="60" onclick="setGreyMix(60)">60% (+$60)</span>
+          <span class="chip" data-grey="70" onclick="setGreyMix(70)">70% (+$70)</span>
+          <span class="chip" data-grey="80" onclick="setGreyMix(80)">80% (+$80)</span>
+          <span class="chip" data-grey="90" onclick="setGreyMix(90)">90% (+$90)</span>
+          <span class="chip" data-grey="100" onclick="setGreyMix(100)">100% (Full Grey · +$100)</span>
+        </div>
+      </div>
+
+      <!-- 8. Hair Texture & Wave Pattern (Single selection) -->
+      <div class="form-group">
+        <div class="section-title">
+          <span>8. Hair Texture &amp; Wave Pattern (Single selection)</span>
           <span id="textureDisplay" style="font-size:0.8rem; color:var(--accent); font-weight:700;">Straight (+$0 AUD)</span>
         </div>
         <div class="texture-grid">
@@ -1168,14 +1277,14 @@
         </div>
       </div>
 
-      <!-- 8. Salon Services & Craft Add-ons -->
+      <!-- 9. Salon Services & Craft Add-ons -->
       <div class="form-group">
         <div class="section-title">
-          <span>8. Salon Services &amp; Craft Add-ons</span>
+          <span>9. Salon Services &amp; Craft Add-ons</span>
         </div>
         <div class="checkbox-grid">
           <label class="check-item">
-            <span><input type="checkbox" id="optInstall" checked onchange="calculate()">Cut-in &amp; Professional Install (Bonding / Clip)</span>
+            <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in &amp; Professional Install (Bonding / Clip)</span>
             <span class="check-price">Included ($160)</span>
           </label>
           <label class="check-item">
@@ -1223,6 +1332,10 @@
         <li>
           <span>Hair Color / Multi-Shade (<span id="lblColor">#1B</span>)</span>
           <strong id="valColorAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Grey Hair Mix (<span id="lblGrey">0%</span>)</span>
+          <strong id="valGreyAud">+$0 AUD</strong>
         </li>
         <li>
           <span>Hair Texture / Wave (<span id="lblTexture">Straight</span>)</span>
@@ -1506,28 +1619,110 @@
     }
   }
 
+  const BASE_SIZE_PRICES = {
+    '2x3': { men: 250, women: 250 },
+    '2x4': { men: 280, women: 280 },
+    '3x4': { men: 350, women: 350 },
+    '4x4': { men: 400, women: 400 },
+    '5x5': { men: 450, women: 450 },
+    '6x6': { men: 500, women: 500 },
+    '6x8': { men: 600, women: 600 },
+    '7x9': { men: 420, women: 600 },
+    '8x10': { men: 600, women: 700 },
+    '10x12': { men: 800, women: 800 }
+  };
+
+  const PRESET_CHIP_DATA = [
+    { w: 2, l: 3, labelMen: 'Filler', labelWomen: 'Filler' },
+    { w: 2, l: 4, labelMen: 'Filler', labelWomen: 'Filler' },
+    { w: 3, l: 4, labelMen: 'Mini Part', labelWomen: 'Mini Part' },
+    { w: 4, l: 4, labelMen: 'Mini Top', labelWomen: "Women's Std" },
+    { w: 5, l: 5, labelMen: 'Crown/Part', labelWomen: 'Crown/Part' },
+    { w: 6, l: 6, labelMen: 'Medium', labelWomen: "Women's Med" },
+    { w: 6, l: 8, labelMen: "Men's Small", labelWomen: 'Large Top' },
+    { w: 7, l: 9, labelMen: "Men's Std", labelWomen: 'XL Topper' },
+    { w: 8, l: 10, labelMen: "Men's Large", labelWomen: 'Full Topper' },
+    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap' }
+  ];
+
+  function getBaseSizePrice(w, l, category) {
+    const minDim = Math.min(w, l);
+    const maxDim = Math.max(w, l);
+    const key = `${minDim}x${maxDim}`;
+    const isMen = (category === 'men');
+
+    if (BASE_SIZE_PRICES[key]) {
+      return isMen ? BASE_SIZE_PRICES[key].men : BASE_SIZE_PRICES[key].women;
+    }
+
+    // Smooth fallback for custom user-entered dimensions based on combined size sum (w + l)
+    const sum = w + l;
+    if (isMen) {
+      if (sum <= 5) return 250;
+      if (sum <= 6) return 250 + (sum - 5) * 30;
+      if (sum <= 7) return 280 + (sum - 6) * 70;
+      if (sum <= 8) return 350 + (sum - 7) * 50;
+      if (sum <= 10) return 400 + (sum - 8) * 25;
+      if (sum <= 12) return 450 + (sum - 10) * 25;
+      if (sum <= 14) return 500 + (sum - 12) * 50;
+      if (sum <= 16) return 550 + (sum - 14) * 25;
+      if (sum <= 18) return 600;
+      if (sum <= 22) return 600 + (sum - 18) * 50;
+      return Math.round((800 + (sum - 22) * 40) / 10) * 10;
+    } else {
+      if (sum <= 5) return 250;
+      if (sum <= 6) return 280;
+      if (sum <= 7) return 350;
+      if (sum <= 8) return 400;
+      if (sum <= 10) return 400 + (sum - 8) * 25;
+      if (sum <= 12) return 450 + (sum - 10) * 25;
+      if (sum <= 14) return 500 + (sum - 12) * 50;
+      if (sum <= 16) return 600;
+      if (sum <= 18) return 600 + (sum - 16) * 50;
+      if (sum <= 22) return 700 + (sum - 18) * 25;
+      return Math.round((800 + (sum - 22) * 40) / 10) * 10;
+    }
+  }
+
+  function refreshChips() {
+    const container = document.getElementById('presetChipsContainer');
+    if (!container) return;
+    const curW = parseFloat(document.getElementById('sizeW').value) || 0;
+    const curL = parseFloat(document.getElementById('sizeL').value) || 0;
+
+    container.innerHTML = PRESET_CHIP_DATA.map(item => {
+      const price = getBaseSizePrice(item.w, item.l, currentCategory);
+      const desc = currentCategory === 'men' ? item.labelMen : item.labelWomen;
+      const isActive = ((curW === item.w && curL === item.l) || (curW === item.l && curL === item.w));
+      return `<span class="chip ${isActive ? 'active' : ''}" data-w="${item.w}" data-l="${item.l}" onclick="setSize(${item.w}, ${item.l})">${item.w}" × ${item.l}" (${desc} · $${price})</span>`;
+    }).join('');
+  }
+
   function setCategory(cat) {
     currentCategory = cat;
     document.getElementById('btnMen').classList.toggle('active', cat === 'men');
     document.getElementById('btnWomen').classList.toggle('active', cat === 'women');
 
     if (cat === 'men') {
-      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Remy hair, salon cut-in included
-      setSize(7, 9);
+      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon cut-in excluded
+      document.getElementById('sizeW').value = '7';
+      document.getElementById('sizeL').value = '9';
       document.getElementById('hairLength').value = '6';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
-      document.getElementById('hairType').value = 'remy';
-      document.getElementById('optInstall').checked = true;
+      document.getElementById('hairType').value = 'standard';
+      document.getElementById('optInstall').checked = false;
     } else {
-      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Remy hair, salon cut-in included
-      setSize(4, 4);
+      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon cut-in excluded
+      document.getElementById('sizeW').value = '4';
+      document.getElementById('sizeL').value = '4';
       document.getElementById('hairLength').value = '10';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
-      document.getElementById('hairType').value = 'remy';
-      document.getElementById('optInstall').checked = true;
+      document.getElementById('hairType').value = 'standard';
+      document.getElementById('optInstall').checked = false;
     }
+    refreshChips();
     calculate();
   }
 
@@ -1546,11 +1741,14 @@
   }
 
   function updateChips(w, l) {
-    const chips = document.querySelectorAll('.chip');
+    const chips = document.querySelectorAll('#presetChipsContainer .chip');
     chips.forEach(chip => {
-      chip.classList.remove('active');
-      if (chip.textContent.startsWith(`${w}" × ${l}"`)) {
+      const chipW = parseFloat(chip.getAttribute('data-w'));
+      const chipL = parseFloat(chip.getAttribute('data-l'));
+      if ((chipW === w && chipL === l) || (chipW === l && chipL === w)) {
         chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
       }
     });
   }
@@ -1560,6 +1758,32 @@
     if (parent) {
       parent.classList.toggle('active', checkbox.checked);
     }
+    calculate();
+  }
+
+  function setGreyMix(val) {
+    val = parseInt(val, 10) || 0;
+    const slider = document.getElementById('greyHairMix');
+    if (slider) slider.value = val;
+    updateGreyChips(val);
+    calculate();
+  }
+
+  function updateGreyChips(val) {
+    const chips = document.querySelectorAll('#greyChipsContainer .chip');
+    chips.forEach(chip => {
+      const chipVal = parseInt(chip.getAttribute('data-grey'), 10);
+      if (chipVal === val) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+  }
+
+  function onGreySliderChange(val) {
+    val = parseInt(val, 10) || 0;
+    updateGreyChips(val);
     calculate();
   }
 
@@ -1589,6 +1813,9 @@
       if (parent) parent.classList.toggle('active', cb.checked);
     });
 
+    // Reset Grey Hair Mix
+    setGreyMix(0);
+
     // Reset Hair Texture: select 'straight'
     selectTexture('straight');
 
@@ -1600,7 +1827,8 @@
     const w = parseFloat(document.getElementById('sizeW').value) || 0;
     const l = parseFloat(document.getElementById('sizeL').value) || 0;
     const sizeSum = w + l; // Wig industry standard: Combined size (W + L in inches, e.g. 5+5=10, 8+10=18)
-    document.getElementById('areaDisplay').textContent = `Size: ${sizeSum}" (${w}" + ${l}")`;
+    const rawBaseAud = getBaseSizePrice(w, l, currentCategory);
+    document.getElementById('areaDisplay').textContent = `Size: ${sizeSum}" (${w}" + ${l}") · Base: $${rawBaseAud} AUD`;
     updateChips(w, l);
 
     const hairLen = parseInt(document.getElementById('hairLength').value, 10);
@@ -1633,6 +1861,13 @@
       colorAddAud = (hasHighColor ? 50 : 0) + (colorCount * 20);
     }
 
+    // Grey Hair Mix calculation (0% ~ 100%, step 10%, +$10 AUD per 10%)
+    const greyHairInput = document.getElementById('greyHairMix');
+    const greyPercent = greyHairInput ? (parseInt(greyHairInput.value, 10) || 0) : 0;
+    const greyAddAud = Math.round((greyPercent / 10) * 10);
+    const greyAddUsd = greyAddAud > 0 ? (greyAddAud / 3.0) : 0;
+    updateGreyChips(greyPercent);
+
     // Hair Texture calculation (Single select)
     // Straight $0, Natural Wave $10, Body Wave $30, Deep Wave $50, Curl $50, Tight Curl $100
     const texturePrices = {
@@ -1656,10 +1891,11 @@
     const textureAddAud = texturePrices[textureVal] !== undefined ? texturePrices[textureVal] : 0;
     const textureDisplayName = textureNames[textureVal] || 'Straight';
 
-    // 1. Factory base cost (USD) calculation ($10 USD / $30 AUD per inch of combined size)
-    // Men's 7x9 (16") standard base cap = $140 USD ($420 AUD) -> Total $700 AUD
-    // Women's 4x4 (8") standard base cap = $60 USD ($180 AUD) -> Total $500 AUD
-    const baseCapUsd = Math.max(20.0, (10.0 * sizeSum - 20.0)) * wCap;
+    // 1. Factory base cost (USD) calculation from Base Size AUD table
+    // User calibrated base rates: e.g. Men 7x9 = $420 AUD, Women 4x4 = $400 AUD, etc.
+    const retailMultiplier = 3.0;
+    const baseCapAud = Math.round(rawBaseAud * wCap);
+    const baseCapUsd = baseCapAud / retailMultiplier;
 
     // Hair length surcharge (USD): 6"=0, 10"(1.8) -> $13.33 USD ($40 AUD)
     const lengthAddUsd = (wLength - 1.0) * 16.6667;
@@ -1679,11 +1915,9 @@
     const textureAddUsd = textureAddAud > 0 ? (textureAddAud / 3.0) : 0;
 
     // Total factory cost (USD)
-    const totalFactoryUsd = subTotalUsd + densityAddUsd + extraOptionsUsd + colorAddUsd + textureAddUsd;
+    const totalFactoryUsd = subTotalUsd + densityAddUsd + extraOptionsUsd + colorAddUsd + textureAddUsd + greyAddUsd;
 
-    // 2. Retail sales price (AUD) calculation (3.0x markup + install $160 + custom fee $200)
-    const retailMultiplier = 3.0;
-    const baseCapAud = Math.round(baseCapUsd * retailMultiplier);
+    // 2. Retail sales price (AUD) calculation
     const lengthAddAud = Math.round(lengthAddUsd * retailMultiplier);
     const hairTypeAud = Math.round(hairTypeUsd * retailMultiplier);
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
@@ -1693,10 +1927,10 @@
     const extraOptionsAud = (hasBleach ? 35 : 0) + (hasRoot ? 40 : 0) + (hasRush ? 80 : 0);
 
     // Rounding to nearest $10
-    const rawProductAud = (baseCapUsd + lengthAddUsd + hairTypeUsd + densityAddUsd) * retailMultiplier;
+    const rawProductAud = baseCapAud + lengthAddAud + hairTypeAud + densityAddAud;
     const roundedProductAud = Math.round(rawProductAud / 10) * 10;
 
-    const finalAud = roundedProductAud + installAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud;
+    const finalAud = roundedProductAud + installAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
 
     // Comparison price for alternative order type
     const altAud = (currentOrderType === 'ready') ? (finalAud + 200) : (finalAud - 200);
@@ -1729,6 +1963,18 @@
       }
     }
 
+    // Grey Hair Mix badge & label updates
+    const greyDisplayBadge = document.getElementById('greyDisplayBadge');
+    if (greyDisplayBadge) {
+      greyDisplayBadge.textContent = greyPercent === 0
+        ? '0% None (+$0 AUD)'
+        : `${greyPercent}% Grey (+$${greyAddAud} AUD)`;
+    }
+    const greySliderValue = document.getElementById('greySliderValue');
+    if (greySliderValue) {
+      greySliderValue.textContent = `${greyPercent}% (+$${greyAddAud} AUD)`;
+    }
+
     const textureDisplay = document.getElementById('textureDisplay');
     if (textureDisplay) {
       textureDisplay.textContent = `${textureDisplayName} (+$${textureAddAud} AUD)`;
@@ -1752,6 +1998,11 @@
     if (lblColor) lblColor.textContent = colorCount > 0 ? checkedColors.join(', ') : 'None';
     const valColorAud = document.getElementById('valColorAud');
     if (valColorAud) valColorAud.textContent = `+$${colorAddAud.toLocaleString()} AUD`;
+
+    const lblGrey = document.getElementById('lblGrey');
+    if (lblGrey) lblGrey.textContent = `${greyPercent}%`;
+    const valGreyAud = document.getElementById('valGreyAud');
+    if (valGreyAud) valGreyAud.textContent = `+$${greyAddAud.toLocaleString()} AUD`;
 
     const lblTexture = document.getElementById('lblTexture');
     if (lblTexture) lblTexture.textContent = textureDisplayName;
@@ -1808,6 +2059,11 @@
     const textureDisplayName = textureNames[textureVal] || 'Straight';
     const textureText = `${textureDisplayName} (+$${textureAddAud} AUD)`;
 
+    const greyHairInput = document.getElementById('greyHairMix');
+    const greyPercent = greyHairInput ? (parseInt(greyHairInput.value, 10) || 0) : 0;
+    const greyAddAud = Math.round((greyPercent / 10) * 10);
+    const greyText = greyPercent > 0 ? `${greyPercent}% (+$${greyAddAud} AUD)` : '0% (None)';
+
     const price = document.getElementById('finalAudPrice').textContent;
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? 'Ready-made (In-Stock)' : 'Custom Bespoke Order';
@@ -1822,6 +2078,7 @@
       `• Cap Construction: ${capText}\n` +
       `• Hair Quality: ${hairText}\n` +
       `• Hair Color: ${colorText}\n` +
+      `• Grey Hair Mix: ${greyText}\n` +
       `• Hair Texture: ${textureText}\n` +
       `• Salon Service: ${installText}\n` +
       `----------------------------------------\n` +
@@ -1856,6 +2113,7 @@
   }
 
   // Initial calculation & Admin authentication check
+  refreshChips();
   calculate();
   checkAdminAuth();
 </script>

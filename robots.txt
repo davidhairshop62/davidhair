@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api_*.php
+Disallow: /admin_*.php
+Disallow: /section_manager.php
+Disallow: /stock_manager.php
+Disallow: /db_test.php
+Disallow: /backups/
+Disallow: /scratch/
+Disallow: /scripts/
+
+Sitemap: https://davidhairshop.com/sitemap.xml
