@@ -1,7 +1,29 @@
 # ==============================================================================
-# High Performance Apache Configuration (.htaccess)
-# David Hair - High-Speed Caching, Compression & HTTP/2 Acceleration
+# High Performance & Hardened Apache Configuration (.htaccess)
+# David Hair - Security Protection, High-Speed Caching & HTTP/2 Acceleration
 # ==============================================================================
+
+# 0. Core Security Protections
+Options -Indexes
+
+# Block sensitive directories and files using mod_alias
+RedirectMatch 403 /\.git
+RedirectMatch 403 /\.env
+RedirectMatch 403 /\.agents
+RedirectMatch 403 /\.vscode
+RedirectMatch 403 /\.deploy_cache
+RedirectMatch 403 \.(sql|log|sh|bat|ps1|md)$
+
+# Block access to hidden files and directories
+<FilesMatch "^(\.git|\.env|\.deploy_cache|\.vscode|\.agents|.*\.sql|.*\.log|.*\.md|.*\.sh|.*\.bat|.*\.ps1)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
 # 1. Enable Gzip / Deflate Compression
 <IfModule mod_deflate.c>
@@ -78,4 +100,7 @@
 
     # Security & Performance Headers
     Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>

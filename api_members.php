@@ -147,6 +147,14 @@ if (is_array($jsonBody)) {
     }
 }
 
+// AUTHENTICATION GUARD FOR ADMIN MEMBER ACTIONS
+$adminMemberActions = ['list', 'create', 'update', 'delete', 'add_record'];
+if (in_array($action, $adminMemberActions)) {
+    if (empty($_SESSION['admin_user'])) {
+        sendJsonResponse(['status' => 'error', 'message' => 'Unauthorized. Admin login required.'], 401);
+    }
+}
+
 switch ($action) {
     // -------------------------------------------------------------
     // 1. PUBLIC: MEMBER REGISTRATION
@@ -287,7 +295,8 @@ switch ($action) {
     // -------------------------------------------------------------
     case 'me':
         $memberId = $_SESSION['member_id'] ?? null;
-        if (!$memberId && isset($_GET['member_id'])) {
+        // Only allow explicit member_id lookup if authenticated as administrator
+        if (!empty($_SESSION['admin_user']) && isset($_GET['member_id'])) {
             $memberId = intval($_GET['member_id']);
         }
 
@@ -546,6 +555,14 @@ switch ($action) {
     // -------------------------------------------------------------
     case 'records':
         $memberId = intval($_GET['member_id'] ?? 0);
+        $currentLoggedInMemberId = $_SESSION['member_id'] ?? 0;
+        $isAdmin = !empty($_SESSION['admin_user']);
+
+        // Must be logged in as admin or requesting own records
+        if (!$isAdmin && ($currentLoggedInMemberId === 0 || $currentLoggedInMemberId !== $memberId)) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Unauthorized to view member records.'], 403);
+        }
+
         if ($memberId <= 0) {
             sendJsonResponse(['status' => 'error', 'message' => 'Invalid member ID.'], 400);
         }

@@ -1,5 +1,10 @@
 <?php
 // api_booking.php - David Hair Springvale Fitting Booking API
+error_reporting(0);
+ini_set('display_errors', '0');
+ob_start();
+session_start();
+
 require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -105,6 +110,26 @@ function check_date_is_closed($dateStr, $rules) {
 }
 
 $action = $_REQUEST['action'] ?? 'list';
+
+// AUTHENTICATION GUARD FOR ADMIN ACTIONS
+$adminBookingActions = [
+    'list_bookings',
+    'update_status',
+    'reschedule_booking',
+    'delete_booking',
+    'save_regular_off_days',
+    'add_closure_period',
+    'delete_closure_period'
+];
+
+if (in_array($action, $adminBookingActions)) {
+    if (empty($_SESSION['admin_user'])) {
+        if (ob_get_length()) ob_clean();
+        http_response_code(401);
+        echo json_encode(['status' => 'error', 'message' => 'Unauthorized. Admin login required.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+}
 
 // Default daily operating hours (11:00 AM - 5:00 PM, 1-hour interval, total 7 slots)
 $standardSlots = ['11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];

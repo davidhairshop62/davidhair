@@ -40,6 +40,10 @@ try {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+    // Ensure header menu titles match standard navigation
+    $conn->exec("UPDATE site_sections SET menu_title = 'Self-Check', menu_icon = 'fa-clipboard-check' WHERE section_key = 'hair-diagnosis-hub' AND (menu_title = 'Diagnostic Tool' OR menu_title = '')");
+    $conn->exec("UPDATE site_sections SET menu_title = 'AI Try-on' WHERE section_key = 'ai-simulator' AND (menu_title = 'AI Try-On' OR menu_title = '')");
+
     // Check count and seed if empty
     $countStmt = $conn->query("SELECT COUNT(*) FROM site_sections");
     if ($countStmt->fetchColumn() == 0) {
@@ -63,8 +67,8 @@ try {
                 'description' => 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'Diagnostic Tool',
-                'menu_icon' => 'fa-clipboard-question',
+                'menu_title' => 'Self-Check',
+                'menu_icon' => 'fa-clipboard-check',
                 'menu_badge' => '5-Step',
                 'sort_order' => 2
             ],
@@ -234,6 +238,14 @@ $action = $_REQUEST['action'] ?? 'get_public_sections';
 // Raw JSON input helper
 $rawInput = file_get_contents('php://input');
 $jsonBody = json_decode($rawInput, true) ?: [];
+
+// AUTHENTICATION GUARD FOR ADMIN STATE-CHANGING ACTIONS
+$adminSectionActions = ['update_order', 'toggle_visibility', 'toggle_menu', 'update_section', 'bulk_update', 'reset_defaults'];
+if (in_array($action, $adminSectionActions)) {
+    if (empty($_SESSION['admin_user'])) {
+        sendJsonResponse(['status' => 'error', 'message' => 'Unauthorized. Admin login required.'], 401);
+    }
+}
 
 try {
     // 1. PUBLIC GET SECTIONS (Used by index.html to show/hide sections & navigation items)

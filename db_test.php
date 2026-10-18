@@ -1,5 +1,11 @@
 <?php
-// db_test.php - 데이터베이스 연결 확인 페이지
+// db_test.php - 데이터베이스 연결 확인 페이지 (관리자 인증 필요)
+session_start();
+if (empty($_SESSION['admin_user'])) {
+    http_response_code(403);
+    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>403 Forbidden</title></head><body style="background:#0f172a;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;padding:24px;background:#1e293b;border-radius:12px;border:1px solid #334155;"><h2 style="margin-bottom:12px;color:#f87171;">403 Forbidden</h2><p style="color:#94a3b8;margin-bottom:20px;">Access to database diagnostic tools is restricted to authenticated administrators.</p><a href="/stock_manager.php" style="color:#14b8a6;text-decoration:none;font-weight:bold;">Go to Admin Login &rarr;</a></div></body></html>';
+    exit;
+}
 
 require_once 'config.php';
 ?>
