@@ -231,6 +231,24 @@
                     return defaultTitle;
                 },
 
+                getMenuBadge(key, defaultBadge = '') {
+                    if (this.sectionsList && this.sectionsList.length > 0) {
+                        const s = this.sectionsList.find(x => x.section_key === key);
+                        if (s && s.menu_badge !== undefined && s.menu_badge !== null && s.menu_badge !== '') return s.menu_badge;
+                    }
+                    return defaultBadge;
+                },
+
+                getMenuIcon(key, defaultIcon = 'fa-solid fa-layer-group') {
+                    if (this.sectionsList && this.sectionsList.length > 0) {
+                        const s = this.sectionsList.find(x => x.section_key === key);
+                        if (s && s.menu_icon) {
+                            return s.menu_icon.startsWith('fa-') ? s.menu_icon : 'fa-solid ' + s.menu_icon;
+                        }
+                    }
+                    return defaultIcon;
+                },
+
                 async fetchSectionSettings() {
                     try {
                         const res = await fetch('api_sections.php?action=get_public_sections&t=' + Date.now());
@@ -2649,6 +2667,18 @@
                     </div>
                 </div>
 
+                <!-- Self-Assessment & Style Diagnostic Tool Nav Link -->
+                <a href="#hair-diagnosis-hub" 
+                   x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
+                   :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'" 
+                   class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white group">
+                    <i :class="getMenuIcon('hair-diagnosis-hub', 'fa-solid fa-clipboard-question') + ' text-teal-400'"></i>
+                    <span x-text="getMenuTitle('hair-diagnosis-hub', 'Diagnostic Tool')">Diagnostic Tool</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase font-mono tracking-wider" 
+                          x-show="getMenuBadge('hair-diagnosis-hub', '5-Step')"
+                          x-text="getMenuBadge('hair-diagnosis-hub', '5-Step')">5-Step</span>
+                </a>
+
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
                     <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
                     <span x-text="getMenuTitle('transformations', 'Before & After')">Before &amp; After</span>
@@ -2858,6 +2888,21 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Mobile Self-Assessment & Style Diagnostic Tool Nav Link -->
+                <a href="#hair-diagnosis-hub" 
+                   x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
+                   :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'" 
+                   @click="mobileMenuOpen = false"
+                   class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i :class="getMenuIcon('hair-diagnosis-hub', 'fa-solid fa-clipboard-question') + ' text-teal-400'"></i>
+                        <span x-text="getMenuTitle('hair-diagnosis-hub', 'Diagnostic Tool')">Diagnostic Tool</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono"
+                          x-show="getMenuBadge('hair-diagnosis-hub', '5-Step')"
+                          x-text="getMenuBadge('hair-diagnosis-hub', '5-Step')">5-Step</span>
+                </a>
 
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">

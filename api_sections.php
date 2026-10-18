@@ -58,14 +58,14 @@ try {
             ],
             [
                 'section_key' => 'hair-diagnosis-hub',
-                'name' => 'Do I Need a Wig? (Self-Diagnosis Hub)',
+                'name' => 'Self-Assessment & Style Diagnostic Tool',
                 'category' => 'Interactive & AI',
-                'description' => 'Interactive hairloss phase self-diagnosis, style recommendations, and wig specs calculator.',
+                'description' => 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'Wig Quiz',
+                'menu_title' => 'Diagnostic Tool',
                 'menu_icon' => 'fa-clipboard-question',
-                'menu_badge' => 'Self-Check',
+                'menu_badge' => '5-Step',
                 'sort_order' => 2
             ],
             [
@@ -211,6 +211,26 @@ try {
     }
     // Ensure builder is set to hidden
     $conn->exec("UPDATE site_sections SET is_visible = 0, in_menu = 0 WHERE section_key = 'builder'");
+
+    // Ensure Self-Assessment & Style Diagnostic Tool is present, up to date, and active
+    $chkHub = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'hair-diagnosis-hub'")->fetchColumn();
+    if ($chkHub == 0) {
+        $insHub = $conn->prepare("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
+            VALUES ('hair-diagnosis-hub', 'Self-Assessment & Style Diagnostic Tool', 'Interactive & AI', 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.', 1, 1, 'Diagnostic Tool', 'fa-clipboard-question', '5-Step', 2)");
+        $insHub->execute();
+    } else {
+        $conn->exec("UPDATE site_sections SET 
+            name = 'Self-Assessment & Style Diagnostic Tool',
+            description = 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.',
+            category = 'Interactive & AI',
+            menu_title = IF(menu_title = 'Wig Quiz' OR menu_title = '', 'Diagnostic Tool', menu_title),
+            menu_icon = IF(menu_icon = '' OR menu_icon IS NULL, 'fa-clipboard-question', menu_icon),
+            menu_badge = IF(menu_badge = '' OR menu_badge IS NULL, '5-Step', menu_badge),
+            is_visible = 1,
+            in_menu = 1,
+            sort_order = IF(sort_order = 13, 2, sort_order)
+            WHERE section_key = 'hair-diagnosis-hub'");
+    }
 } catch (Exception $e) {
     // If creation fails, proceed to try queries
 }

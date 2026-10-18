@@ -175,7 +175,7 @@
             <!-- Toolbar: Category Filter & Action Buttons -->
             <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
                 <!-- Category Filter Tabs -->
-                <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+                <div class="flex flex-wrap items-center gap-1.5 w-full lg:w-auto">
                     <template x-for="cat in ['All', 'Interactive & AI', 'Products & Ordering', 'Salon & Services', 'Brand & Trust']" :key="cat">
                         <button type="button" @click="activeFilter = cat"
                             :class="activeFilter === cat ? 'bg-brand-teal text-white font-bold shadow' : 'bg-brand-inner text-slate-300 hover:text-white border border-brand-border'"
@@ -183,6 +183,15 @@
                             x-text="cat">
                         </button>
                     </template>
+                </div>
+
+                <!-- Instant Search Filter -->
+                <div class="relative w-full sm:w-72 lg:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" x-model="searchQuery" placeholder="Search section name, key, or nav label..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-8 pr-8 py-2 text-xs text-white placeholder:text-slate-500 outline-none focus:border-brand-teal transition-all">
+                    <button type="button" x-show="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs p-1" title="Clear search">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
 
                 <!-- Bulk Actions -->
@@ -349,7 +358,7 @@
                     <i class="fa-solid fa-circle-info text-brand-tealLight"></i>
                     <span>How Section Visibility &amp; Menu Synchronization Works</span>
                 </div>
-                <p>1. <strong>Visible on Homepage:</strong> Controls whether the section is rendered and visible on <a href="/" target="_blank" class="text-brand-tealLight underline">https://davidhair.atozhair.shop</a>. If toggled off, the entire section collapses smoothly with zero layout shift.</p>
+                <p>1. <strong>Visible on Homepage:</strong> Controls whether the section is rendered and visible on <a href="/" target="_blank" class="text-brand-tealLight underline">https://www.davidhairshop.com</a>. If toggled off, the entire section collapses smoothly with zero layout shift.</p>
                 <p>2. <strong>In Nav Menu:</strong> Automatically synchronizes with both the top desktop navigation bar and the mobile hamburger drawer menu. If a section is hidden, its corresponding menu item is immediately hidden as well.</p>
                 <p>3. <strong>Instant Save:</strong> Clicking the switches instantly updates the MySQL database. You can also edit navigation labels and click "Save All Changes".</p>
             </div>
@@ -370,6 +379,7 @@
                     password: ''
                 },
                 sections: [],
+                searchQuery: '',
                 activeFilter: 'All',
                 isSaving: false,
                 toastMessage: '',
@@ -450,10 +460,20 @@
                 },
 
                 get filteredSections() {
-                    if (this.activeFilter === 'All') {
-                        return this.sections;
+                    let list = this.sections;
+                    if (this.activeFilter !== 'All') {
+                        list = list.filter(s => s.category === this.activeFilter);
                     }
-                    return this.sections.filter(s => s.category === this.activeFilter);
+                    if (this.searchQuery && this.searchQuery.trim()) {
+                        const q = this.searchQuery.toLowerCase().trim();
+                        list = list.filter(s => 
+                            (s.name && s.name.toLowerCase().includes(q)) ||
+                            (s.section_key && s.section_key.toLowerCase().includes(q)) ||
+                            (s.menu_title && s.menu_title.toLowerCase().includes(q)) ||
+                            (s.description && s.description.toLowerCase().includes(q))
+                        );
+                    }
+                    return list;
                 },
 
                 get visibleCount() {
