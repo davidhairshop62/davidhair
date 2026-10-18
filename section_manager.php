@@ -286,11 +286,12 @@
                                         <span class="text-[10px] text-brand-textMuted font-bold uppercase tracking-wider block">Order</span>
                                         <span class="text-xs font-mono font-extrabold text-teal-300" x-text="'#' + sec.sort_order"></span>
                                     </div>
-                                    <input type="number" min="1" max="99" 
-                                           x-model.number="sec.sort_order" 
-                                           @change="normalizeAndSaveOrders()"
-                                           class="w-12 text-center bg-brand-darkBg border border-brand-border rounded-lg py-1 text-xs font-mono font-bold text-white outline-none focus:border-brand-teal"
-                                           title="Type custom display sequence number">
+                                    <input type="number" min="1" :max="sections.length" 
+                                           :value="sec.sort_order" 
+                                           @keydown.enter.prevent="changeOrder(sec, $event.target.value)"
+                                           @change="changeOrder(sec, $event.target.value)"
+                                           class="w-12 text-center bg-brand-darkBg border border-brand-border rounded-lg py-1 text-xs font-mono font-bold text-white outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
+                                           title="Type position number (e.g. 1) and press Enter">
                                     <div class="flex flex-col gap-0.5">
                                         <button type="button" @click="moveSection(sec, -1)" :disabled="isFirstSection(sec)"
                                             class="w-5 h-4.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-[9px] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer" title="Move Up (Appear Earlier)">
@@ -532,6 +533,39 @@
                     }
                 },
 
+                changeOrder(sec, newOrderVal) {
+                    const targetPos = parseInt(newOrderVal, 10);
+                    if (isNaN(targetPos) || targetPos < 1) {
+                        this.sections = [...this.sections];
+                        return;
+                    }
+
+                    // Sort existing list cleanly
+                    this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+
+                    const fromIdx = this.sections.findIndex(s => s.id === sec.id);
+                    if (fromIdx === -1) return;
+
+                    const toIdx = Math.max(0, Math.min(this.sections.length - 1, targetPos - 1));
+
+                    if (fromIdx === toIdx) {
+                        sec.sort_order = toIdx + 1;
+                        this.sections = [...this.sections];
+                        return;
+                    }
+
+                    const [moved] = this.sections.splice(fromIdx, 1);
+                    this.sections.splice(toIdx, 0, moved);
+
+                    this.sections.forEach((s, idx) => {
+                        s.sort_order = idx + 1;
+                    });
+
+                    this.sections = [...this.sections];
+                    this.saveAllChanges();
+                    this.showToast(`"${moved.name}" moved to position #${toIdx + 1}`);
+                },
+
                 moveSection(sec, direction) {
                     this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
                     const currIdx = this.sections.findIndex(s => s.id === sec.id);
@@ -539,11 +573,16 @@
                     const targetIdx = currIdx + direction;
                     if (targetIdx < 0 || targetIdx >= this.sections.length) return;
 
-                    const temp = this.sections[currIdx];
-                    this.sections[currIdx] = this.sections[targetIdx];
-                    this.sections[targetIdx] = temp;
+                    const [moved] = this.sections.splice(currIdx, 1);
+                    this.sections.splice(targetIdx, 0, moved);
 
-                    this.normalizeAndSaveOrders();
+                    this.sections.forEach((s, idx) => {
+                        s.sort_order = idx + 1;
+                    });
+
+                    this.sections = [...this.sections];
+                    this.saveAllChanges();
+                    this.showToast(`"${moved.name}" moved to position #${targetIdx + 1}`);
                 },
 
                 isFirstSection(sec) {
@@ -599,7 +638,12 @@
                         const [moved] = this.sections.splice(fromIdx, 1);
                         this.sections.splice(toIdx, 0, moved);
 
-                        this.normalizeAndSaveOrders();
+                        this.sections.forEach((s, idx) => {
+                            s.sort_order = idx + 1;
+                        });
+
+                        this.sections = [...this.sections];
+                        this.saveAllChanges();
                         this.showToast(`"${moved.name}" moved to position #${toIdx + 1}`);
                     }
 
@@ -617,6 +661,7 @@
                     this.sections.forEach((s, idx) => {
                         s.sort_order = idx + 1;
                     });
+                    this.sections = [...this.sections];
                     this.saveAllChanges();
                 },
 

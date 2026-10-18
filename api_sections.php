@@ -222,13 +222,7 @@ try {
         $conn->exec("UPDATE site_sections SET 
             name = 'Self-Assessment & Style Diagnostic Tool',
             description = 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.',
-            category = 'Interactive & AI',
-            menu_title = IF(menu_title = 'Wig Quiz' OR menu_title = '', 'Diagnostic Tool', menu_title),
-            menu_icon = IF(menu_icon = '' OR menu_icon IS NULL, 'fa-clipboard-question', menu_icon),
-            menu_badge = IF(menu_badge = '' OR menu_badge IS NULL, '5-Step', menu_badge),
-            is_visible = 1,
-            in_menu = 1,
-            sort_order = IF(sort_order = 13, 2, sort_order)
+            category = 'Interactive & AI'
             WHERE section_key = 'hair-diagnosis-hub'");
     }
 } catch (Exception $e) {
