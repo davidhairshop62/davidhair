@@ -499,18 +499,6 @@
                         }
                     });
 
-                    // Smart Welcome Event Popup check (2.2s delay for seamless landing)
-                    try {
-                        const dismissedUntil = localStorage.getItem('davidhair_welcome_dismissed');
-                        const now = new Date().getTime();
-                        if (!dismissedUntil || now > parseInt(dismissedUntil, 10)) {
-                            setTimeout(() => {
-                                this.isWelcomeModalOpen = true;
-                            }, 2200);
-                        }
-                    } catch (e) {
-                        console.log('Welcome popup storage check error:', e);
-                    }
 
                     try {
                         let res = await fetch('/api_get_stock.php?t=' + Date.now(), { cache: 'no-store' });
@@ -1597,7 +1585,7 @@
                 isCameraActive: false,
                 mediaStream: null,
                 cameraFacingMode: 'user', // 'user' (front) or 'environment' (rear)
-                cameraGuideOpacity: 1.0, // 100% full opacity (no transparency)
+                cameraGuideOpacity: 0.5, // 50% opacity (transparency)
                 cameraGuideGender: 'Man', // 'Man' or 'Woman'
 
                 // Original Face Photo transform controls
@@ -2204,12 +2192,12 @@
                 },
 
                 cycleGuideOpacity() {
-                    if (this.cameraGuideOpacity === 1) {
-                        this.cameraGuideOpacity = 0.5;
-                    } else if (this.cameraGuideOpacity === 0.5) {
+                    if (this.cameraGuideOpacity === 0.5) {
+                        this.cameraGuideOpacity = 1.0;
+                    } else if (this.cameraGuideOpacity === 1.0) {
                         this.cameraGuideOpacity = 0;
                     } else {
-                        this.cameraGuideOpacity = 1;
+                        this.cameraGuideOpacity = 0.5;
                     }
                 },
 
@@ -2221,6 +2209,7 @@
 
                 async startCamera() {
                     this.cameraGuideGender = (this.selectedCategory === 'Woman') ? 'Woman' : 'Man';
+                    this.cameraGuideOpacity = 0.5;
                     try {
                         if (this.mediaStream) {
                             this.mediaStream.getTracks().forEach(track => track.stop());
@@ -2571,12 +2560,11 @@
             <nav
                 class="hidden lg:flex items-center gap-5 xl:gap-7 text-xs xl:text-sm font-semibold text-slate-300 uppercase tracking-wider">
                 
-                <!-- ALL ABOUT US Dropdown (Order, Stock, Salon, Solutions, Factory, B2B) -->
+                <!-- 1. All About Us Dropdown (Order, Stock, Salon, Solutions, Factory, B2B) -->
                 <div class="relative group" x-data="{ productsOpen: false }" @mouseenter="productsOpen = true" @mouseleave="productsOpen = false"
-                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))"
-                     :style="'order: ' + getProductsMenuOrder() + ';'">
+                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))">
                     <button type="button" @click="productsOpen = !productsOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer">
-                        <span>ALL ABOUT US</span>
+                        <span>All About Us</span>
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': productsOpen }"></i>
                     </button>
                     <!-- Dropdown Menu -->
@@ -2609,7 +2597,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Norwood &amp; Women's Types</div>
                                 </div>
                             </button>
-                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-boxes-stacked text-xs"></i>
                                 </div>
@@ -2618,7 +2606,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Ready-to-Ship Inventory</div>
                                 </div>
                             </a>
-                            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-scissors text-xs"></i>
                                 </div>
@@ -2627,7 +2615,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Melbourne Private Studio</div>
                                 </div>
                             </a>
-                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-layer-group text-xs"></i>
                                 </div>
@@ -2636,7 +2624,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Wigs, Systems &amp; Extensions</div>
                                 </div>
                             </a>
-                            <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-industry text-xs"></i>
                                 </div>
@@ -2645,7 +2633,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Direct Manufacturing &amp; Craft</div>
                                 </div>
                             </a>
-                            <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                            <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-handshake text-xs"></i>
                                 </div>
@@ -2654,7 +2642,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Salon &amp; Wholesale Partner</div>
                                 </div>
                             </a>
-                            <a href="#wig-training" :style="'order: ' + (getSectionOrder('products-range', 11) + 5) + ';'" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item border-t border-brand-border/40 mt-1">
+                            <a href="#wig-training" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item border-t border-brand-border/40 mt-1">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-graduation-cap text-xs"></i>
                                 </div>
@@ -2667,29 +2655,29 @@
                     </div>
                 </div>
 
-                <!-- Self-Assessment & Style Diagnostic Tool Nav Link -->
+                <!-- 2. Self-Check Nav Link -->
                 <a href="#hair-diagnosis-hub" 
                    x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
-                   :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'" 
                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white group">
-                    <i :class="getMenuIcon('hair-diagnosis-hub', 'fa-solid fa-clipboard-question') + ' text-teal-400'"></i>
-                    <span x-text="getMenuTitle('hair-diagnosis-hub', 'Diagnostic Tool')">Diagnostic Tool</span>
-                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase font-mono tracking-wider" 
-                          x-show="getMenuBadge('hair-diagnosis-hub', '5-Step')"
-                          x-text="getMenuBadge('hair-diagnosis-hub', '5-Step')">5-Step</span>
+                    <i class="fa-solid fa-clipboard-check text-teal-400"></i>
+                    <span>Self-Check</span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase font-mono tracking-wider">5-Step</span>
                 </a>
 
-                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
-                    <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
-                    <span x-text="getMenuTitle('transformations', 'Before & After')">Before &amp; After</span>
-                </a>
-                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
+                <!-- 3. AI Try-on Nav Link -->
+                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
                     <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                    <span x-text="getMenuTitle('ai-simulator', 'AI Try-On')">AI Try-On</span>
+                    <span>AI Try-on</span>
                 </a>
 
+                <!-- 4. Before & After Nav Link -->
+                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
+                    <span>Before &amp; After</span>
+                </a>
+
+                <!-- 5. FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true"
-                    :style="'order: ' + (parseInt(getSectionOrder('ai-simulator', 10) || 10) + 1) + ';'"
                     class="hover:text-brand-tealLight transition-colors flex items-center gap-1 font-bold text-white uppercase tracking-wider cursor-pointer">
                     <i class="fa-solid fa-circle-question text-teal-400 text-xs"></i>
                     <span>FAQ</span>
@@ -2709,19 +2697,13 @@
 
                 <!-- Membership Sign In / Sign Up or Profile Chip -->
                 <div class="flex items-center gap-1.5">
-                    <!-- Guest: Sign In & Sign Up -->
-                    <div x-show="!currentMember" class="flex items-center gap-1.5">
+                    <!-- Guest: Unified Sign In / Sign Up Button -->
+                    <div x-show="!currentMember" class="flex items-center">
                         <button type="button" @click="openSignInModal()"
-                            class="px-2.5 sm:px-3.5 py-2 rounded-lg bg-brand-cardBg hover:bg-slate-800 border border-brand-border text-slate-100 text-xs font-bold transition-all hover:text-white flex items-center gap-1.5 min-h-[38px] shadow-sm cursor-pointer"
-                            title="Sign In to Member Dashboard">
-                            <i class="fa-solid fa-right-to-bracket text-brand-tealLight text-sm"></i>
-                            <span>Sign In</span>
-                        </button>
-                        <button type="button" @click="openSignUpModal()"
-                            class="px-2.5 sm:px-3.5 py-2 rounded-lg teal-gradient hover:opacity-95 text-white text-xs font-bold transition-all flex items-center gap-1.5 min-h-[38px] shadow-md group cursor-pointer"
-                            title="Join VIP Membership">
-                            <i class="fa-solid fa-user-plus text-sm"></i>
-                            <span>Sign Up</span>
+                            class="px-3 sm:px-3.5 py-2 rounded-lg teal-gradient hover:opacity-95 text-white text-xs font-bold transition-all flex items-center gap-1.5 min-h-[38px] shadow-md cursor-pointer group"
+                            title="Sign In or Register for VIP Membership">
+                            <i class="fa-solid fa-right-to-bracket text-sm"></i>
+                            <span>Sign In / Sign Up</span>
                         </button>
                     </div>
 
@@ -2793,16 +2775,11 @@
                     </div>
                     <span class="text-[10px] bg-teal-500/20 text-teal-300 border border-teal-500/40 px-2 py-0.5 rounded-full font-mono font-bold">+100 Pts Bonus</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
+                <div>
                     <button type="button" @click="openSignInModal(); mobileMenuOpen = false;"
-                        class="w-full py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600/70 text-slate-100 text-xs font-bold hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
-                        <i class="fa-solid fa-right-to-bracket text-brand-tealLight"></i>
-                        <span>Sign In</span>
-                    </button>
-                    <button type="button" @click="openSignUpModal(); mobileMenuOpen = false;"
-                        class="w-full py-2.5 px-3 rounded-lg teal-gradient text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow cursor-pointer hover:opacity-95 transition-opacity">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span>Sign Up</span>
+                        class="w-full py-2.5 px-3 rounded-lg teal-gradient text-white text-xs font-bold flex items-center justify-center gap-2 shadow cursor-pointer hover:opacity-95 transition-opacity">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Sign In / Sign Up</span>
                     </button>
                 </div>
             </div>
@@ -2831,15 +2808,14 @@
 
             <!-- Mobile Navigation Links (Ordered dynamically via CSS flex order) -->
             <div class="flex flex-col space-y-1">
-                <!-- Mobile ALL ABOUT US Dropdown -->
-                <div x-data="{ mobileProductsOpen: true }" class="border-b border-slate-700/60 pb-2"
-                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))"
-                     :style="'order: ' + getProductsMenuOrder() + ';'">
+                <!-- 1. Mobile All About Us Dropdown -->
+                <div x-data="{ mobileProductsOpen: false }" class="border-b border-slate-700/60 pb-2"
+                     x-show="(isSectionVisible('stock') && isSectionInMenu('stock')) || (isSectionVisible('salon') && isSectionInMenu('salon')) || (isSectionVisible('products-range') && isSectionInMenu('products-range')) || (isSectionVisible('factory') && isSectionInMenu('factory')) || (isSectionVisible('b2b') && isSectionInMenu('b2b'))">
                     <button type="button" @click="mobileProductsOpen = !mobileProductsOpen"
                         class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
                         <span class="flex items-center gap-2">
                             <i class="fa-solid fa-box-open text-brand-tealLight text-xs"></i>
-                            <span>ALL ABOUT US</span>
+                            <span>All About Us</span>
                         </span>
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
                     </button>
@@ -2856,31 +2832,31 @@
                             <span class="font-bold uppercase tracking-wider text-emerald-300">Diagnostic Tool</span>
                             <span class="text-slate-400 text-[10px]">(Norwood &amp; Women's)</span>
                         </button>
-                        <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" :style="'order: ' + getSectionOrder('stock', 7) + ';'" @click="mobileMenuOpen = false"
+                        <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</span>
                             <span class="text-slate-400 text-[10px]">(In-Stock Inventory)</span>
                         </a>
-                        <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" :style="'order: ' + getSectionOrder('salon', 8) + ';'" @click="mobileMenuOpen = false"
+                        <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-scissors text-emerald-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</span>
                             <span class="text-slate-400 text-[10px]">(Melbourne Studio)</span>
                         </a>
-                        <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" :style="'order: ' + getSectionOrder('products-range', 11) + ';'" @click="mobileMenuOpen = false"
+                        <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-layer-group text-sky-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions')">All Solutions</span>
                             <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
                         </a>
-                        <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" :style="'order: ' + getSectionOrder('factory', 12) + ';'" @click="mobileMenuOpen = false"
+                        <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-industry text-purple-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('factory', 'Factory')">Factory</span>
                             <span class="text-slate-400 text-[10px]">(Direct Craft)</span>
                         </a>
-                        <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" :style="'order: ' + getSectionOrder('b2b', 13) + ';'" @click="mobileMenuOpen = false"
+                        <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-handshake text-blue-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('b2b', 'B2B Wholesale')">B2B Wholesale</span>
@@ -2889,34 +2865,40 @@
                     </div>
                 </div>
 
-                <!-- Mobile Self-Assessment & Style Diagnostic Tool Nav Link -->
+                <!-- 2. Mobile Self-Check Nav Link -->
                 <a href="#hair-diagnosis-hub" 
                    x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
-                   :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 2) + ';'" 
                    @click="mobileMenuOpen = false"
                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
                     <span class="flex items-center gap-2">
-                        <i :class="getMenuIcon('hair-diagnosis-hub', 'fa-solid fa-clipboard-question') + ' text-teal-400'"></i>
-                        <span x-text="getMenuTitle('hair-diagnosis-hub', 'Diagnostic Tool')">Diagnostic Tool</span>
+                        <i class="fa-solid fa-clipboard-check text-teal-400"></i>
+                        <span>Self-Check</span>
                     </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono"
-                          x-show="getMenuBadge('hair-diagnosis-hub', '5-Step')"
-                          x-text="getMenuBadge('hair-diagnosis-hub', '5-Step')">5-Step</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">5-Step</span>
                 </a>
 
-                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" :style="'order: ' + getSectionOrder('transformations', 9) + ';'" @click="mobileMenuOpen = false"
+                <!-- 3. Mobile AI Try-on Nav Link -->
+                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" @click="mobileMenuOpen = false"
+                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
+                    <span class="flex items-center gap-2 text-teal-300">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        <span>AI Try-on</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Tech</span>
+                </a>
+
+                <!-- 4. Mobile Before & After Nav Link -->
+                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                    <span x-text="getMenuTitle('transformations', 'Before & After Transformations')">Before &amp; After Transformations</span>
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
+                        <span>Before &amp; After</span>
+                    </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
                 </a>
-                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" :style="'order: ' + getSectionOrder('ai-simulator', 10) + ';'" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
-                    <span x-text="getMenuTitle('ai-simulator', 'AI Hairstyle Simulator')">AI Hairstyle Simulator</span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Try-On</span>
-                </a>
 
+                <!-- 5. Mobile FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true; mobileMenuOpen = false;"
-                    :style="'order: ' + (parseInt(getSectionOrder('ai-simulator', 10) || 10) + 1) + ';'"
                     class="w-full text-left block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors cursor-pointer">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-circle-question text-teal-400"></i>
@@ -3191,7 +3173,7 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- 2.1 DO I NEED A HAIR SYSTEM? (SELF-DIAGNOSIS & TAILORED SOLUTION HUB)     -->
+    <!-- 2.1 WHICH HAIR SYSTEM IS BEST FOR ME? (SELF-DIAGNOSIS & TAILORED SOLUTION HUB) -->
     <!-- [OPTION 1] 4-STEP INTERACTIVE WIZARD                                      -->
     <!-- [OPTION 2] VISUAL DIAGRAM & HAIRLINE MATRIX                               -->
     <!-- ========================================================================= -->
@@ -3213,7 +3195,7 @@
                     <span>Self-Assessment &amp; Style Diagnostic Tool</span>
                 </div>
                 <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    Do I Need a Hair System? <br class="hidden sm:inline">
+                    Which Hair System Is Best for Me? <br class="hidden sm:inline">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-sky-400 to-amber-300">
                         Self-Assessment &amp; Bespoke System Guide
                     </span>
@@ -10183,10 +10165,33 @@
                 <p class="text-xs text-brand-textMuted">Access your personal membership tier, performance points, and fitting history.</p>
             </div>
 
+            <!-- Not a Member Callout Box (Click to switch to Sign Up) -->
+            <button type="button" @click="isSignInModalOpen = false; openSignUpModal();"
+                class="w-full p-3.5 rounded-xl bg-gradient-to-r from-teal-500/15 via-emerald-500/15 to-teal-500/15 hover:from-teal-500/25 hover:via-emerald-500/25 hover:to-teal-500/25 border border-teal-400/40 hover:border-teal-300 text-left transition-all shadow-sm group cursor-pointer flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-teal-500/25 border border-teal-400/50 text-teal-300 flex items-center justify-center text-sm flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-user-plus text-base"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white group-hover:text-teal-200 flex items-center gap-1.5">
+                            <span>Not a member yet? Create VIP Account</span>
+                            <span class="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.2 rounded font-bold font-mono">+100 Pts</span>
+                        </div>
+                        <p class="text-[11px] text-teal-300/90 group-hover:text-teal-200 mt-0.5 font-medium">Click here to register &amp; unlock exclusive VIP benefits &rarr;</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs text-teal-400 group-hover:translate-x-1 transition-transform flex-shrink-0"></i>
+            </button>
+
             <!-- Error Banner -->
-            <div x-show="signInForm.error" x-cloak class="p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs font-semibold flex items-center gap-2">
-                <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
-                <span x-text="signInForm.error"></span>
+            <div x-show="signInForm.error" x-cloak class="p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs font-semibold flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+                    <span x-text="signInForm.error"></span>
+                </div>
+                <button type="button" @click="isSignInModalOpen = false; openSignUpModal();" class="text-teal-300 hover:text-teal-200 underline font-bold text-[11px] whitespace-nowrap cursor-pointer">
+                    Sign Up &rarr;
+                </button>
             </div>
 
             <form @submit.prevent="memberLogin()" class="space-y-4 text-xs">
@@ -10213,9 +10218,11 @@
             </form>
 
             <div class="text-center text-xs text-slate-400 border-t border-brand-border/60 pt-4 space-y-2">
-                <p>New to David Hair? 
-                    <button type="button" @click="isSignInModalOpen = false; openSignUpModal();" class="text-teal-400 hover:text-teal-300 font-bold underline ml-1">
-                        Create VIP Account (+100 Pts Bonus)
+                <p class="flex items-center justify-center gap-1 flex-wrap">
+                    <span>Don't have an account yet?</span>
+                    <button type="button" @click="isSignInModalOpen = false; openSignUpModal();" class="text-teal-400 hover:text-teal-300 font-bold underline cursor-pointer inline-flex items-center gap-1 ml-1">
+                        <span>Sign up here (+100 Pts Bonus)</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </button>
                 </p>
                 <p class="text-[11px] text-slate-500 font-mono">Demo account: john.smith@example.com / password123</p>

@@ -1,7 +1,8 @@
 # Server Sync & Git Policy
 
-1. **Auto Web Server Update (Fast Direct Deploy)**:
-   - 파일 추가, 수정 또는 작업 완료 시 즉시 `./scripts/deploy.sh` (rsync)를 실행하여 1초 내에 운영 서버(`/var/www/davidhair`)로 직접 동기화합니다.
+1. **Auto Web Server Update (Fast Direct Deploy) - MANDATORY**:
+   - 코드나 파일 추가, 수정 또는 작업 완료 시 **반드시 매번 자동으로 `npm run deploy`** 를 실행하여 운영 서버(`/var/www/davidhair`)로 즉시 동기화합니다.
+   - Windows 및 Mac 환경 모두 지원하는 `npm run deploy` (또는 `node scripts/deploy_runner.js`)를 실행합니다.
    - GitHub를 거치지 않고 직접 동기화하여 속도를 극대화합니다.
    - 서버의 `uploads/` 디렉토리와 `.git`은 절대 훼손되지 않도록 보호됩니다.
 
