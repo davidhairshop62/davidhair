@@ -75,6 +75,6 @@ npm run git:push
 
 ## 🌐 4. 웹사이트 바로가기 링크
 
-* 🏠 **메인 사이트**: [https://davidhair.atozhair.shop](https://davidhair.atozhair.shop)
-* 📦 **재고 관리 시스템**: [https://davidhair.atozhair.shop/stock_manager.php](https://davidhair.atozhair.shop/stock_manager.php)
-* 🔌 **DB 연동 테스트**: [https://davidhair.atozhair.shop/db_test.php](https://davidhair.atozhair.shop/db_test.php)
+* 🏠 **공식 메인 사이트**: [https://www.davidhairshop.com](https://www.davidhairshop.com) (미러: [https://davidhair.atozhair.shop](https://davidhair.atozhair.shop))
+* 📦 **재고 관리 시스템**: [https://www.davidhairshop.com/stock_manager.php](https://www.davidhairshop.com/stock_manager.php)
+* 🔌 **DB 연동 테스트**: [https://www.davidhairshop.com/db_test.php](https://www.davidhairshop.com/db_test.php)

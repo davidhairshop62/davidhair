@@ -24,7 +24,8 @@ rsync -avz \
 if [ $? -eq 0 ]; then
   echo "=========================================================="
   echo "✅ [Deploy Complete] Server updated successfully!"
-  echo "👉 Verification URL: https://davidhair.atozhair.shop"
+  echo "👉 Verification URL: https://www.davidhairshop.com"
+  echo "   (Mirror URL: https://davidhair.atozhair.shop)"
   echo "=========================================================="
 else
   echo "❌ [Deploy Failed] Please check SSH connection."
