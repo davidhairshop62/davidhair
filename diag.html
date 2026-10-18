@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hair System & Topper Diagnostic Assessment | David Hair Melbourne</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Global Header -->
+    <header class="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 sticky top-0 z-30 py-3.5 px-4 sm:px-8">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2.5 group">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-600 to-sky-600 flex items-center justify-center text-white font-extrabold text-sm shadow group-hover:scale-105 transition-transform">
+                    DH
+                </div>
+                <div>
+                    <span class="font-heading font-extrabold text-base sm:text-lg tracking-tight text-slate-900 block leading-none">DAVID HAIR</span>
+                    <span class="text-[9px] uppercase tracking-wider text-teal-600 font-bold">Melbourne Flagship Studio</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="https://wa.me/61433484882" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full transition-colors">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>+61 433 484 882</span>
+                </a>
+                <a href="/" class="text-xs font-semibold text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span class="hidden xs:inline">Home</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="max-w-3xl mx-auto w-full p-4 sm:p-6 my-auto">
+        <!-- Intro Banner -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Hair System &amp; Topper Assessment</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-lg mx-auto">
+                Discover the optimal custom hairpiece, toupee, or topper engineered for your condition, hair loss pattern, and lifestyle.
+            </p>
+        </div>
+
+        <!-- Dynamic Quiz Card -->
+        <div id="quiz-card" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 transition-all duration-300">
+            <!-- Dynamic Step Content Rendered Here -->
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="text-center py-5 text-xs text-slate-400 border-t border-slate-200 bg-white">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>&copy; 2026 David Hair Systems Melbourne. All rights reserved.</span>
+            <span class="text-[11px] text-slate-500">Shop F16 (Level 1), Buckingham Ave, Springvale VIC 3171</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Diagnostic Logic -->
+    <script>
+        // Assessment State Management
+        const state = {
+            gender: null,
+            stage: null,
+            attachment: null,
+            scalp: null,
+            hairCondition: null,
+            step: 1 // 1: Gender, 2: Condition/Stage, 3: Attachment, 4: Scalp, 5: Bio Hair, 6: Recommendation
+        };
+
+        const stagesData = {
+            male: [
+                {
+                    id: 'm1',
+                    norwood: 'Norwood II ~ III',
+                    category: 'Early Frontal Recession',
+                    name: 'Phase 1: Receding Temples (M-Shape)',
+                    desc: 'Noticeable temple recession creating an M-shaped hairline while the crown vertex and mid-scalp remain full and intact.',
+                    baseSize: 'Rec. Base: 5x7" ~ 6x8" Frontal Piece',
+                    solution: 'Micro Frontal Hairpiece or Targeted Hairline System',
+                    detail: 'Featherweight partial system seamlessly reconstructing the receding temporal angles and front hairline while preserving 100% of your biological hair.',
+                    implications: 'Preserves unaffected biological hair with a featherlight micro-piece or targeted hairline attachment.',
+                    icon: 'fa-solid fa-seedling text-teal-600',
+                    svg: `<svg viewBox="0 0 100 110" class="w-20 h-20 sm:w-24 sm:h-24">
+                        <text x="50" y="8" font-size="7" fill="#64748b" text-anchor="middle" font-family="sans-serif" font-weight="600" letter-spacing="1">FRONT</text>
+                        <ellipse cx="50" cy="58" rx="34" ry="42" fill="#141E38" stroke="#334155" stroke-width="2"/>
+                        <path d="M 47 16 L 50 11 L 53 16" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M 16 53 Q 12 58 16 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 84 53 Q 88 58 84 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 22 45 Q 50 30 78 45 Q 84 75 75 92 Q 50 100 25 92 Z" fill="#24314E"/>
+                        <path d="M 23 42 Q 33 55 42 42 Q 32 30 23 42 Z" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5" class="animate-pulse"/>
+                        <path d="M 77 42 Q 67 55 58 42 Q 68 30 77 42 Z" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5" class="animate-pulse"/>
+                    </svg>`
+                },
+                {
+                    id: 'm2',
+                    norwood: 'Norwood IV ~ V',
+                    badge: 'Most Popular',
+                    category: 'Standard Custom Toupee',
+                    name: 'Phase 2: M-Shape & Crown Vertex Loss',
+                    desc: 'Simultaneous hairline recession and coin-to-palm sized vertex thinning at the crown with a thinning bridge between them.',
+                    baseSize: 'Rec. Base: 7x9" (Golden Standard)',
+                    solution: 'Bespoke Men’s Partial Toupee / Hair System (7x9")',
+                    detail: 'Our most requested custom model in Melbourne. Fully conceals both frontal and crown thinning with an ultra-natural featherweight base.',
+                    implications: 'Covers M-shape temples and crown with seamless skin or lace transition and invisible knotless hairline.',
+                    icon: 'fa-solid fa-user text-indigo-600',
+                    svg: `<svg viewBox="0 0 100 110" class="w-20 h-20 sm:w-24 sm:h-24">
+                        <text x="50" y="8" font-size="7" fill="#64748b" text-anchor="middle" font-family="sans-serif" font-weight="600" letter-spacing="1">FRONT</text>
+                        <ellipse cx="50" cy="58" rx="34" ry="42" fill="#141E38" stroke="#334155" stroke-width="2"/>
+                        <path d="M 47 16 L 50 11 L 53 16" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M 16 53 Q 12 58 16 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 84 53 Q 88 58 84 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 22 45 Q 50 30 78 45 Q 84 75 75 92 Q 50 100 25 92 Z" fill="#24314E"/>
+                        <path d="M 22 42 Q 33 58 45 44 Q 32 30 22 42 Z" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5"/>
+                        <path d="M 78 42 Q 67 58 55 44 Q 68 30 78 42 Z" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5"/>
+                        <circle cx="50" cy="70" r="11" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5" class="animate-pulse"/>
+                    </svg>`
+                },
+                {
+                    id: 'm3',
+                    norwood: 'Norwood VI ~ VII',
+                    category: 'Extended Top System',
+                    name: 'Phase 3: Advanced Top Thinning (Horseshoe)',
+                    desc: 'Frontal hairline and crown vertex have merged into a broad top opening, leaving biological donor hair along the sides and back (horseshoe pattern).',
+                    baseSize: 'Rec. Base: 8x10" Wide Toupee',
+                    solution: 'Large Custom Toupee or Extended Hair System (8x10")',
+                    detail: 'Engineered with ultra-fine Swiss lace for supreme breathability, featherlight feel, and all-day perimeter bond hold.',
+                    implications: 'Maximum breathability and all-day perimeter security using medical adhesives or perimeter tapes.',
+                    icon: 'fa-solid fa-crown text-amber-600',
+                    svg: `<svg viewBox="0 0 100 110" class="w-20 h-20 sm:w-24 sm:h-24">
+                        <text x="50" y="8" font-size="7" fill="#64748b" text-anchor="middle" font-family="sans-serif" font-weight="600" letter-spacing="1">FRONT</text>
+                        <ellipse cx="50" cy="58" rx="34" ry="42" fill="#141E38" stroke="#334155" stroke-width="2"/>
+                        <path d="M 47 16 L 50 11 L 53 16" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M 16 53 Q 12 58 16 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 84 53 Q 88 58 84 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 18 55 Q 50 30 82 55 Q 84 80 75 94 Q 50 100 25 94 Z" fill="#24314E"/>
+                        <ellipse cx="50" cy="54" rx="23" ry="27" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5" class="animate-pulse"/>
+                    </svg>`
+                },
+                {
+                    id: 'm4',
+                    norwood: 'Norwood VII+ / Universal',
+                    category: 'Full Cranial System',
+                    name: 'Phase 4: Universal Loss & Severe Alopecia',
+                    desc: 'Minimal biological donor hair remaining on the sides and lower nape, requiring full 360-degree cranial cap coverage.',
+                    baseSize: 'Rec. System: Full Cranial Cap Wig',
+                    solution: 'Medical-Grade Full Cranial System (Full Wig)',
+                    detail: '360-degree precision custom-molded cranial cap with ultra-thin Swiss lace or organic silicone lining for zero slippage.',
+                    implications: 'Complete 360-degree cranial restoration engineered for maximum comfort, secure fit, and lifelike natural movement.',
+                    icon: 'fa-solid fa-circle-nodes text-purple-600',
+                    svg: `<svg viewBox="0 0 100 110" class="w-20 h-20 sm:w-24 sm:h-24">
+                        <text x="50" y="8" font-size="7" fill="#64748b" text-anchor="middle" font-family="sans-serif" font-weight="600" letter-spacing="1">FRONT</text>
+                        <ellipse cx="50" cy="58" rx="34" ry="42" fill="#141E38" stroke="#334155" stroke-width="2"/>
+                        <path d="M 47 16 L 50 11 L 53 16" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M 16 53 Q 12 58 16 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 84 53 Q 88 58 84 64" stroke="#475569" stroke-width="2" fill="none"/>
+                        <path d="M 18 70 Q 50 50 82 70 Q 82 85 75 95 Q 50 101 25 95 Z" fill="#24314E"/>
+                        <ellipse cx="50" cy="56" rx="30" ry="36" fill="#0D9488" stroke="#14B8A6" stroke-width="1.5" class="animate-pulse"/>
+                    </svg>`
+                }
+            ],
+            female: [
+                {
+                    id: 'f_chemo',
+                    category: 'Medical Hair Loss',
+                    name: '1. Chemotherapy-Induced Alopecia',
+                    desc: 'Due to cytotoxic cancer treatments, all body hair—including scalp, eyebrows, and eyelashes—drops out rapidly and comprehensively within 1 to 3 weeks. The scalp is completely exposed and exceptionally delicate.',
+                    solution: 'Medical-Grade Soft Full Wig (Swiss Lace or Organic/Silicone Base)',
+                    detail: 'Engineered specifically for sensitive scalp protection. Worn with a breathable organic bamboo liner without glues or strong tapes that strain fragile skin.',
+                    implications: 'Since the scalp becomes extremely sensitive, Full Wigs with Swiss lace or soft organic/silicone bases offering superior breathability are essential. Worn securely with a soft under-cap liner rather than aggressive glues.',
+                    icon: 'fa-solid fa-ribbon text-rose-500'
+                },
+                {
+                    id: 'f_fphl',
+                    category: 'Female Pattern / Ludwig Scale',
+                    name: '2. Female Pattern Hair Loss (FPHL) / Diffuse Hair Loss',
+                    desc: 'The frontal hairline remains intact, but the center-parting line widens and hair density thins out in a round shape around the crown (based on the Ludwig Scale).',
+                    solution: 'Crown Topper or Volume Extensions',
+                    detail: 'Targeted custom crown topper blending seamlessly into your surrounding biological hair to restore parting density, crown lift, and realistic scalp illusion.',
+                    implications: 'Targeted silk-top crown topper or extensions restore parting line without covering unaffected healthy side and back hair.',
+                    icon: 'fa-solid fa-arrows-split-up-and-left text-teal-600'
+                },
+                {
+                    id: 'f_ffa',
+                    category: 'Scarring Frontal Alopecia',
+                    name: '3. Frontal Fibrosing Alopecia (FFA)',
+                    desc: 'The frontal hairline and temples recede backward in a band-like pattern, similar to male M-shaped loss. Skin becomes smooth and scarring, often accompanied by loss of outer eyebrows.',
+                    solution: 'Custom Lace-Front Topper or Full Wig',
+                    detail: 'Features an ultra-fine, hand-tied HD Lace Front to recreate a natural-looking faux hairline and soft baby hairs where biological hair has receded.',
+                    implications: 'Requires custom toppers or full wigs featuring a Lace Front to recreate a natural-looking faux hairline and realistic temple transitions.',
+                    icon: 'fa-solid fa-arrow-up-right-dots text-indigo-600'
+                },
+                {
+                    id: 'f_trich',
+                    category: 'Impulse-Control / Protection',
+                    name: '4. Trichotillomania',
+                    desc: 'An impulse-control condition where individuals unconsciously pull out their own hair due to psychological stress or compulsion. Broken, uneven, and sparse hairs appear in specific scalp zones.',
+                    solution: 'Secure Tape or Adhesive Fixing System (Barrier Protection)',
+                    detail: 'A secure, continuous-wear barrier system that physically blocks hands from reaching the scalp, allowing underlying natural follicles to rest and regenerate.',
+                    implications: 'To physically block hands from reaching the scalp and pulling hair, secure tape or adhesive fixing systems are strongly recommended over easily removable clip-in options.',
+                    icon: 'fa-solid fa-shield-heart text-amber-500'
+                },
+                {
+                    id: 'f_traction',
+                    category: 'Mechanical Tension Strain',
+                    name: '5. Traction Alopecia',
+                    desc: 'Hair thinning and loss around the hairline or anchor points caused by physical tension, such as tight ponytails or continuous pulling force from heavy extensions/clips.',
+                    solution: 'Tension-Free Skin-Tape or Rotational Soft-Clip System',
+                    detail: 'Relieves stress on natural follicles by rotating clip placement zones and utilizing featherlight skin-tape or poly perimeters to distribute tension evenly.',
+                    implications: 'Minimize tension on existing hair by rotating clip placements or utilizing skin-tape attachment methods to distribute pressure evenly.',
+                    icon: 'fa-solid fa-weight-hanging text-sky-600'
+                },
+                {
+                    id: 'f_telogen',
+                    category: 'Stress / Postpartum Shedding',
+                    name: '6. Telogen Effluvium',
+                    desc: 'Widespread, generalized hair shedding where hair prematurely enters the resting phase due to stress, childbirth, or severe dieting, causing noticeable clumps to shed when washing.',
+                    solution: 'Lightweight Volume-Boosting Extensions or Mini Topper',
+                    detail: 'Featherlight non-invasive volume support that comfortably conceals diffuse thinning while your biological hair naturally cycles back into the active anagen growth phase.',
+                    implications: 'Provides non-invasive, temporary volume restoration without chemical processing or heavy load during the natural follicle recovery period.',
+                    icon: 'fa-solid fa-feather text-emerald-600'
+                },
+                {
+                    id: 'f_areata',
+                    category: 'Autoimmune Focal Loss',
+                    name: '7. Alopecia Areata',
+                    desc: 'An autoimmune response causing hair to fall out in distinct, smooth, coin-sized circular patches across various areas of the scalp.',
+                    solution: 'Small Patch-Type Wigs or Partial Spot Toppers',
+                    detail: 'Precision-sized miniature hairpieces designed to cover localized circular patches without the heat, weight, or coverage of a full-head system.',
+                    implications: 'Small patch-type wigs or partial toppers covering only the localized areas, attached with hypoallergenic medical skin tape without disturbing surrounding hair.',
+                    icon: 'fa-solid fa-circle-dot text-purple-600'
+                }
+            ]
+        };
+
+        const quizCard = document.getElementById('quiz-card');
+
+        function render() {
+            if (state.step === 1) {
+                quizCard.innerHTML = `
+                    <div class="text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-3 py-1 rounded-full inline-block">
+                            Step 1 of 5
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-4 mb-2">Select Your Consultation Category</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">
+                            Tailored assessment based on male Norwood stages or specialized women's hair loss conditions.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button onclick="setGender('male')" class="p-6 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl font-bold transition-all flex flex-col items-center gap-3 group text-center cursor-pointer shadow-sm">
+                                <div class="w-14 h-14 rounded-full bg-slate-100 group-hover:bg-teal-100 flex items-center justify-center text-2xl transition-colors">
+                                    👨
+                                </div>
+                                <div>
+                                    <span class="block text-base text-slate-900 group-hover:text-teal-700">Men’s Hair Systems</span>
+                                    <span class="text-xs text-slate-400 font-normal">Norwood Hair Loss Scale (Stage 1–7)</span>
+                                </div>
+                            </button>
+                            <button onclick="setGender('female')" class="p-6 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl font-bold transition-all flex flex-col items-center gap-3 group text-center cursor-pointer shadow-sm">
+                                <div class="w-14 h-14 rounded-full bg-slate-100 group-hover:bg-teal-100 flex items-center justify-center text-2xl transition-colors">
+                                    👩
+                                </div>
+                                <div>
+                                    <span class="block text-base text-slate-900 group-hover:text-teal-700">Women’s Hair Solutions</span>
+                                    <span class="text-xs text-teal-600 font-medium">7 Types: FPHL, Chemo, Toppers &amp; Wigs</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (state.step === 2) {
+                const list = stagesData[state.gender];
+                const isFemale = state.gender === 'female';
+                let html = `
+                    <div class="text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-3 py-1 rounded-full inline-block">
+                            Step 2 of 5
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-4 mb-2">
+                            ${isFemale ? 'Select Your Hair Loss Type &amp; Pattern' : 'Select Your Norwood Hair Loss Stage'}
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">
+                            ${isFemale ? 'Choose the condition that most accurately reflects your scalp symptoms and hair loss characteristics:' : 'Compare your hairline recession and crown visibility with the Norwood anatomical diagrams below:'}
+                        </p>
+                `;
+
+                if (!isFemale) {
+                    // Male Norwood 2x2 Grid with Interactive Scalp Drawings
+                    html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">`;
+                    list.forEach(item => {
+                        html += `
+                            <button onclick="setStage('${item.id}')" class="p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/30 rounded-2xl transition-all flex flex-col justify-between text-left cursor-pointer group shadow-sm bg-white hover:shadow-md">
+                                <div>
+                                    <div class="flex items-center justify-between gap-1.5 mb-2">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 font-mono">
+                                            ${item.norwood}
+                                        </span>
+                                        ${item.badge ? `<span class="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">${item.badge}</span>` : ''}
+                                        <i class="fa-solid fa-arrow-right text-xs text-slate-300 group-hover:text-teal-600 group-hover:translate-x-1 transition-all ml-auto"></i>
+                                    </div>
+                                    <h3 class="font-extrabold text-slate-900 group-hover:text-teal-700 text-sm sm:text-base leading-snug">
+                                        ${item.name}
+                                    </h3>
+                                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1 leading-relaxed">
+                                        ${item.desc}
+                                    </p>
+                                </div>
+
+                                <!-- Scalp SVG Visual Canvas -->
+                                <div class="my-3 py-3 px-2 rounded-xl bg-gradient-to-b from-[#111A3A] to-[#0A0F24] border border-slate-700/60 flex flex-col items-center justify-center shadow-inner group-hover:border-teal-500/60 transition-colors">
+                                    <div class="py-1 flex justify-center">
+                                        ${item.svg}
+                                    </div>
+                                    <div class="text-[10px] text-teal-300 font-mono font-semibold bg-slate-900/90 py-1 px-2.5 rounded-md border border-teal-500/30 mt-1.5 text-center">
+                                        ${item.baseSize}
+                                    </div>
+                                </div>
+
+                                <!-- Solution Footer -->
+                                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                    <div class="flex flex-col pr-2">
+                                        <span class="text-[9px] uppercase font-bold text-teal-600 tracking-wider">Solution:</span>
+                                        <span class="text-xs font-semibold text-slate-800 line-clamp-1">${item.solution}</span>
+                                    </div>
+                                    <span class="text-xs font-bold text-teal-600 group-hover:underline shrink-0">Select &rarr;</span>
+                                </div>
+                            </button>
+                        `;
+                    });
+                    html += `</div>`;
+                } else {
+                    // Female Clinical Conditions List
+                    html += `<div class="space-y-3.5 text-left">`;
+                    list.forEach(item => {
+                        html += `
+                            <button onclick="setStage('${item.id}')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all flex flex-col text-left cursor-pointer group shadow-xs">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-2.5">
+                                        ${item.icon ? `<span class="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-teal-100/80 flex items-center justify-center text-sm ${item.icon} shrink-0 transition-colors"></span>` : ''}
+                                        <div>
+                                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 text-sm sm:text-base block">
+                                                ${item.name}
+                                            </span>
+                                            ${item.category ? `<span class="text-[10px] uppercase font-bold tracking-wider text-teal-600">${item.category}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform mt-1.5 shrink-0"></i>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-2.5 leading-relaxed">${item.desc}</p>
+                                <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                                    <span class="text-teal-700 font-bold uppercase text-[10px] bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">Solution:</span>
+                                    <span class="text-slate-800 font-semibold">${item.solution}</span>
+                                </div>
+                            </button>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `
+                        <button onclick="prevStep()" class="mt-6 text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 mx-auto transition-colors cursor-pointer font-medium">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back to Previous Step</span>
+                        </button>
+                    </div>
+                `;
+                quizCard.innerHTML = html;
+            } else if (state.step === 3) {
+                const isChemo = state.stage === 'f_chemo';
+                const isTrich = state.stage === 'f_trich';
+                const isTraction = state.stage === 'f_traction';
+
+                let step3Html = `
+                    <div class="text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-3 py-1 rounded-full inline-block">
+                            Step 3 of 5
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-4 mb-2">Preferred Attachment &amp; Daily Routine</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">
+                            ${isChemo ? 'For chemotherapy-induced hair loss, gentle, pressure-free attachment is critical to protect sensitive scalp tissue.' : isTrich ? 'For trichotillomania, selecting the right securing method helps physically safeguard hair follicles.' : isTraction ? 'For traction alopecia, pressure distribution and zero-tension attachment are essential.' : 'Do you prefer daily on-and-off convenience or secure extended wear?'}
+                        </p>
+                        <div class="space-y-3 text-left">
+                `;
+
+                if (isChemo) {
+                    step3Html += `
+                        <button onclick="setAttachment('Soft Organic Under-Cap / Non-Slip Silicone Grip (Zero Glue/Tension)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Soft Organic Under-Cap &amp; Non-Slip Silicone Grip (Clinically Recommended)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Fits securely without glue, clips, or strong tapes. Worn with an ultra-soft organic bamboo/cotton liner to avoid straining delicate, sensitized scalp.
+                            </span>
+                        </button>
+                        <button onclick="setAttachment('Hypoallergenic Perimeter Skin-Tape (Gentle Secure Wear)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Hypoallergenic Medical Skin-Tape (Perimeter Touch)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Gentle, dermatologically tested skin tape applied to poly perimeter tabs for extra security during windy or active days.
+                            </span>
+                        </button>
+                    `;
+                } else if (isTrich) {
+                    step3Html += `
+                        <button onclick="setAttachment('Secure Semi-Permanent Tape/Adhesive (Protective Barrier System)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Secure Tape / Adhesive Fixing System (Clinically Recommended)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Continuous bond creates a physical barrier that prevents hands from reaching the scalp and pulling hair, allowing natural follicles to rest and regrow.
+                            </span>
+                        </button>
+                        <button onclick="setAttachment('Daily Detachable (Clips / Daily Tape)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Daily Detachable (Clips / Daily Tape)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Easily removable at night. Note: Clips do not physically restrict hand access if pulling triggers occur at home.
+                            </span>
+                        </button>
+                    `;
+                } else if (isTraction) {
+                    step3Html += `
+                        <button onclick="setAttachment('Tension-Free Skin-Tape / Rotational Soft-Clip System')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Tension-Free Skin-Tape or Rotational Clip Method (Recommended)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Distributes anchoring pressure evenly across the perimeter or rotates clip anchor points regularly to avoid localized pulling strain.
+                            </span>
+                        </button>
+                        <button onclick="setAttachment('Daily Detachable (Clips / Daily Tape)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Standard Daily Wear (Silicone-Lined Clips)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Silicone-padded micro-clips removed each night to let natural roots relax without overnight tension.
+                            </span>
+                        </button>
+                    `;
+                } else {
+                    step3Html += `
+                        <button onclick="setAttachment('Daily Detachable (Clips / Daily Contour Tape)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Daily Detachable (Clips / Daily Contour Tape)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Remove easily before sleeping or showering. Ideal for effortless home maintenance and long piece longevity.
+                            </span>
+                        </button>
+                        <button onclick="setAttachment('Extended Bond (Semi-Permanent 3–4 Weeks)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                            <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                <span>Extended Bonding (Medical Adhesive / 3–4 Week Wear)</span>
+                                <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                Securely affixed for weeks. Sleep, shower, workout at the gym, and swim freely just like your natural hair.
+                            </span>
+                        </button>
+                    `;
+                }
+
+                step3Html += `
+                        </div>
+                        <button onclick="prevStep()" class="mt-6 text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 mx-auto transition-colors cursor-pointer font-medium">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back to Previous Step</span>
+                        </button>
+                    </div>
+                `;
+                quizCard.innerHTML = step3Html;
+            } else if (state.step === 4) {
+                const isChemo = state.stage === 'f_chemo';
+                quizCard.innerHTML = `
+                    <div class="text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-3 py-1 rounded-full inline-block">
+                            Step 4 of 5
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-4 mb-2">Scalp Sensitivity &amp; Base Selection</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">
+                            ${isChemo ? 'Chemotherapy makes the scalp highly sensitive. We tailor the base material for supreme softness and zero friction.' : 'Helps determine the ideal base material (Ultra-Fine Swiss Lace, Silk Scalp, Thin Skin, or Mono).'}
+                        </p>
+                        <div class="space-y-3 text-left">
+                            <button onclick="setScalp('Highly Sensitive Scalp (Ultra-Soft Swiss Lace / Organic Silk Lining)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                                <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                    <span>${isChemo ? 'Sensitive / Tender Scalp (Ultra-Soft Swiss Lace & Organic Lining)' : 'Sensitive Scalp / Prone to Heat & High Perspiration'}</span>
+                                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                                <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                    ${isChemo ? 'Featherlight Swiss lace and soft organic bamboo lining offering maximum breathability with zero scratchiness on bare skin.' : 'Maximum airflow is critical. We recommend ultra-breathable Swiss/French Lace or ventilated hybrid bases.'}
+                                </span>
+                            </button>
+                            <button onclick="setScalp('Standard Scalp (Fine Mono or Lace with Soft Silicone Perimeter)')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                                <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                    <span>${isChemo ? 'Moderate Sensitivity (Soft Silicone Grip Perimeter & Lace Core)' : 'Standard Scalp / Balanced Durability & Natural Feel'}</span>
+                                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                                <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                    ${isChemo ? 'Soft silicone perimeter tabs that grip gently without adhesion, paired with a realistic scalp center.' : 'Fine Monofilament or PU skin perimeter combination for optimal lifespan, easy cleaning, and realistic scalp illusion.'}
+                                </span>
+                            </button>
+                        </div>
+                        <button onclick="prevStep()" class="mt-6 text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 mx-auto transition-colors cursor-pointer font-medium">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back to Previous Step</span>
+                        </button>
+                    </div>
+                `;
+            } else if (state.step === 5) {
+                const isChemo = state.stage === 'f_chemo';
+                const isFFA = state.stage === 'f_ffa';
+                const isTraction = state.stage === 'f_traction';
+
+                quizCard.innerHTML = `
+                    <div class="text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 border border-teal-200/80 px-3 py-1 rounded-full inline-block">
+                            Step 5 of 5
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-4 mb-2">Bio Hair Condition &amp; Transition</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mb-6">
+                            ${isChemo ? 'Assess whether you currently have complete hair loss or if early regrowth has begun.' : isFFA ? 'Assess frontal temple recession and surrounding hair strength for natural lace-front blending.' : 'Assessing remaining hair strength to ensure zero traction stress and seamless blend.'}
+                        </p>
+                        <div class="space-y-3 text-left">
+                            <button onclick="setHairCondition('${isChemo ? 'Complete Scalp Exposure (Full Wig with Soft Liner)' : isFFA ? 'Receded Frontal Band with Preserved Mid/Back Bio Hair' : 'Sufficient Bio Hair Density (Clip-Ready)'}')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                                <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                    <span>${isChemo ? 'Complete Scalp Exposure (Total Hair Loss)' : isFFA ? 'Receded Frontal Hairline with Healthy Mid/Back Density' : 'Sufficient Hair Strength Along Sides & Back'}</span>
+                                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                                <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                    ${isChemo ? 'Full coverage system resting gently on the scalp without reliance on biological hair anchoring.' : isFFA ? 'Lace Front recreates the missing hairline while custom topper or wig seamlessly blends with preserved bio hair in the crown and back.' : 'Your natural hair has ample tensile strength to support silicone-lined pressure clips securely and comfortably.'}
+                                </span>
+                            </button>
+                            <button onclick="setHairCondition('${isChemo ? 'Early Regrowth Phase (Fragile Baby Hair)' : isTraction ? 'Delicate / Thinning Hair (Tension-Free Bond Required)' : 'Delicate / Thinning Hair (Tension-Free Bond Recommended)'}')" class="w-full p-4 sm:p-5 border-2 border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 rounded-2xl transition-all cursor-pointer group">
+                                <span class="font-extrabold text-slate-900 group-hover:text-teal-700 block text-sm sm:text-base flex items-center justify-between">
+                                    <span>${isChemo ? 'Early Regrowth Phase (Emerging Fine Hair)' : 'Delicate or Diffuse Hair (Traction-Sensitive)'}</span>
+                                    <i class="fa-solid fa-arrow-right text-xs text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                                <span class="text-xs text-slate-500 mt-1 block leading-relaxed">
+                                    ${isChemo ? 'Gentle protective cap environment that shields fine emerging hair without pulling or stifling growth.' : 'Avoid clip strain. Hypoallergenic medical tape, perimeter liquid bond, or zero-tension perimeter contact is recommended.'}
+                                </span>
+                            </button>
+                        </div>
+                        <button onclick="prevStep()" class="mt-6 text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 mx-auto transition-colors cursor-pointer font-medium">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back to Previous Step</span>
+                        </button>
+                    </div>
+                `;
+            } else if (state.step === 6) {
+                const stageObj = stagesData[state.gender].find(s => s.id === state.stage);
+                const isFemale = state.gender === 'female';
+                quizCard.innerHTML = `
+                    <div class="text-left">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full inline-flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                                <span>Assessment Complete</span>
+                            </span>
+                            <span class="text-xs text-slate-400 font-mono">Ref: DH-DIAG-${Date.now().toString().slice(-6)}</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-1">
+                            ${isFemale ? 'Women’s Personalized Hair Restoration Proposal' : 'Men’s Personalized Hair Solution Proposal'}
+                        </h2>
+                        <p class="text-xs text-slate-500 mb-6">
+                            Synthesized based on your hair loss condition, scalp sensitivity, and daily lifestyle routine.
+                        </p>
+                        
+                        <!-- Recommendation Banner Card -->
+                        <div class="bg-gradient-to-br from-teal-900 to-slate-900 text-white rounded-2xl p-5 sm:p-6 mb-6 shadow-lg border border-teal-500/30">
+                            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                                ${!isFemale && stageObj.svg ? `
+                                    <div class="shrink-0 p-2.5 rounded-xl bg-[#0A0F24]/90 border border-teal-500/40 flex flex-col items-center">
+                                        <div class="w-20 h-20">
+                                            ${stageObj.svg}
+                                        </div>
+                                        <span class="text-[9px] text-teal-300 font-mono mt-1 font-bold">${stageObj.norwood || ''}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="flex-1 text-center sm:text-left">
+                                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                        <span class="text-[10px] font-extrabold tracking-wider uppercase text-teal-300 bg-teal-500/20 px-2.5 py-0.5 rounded-full border border-teal-400/30">
+                                            Recommended Solution
+                                        </span>
+                                        ${stageObj.category ? `<span class="text-[10px] font-semibold text-slate-300 font-mono">${stageObj.category}</span>` : ''}
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-white mt-2">${stageObj.solution}</h3>
+                                    <p class="text-xs text-slate-200 mt-1.5 leading-relaxed">${stageObj.detail}</p>
+                                    ${stageObj.baseSize ? `<div class="mt-2.5 text-xs font-mono text-teal-300 font-semibold"><i class="fa-solid fa-ruler-combined mr-1.5"></i>${stageObj.baseSize}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        ${stageObj.implications ? `
+                        <!-- Solution Implications Highlight -->
+                        <div class="bg-indigo-50/70 border border-indigo-200/80 rounded-xl p-4 mb-6 text-xs text-indigo-950">
+                            <div class="flex items-center gap-2 mb-1.5 font-bold text-indigo-900 text-[11px] uppercase tracking-wider">
+                                <i class="fa-solid fa-stethoscope text-indigo-600"></i>
+                                <span>Clinical &amp; Salon Solution Implications</span>
+                            </div>
+                            <p class="leading-relaxed text-indigo-900">${stageObj.implications}</p>
+                        </div>
+                        ` : ''}
+
+                        <!-- Details Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 text-xs text-slate-700">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                <span class="font-bold text-slate-900 block mb-1 text-[11px] uppercase tracking-wider text-teal-700">
+                                    <i class="fa-solid fa-chart-line mr-1 text-teal-600"></i> ${isFemale ? 'Hair Loss Condition' : 'Hair Loss Stage'}
+                                </span>
+                                <div class="font-medium text-slate-800">${stageObj.name}</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">${stageObj.desc}</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                <span class="font-bold text-slate-900 block mb-1 text-[11px] uppercase tracking-wider text-teal-700">
+                                    <i class="fa-solid fa-link mr-1 text-teal-600"></i> Attachment Method
+                                </span>
+                                <div class="font-medium text-slate-800">${state.attachment}</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                <span class="font-bold text-slate-900 block mb-1 text-[11px] uppercase tracking-wider text-teal-700">
+                                    <i class="fa-solid fa-shield-halved mr-1 text-teal-600"></i> Scalp Compatibility
+                                </span>
+                                <div class="font-medium text-slate-800">${state.scalp}</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                <span class="font-bold text-slate-900 block mb-1 text-[11px] uppercase tracking-wider text-teal-700">
+                                    <i class="fa-solid fa-scissors mr-1 text-teal-600"></i> Bio Hair Strategy
+                                </span>
+                                <div class="font-medium text-slate-800">${state.hairCondition}</div>
+                            </div>
+                        </div>
+
+                        <!-- Salon Location & Confidentiality Box -->
+                        <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4 mb-6 text-xs text-amber-900 flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot text-amber-600 text-sm mt-0.5 shrink-0"></i>
+                            <div>
+                                <strong class="block text-slate-900">David Hair Flagship Studio Melbourne</strong>
+                                <span>Shop F16 (Level 1), Buckingham Ave, Springvale VIC 3171. Consultations, head measurements, and fittings are conducted 100% private 1-on-1 with complete discretion.</span>
+                            </div>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="https://wa.me/61433484882?text=${encodeURIComponent('Hi David Hair Melbourne, I completed the online diagnostic assessment for [' + stageObj.name + ' - ' + stageObj.solution + ']. I would like to book a private consultation at your Springvale studio.')}" target="_blank" rel="noopener" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all text-xs text-center flex items-center justify-center gap-2 shadow-md">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Book Private Fitting on WhatsApp</span>
+                            </a>
+                            <button onclick="window.print()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all text-xs flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-print"></i>
+                                <span>Print / Save Assessment</span>
+                            </button>
+                        </div>
+
+                        <div class="text-center pt-4">
+                            <button onclick="resetQuiz()" class="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer">
+                                Restart Diagnostic Assessment
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function setGender(g) {
+            state.gender = g;
+            state.step = 2;
+            render();
+        }
+
+        function setStage(s) {
+            state.stage = s;
+            state.step = 3;
+            render();
+        }
+
+        function setAttachment(a) {
+            state.attachment = a;
+            state.step = 4;
+            render();
+        }
+
+        function setScalp(sc) {
+            state.scalp = sc;
+            state.step = 5;
+            render();
+        }
+
+        function setHairCondition(hc) {
+            state.hairCondition = hc;
+            state.step = 6;
+            render();
+        }
+
+        function prevStep() {
+            if (state.step > 1) {
+                state.step--;
+                render();
+            }
+        }
+
+        function resetQuiz() {
+            state.gender = null;
+            state.stage = null;
+            state.attachment = null;
+            state.scalp = null;
+            state.hairCondition = null;
+            state.step = 1;
+            render();
+        }
+
+        // Initialize Rendering
+        render();
+    </script>
+</body>
+
+</html>
