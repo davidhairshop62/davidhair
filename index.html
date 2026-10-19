@@ -2067,7 +2067,7 @@
                     },
                     {
                         name: 'Slick Back',
-                        category: 'Unisex',
+                        category: 'Man',
                         tag: 'Back Swept Undercut',
                         overlay: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320" fill="none"><path d="M105,210 C95,110 150,20 250,15 C350,20 405,110 395,210 C380,150 340,50 250,55 C160,50 120,150 105,210 Z" fill="%23181818" opacity="0.95"/><path d="M125,170 C160,60 340,60 375,170 C340,90 250,85 125,170 Z" fill="%232c2c2c" opacity="0.88"/><path d="M150,120 C190,40 310,40 350,120 C310,55 190,55 150,120 Z" fill="%230a0a0a" opacity="0.95"/></svg>'
                     },
@@ -2084,19 +2084,13 @@
                     if (this.selectedCategory === 'Man') {
                         return this.styles.filter(s => {
                             const c = (s.category || s.gender || '').trim().toLowerCase();
-                            return c === 'man' || c === 'men' || c === 'unisex';
+                            return c === 'man' || c === 'men';
                         });
                     }
                     if (this.selectedCategory === 'Woman') {
                         return this.styles.filter(s => {
                             const c = (s.category || s.gender || '').trim().toLowerCase();
-                            return c === 'woman' || c === 'women' || c.includes('wom') || c === 'unisex';
-                        });
-                    }
-                    if (this.selectedCategory === 'Unisex') {
-                        return this.styles.filter(s => {
-                            const c = (s.category || s.gender || '').trim().toLowerCase();
-                            return c === 'unisex';
+                            return c === 'woman' || c === 'women' || c.includes('wom');
                         });
                     }
                     return this.styles;
@@ -2168,15 +2162,13 @@
                                 let cat = 'Man';
                                 if (g === 'women' || g === 'woman' || g.includes('wom') || item.name.toLowerCase().includes('woman') || item.name.toLowerCase().includes('topper') || item.name.toLowerCase().includes('female')) {
                                     cat = 'Woman';
-                                } else if (g === 'unisex') {
-                                    cat = 'Unisex';
                                 } else {
                                     cat = 'Man';
                                 }
                                 return {
                                     ...item,
                                     category: cat,
-                                    gender: cat === 'Woman' ? 'Women' : (cat === 'Unisex' ? 'Unisex' : 'Men')
+                                    gender: cat === 'Woman' ? 'Women' : 'Men'
                                 };
                             });
                             const available = this.filteredStyles;
@@ -2303,7 +2295,7 @@
                     this.selectedCategory = cat;
                     if (cat === 'Man') {
                         this.userFacePhoto = 'images/basicman.png';
-                    } else if (cat === 'Woman' || cat === 'Unisex') {
+                    } else if (cat === 'Woman') {
                         this.userFacePhoto = 'images/basicwoman.png';
                     } else if (cat === 'All') {
                         this.userFacePhoto = 'images/basicman.png';
@@ -6505,7 +6497,7 @@
                             </div>
                         </div>
 
-                        <!-- STEP 2: Hairstyle Category Filters (Man, Woman, Unisex, All) -->
+                        <!-- STEP 2: Hairstyle Category Filters (Man, Woman, All) -->
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight">Step 2:
@@ -6513,32 +6505,27 @@
                                 <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-brand-inner border border-brand-border text-slate-200" x-text="selectedStyle"></span>
                             </div>
 
-                            <!-- Category Filter Tabs (Man, Woman, Unisex, All) -->
+                            <!-- Category Filter Tabs (Man, Woman, All) -->
                             <div
                                 class="flex items-center gap-1.5 bg-brand-inner p-1 rounded-xl border border-brand-border text-xs font-bold">
                                 <button type="button" @click="selectCategory('Man')"
                                     :class="selectedCategory === 'Man' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
-                                    class="flex-1 py-1.5 rounded-lg transition-all text-center">
+                                    class="flex-1 py-1.5 rounded-lg transition-all text-center cursor-pointer">
                                     👨 Men
                                 </button>
                                 <button type="button" @click="selectCategory('Woman')"
                                     :class="selectedCategory === 'Woman' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'"
-                                    class="flex-1 py-1.5 rounded-lg transition-all text-center">
+                                    class="flex-1 py-1.5 rounded-lg transition-all text-center cursor-pointer">
                                     👩 Women
-                                </button>
-                                <button type="button" @click="selectCategory('Unisex')"
-                                    :class="selectedCategory === 'Unisex' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
-                                    class="flex-1 py-1.5 rounded-lg transition-all text-center">
-                                    👫 Unisex
                                 </button>
                                 <button type="button" @click="selectCategory('All')"
                                     :class="selectedCategory === 'All' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
-                                    class="py-1.5 px-2.5 rounded-lg transition-all text-center">
+                                    class="py-1.5 px-3 rounded-lg transition-all text-center cursor-pointer">
                                     ✨ All
                                 </button>
                             </div>
 
-                            <!-- Style Cards List (150*150 Hairstyle Photos Only) -->
+                            <!-- Style Cards List (150*150 Hairstyle Photos on White Background) -->
                             <div class="flex flex-wrap items-center gap-3 max-h-[340px] overflow-y-auto pr-1 justify-center sm:justify-start">
                                 <template x-for="st in filteredStyles" :key="st.name">
                                     <button type="button" @click="selectedStyle = st.name"
@@ -6546,15 +6533,15 @@
                                         :class="[
                                             isWomanStyle(st)
                                                 ? (selectedStyle === st.name
-                                                    ? 'border-pink-300 ring-2 ring-pink-400 bg-pink-950/40 shadow-lg shadow-pink-500/25 scale-[1.02]'
-                                                    : 'border-pink-400 bg-brand-inner hover:border-pink-300 hover:scale-[1.01]')
+                                                    ? 'border-pink-500 ring-4 ring-pink-400/50 shadow-lg shadow-pink-500/25 scale-[1.02]'
+                                                    : 'border-pink-400 hover:border-pink-500 hover:scale-[1.01]')
                                                 : (selectedStyle === st.name
-                                                    ? 'border-brand-teal ring-2 ring-brand-teal bg-teal-950/60 shadow-lg shadow-teal-500/20 scale-[1.02]'
-                                                    : 'border-brand-border bg-brand-inner hover:border-slate-500 hover:scale-[1.01]')
+                                                    ? 'border-brand-teal ring-4 ring-teal-400/50 shadow-lg shadow-teal-500/25 scale-[1.02]'
+                                                    : 'border-brand-border hover:border-slate-400 hover:scale-[1.01]')
                                         ]"
-                                        class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] max-w-[150px] max-h-[150px] border-2 rounded-xl p-1.5 flex items-center justify-center transition-all cursor-pointer relative overflow-hidden group">
+                                        class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] max-w-[150px] max-h-[150px] bg-white border-2 rounded-2xl p-1.5 flex items-center justify-center transition-all cursor-pointer relative overflow-hidden group shadow-sm">
                                         <img :src="st.overlay" :alt="st.name"
-                                            class="w-full h-full object-contain rounded-lg transition-transform duration-200 group-hover:scale-105 pointer-events-none"
+                                            class="w-full h-full object-contain rounded-xl transition-transform duration-200 group-hover:scale-105 pointer-events-none"
                                             loading="lazy">
                                     </button>
                                 </template>

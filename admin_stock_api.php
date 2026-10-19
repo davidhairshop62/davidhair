@@ -130,9 +130,6 @@ try {
             if ($g === 'women' || $g === 'woman' || str_contains($g, 'wom')) {
                 $it['category'] = 'Woman';
                 $it['gender'] = 'Women';
-            } elseif ($g === 'unisex') {
-                $it['category'] = 'Unisex';
-                $it['gender'] = 'Unisex';
             } else {
                 $it['category'] = 'Man';
                 $it['gender'] = 'Men';

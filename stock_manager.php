@@ -1794,7 +1794,6 @@
                     <select x-model="aiForm.gender" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
                         <option value="Men">Men's Style</option>
                         <option value="Women">Women's Style</option>
-                        <option value="Unisex">Unisex</option>
                     </select>
                 </div>
                 <div>
