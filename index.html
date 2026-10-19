@@ -3033,14 +3033,9 @@
         class="relative pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
         x-init="$nextTick(() => { updateVideos(); }); setInterval(() => { playNext(); }, 6000);" x-data="{
             videos: ['videos/Runing.mp4', 'videos/shampoo.mp4', 'videos/swim.mp4', 'videos/windy.mp4'],
-            videoNames: ['Running', 'Shampoo', 'Swimming', 'Windy'],
             currentIdx: 0,
             playNext() {
                 this.currentIdx = (this.currentIdx + 1) % this.videos.length;
-                this.updateVideos();
-            },
-            selectVideo(idx) {
-                this.currentIdx = idx;
                 this.updateVideos();
             },
             updateVideos() {
@@ -3156,20 +3151,6 @@
                 </div>
             </div>
 
-            <!-- Video Playlist Indicators -->
-            <div class="mt-8 pt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3 z-10 relative">
-                <span class="text-xs text-slate-400 font-semibold mr-2 hidden sm:inline-block"><i
-                        class="fa-solid fa-clapperboard text-brand-tealLight mr-1.5"></i>Background Scene:</span>
-                <template x-for="(name, idx) in videoNames" :key="idx">
-                    <button @click="selectVideo(idx)"
-                        :class="currentIdx === idx ? 'bg-brand-teal text-white border-brand-tealLight scale-105 shadow-md' : 'bg-brand-cardBg/80 text-slate-300 border-brand-border hover:border-slate-500'"
-                        class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all flex items-center gap-1.5 backdrop-blur-sm cursor-pointer">
-                        <span class="w-2.5 h-2.5 rounded-full"
-                            :class="currentIdx === idx ? 'bg-white animate-pulse' : 'bg-slate-500'"></span>
-                        <span x-text="(idx + 1) + '. ' + name"></span>
-                    </button>
-                </template>
-            </div>
         </div>
     </section>
 
