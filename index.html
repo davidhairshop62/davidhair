@@ -2102,6 +2102,13 @@
                     return this.styles;
                 },
 
+                isWomanStyle(st) {
+                    if (!st) return false;
+                    if (this.selectedCategory === 'Woman') return true;
+                    const g = (st.gender || st.category || '').toLowerCase();
+                    return g.includes('wom') || g.includes('female');
+                },
+
                 getHairOverlayUrl() {
                     const matched = this.styles.find(s => s.name === this.selectedStyle);
                     return matched ? matched.overlay : (this.styles[0] ? this.styles[0].overlay : '');
@@ -6499,9 +6506,12 @@
                         </div>
 
                         <!-- STEP 2: Hairstyle Category Filters (Man, Woman, Unisex, All) -->
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight">Step 2:
-                                Select Category & Style</label>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight">Step 2:
+                                    Select Category & Style</label>
+                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-brand-inner border border-brand-border text-slate-200" x-text="selectedStyle"></span>
+                            </div>
 
                             <!-- Category Filter Tabs (Man, Woman, Unisex, All) -->
                             <div
@@ -6512,7 +6522,7 @@
                                     👨 Men
                                 </button>
                                 <button type="button" @click="selectCategory('Woman')"
-                                    :class="selectedCategory === 'Woman' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 hover:text-white'"
+                                    :class="selectedCategory === 'Woman' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'"
                                     class="flex-1 py-1.5 rounded-lg transition-all text-center">
                                     👩 Women
                                 </button>
@@ -6528,22 +6538,27 @@
                                 </button>
                             </div>
 
-                            <!-- Style Cards Grid -->
-                            <div class="grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto pr-1">
+                            <!-- Style Cards List (150*150 Hairstyle Photos Only) -->
+                            <div class="flex flex-wrap items-center gap-3 max-h-[340px] overflow-y-auto pr-1 justify-center sm:justify-start">
                                 <template x-for="st in filteredStyles" :key="st.name">
-                                    <button @click="selectedStyle = st.name"
-                                        :class="selectedStyle === st.name ? 'border-brand-teal bg-teal-950/60 text-white font-bold shadow-md' : 'border-brand-border bg-brand-inner text-slate-300 hover:border-slate-500'"
-                                        class="p-2.5 border-2 rounded-xl text-left transition-all min-h-[54px] flex items-center justify-between">
-                                        <div>
-                                            <div class="text-xs font-bold" x-text="st.name"></div>
-                                            <div class="text-[10px] text-brand-textMuted"
-                                                x-text="st.tag || (st.gender === 'Women' || st.category === 'Woman' ? 'Women Hairstyle' : 'Men Hairstyle')"></div>
-                                        </div>
-                                        <i class="fa-solid fa-scissors text-xs"
-                                            :class="selectedStyle === st.name ? 'text-brand-tealLight' : 'text-slate-500'"></i>
+                                    <button type="button" @click="selectedStyle = st.name"
+                                        :title="st.name + (st.tag ? ' - ' + st.tag : '')"
+                                        :class="[
+                                            isWomanStyle(st)
+                                                ? (selectedStyle === st.name
+                                                    ? 'border-pink-300 ring-2 ring-pink-400 bg-pink-950/40 shadow-lg shadow-pink-500/25 scale-[1.02]'
+                                                    : 'border-pink-400 bg-brand-inner hover:border-pink-300 hover:scale-[1.01]')
+                                                : (selectedStyle === st.name
+                                                    ? 'border-brand-teal ring-2 ring-brand-teal bg-teal-950/60 shadow-lg shadow-teal-500/20 scale-[1.02]'
+                                                    : 'border-brand-border bg-brand-inner hover:border-slate-500 hover:scale-[1.01]')
+                                        ]"
+                                        class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] max-w-[150px] max-h-[150px] border-2 rounded-xl p-1.5 flex items-center justify-center transition-all cursor-pointer relative overflow-hidden group">
+                                        <img :src="st.overlay" :alt="st.name"
+                                            class="w-full h-full object-contain rounded-lg transition-transform duration-200 group-hover:scale-105 pointer-events-none"
+                                            loading="lazy">
                                     </button>
                                 </template>
-                                <div x-show="filteredStyles.length === 0" class="col-span-2 py-6 text-center text-slate-400 text-xs bg-brand-inner/40 rounded-xl border border-dashed border-brand-border">
+                                <div x-show="filteredStyles.length === 0" class="w-full py-8 text-center text-slate-400 text-xs bg-brand-inner/40 rounded-xl border border-dashed border-brand-border">
                                     <i class="fa-solid fa-sparkles text-brand-tealLight text-sm mb-1.5 block"></i>
                                     <span class="font-medium">No styles registered in this category</span>
                                 </div>
