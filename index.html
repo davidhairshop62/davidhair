@@ -2695,7 +2695,7 @@
                 <!-- 1. All About Us Dropdown (Order, Stock, Salon, Solutions, Factory, B2B) -->
                 <div class="relative group" x-data="{ productsOpen: false }" @mouseenter="productsOpen = true" @mouseleave="productsOpen = false">
                     <button type="button" @click="productsOpen = !productsOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer">
-                        <span>All About Us</span>
+                        <span>ALL OF US</span>
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': productsOpen }"></i>
                     </button>
                     <!-- Dropdown Menu -->
@@ -2708,14 +2708,14 @@
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                         class="absolute left-0 top-full pt-1 w-64 z-50 normal-case">
                         <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1 flex flex-col">
-                            <!-- 1. Top Featured: FFA Frontal Piece -->
+                            <!-- 1. Top Featured: FRONTAL -->
                             <a href="#frontal-fibrosing-alopecia" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-white transition-all group/item shadow-sm">
                                 <div class="w-8 h-8 rounded-lg bg-teal-500/30 border border-teal-400/60 flex items-center justify-center text-teal-300 group-hover/item:scale-110 transition-transform">
                                     <i class="fa-solid fa-head-side-mask text-xs"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between gap-1">
-                                        <div class="font-extrabold text-xs uppercase tracking-wider text-teal-300">FFA Frontal Piece</div>
+                                        <div class="font-extrabold text-xs uppercase tracking-wider text-teal-300">FRONTAL</div>
                                         <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight shadow-sm">NEW</span>
                                     </div>
                                     <div class="text-[10px] text-teal-200/80 font-medium">Headband Fringe &bull; 앞머리 밴드 가발</div>
@@ -2800,33 +2800,33 @@
                     </div>
                 </div>
 
-                <!-- 1.1 Direct FFA Frontal Piece Nav Link -->
+                <!-- 1.1 Direct FRONTAL Nav Link -->
                 <a href="#frontal-fibrosing-alopecia"
                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-teal-300 group">
                     <i class="fa-solid fa-head-side-mask text-teal-400 text-xs"></i>
-                    <span>FFA Frontal Piece</span>
+                    <span>FRONTAL</span>
                     <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight shadow-sm">NEW</span>
                 </a>
 
-                <!-- 2. Self-Check Nav Link -->
+                <!-- 2. SELF CHECK Nav Link -->
                 <a href="#hair-diagnosis-hub" 
                    x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white group">
                     <i class="fa-solid fa-clipboard-check text-teal-400"></i>
-                    <span>Self-Check</span>
+                    <span>SELF CHECK</span>
                     <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase font-mono tracking-wider">5-Step</span>
                 </a>
 
-                <!-- 3. AI Try-on Nav Link -->
+                <!-- 3. TRY ON Nav Link -->
                 <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
                     <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                    <span>AI Try-on</span>
+                    <span>TRY ON</span>
                 </a>
 
-                <!-- 4. Before & After Nav Link -->
+                <!-- 4. B/A Nav Link -->
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
                     <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
-                    <span>Before &amp; After</span>
+                    <span>B/A</span>
                 </a>
 
                 <!-- 5. FAQ Modal Button -->
@@ -2961,23 +2961,23 @@
 
             <!-- Mobile Navigation Links (Ordered dynamically via CSS flex order) -->
             <div class="flex flex-col space-y-1">
-                <!-- 1. Mobile All About Us Dropdown -->
+                <!-- 1. Mobile ALL OF US Dropdown -->
                 <div x-data="{ mobileProductsOpen: false }" class="border-b border-slate-700/60 pb-2">
                     <button type="button" @click="mobileProductsOpen = !mobileProductsOpen"
                         class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
                         <span class="flex items-center gap-2">
                             <i class="fa-solid fa-box-open text-brand-tealLight text-xs"></i>
-                            <span>All About Us</span>
+                            <span>ALL OF US</span>
                         </span>
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
                     </button>
                     <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
-                        <!-- Top Featured: FFA Frontal Piece -->
+                        <!-- Top Featured: FRONTAL -->
                         <a href="#frontal-fibrosing-alopecia" @click="mobileMenuOpen = false"
                             class="block text-white font-medium py-2 px-2.5 rounded-lg bg-teal-500/20 border border-teal-400/40 text-xs flex items-center justify-between transition-colors shadow-sm">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-head-side-mask text-teal-300 text-xs"></i>
-                                <span class="font-bold uppercase tracking-wider text-teal-300">FFA Frontal Piece</span>
+                                <span class="font-bold uppercase tracking-wider text-teal-300">FRONTAL</span>
                                 <span class="text-slate-300 text-[10px]">(Headband Fringe)</span>
                             </div>
                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono">NEW</span>
@@ -3027,44 +3027,44 @@
                     </div>
                 </div>
 
-                <!-- 1.1 Direct Mobile FFA Frontal Piece Nav Link -->
+                <!-- 1.1 Direct Mobile FRONTAL Nav Link -->
                 <a href="#frontal-fibrosing-alopecia" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg bg-teal-500/10 border border-teal-500/30 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
                     <span class="flex items-center gap-2 text-teal-300">
                         <i class="fa-solid fa-head-side-mask text-xs"></i>
-                        <span>FFA Frontal Piece</span>
+                        <span>FRONTAL</span>
                     </span>
                     <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono">NEW</span>
                 </a>
 
-                <!-- 2. Mobile Self-Check Nav Link -->
+                <!-- 2. Mobile SELF CHECK Nav Link -->
                 <a href="#hair-diagnosis-hub" 
                    x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
                    @click="mobileMenuOpen = false"
                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-clipboard-check text-teal-400"></i>
-                        <span>Self-Check</span>
+                        <span>SELF CHECK</span>
                     </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">5-Step</span>
                 </a>
 
-                <!-- 3. Mobile AI Try-on Nav Link -->
+                <!-- 3. Mobile TRY ON Nav Link -->
                 <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
                     <span class="flex items-center gap-2 text-teal-300">
                         <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                        <span>AI Try-on</span>
+                        <span>TRY ON</span>
                     </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Tech</span>
                 </a>
 
-                <!-- 4. Mobile Before & After Nav Link -->
+                <!-- 4. Mobile B/A Nav Link -->
                 <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" @click="mobileMenuOpen = false"
                     class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
-                        <span>Before &amp; After</span>
+                        <span>B/A</span>
                     </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
                 </a>

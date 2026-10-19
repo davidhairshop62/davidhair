@@ -41,8 +41,9 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // Ensure header menu titles match standard navigation
-    $conn->exec("UPDATE site_sections SET menu_title = 'Self-Check', menu_icon = 'fa-clipboard-check' WHERE section_key = 'hair-diagnosis-hub' AND (menu_title = 'Diagnostic Tool' OR menu_title = '')");
-    $conn->exec("UPDATE site_sections SET menu_title = 'AI Try-on' WHERE section_key = 'ai-simulator' AND (menu_title = 'AI Try-On' OR menu_title = '')");
+    $conn->exec("UPDATE site_sections SET menu_title = 'SELF CHECK', menu_icon = 'fa-clipboard-check' WHERE section_key = 'hair-diagnosis-hub'");
+    $conn->exec("UPDATE site_sections SET menu_title = 'TRY ON' WHERE section_key = 'ai-simulator'");
+    $conn->exec("UPDATE site_sections SET menu_title = 'B/A' WHERE section_key = 'transformations'");
 
     // Ensure FFA section exists in site_sections table and has order 2, and diagnosis hub has order 3
     try {
@@ -50,9 +51,9 @@ try {
         $checkFfa = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'frontal-fibrosing-alopecia'");
         if ($checkFfa && $checkFfa->fetchColumn() == 0) {
             $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
-                VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FFA Frontal', 'fa-head-side-mask', 'FFA', 2)");
+                VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FRONTAL', 'fa-head-side-mask', 'NEW', 2)");
         } else {
-            $conn->exec("UPDATE site_sections SET sort_order = 2, is_visible = 1, in_menu = 1 WHERE section_key = 'frontal-fibrosing-alopecia'");
+            $conn->exec("UPDATE site_sections SET menu_title = 'FRONTAL', sort_order = 2, is_visible = 1, in_menu = 1 WHERE section_key = 'frontal-fibrosing-alopecia'");
         }
     } catch(Exception $eFfa) {}
 
@@ -79,9 +80,9 @@ try {
                 'description' => 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'FFA Frontal',
+                'menu_title' => 'FRONTAL',
                 'menu_icon' => 'fa-head-side-mask',
-                'menu_badge' => 'FFA',
+                'menu_badge' => 'NEW',
                 'sort_order' => 2
             ],
             [
@@ -91,10 +92,10 @@ try {
                 'description' => 'Self-Assessment & Style Diagnostic Hub: Clinical 5-step diagnostic tool (diag.html with Norwood stages & women\'s 7 conditions), Option 1 wizard, Option 2 visual matrix, and tailored hair system specs.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'Self-Check',
+                'menu_title' => 'SELF CHECK',
                 'menu_icon' => 'fa-clipboard-check',
                 'menu_badge' => '5-Step',
-                'sort_order' => 2
+                'sort_order' => 3
             ],
             [
                 'section_key' => 'diagnosis-option1',
@@ -175,7 +176,7 @@ try {
                 'description' => 'Real client transformation gallery, before and after slider, 10-year youth look.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'Before & After',
+                'menu_title' => 'B/A',
                 'menu_icon' => 'fa-arrows-split-up-and-left',
                 'menu_badge' => '10-Yr Youth',
                 'sort_order' => 9
@@ -187,7 +188,7 @@ try {
                 'description' => 'Live camera and photo upload virtual hair fitting simulator with touch drag/scale.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'AI Try-On',
+                'menu_title' => 'TRY ON',
                 'menu_icon' => 'fa-wand-magic-sparkles',
                 'menu_badge' => 'AI Tech',
                 'sort_order' => 10
