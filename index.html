@@ -108,6 +108,12 @@
                     this.diagUrl = 'diag.html?t=' + Date.now();
                     this.isDiagModalOpen = true;
                 },
+                isFfaModalOpen: false,
+                ffaModalUrl: 'ffa_interactive_questionnaire.html?t=' + Date.now(),
+                openFfaModal() {
+                    this.ffaModalUrl = 'ffa_interactive_questionnaire.html?t=' + Date.now();
+                    this.isFfaModalOpen = true;
+                },
                 isFaqModalOpen: false,
                 isMapModalOpen: false,
                 googleMapsPlaceUrl: 'https://www.google.com/maps/place/David+Hair+Shop/@-37.951084,145.1483707,17z/data=!3m2!4b1!5s0x6ad614c7832bd26b:0x4e8247ab315ada8f!4m6!3m5!1s0x6ad61408aa7f0829:0xe8f1dc7860f28ea4!8m2!3d-37.951084!4d145.150951!16s%2Fg%2F1tgc9n5p?entry=ttu&g_ep=EgoyMDI2MTAxNC4wIKXMDSoASAFQAw%3D%3D',
@@ -505,6 +511,17 @@
                         if (isOpen) {
                             this.diagUrl = 'diag.html?t=' + Date.now();
                         }
+                    });
+
+                    // Always ensure fresh ffa_interactive_questionnaire.html on modal open
+                    this.$watch('isFfaModalOpen', (isOpen) => {
+                        if (isOpen) {
+                            this.ffaModalUrl = 'ffa_interactive_questionnaire.html?t=' + Date.now();
+                        }
+                    });
+
+                    window.addEventListener('open-ffa-modal', () => {
+                        this.openFfaModal();
                     });
 
 
@@ -2465,6 +2482,10 @@
                     const m = Math.floor(seconds / 60);
                     const s = Math.floor(seconds % 60);
                     return `${m}:${s < 10 ? '0' : ''}${s}`;
+                },
+
+                openFfaModal() {
+                    window.dispatchEvent(new CustomEvent('open-ffa-modal'));
                 }
             };
         }
@@ -3580,9 +3601,9 @@
                             <i class="fa-solid fa-calendar-check"></i>
                             <span>Book Free Springvale Consultation</span>
                         </button>
-                        <button type="button" @click="openDiagModal()"
-                            class="w-full sm:w-auto bg-brand-cardBg hover:bg-brand-border text-slate-200 border border-brand-border font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all text-center flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-clipboard-check text-brand-tealLight"></i>
+                        <button type="button" @click="$dispatch('open-ffa-modal'); openFfaModal();"
+                            class="w-full sm:w-auto bg-brand-cardBg hover:bg-brand-border text-slate-200 border border-brand-border font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all text-center flex items-center justify-center gap-2 cursor-pointer shadow-sm group">
+                            <i class="fa-solid fa-clipboard-check text-brand-tealLight group-hover:scale-110 transition-transform"></i>
                             <span>Self-Check FFA Stage</span>
                         </button>
                     </div>
@@ -11038,6 +11059,67 @@
                     src="diag.html"
                     class="w-full h-full border-0 block"
                     title="Hair System &amp; Topper Diagnostic Assessment"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8.6. FRONTAL FIBROSING ALOPECIA (FFA) STAGE ASSESSMENT MODAL (ffa_interactive_questionnaire.html) -->
+    <div x-show="isFfaModalOpen" x-cloak
+        @keydown.escape.window="isFfaModalOpen = false"
+        @open-ffa-modal.window="openFfaModal()"
+        class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md overflow-hidden"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95">
+        <div @click.away="isFfaModalOpen = false"
+            class="bg-brand-cardBg border border-teal-500/40 rounded-2xl max-w-5xl w-full h-[94vh] flex flex-col shadow-2xl relative overflow-hidden text-left my-auto">
+            
+            <!-- Modal Top Header Bar -->
+            <div class="px-4 sm:px-6 py-3.5 bg-brand-darkBg/95 border-b border-brand-border flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-sky-600 flex items-center justify-center text-white text-base shadow-sm flex-shrink-0">
+                        <i class="fa-solid fa-head-side-mask"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-heading font-extrabold text-sm sm:text-base text-white tracking-tight">
+                                FFA Clinical Screening &amp; Self-Assessment Tool
+                            </h3>
+                            <span class="hidden sm:inline-block text-[10px] bg-teal-500/20 text-teal-300 border border-teal-400/40 px-2 py-0.5 rounded-full font-mono font-bold">FFA Stage Evaluation</span>
+                        </div>
+                        <p class="text-[11px] text-brand-textMuted hidden xs:block">
+                            Frontal Fibrosing Alopecia evidence-based criteria &amp; custom headband fringe recommendation
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-2">
+                    <a :href="ffaModalUrl" href="ffa_interactive_questionnaire.html" target="_blank"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                        title="Open in Full Tab">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-brand-tealLight"></i>
+                        <span>Full Page</span>
+                    </a>
+                    <button type="button" @click="isFfaModalOpen = false"
+                        class="w-9 h-9 rounded-lg bg-brand-inner hover:bg-rose-950/80 border border-brand-border hover:border-rose-800 text-slate-400 hover:text-rose-200 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Close FFA Assessment">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content Iframe -->
+            <div class="flex-1 w-full h-full bg-[#f8fafc] relative overflow-hidden">
+                <iframe :src="isFfaModalOpen ? ffaModalUrl : ''"
+                    src="ffa_interactive_questionnaire.html"
+                    class="w-full h-full border-0 block"
+                    title="FFA Clinical Screening &amp; Self-Assessment Tool"
                     loading="lazy">
                 </iframe>
             </div>
