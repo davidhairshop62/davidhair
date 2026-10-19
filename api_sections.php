@@ -44,6 +44,18 @@ try {
     $conn->exec("UPDATE site_sections SET menu_title = 'Self-Check', menu_icon = 'fa-clipboard-check' WHERE section_key = 'hair-diagnosis-hub' AND (menu_title = 'Diagnostic Tool' OR menu_title = '')");
     $conn->exec("UPDATE site_sections SET menu_title = 'AI Try-on' WHERE section_key = 'ai-simulator' AND (menu_title = 'AI Try-On' OR menu_title = '')");
 
+    // Ensure FFA section exists in site_sections table and has order 2, and diagnosis hub has order 3
+    try {
+        $conn->exec("UPDATE site_sections SET sort_order = 3 WHERE section_key = 'hair-diagnosis-hub' AND sort_order = 2");
+        $checkFfa = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'frontal-fibrosing-alopecia'");
+        if ($checkFfa && $checkFfa->fetchColumn() == 0) {
+            $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
+                VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FFA Frontal', 'fa-head-side-mask', 'FFA', 2)");
+        } else {
+            $conn->exec("UPDATE site_sections SET sort_order = 2, is_visible = 1, in_menu = 1 WHERE section_key = 'frontal-fibrosing-alopecia'");
+        }
+    } catch(Exception $eFfa) {}
+
     // Check count and seed if empty
     $countStmt = $conn->query("SELECT COUNT(*) FROM site_sections");
     if ($countStmt->fetchColumn() == 0) {
@@ -59,6 +71,18 @@ try {
                 'menu_icon' => 'fa-house',
                 'menu_badge' => '',
                 'sort_order' => 1
+            ],
+            [
+                'section_key' => 'frontal-fibrosing-alopecia',
+                'name' => 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe',
+                'category' => 'Products & Ordering',
+                'description' => 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.',
+                'is_visible' => 1,
+                'in_menu' => 1,
+                'menu_title' => 'FFA Frontal',
+                'menu_icon' => 'fa-head-side-mask',
+                'menu_badge' => 'FFA',
+                'sort_order' => 2
             ],
             [
                 'section_key' => 'hair-diagnosis-hub',
