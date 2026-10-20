@@ -2385,7 +2385,7 @@
         function ffaSectionApp() {
             return {
                 activeVideoTab: 'highlight',
-                currentVideo: 'videos/frontal_highlight.mp4',
+                currentVideo: 'videos/Frontal-sum.mp4',
                 isPlaying: true,
                 isMuted: true,
                 currentTime: 0,
@@ -2408,7 +2408,7 @@
 
                 switchVideo(type) {
                     this.activeVideoTab = type;
-                    this.currentVideo = (type === 'highlight') ? 'videos/frontal_highlight.mp4' : 'videos/frontal_full.mp4';
+                    this.currentVideo = (type === 'highlight') ? 'videos/Frontal-sum.mp4' : 'videos/frontal_full.mp4';
                     this.$nextTick(() => {
                         const v = this.$refs.ffaVideo;
                         if (v) {
@@ -3346,7 +3346,7 @@
         x-init="$nextTick(() => { updateVideos(); }); setInterval(() => { playNext(); }, 6000);" x-data="{
             videos: [
                 'videos/Runing.mp4',
-                'videos/Frontal -강조.mp4',
+                'videos/Frontal-sum.mp4',
                 'videos/shampoo.mp4',
                 'videos/swim.mp4',
                 'videos/windy.mp4'
@@ -3555,6 +3555,7 @@
                                @loadedmetadata="onLoadedMetadata()"
                                @click="togglePlay()">
                             <source :src="currentVideo" type="video/mp4">
+                            <source src="videos/Frontal-sum.mp4" type="video/mp4">
                             <source src="videos/frontal_highlight.mp4" type="video/mp4">
                             <source src="videos/frontal_full.mp4" type="video/mp4">
                         </video>
