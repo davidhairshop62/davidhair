@@ -55,6 +55,29 @@
         A structured pre-clinical triage questionnaire designed to detect hallmark indicators of cicatricial (scarring) hairline regression, guiding prompt referral for dermoscopy and histology.
       </p>
 
+      <!-- Medical Disclaimer & Caution Banner -->
+      <div class="mt-5 max-w-3xl mx-auto p-4 sm:p-5 rounded-2xl bg-amber-50/90 border border-amber-200/90 text-amber-900 text-xs sm:text-sm custom-shadow text-left">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 border border-amber-300 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="space-y-1.5 flex-1 min-w-0">
+            <div class="font-bold text-amber-950 text-xs sm:text-sm flex flex-wrap items-center gap-2">
+              <span>⚠️ Important Medical Disclaimer &amp; Patient Notice</span>
+              <span class="text-[10px] font-semibold bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">Not Medical Advice</span>
+            </div>
+            <p class="text-amber-900 leading-relaxed text-xs sm:text-[13px]">
+              This self-assessment tool is <strong>not intended for medical diagnostic purposes</strong>. The results provided are strictly for <strong>personal self-reference and educational awareness only</strong>. For an accurate clinical evaluation, dermoscopy, or biopsy, we strongly advise consulting directly with a <strong>board-certified dermatologist or qualified medical physician</strong>.
+            </p>
+            <p class="text-amber-800 text-[11px] sm:text-xs leading-relaxed pt-0.5 border-t border-amber-200/60 mt-1 font-medium">
+              (본 자가진단 도구는 의료적 목적의 진료나 진단이 아니며, 결과는 단순 자기 참고용입니다. 전문적인 진찰, 감별 및 치료를 위해 반드시 의사(피부과 전문의)에게 직접 진료받으실 것을 강력히 권장합니다.)
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- Educational Dermoscopy Guide Accordion Trigger -->
       <div class="mt-4 flex justify-center">
         <button id="toggle-derm-guide" type="button" class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-teal-700 hover:text-teal-900 bg-teal-50/80 hover:bg-teal-100/80 border border-teal-200 px-4 py-2 rounded-xl transition">
@@ -220,10 +243,18 @@
 
         <!-- Footer / Action Buttons -->
         <div class="pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
-          <div class="text-xs text-slate-400 text-center sm:text-left">
-            * This questionnaire is an informational screening instrument and does not constitute a formal histological or clinical diagnosis.
+          <div class="text-xs text-slate-500 text-center sm:text-left space-y-1 max-w-xl">
+            <div class="font-semibold text-slate-700 flex items-center gap-1.5 justify-center sm:justify-start">
+              <span>⚠️ Medical Disclaimer &amp; Advisory Notice</span>
+            </div>
+            <p class="leading-relaxed text-[11px] text-slate-500">
+              This screening tool is for informational self-reference only and does not constitute a formal medical diagnosis or treatment plan. For formal clinical assessment, dermoscopy, or biopsy, direct consultation with a qualified medical doctor/dermatologist is strongly advised.
+            </p>
+            <p class="leading-relaxed text-[11px] text-slate-400">
+              (본 결과는 단순 자기 참고용이며 의료적 진단이 아닙니다. 정확한 진단 및 치료를 위해 반드시 의사에게 직접 진료받으시기 바랍니다.)
+            </p>
           </div>
-          <div class="flex items-center gap-2.5 w-full sm:w-auto">
+          <div class="flex items-center gap-2.5 w-full sm:w-auto flex-shrink-0">
             <button id="copy-report-btn" class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -610,6 +641,10 @@ ${hallmarks.length ? hallmarks.join('\n') : 'No primary hallmarks selected.'}
 
 Clinical Recommendation:
 Present this structured report to a board-certified dermatologist or trichologist for high-magnification trichoscopy and formal management.
+
+Medical Disclaimer / 경고 문구:
+This assessment is strictly for personal self-reference and educational awareness. It does not constitute a formal medical diagnosis or treatment plan. Direct clinical evaluation and care by a qualified physician/dermatologist is strongly advised.
+(본 결과는 단순 자기 참고용이며 의료적 목적의 진단이 아닙니다. 정확한 진찰과 치료는 의사에게 직접 진료받으시기 바랍니다.)
 =====================================================`;
 
       const tempTextArea = document.createElement("textarea");
