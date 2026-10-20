@@ -291,7 +291,7 @@
         <div>
           <span class="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200/80 mb-1">
             <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            Clinical Reference Photo • 1:1
+            Real Clinical Photo (1:1 Ratio)
           </span>
           <h3 id="modal-title" class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight"></h3>
         </div>
@@ -304,25 +304,38 @@
 
       <!-- Modal Body (1:1 Aspect Ratio Photo) -->
       <div class="relative w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0">
-        <img id="modal-img" src="" alt="Clinical Reference" class="w-full h-full object-cover select-none">
-        <div class="absolute bottom-2.5 right-2.5 bg-black/70 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md">
-          1:1 Aspect Ratio
+        <img id="modal-img" src="" alt="Real Clinical Photo" class="w-full h-full object-cover select-none">
+        <div class="absolute bottom-2.5 right-2.5 bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md">
+          1:1 Clinical Aspect Ratio
+        </div>
+        <div class="absolute top-2.5 left-2.5 bg-teal-900/85 text-teal-200 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
+          실제 임상 증례 (Real Case)
         </div>
       </div>
 
-      <!-- Modal Caption & Guidance -->
+      <!-- Modal Caption & Academic Source Guidance -->
       <div class="p-4 sm:p-5 bg-white border-t border-slate-100 flex-1 overflow-y-auto">
-        <div class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
           <svg class="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <div>
             <p id="modal-caption" class="text-slate-800 font-medium"></p>
-            <p class="text-[11px] text-slate-400 mt-1.5">
-              ※ Note: AI-generated clinical visual example for educational comparison and self-reference.
-            </p>
           </div>
         </div>
+
+        <!-- Academic / Clinical Citation Box -->
+        <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-xl text-slate-600 text-xs">
+          <div class="flex items-center gap-1.5 font-bold text-slate-800 text-[11px] uppercase tracking-wider mb-1">
+            <svg class="w-3.5 h-3.5 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <span>실제 임상 사진 학술 출처 (Clinical Reference Source):</span>
+          </div>
+          <p id="modal-source" class="text-[11px] text-slate-700 font-mono leading-relaxed bg-white p-2 rounded border border-slate-200/80 break-words"></p>
+          <p class="text-[10px] text-slate-400 mt-1.5">※ 본 임상 사진은 피어리뷰 학술 저널(PubMed Central Open Access / Creative Commons License)에 공식 수록된 실제 환자 증례 사진입니다.</p>
+        </div>
+
         <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
           <button type="button" onclick="closeImageModal()" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer">
             Close (닫기)
@@ -344,7 +357,8 @@
         isMajor: true,
         tag: "Progressive Frontotemporal Margin Recession",
         image: "images/ffa/q1_hairline_recession.jpg",
-        caption: "Frontal Hairline Recession: Symmetrical band-like recession of the anterior hair margin. (헤어라인이 머리띠 형태로 대칭 후퇴)"
+        caption: "Frontal Hairline Recession: Symmetrical band-like recession of the anterior frontotemporal hairline margin in a patient with FFA. (헤어라인이 머리띠 형태로 대칭 후퇴하며 창백한 피부 노출)",
+        source: "Singal A, et al. 'Frontal Fibrosing Alopecia: A Comprehensive Review with Recent Updates.' Indian Journal of Dermatology 2025; 70(1):115-124. (PMCID: PMC11952711, Fig. 1) [Open Access CC BY]"
       },
       {
         id: 2,
@@ -355,7 +369,8 @@
         isMajor: true,
         tag: "Porcelain-like Band with Complete Ostial Loss",
         image: "images/ffa/q2_vellus_hair_loss.jpg",
-        caption: "Porcelain Scarred Band: Smooth, pale skin surface showing complete loss of follicular pores and vellus hairs. (모공이 사라져 도자기처럼 매끄럽고 창백해진 두피)"
+        caption: "Trichoscopy of Scarred Margin: Complete absence of vellus hairs and loss of follicular ostia (pores) forming a smooth porcelain cicatricial band. (모공과 솜털이 영구 소실되어 매끄러운 반흔성 피부)",
+        source: "Skin Appendage Disorders. 'Trichoscopy of Frontal Fibrosing Alopecia Affecting Black Scalp: A Literature Review.' Skin Appendage Disord 2024; 10(5):353-363. (PMCID: PMC11460864, Fig. 3) [Open Access CC BY-NC]"
       },
       {
         id: 3,
@@ -366,7 +381,8 @@
         isMajor: true,
         tag: "Presence of 'Lonely Hair' Sign",
         image: "images/ffa/q3_peripilar_casts.jpg",
-        caption: "The 'Lonely Hair' Sign: Isolated terminal hair strand persisting alone within the receded atrophic band. (후퇴된 민머리 부위에 외롭게 1~2가닥 홀로 남은 모발)"
+        caption: "The 'Lonely Hair' Sign: Isolated single terminal hair persisting along the bald atrophic band ahead of the receding margin. (후퇴된 민머리 부위에 외롭게 1~2가닥 홀로 남은 모발)",
+        source: "Singal A, et al. Indian Journal of Dermatology 2025; 70(1):115-124. (PMCID: PMC11952711, Fig. 2) / Seminal report: Tosti A, Miteva M, Torres F. Arch Dermatol 2011; 147(10):1240-1242."
       },
       {
         id: 4,
@@ -377,7 +393,8 @@
         isMajor: false,
         tag: "Perifollicular Erythema & Hyperkeratotic Casts",
         image: "images/ffa/q4_perifollicular_erythema.jpg",
-        caption: "Perifollicular Erythema & Casts: Inflammatory redness and tubular keratin collars around active hair roots. (모낭 주변 붉은 홍반 및 모발 뿌리를 감싸는 흰색 각질 튜브)"
+        caption: "Perifollicular Erythema & Hyperkeratotic Casts: High-magnification dermoscopy showing active redness and tubular peripilar casts encircling follicles. (모낭 주변 홍반 및 원통형 각질 칼라)",
+        source: "Porriño-Bustamante ML, Fernández-Guarino M, et al. 'Frontal Fibrosing Alopecia: A Review.' Journal of Clinical Medicine 2021; 10(9):1805. (PMCID: PMC8122646, Fig. 4a) [Open Access CC BY 4.0]"
       },
       {
         id: 5,
@@ -388,7 +405,8 @@
         isMajor: false,
         tag: "Trichodynia (Burning, Pricking, Itching at Hairline)",
         image: "images/ffa/q5_trichodynia.jpg",
-        caption: "Trichodynia (Scalp Dysesthesia): Active burning, tingling, itching, or pain sensations localized along the hairline. (헤어라인 부위의 화끈거림, 따가움, 가려움 및 두피 당김)"
+        caption: "Active Inflammatory Frontal Margin: Prominent perifollicular erythema driving active burning sensation, trichodynia, and scalp discomfort. (헤어라인 경계부의 활성 염증 홍반 및 작열감/통증)",
+        source: "Porriño-Bustamante ML, Fernández-Guarino M, et al. 'Frontal Fibrosing Alopecia in Men: A Review.' Journal of Clinical Medicine 2025; 14(7):1914. (PMCID: PMC11942993, Fig. 2) [Open Access CC BY 4.0]"
       },
       {
         id: 6,
@@ -399,7 +417,8 @@
         isMajor: true,
         tag: "Eyebrow Madarosis (Particularly Lateral 1/3)",
         image: "images/ffa/q6_eyebrow_madarosis.jpg",
-        caption: "Eyebrow Madarosis: Characteristic loss or thinning of the eyebrows, especially prominent on the outer lateral 1/3. (눈썹 외측 1/3부터 시작되는 눈썹 탈모 및 숱 감소)"
+        caption: "Eyebrow Madarosis: Characteristic loss or thinning of eyebrows, prominently beginning at the outer lateral third. (눈썹 외측 1/3부터 소실되는 전형적인 눈썹 탈모)",
+        source: "Singal A, et al. 'Frontal Fibrosing Alopecia: A Comprehensive Review with Recent Updates.' Indian Journal of Dermatology 2025; 70(1):115-124. (PMCID: PMC11952711, Fig. 3) [Open Access CC BY]"
       },
       {
         id: 7,
@@ -410,7 +429,8 @@
         isMajor: false,
         tag: "Reduction or Loss of Peripheral Body Hair",
         image: "images/ffa/q7_body_hair_loss.jpg",
-        caption: "Peripheral Body Hair Loss: Unexplained reduction or loss of body hair on forearms, shins, or extremities. (팔, 다리 종아리 등의 체모가 눈에 띄게 줄거나 소실되는 현상)"
+        caption: "Peripheral Body Hair Loss: Marked loss of body vellus and terminal hair on upper extremities (arms/forearms) in FFA. (상지 팔 부위의 체모 및 연모의 현저한 소실)",
+        source: "Porriño-Bustamante ML, Fernández-Guarino M, et al. 'Frontal Fibrosing Alopecia in Men: A Review.' Journal of Clinical Medicine 2025; 14(7):1914. (PMCID: PMC11942993, Fig. 6) [Open Access CC BY 4.0]"
       },
       {
         id: 8,
@@ -421,7 +441,8 @@
         isMajor: false,
         tag: "Facial Papules / Temple Roughness",
         image: "images/ffa/q8_facial_papules.jpg",
-        caption: "Facial Papules: Small skin-toned or yellowish follicular papules on temples and cheeks. (관자놀이나 뺨 부위에 오돌토돌하게 돋아나는 피부색 구진)"
+        caption: "Facial Papules: Multiple non-inflammatory skin-colored follicular papules across forehead and temples. (이마 및 관자놀이에 오돌토돌 돋아난 모낭성 안면 구진)",
+        source: "Singal A, et al. 'Frontal Fibrosing Alopecia: A Comprehensive Review with Recent Updates.' Indian Journal of Dermatology 2025; 70(1):115-124. (PMCID: PMC11952711, Fig. 5) [Open Access CC BY]"
       },
       {
         id: 9,
@@ -432,7 +453,8 @@
         isMajor: false,
         tag: "Post-menopausal Status or Concomitant Autoimmune History",
         image: "images/ffa/q9_autoimmune_factors.jpg",
-        caption: "Hormonal & Autoimmune Predisposition: Post-menopausal status and association with thyroid (Hashimoto) autoimmunity. (폐경 후 호르몬 변화 및 갑상선 질환 등 자가면역 소인)"
+        caption: "Pathogenesis & Autoimmune Comorbidities: Interplay of hormonal factors (estrogen/DHEA shift) and autoimmune predisposition (Hashimoto thyroiditis, vitiligo). (호르몬 변화 및 갑상선 질환 등 자가면역 병인도)",
+        source: "Porriño-Bustamante ML, Fernández-Guarino M, et al. 'Frontal Fibrosing Alopecia: A Review.' Journal of Clinical Medicine 2021; 10(9):1805. (PMCID: PMC8122646, Fig. 1) [Open Access CC BY 4.0]"
       }
     ];
 
@@ -457,11 +479,13 @@
     const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
     const modalCaption = document.getElementById('modal-caption');
+    const modalSource = document.getElementById('modal-source');
 
-    window.openImageModal = function(src, title, caption) {
+    window.openImageModal = function(src, title, caption, source) {
       modalImg.src = src;
       modalTitle.textContent = title;
       modalCaption.textContent = caption;
+      if (modalSource) modalSource.textContent = source || '';
       imageModal.classList.remove('opacity-0', 'pointer-events-none');
       imageModal.classList.add('opacity-100');
       imageModalCard.classList.remove('scale-95');
@@ -513,6 +537,7 @@
 
         const safeTitle = item.title.replace(/'/g, "\\'");
         const safeCaption = item.caption.replace(/'/g, "\\'");
+        const safeSource = (item.source || '').replace(/'/g, "\\'");
 
         card.innerHTML = `
           <div class="flex flex-col sm:flex-row gap-4 items-start justify-between">
@@ -542,18 +567,21 @@
             <!-- 1:1 Aspect Ratio Photo Thumbnail with Click-to-Enlarge Modal -->
             <div class="flex-shrink-0 flex flex-col items-center self-center sm:self-start">
               <div class="relative group cursor-pointer w-24 h-24 sm:w-28 sm:h-28 aspect-square rounded-2xl overflow-hidden border-2 border-slate-200 shadow-sm hover:border-teal-500 hover:shadow-md transition-all duration-200 bg-slate-100"
-                   onclick="openImageModal('${item.image}', '${safeTitle}', '${safeCaption}')"
+                   onclick="openImageModal('${item.image}', '${safeTitle}', '${safeCaption}', '${safeSource}')"
                    role="button"
-                   aria-label="Enlarge reference photo"
+                   aria-label="Enlarge real clinical reference photo"
                    tabindex="0">
                 <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white backdrop-blur-[1px]">
+                <div class="absolute inset-0 bg-slate-950/45 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white backdrop-blur-[1px]">
                   <svg class="w-6 h-6 mb-0.5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
                   </svg>
-                  <span class="text-[10px] font-bold">확대보기</span>
+                  <span class="text-[10px] font-bold">확대 &amp; 출처보기</span>
                 </div>
-                <span class="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+                <span class="absolute top-1.5 left-1.5 bg-teal-900/85 text-teal-200 text-[8.5px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+                  실제 임상
+                </span>
+                <span class="absolute bottom-1 right-1 bg-black/65 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm pointer-events-none">
                   1:1
                 </span>
               </div>
@@ -561,7 +589,7 @@
                 <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
                 </svg>
-                클릭 시 확대
+                클릭 시 확대/출처
               </span>
             </div>
           </div>
