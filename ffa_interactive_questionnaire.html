@@ -283,6 +283,55 @@
 
   </div>
 
+  <!-- High-Resolution 1:1 Clinical Photo Lightbox Modal -->
+  <div id="image-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 opacity-0 pointer-events-none transition-all duration-300 no-print" onclick="handleBackdropClick(event)">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 flex flex-col max-h-[92vh]" id="image-modal-card" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/70 flex-shrink-0">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200/80 mb-1">
+            <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Clinical Reference Photo • 1:1
+          </span>
+          <h3 id="modal-title" class="text-base sm:text-lg font-extrabold text-slate-900 leading-tight"></h3>
+        </div>
+        <button type="button" onclick="closeImageModal()" class="w-9 h-9 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition flex-shrink-0 cursor-pointer" title="Close modal (Esc)">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (1:1 Aspect Ratio Photo) -->
+      <div class="relative w-full aspect-square bg-slate-950 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <img id="modal-img" src="" alt="Clinical Reference" class="w-full h-full object-cover select-none">
+        <div class="absolute bottom-2.5 right-2.5 bg-black/70 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg backdrop-blur-md">
+          1:1 Aspect Ratio
+        </div>
+      </div>
+
+      <!-- Modal Caption & Guidance -->
+      <div class="p-4 sm:p-5 bg-white border-t border-slate-100 flex-1 overflow-y-auto">
+        <div class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <svg class="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <p id="modal-caption" class="text-slate-800 font-medium"></p>
+            <p class="text-[11px] text-slate-400 mt-1.5">
+              ※ Note: AI-generated clinical visual example for educational comparison and self-reference.
+            </p>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+          <button type="button" onclick="closeImageModal()" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold transition shadow-sm cursor-pointer">
+            Close (닫기)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Clinically Validated Questions & Categories
     const clinicalCriteria = [
@@ -293,7 +342,9 @@
         clinicalNote: "Crucial Major Hallmark — Primary presenting feature in over 95% of FFA cases.",
         weight: 3.5,
         isMajor: true,
-        tag: "Progressive Frontotemporal Margin Recession"
+        tag: "Progressive Frontotemporal Margin Recession",
+        image: "images/ffa/q1_hairline_recession.jpg",
+        caption: "Frontal Hairline Recession: Symmetrical band-like recession of the anterior hair margin. (헤어라인이 머리띠 형태로 대칭 후퇴)"
       },
       {
         id: 2,
@@ -302,7 +353,9 @@
         clinicalNote: "Crucial Major Hallmark — Indicates irreversible cicatricial destruction of follicular ostia.",
         weight: 3.5,
         isMajor: true,
-        tag: "Porcelain-like Band with Complete Ostial Loss"
+        tag: "Porcelain-like Band with Complete Ostial Loss",
+        image: "images/ffa/q2_vellus_hair_loss.jpg",
+        caption: "Porcelain Scarred Band: Smooth, pale skin surface showing complete loss of follicular pores and vellus hairs. (모공이 사라져 도자기처럼 매끄럽고 창백해진 두피)"
       },
       {
         id: 3,
@@ -311,7 +364,9 @@
         clinicalNote: "Specific Hallmark — High specificity for FFA; surviving solitary hair units amid lichenoid destruction.",
         weight: 3.0,
         isMajor: true,
-        tag: "Presence of 'Lonely Hair' Sign"
+        tag: "Presence of 'Lonely Hair' Sign",
+        image: "images/ffa/q3_peripilar_casts.jpg",
+        caption: "The 'Lonely Hair' Sign: Isolated terminal hair strand persisting alone within the receded atrophic band. (후퇴된 민머리 부위에 외롭게 1~2가닥 홀로 남은 모발)"
       },
       {
         id: 4,
@@ -320,7 +375,9 @@
         clinicalNote: "Active Inflammatory Hallmark — Indicates ongoing lichenoid inflammatory destruction of follicular stem cells.",
         weight: 2.5,
         isMajor: false,
-        tag: "Perifollicular Erythema & Hyperkeratotic Casts"
+        tag: "Perifollicular Erythema & Hyperkeratotic Casts",
+        image: "images/ffa/q4_perifollicular_erythema.jpg",
+        caption: "Perifollicular Erythema & Casts: Inflammatory redness and tubular keratin collars around active hair roots. (모낭 주변 붉은 홍반 및 모발 뿌리를 감싸는 흰색 각질 튜브)"
       },
       {
         id: 5,
@@ -329,7 +386,9 @@
         clinicalNote: "Symptomatic Marker — Trichodynia is reported in roughly 30-50% of active FFA cohorts.",
         weight: 1.5,
         isMajor: false,
-        tag: "Trichodynia (Burning, Pricking, Itching at Hairline)"
+        tag: "Trichodynia (Burning, Pricking, Itching at Hairline)",
+        image: "images/ffa/q5_trichodynia.jpg",
+        caption: "Trichodynia (Scalp Dysesthesia): Active burning, tingling, itching, or pain sensations localized along the hairline. (헤어라인 부위의 화끈거림, 따가움, 가려움 및 두피 당김)"
       },
       {
         id: 6,
@@ -338,7 +397,9 @@
         clinicalNote: "Major Hallmark — Can precede hairline recession by months or years in 60-80% of patients.",
         weight: 3.5,
         isMajor: true,
-        tag: "Eyebrow Madarosis (Particularly Lateral 1/3)"
+        tag: "Eyebrow Madarosis (Particularly Lateral 1/3)",
+        image: "images/ffa/q6_eyebrow_madarosis.jpg",
+        caption: "Eyebrow Madarosis: Characteristic loss or thinning of the eyebrows, especially prominent on the outer lateral 1/3. (눈썹 외측 1/3부터 시작되는 눈썹 탈모 및 숱 감소)"
       },
       {
         id: 7,
@@ -347,7 +408,9 @@
         clinicalNote: "Extracranial Presentation — Follicular lichenoid destruction frequently extends beyond the scalp.",
         weight: 1.5,
         isMajor: false,
-        tag: "Reduction or Loss of Peripheral Body Hair"
+        tag: "Reduction or Loss of Peripheral Body Hair",
+        image: "images/ffa/q7_body_hair_loss.jpg",
+        caption: "Peripheral Body Hair Loss: Unexplained reduction or loss of body hair on forearms, shins, or extremities. (팔, 다리 종아리 등의 체모가 눈에 띄게 줄거나 소실되는 현상)"
       },
       {
         id: 8,
@@ -356,7 +419,9 @@
         clinicalNote: "Vellus Follicle Involvement — Reflects lichenoid involvement of facial vellus and sebaceous glands.",
         weight: 2.0,
         isMajor: false,
-        tag: "Facial Papules / Temple Roughness"
+        tag: "Facial Papules / Temple Roughness",
+        image: "images/ffa/q8_facial_papules.jpg",
+        caption: "Facial Papules: Small skin-toned or yellowish follicular papules on temples and cheeks. (관자놀이나 뺨 부위에 오돌토돌하게 돋아나는 피부색 구진)"
       },
       {
         id: 9,
@@ -365,7 +430,9 @@
         clinicalNote: "Etiological Predisposition — Strong epidemiological link to hormonal shifts and thyroid autoimmunity.",
         weight: 1.5,
         isMajor: false,
-        tag: "Post-menopausal Status or Concomitant Autoimmune History"
+        tag: "Post-menopausal Status or Concomitant Autoimmune History",
+        image: "images/ffa/q9_autoimmune_factors.jpg",
+        caption: "Hormonal & Autoimmune Predisposition: Post-menopausal status and association with thyroid (Hashimoto) autoimmunity. (폐경 후 호르몬 변화 및 갑상선 질환 등 자가면역 소인)"
       }
     ];
 
@@ -383,6 +450,44 @@
     const dermPanel = document.getElementById('derm-guide-panel');
     const dermArrow = document.getElementById('derm-arrow');
     const dermLabel = document.getElementById('derm-guide-toggle-label');
+
+    // Image Modal Elements
+    const imageModal = document.getElementById('image-modal');
+    const imageModalCard = document.getElementById('image-modal-card');
+    const modalImg = document.getElementById('modal-img');
+    const modalTitle = document.getElementById('modal-title');
+    const modalCaption = document.getElementById('modal-caption');
+
+    window.openImageModal = function(src, title, caption) {
+      modalImg.src = src;
+      modalTitle.textContent = title;
+      modalCaption.textContent = caption;
+      imageModal.classList.remove('opacity-0', 'pointer-events-none');
+      imageModal.classList.add('opacity-100');
+      imageModalCard.classList.remove('scale-95');
+      imageModalCard.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeImageModal = function() {
+      imageModal.classList.remove('opacity-100');
+      imageModal.classList.add('opacity-0', 'pointer-events-none');
+      imageModalCard.classList.remove('scale-100');
+      imageModalCard.classList.add('scale-95');
+      document.body.style.overflow = '';
+    };
+
+    window.handleBackdropClick = function(e) {
+      if (e.target === imageModal) {
+        closeImageModal();
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !imageModal.classList.contains('pointer-events-none')) {
+        closeImageModal();
+      }
+    });
 
     // Toggle Dermoscopy Guide
     toggleDermBtn.addEventListener('click', () => {
@@ -406,27 +511,62 @@
         card.className = "bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 custom-shadow transition-all duration-200 hover:border-teal-200";
         card.id = `card-${item.id}`;
 
+        const safeTitle = item.title.replace(/'/g, "\\'");
+        const safeCaption = item.caption.replace(/'/g, "\\'");
+
         card.innerHTML = `
-          <div class="flex items-start justify-between gap-3 mb-2">
-            <div class="flex items-center gap-2">
-              <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-teal-50 text-teal-800 font-bold text-xs">
-                ${String(item.id).padStart(2, '0')}
-              </span>
-              <h3 class="text-base sm:text-lg font-bold text-slate-800">${item.title}</h3>
+          <div class="flex flex-col sm:flex-row gap-4 items-start justify-between">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-teal-50 text-teal-800 font-bold text-xs flex-shrink-0">
+                    ${String(item.id).padStart(2, '0')}
+                  </span>
+                  <h3 class="text-base sm:text-lg font-bold text-slate-800 leading-snug">${item.title}</h3>
+                </div>
+                <div class="flex-shrink-0">
+                  ${item.isMajor ? '<span class="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">Major Hallmark</span>' : '<span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">Secondary Sign</span>'}
+                </div>
+              </div>
+              
+              <p class="text-sm text-slate-600 mb-2.5 leading-relaxed">${item.desc}</p>
+              
+              <div class="mb-3 sm:mb-0 inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg w-full">
+                <svg class="w-3.5 h-3.5 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span><strong class="text-slate-700">Clinical Relevance:</strong> ${item.clinicalNote}</span>
+              </div>
             </div>
-            ${item.isMajor ? '<span class="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">Major Hallmark</span>' : '<span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">Secondary Sign</span>'}
-          </div>
-          
-          <p class="text-sm text-slate-600 mb-2.5 leading-relaxed">${item.desc}</p>
-          
-          <div class="mb-4 inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg w-full">
-            <svg class="w-3.5 h-3.5 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span><strong class="text-slate-700">Clinical Relevance:</strong> ${item.clinicalNote}</span>
+
+            <!-- 1:1 Aspect Ratio Photo Thumbnail with Click-to-Enlarge Modal -->
+            <div class="flex-shrink-0 flex flex-col items-center self-center sm:self-start">
+              <div class="relative group cursor-pointer w-24 h-24 sm:w-28 sm:h-28 aspect-square rounded-2xl overflow-hidden border-2 border-slate-200 shadow-sm hover:border-teal-500 hover:shadow-md transition-all duration-200 bg-slate-100"
+                   onclick="openImageModal('${item.image}', '${safeTitle}', '${safeCaption}')"
+                   role="button"
+                   aria-label="Enlarge reference photo"
+                   tabindex="0">
+                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white backdrop-blur-[1px]">
+                  <svg class="w-6 h-6 mb-0.5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                  </svg>
+                  <span class="text-[10px] font-bold">확대보기</span>
+                </div>
+                <span class="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+                  1:1
+                </span>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 font-medium text-center flex items-center gap-0.5">
+                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                </svg>
+                클릭 시 확대
+              </span>
+            </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div class="grid grid-cols-3 gap-2.5 sm:gap-3 mt-3">
             <button type="button" onclick="handleSelect(${item.id}, 'yes')" id="btn-${item.id}-yes" 
               class="choice-btn py-2.5 px-3 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all text-center">
               Yes (+Present)
