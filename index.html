@@ -3344,7 +3344,13 @@
         :class="isTopSection('hero') ? 'pt-28 sm:pt-36' : 'py-16 sm:py-20'"
         class="relative pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
         x-init="$nextTick(() => { updateVideos(); }); setInterval(() => { playNext(); }, 6000);" x-data="{
-            videos: ['videos/Runing.mp4', 'videos/shampoo.mp4', 'videos/swim.mp4', 'videos/windy.mp4'],
+            videos: [
+                'videos/Runing.mp4',
+                'videos/Frontal -강조.mp4',
+                'videos/shampoo.mp4',
+                'videos/swim.mp4',
+                'videos/windy.mp4'
+            ],
             currentIdx: 0,
             playNext() {
                 this.currentIdx = (this.currentIdx + 1) % this.videos.length;
