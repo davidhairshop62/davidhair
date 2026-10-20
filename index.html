@@ -2808,26 +2808,120 @@
                     <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight shadow-sm">NEW</span>
                 </a>
 
-                <!-- 2. SELF CHECK Nav Link -->
-                <a href="#hair-diagnosis-hub" 
-                   x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
-                   class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white group">
-                    <i class="fa-solid fa-clipboard-check text-teal-400"></i>
-                    <span>SELF CHECK</span>
-                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 uppercase font-mono tracking-wider">5-Step</span>
-                </a>
+                <!-- 2. SELF CHECK Dropdown -->
+                <div class="relative group" x-data="{ selfCheckOpen: false }" @mouseenter="selfCheckOpen = true" @mouseleave="selfCheckOpen = false">
+                    <button type="button" @click="selfCheckOpen = !selfCheckOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer font-bold text-white">
+                        <i class="fa-solid fa-clipboard-check text-teal-400"></i>
+                        <span>SELF CHECK</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': selfCheckOpen }"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="selfCheckOpen" x-cloak
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                        class="absolute left-0 top-full pt-1 w-[350px] z-50 normal-case">
+                        <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1.5 flex flex-col">
+                            <!-- 2.1 Hair System & Topper Diagnostic Assessment (Modal) -->
+                            <button type="button" @click="openDiagModal(); selfCheckOpen = false;"
+                                class="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-stethoscope text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-emerald-300">Hair System &amp; Topper Diagnostic Assessment</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono tracking-tight flex-shrink-0">5-STEP</span>
+                                    </div>
+                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Clinical Diagnostic Modal &bull; Norwood &amp; Women's Stages</div>
+                                </div>
+                            </button>
 
-                <!-- 3. TRY ON Nav Link -->
-                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1 text-teal-300 font-bold">
-                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                    <span>TRY ON</span>
-                </a>
+                            <!-- 2.2 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
+                            <button type="button" @click="openFfaModal(); selfCheckOpen = false;"
+                                class="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-head-side-mask text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-teal-300">FFA Clinical Screening &amp; Self-Assessment Tool</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight flex-shrink-0">FFA</span>
+                                    </div>
+                                    <div class="text-[10px] text-teal-200/80 mt-0.5">Interactive Questionnaire Modal &bull; Stages I–V Guide</div>
+                                </div>
+                            </button>
 
-                <!-- 4. B/A Nav Link -->
-                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 font-bold text-white">
-                    <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
-                    <span>B/A</span>
-                </a>
+                            <!-- 2.3 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
+                            <a href="#ai-simulator" @click="selfCheckOpen = false;"
+                                class="flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-amber-300">AI Virtual Hairstyle Try-On Simulator</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 font-mono tracking-tight flex-shrink-0">AI TECH</span>
+                                    </div>
+                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Live Camera &amp; Photo Instant Hairstyle Simulator</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TRY ON Dropdown -->
+                <div class="relative group" x-data="{ tryOnOpen: false }" @mouseenter="tryOnOpen = true" @mouseleave="tryOnOpen = false">
+                    <button type="button" @click="tryOnOpen = !tryOnOpen" class="hover:text-brand-tealLight transition-colors flex items-center gap-1.5 uppercase tracking-wider py-2 focus:outline-none cursor-pointer font-bold text-teal-300">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        <span>TRY ON</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': tryOnOpen }"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="tryOnOpen" x-cloak
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                        class="absolute left-0 top-full pt-1 w-[350px] z-50 normal-case">
+                        <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1.5 flex flex-col">
+                            <!-- 3.1 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
+                            <a href="#ai-simulator" @click="tryOnOpen = false;"
+                                class="flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-300 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-teal-300">AI Virtual Hairstyle Try-On Simulator</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight flex-shrink-0">AI TECH</span>
+                                    </div>
+                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Live Camera &amp; Photo Instant Hairstyle Simulator</div>
+                                </div>
+                            </a>
+
+                            <!-- 3.2 Experience The 10-Year Youthful Before & After (Anchor) -->
+                            <a href="#transformations" @click="tryOnOpen = false;"
+                                class="flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-arrows-split-up-and-left text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-amber-300">Experience The 10-Year Youthful Before &amp; After</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 font-mono tracking-tight flex-shrink-0">10-YR YOUTH</span>
+                                    </div>
+                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Real Client Gallery &bull; Interactive Before/After Split Slider</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 5. FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true"
@@ -3037,37 +3131,81 @@
                     <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono">NEW</span>
                 </a>
 
-                <!-- 2. Mobile SELF CHECK Nav Link -->
-                <a href="#hair-diagnosis-hub" 
-                   x-show="isSectionVisible('hair-diagnosis-hub') && isSectionInMenu('hair-diagnosis-hub')" 
-                   @click="mobileMenuOpen = false"
-                   class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-clipboard-check text-teal-400"></i>
-                        <span>SELF CHECK</span>
-                    </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">5-Step</span>
-                </a>
+                <!-- 2. Mobile SELF CHECK Dropdown -->
+                <div x-data="{ mobileSelfCheckOpen: false }" class="border-b border-slate-700/60 pb-2">
+                    <button type="button" @click="mobileSelfCheckOpen = !mobileSelfCheckOpen"
+                        class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-teal-400"></i>
+                            <span>SELF CHECK</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileSelfCheckOpen }"></i>
+                    </button>
+                    <div x-show="mobileSelfCheckOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
+                        <!-- 2.1 Hair System & Topper Diagnostic Assessment (Modal) -->
+                        <button type="button" @click="openDiagModal(); mobileMenuOpen = false;"
+                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors cursor-pointer">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-stethoscope text-emerald-400 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-emerald-300 text-[11px] leading-tight">Hair System &amp; Topper Diagnostic Assessment</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono flex-shrink-0">5-STEP</span>
+                        </button>
 
-                <!-- 3. Mobile TRY ON Nav Link -->
-                <a href="#ai-simulator" x-show="isSectionVisible('ai-simulator') && isSectionInMenu('ai-simulator')" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors border-b border-slate-700/60">
-                    <span class="flex items-center gap-2 text-teal-300">
-                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                        <span>TRY ON</span>
-                    </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">AI Tech</span>
-                </a>
+                        <!-- 2.2 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
+                        <button type="button" @click="openFfaModal(); mobileMenuOpen = false;"
+                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors cursor-pointer">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-head-side-mask text-teal-300 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-teal-300 text-[11px] leading-tight">FFA Clinical Screening &amp; Self-Assessment Tool</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono flex-shrink-0">FFA</span>
+                        </button>
 
-                <!-- 4. Mobile B/A Nav Link -->
-                <a href="#transformations" x-show="isSectionVisible('transformations') && isSectionInMenu('transformations')" @click="mobileMenuOpen = false"
-                    class="block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 border-b border-slate-700/60 uppercase tracking-wider flex items-center justify-between transition-colors">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-arrows-split-up-and-left text-teal-400"></i>
-                        <span>B/A</span>
-                    </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">10-Yr Youth</span>
-                </a>
+                        <!-- 2.3 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
+                        <a href="#ai-simulator" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-amber-300 text-[11px] leading-tight">AI Virtual Hairstyle Try-On Simulator</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono flex-shrink-0">AI TECH</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. Mobile TRY ON Dropdown -->
+                <div x-data="{ mobileTryOnOpen: false }" class="border-b border-slate-700/60 pb-2">
+                    <button type="button" @click="mobileTryOnOpen = !mobileTryOnOpen"
+                        class="w-full flex items-center justify-between text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 uppercase tracking-wider text-left transition-colors cursor-pointer">
+                        <span class="flex items-center gap-2 text-teal-300">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                            <span>TRY ON</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileTryOnOpen }"></i>
+                    </button>
+                    <div x-show="mobileTryOnOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
+                        <!-- 3.1 AI Virtual Hairstyle Try-On Simulator -->
+                        <a href="#ai-simulator" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-teal-300 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-teal-300 text-[11px] leading-tight">AI Virtual Hairstyle Try-On Simulator</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono flex-shrink-0">AI TECH</span>
+                        </a>
+
+                        <!-- 3.2 Experience The 10-Year Youthful Before & After -->
+                        <a href="#transformations" @click="mobileMenuOpen = false"
+                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-arrows-split-up-and-left text-teal-400 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-amber-300 text-[11px] leading-tight">Experience The 10-Year Youthful Before &amp; After</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono flex-shrink-0">10-YR YOUTH</span>
+                        </a>
+                    </div>
+                </div>
 
                 <!-- 5. Mobile FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true; mobileMenuOpen = false;"
