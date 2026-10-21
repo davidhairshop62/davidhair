@@ -2117,9 +2117,16 @@
                     <label class="block font-bold text-slate-300 mb-1">Fitting Service *</label>
                     <select x-model="newBookingForm.service_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
                         <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
-                        <option value="New Hairpiece Fitting & Cut-in Styling ($145 AUD)">New Hairpiece Fitting & Cut-in Styling ($145 AUD)</option>
-                        <option value="Re-bond Maintenance & Scalp Clean ($99 AUD)">Re-bond Maintenance & Scalp Clean ($99 AUD)</option>
-                        <option value="Minor Adjustment & Perimeter Touch-up ($49 AUD)">Minor Adjustment & Perimeter Touch-up ($49 AUD)</option>
+                        <option value="New Hairpiece Fitting & Cut-in Styling - Member Only ($145 AUD)">New Hairpiece Fitting & Cut-in Styling - Member Only ($145 AUD)</option>
+                        <option value="Re-bond Maintenance & Scalp Clean - Member Only ($80 AUD)">Re-bond Maintenance & Scalp Clean - Member Only ($80 AUD)</option>
+                        <option value="Double Side Tape Bonding & Scalp Clean - Member Only ($80 AUD)">Double Side Tape Bonding & Scalp Clean - Member Only ($80 AUD)</option>
+                        <option value="Hairpiece Blending Haircut - Member Only ($20 AUD)">Hairpiece Blending Haircut - Member Only ($20 AUD)</option>
+                        <option value="Topper Treatment Shampoo & Treatment - Member Only ($30 AUD)">Topper Treatment Shampoo & Treatment - Member Only ($30 AUD)</option>
+                        <option value="Colour - Member Only ($50 AUD)">Colour - Member Only ($50 AUD)</option>
+                        <option value="Hi-Lite / Low Ble - Member Only ($50 AUD)">Hi-Lite / Low Ble - Member Only ($50 AUD)</option>
+                        <option value="Perm Man - Member Only ($50 AUD)">Perm Man - Member Only ($50 AUD)</option>
+                        <option value="Perm Woman - Member Only ($80 AUD)">Perm Woman - Member Only ($80 AUD)</option>
+                        <option value="Minor Adjustment & Perimeter Touch-up - Member Only ($50 AUD)">Minor Adjustment & Perimeter Touch-up - Member Only ($50 AUD)</option>
                     </select>
                 </div>
 
