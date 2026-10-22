@@ -2784,40 +2784,6 @@
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                         class="absolute left-0 top-full pt-1 w-64 z-50 normal-case">
                         <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1 flex flex-col">
-                            <!-- 1. Top Featured: FRONTAL -->
-                            <a href="#frontal-fibrosing-alopecia" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-white transition-all group/item shadow-sm">
-                                <div class="w-8 h-8 rounded-lg bg-teal-500/30 border border-teal-400/60 flex items-center justify-center text-teal-300 group-hover/item:scale-110 transition-transform">
-                                    <i class="fa-solid fa-head-side-mask text-xs"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between gap-1">
-                                        <div class="font-extrabold text-xs uppercase tracking-wider text-teal-300">FRONTAL</div>
-                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono tracking-tight shadow-sm">NEW</span>
-                                    </div>
-                                    <div class="text-[10px] text-teal-200/80 font-medium">Headband Fringe &bull; Elastic Band Hairpiece</div>
-                                </div>
-                            </a>
-
-                            <button type="button" @click="isCalculatorModalOpen = true; productsOpen = false;"
-                                class="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item cursor-pointer">
-                                <div class="w-8 h-8 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-brand-tealLight group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-calculator text-xs"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider text-teal-300">Calculator</div>
-                                    <div class="text-[10px] text-brand-textMuted">Live Custom Price Quote</div>
-                                </div>
-                            </button>
-                            <button type="button" @click="openDiagModal(); productsOpen = false;"
-                                class="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item cursor-pointer">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-stethoscope text-xs"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider text-emerald-300">Diagnostic Tool</div>
-                                    <div class="text-[10px] text-brand-textMuted">Norwood &amp; Women's Types</div>
-                                </div>
-                            </button>
                             <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-boxes-stacked text-xs"></i>
@@ -2931,7 +2897,22 @@
                                 </div>
                             </button>
 
-                            <!-- 2.3 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
+                            <!-- 2.3 Hair System & Topper Cost Calculator (Modal) -->
+                            <button type="button" @click="isCalculatorModalOpen = true; selfCheckOpen = false;"
+                                class="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
+                                <div class="w-8 h-8 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-brand-tealLight group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-calculator text-xs"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-1">
+                                        <span class="font-bold text-xs uppercase tracking-wider text-teal-300">Hair System &amp; Topper Cost Calculator</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 font-mono tracking-tight flex-shrink-0">CALC</span>
+                                    </div>
+                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Live Custom Price Quote &bull; Base Size, Length &amp; Density</div>
+                                </div>
+                            </button>
+
+                            <!-- 2.4 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
                             <a href="#ai-simulator" @click="selfCheckOpen = false;"
                                 class="flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
@@ -3142,28 +3123,6 @@
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
                     </button>
                     <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
-                        <!-- Top Featured: FRONTAL -->
-                        <a href="#frontal-fibrosing-alopecia" @click="mobileMenuOpen = false"
-                            class="block text-white font-medium py-2 px-2.5 rounded-lg bg-teal-500/20 border border-teal-400/40 text-xs flex items-center justify-between transition-colors shadow-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-head-side-mask text-teal-300 text-xs"></i>
-                                <span class="font-bold uppercase tracking-wider text-teal-300">FRONTAL</span>
-                                <span class="text-slate-300 text-[10px]">(Headband Fringe)</span>
-                            </div>
-                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-400 text-slate-900 font-mono">NEW</span>
-                        </a>
-                        <button type="button" @click="isCalculatorModalOpen = true; mobileMenuOpen = false;"
-                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors cursor-pointer">
-                            <i class="fa-solid fa-calculator text-teal-400 text-xs"></i>
-                            <span class="font-bold uppercase tracking-wider text-teal-300">Calculator</span>
-                            <span class="text-slate-400 text-[10px]">(Live Price Estimator)</span>
-                        </button>
-                        <button type="button" @click="openDiagModal(); mobileMenuOpen = false;"
-                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors cursor-pointer">
-                            <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
-                            <span class="font-bold uppercase tracking-wider text-emerald-300">Diagnostic Tool</span>
-                            <span class="text-slate-400 text-[10px]">(Norwood &amp; Women's)</span>
-                        </button>
                         <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-boxes-stacked text-amber-400 text-xs"></i>
@@ -3238,7 +3197,17 @@
                             <span class="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono flex-shrink-0">FFA</span>
                         </button>
 
-                        <!-- 2.3 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
+                        <!-- 2.3 Mobile Hair System Price Calculator (Modal) -->
+                        <button type="button" @click="isCalculatorModalOpen = true; mobileMenuOpen = false;"
+                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors cursor-pointer">
+                            <div class="flex items-center gap-2 min-w-0 pr-2">
+                                <i class="fa-solid fa-calculator text-teal-400 text-xs flex-shrink-0"></i>
+                                <span class="font-bold uppercase tracking-wider text-teal-300 text-[11px] leading-tight">Hair System &amp; Topper Cost Calculator</span>
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono flex-shrink-0">CALC</span>
+                        </button>
+
+                        <!-- 2.4 AI Virtual Hairstyle Try-On Simulator (Anchor) -->
                         <a href="#ai-simulator" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors">
                             <div class="flex items-center gap-2 min-w-0 pr-2">
