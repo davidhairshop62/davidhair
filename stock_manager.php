@@ -42,10 +42,46 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- html2pdf.js for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         [x-cloak] { display: none !important; }
         .teal-gradient { background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%); }
         .bronze-gradient { background: linear-gradient(135deg, #D97706 0%, #B45309 100%); }
+
+        /* PRINT STYLES FOR INVOICE / RECEIPT */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #111827 !important;
+            }
+            body > *:not(#printable-invoice-modal) {
+                display: none !important;
+            }
+            #printable-invoice-modal {
+                position: static !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+                overflow: visible !important;
+            }
+            #printable-invoice-modal .no-print {
+                display: none !important;
+            }
+            #printable-invoice {
+                position: static !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                background: #ffffff !important;
+                color: #111827 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-brand-darkBg text-brand-textMain font-sans antialiased min-h-screen" x-data="stockManagerApp()">
@@ -160,6 +196,16 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'invoices'">
+                        <div class="flex items-center gap-2">
+                            <button @click="openNewInvoiceModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> + Create Invoice
+                            </button>
+                            <button @click="loadInvoices()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Invoices">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingInvoices }"></i>
+                            </button>
+                        </div>
+                    </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
                         <i class="fa-solid fa-power-off"></i> Logout
@@ -186,20 +232,20 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
             <!-- Top Navigation Tab Switcher -->
-            <div class="flex items-center gap-3 border-b border-brand-border pb-3">
+            <div class="flex items-center gap-3 border-b border-brand-border pb-3 overflow-x-auto">
                 <button @click="activeTab = 'stock'" 
                         :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-boxes-stacked"></i> Stock Inventory Manager
                 </button>
                 <button @click="activeTab = 'ai_styles'; loadAiStyles()" 
                         :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-scissors text-amber-400"></i> AI Simulator Hairstyles
                 </button>
                 <button @click="activeTab = 'bookings'; loadBookings()" 
                         :class="activeTab === 'bookings' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
                     <i class="fa-solid fa-calendar-check text-emerald-400"></i> Springvale Fitting Bookings
                     <template x-if="pendingBookingsCount > 0">
                         <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
@@ -207,7 +253,7 @@
                 </button>
                 <button @click="activeTab = 'members'; loadMembers()" 
                         :class="activeTab === 'members' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
                     <i class="fa-solid fa-users-gear text-purple-400"></i> Members &amp; VIP Performance
                     <template x-if="members.length > 0">
                         <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
@@ -215,8 +261,16 @@
                 </button>
                 <button @click="activeTab = 'sections'; loadSections()" 
                         :class="activeTab === 'sections' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative">
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
                     <i class="fa-solid fa-layer-group text-sky-400"></i> Section &amp; Menu Manager
+                </button>
+                <button @click="activeTab = 'invoices'; loadInvoices()" 
+                        :class="activeTab === 'invoices' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-file-invoice-dollar text-amber-300"></i> Invoices &amp; Receipts
+                    <template x-if="invoices.length > 0">
+                        <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
+                    </template>
                 </button>
             </div>
 
@@ -1512,6 +1566,207 @@
                 </div>
             </div>
 
+            <!-- TAB 6: INVOICE & RECEIPT MANAGER -->
+            <div x-show="activeTab === 'invoices'" x-cloak class="space-y-6">
+                <!-- Summary Stats Bar -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total Invoices</div>
+                        <div class="text-2xl font-extrabold text-white mt-1" x-text="invoiceStats.total_count || 0"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Total Revenue</div>
+                        <div class="text-2xl font-extrabold text-emerald-400 mt-1 font-mono">$<span x-text="Number(invoiceStats.total_amount_all || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-tealLight uppercase tracking-wider">Paid Amount</div>
+                        <div class="text-2xl font-extrabold text-brand-tealLight mt-1 font-mono">$<span x-text="Number(invoiceStats.total_paid || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Unpaid / Due</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30" x-text="invoiceStats.unpaid_count || 0"></span>
+                        </div>
+                        <div class="text-2xl font-extrabold text-rose-400 mt-1 font-mono">$<span x-text="Number(invoiceStats.total_unpaid || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-amber-300 uppercase tracking-wider">This Month</div>
+                        <div class="text-2xl font-extrabold text-amber-300 mt-1 font-mono">$<span x-text="Number(invoiceStats.this_month_paid || 0).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span></div>
+                    </div>
+                </div>
+
+                <!-- Toolbar: Filter, Search & Create Action -->
+                <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <!-- Search Bar -->
+                        <div class="relative w-full sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" x-model="invoiceSearchQuery" placeholder="Search customer, invoice #, phone..."
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-brand-teal">
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="flex items-center gap-1 bg-brand-inner border border-brand-border rounded-lg p-1 text-xs">
+                            <template x-for="st in ['All', 'Paid', 'Unpaid', 'Quote']" :key="st">
+                                <button type="button" @click="invoiceStatusFilter = st"
+                                    :class="invoiceStatusFilter === st ? 'bg-brand-teal text-white font-bold shadow' : 'text-slate-400 hover:text-white'"
+                                    class="px-3 py-1 rounded transition-all cursor-pointer" x-text="st">
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 w-full md:w-auto justify-end">
+                        <button type="button" @click="loadInvoices()"
+                            class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5" title="Refresh Invoices">
+                            <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingInvoices }"></i>
+                            <span class="hidden sm:inline">Refresh</span>
+                        </button>
+
+                        <button type="button" @click="openNewInvoiceModal()"
+                            class="teal-gradient hover:opacity-95 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>+ Create Invoice / Receipt</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Invoices List Table -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-brand-inner text-brand-textMuted uppercase tracking-wider text-[11px] border-b border-brand-border">
+                                <tr>
+                                    <th class="py-3 px-4 font-semibold">Invoice #</th>
+                                    <th class="py-3 px-4 font-semibold">Date</th>
+                                    <th class="py-3 px-4 font-semibold">Customer</th>
+                                    <th class="py-3 px-4 font-semibold">Items</th>
+                                    <th class="py-3 px-4 font-semibold">Total Amount</th>
+                                    <th class="py-3 px-4 font-semibold">Payment</th>
+                                    <th class="py-3 px-4 font-semibold">Status</th>
+                                    <th class="py-3 px-4 font-semibold text-right">Quick Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60">
+                                <template x-if="filteredInvoices.length === 0">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-12 text-slate-400">
+                                            <div class="max-w-sm mx-auto space-y-3">
+                                                <i class="fa-solid fa-file-invoice-dollar text-4xl text-slate-600"></i>
+                                                <p class="font-medium text-slate-300">No invoices or receipts found</p>
+                                                <p class="text-xs text-slate-500">Create your first invoice with customer details, multiple items, and export via PDF, Print, WhatsApp or Telegram.</p>
+                                                <button type="button" @click="openNewInvoiceModal()" class="teal-gradient text-white text-xs font-bold px-4 py-2 rounded-lg shadow mt-2">
+                                                    + Create First Invoice
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-for="inv in filteredInvoices" :key="inv.id">
+                                    <tr class="hover:bg-brand-inner/40 transition-colors">
+                                        <!-- Invoice # & Type -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="font-mono font-bold text-white tracking-wide" x-text="inv.invoice_number"></div>
+                                            <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded mt-0.5 inline-block"
+                                                :class="{
+                                                    'bg-amber-500/20 text-amber-300 border border-amber-500/30': inv.invoice_type === 'Tax Invoice',
+                                                    'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30': inv.invoice_type === 'Receipt',
+                                                    'bg-sky-500/20 text-sky-300 border border-sky-500/30': inv.invoice_type === 'Quote'
+                                                }" x-text="inv.invoice_type"></span>
+                                        </td>
+                                        <!-- Date -->
+                                        <td class="py-3.5 px-4 font-mono text-slate-300">
+                                            <div x-text="inv.invoice_date"></div>
+                                            <div x-show="inv.due_date" class="text-[10px] text-slate-400">Due: <span x-text="inv.due_date"></span></div>
+                                        </td>
+                                        <!-- Customer -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="font-bold text-white flex items-center gap-1.5">
+                                                <i class="fa-solid fa-user text-slate-500 text-[10px]"></i>
+                                                <span x-text="inv.customer_name"></span>
+                                            </div>
+                                            <div x-show="inv.customer_phone" class="text-[11px] text-slate-400 font-mono flex items-center gap-1 mt-0.5">
+                                                <i class="fa-solid fa-phone text-slate-500 text-[9px]"></i>
+                                                <span x-text="inv.customer_phone"></span>
+                                            </div>
+                                        </td>
+                                        <!-- Items count -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="bg-brand-inner border border-brand-border px-2 py-1 rounded text-slate-300 text-[11px] font-medium">
+                                                <i class="fa-solid fa-bag-shopping text-brand-tealLight mr-1"></i>
+                                                <span x-text="(inv.item_count || 1) + ' Item' + ((inv.item_count || 1) > 1 ? 's' : '')"></span>
+                                            </span>
+                                        </td>
+                                        <!-- Total Amount -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="font-mono font-bold text-sm text-emerald-400">
+                                                $<span x-text="Number(inv.total_amount || 0).toFixed(2)"></span>
+                                            </div>
+                                            <div x-show="Number(inv.tax_amount || 0) > 0" class="text-[10px] text-slate-400">
+                                                Inc. GST $<span x-text="Number(inv.tax_amount || 0).toFixed(2)"></span>
+                                            </div>
+                                        </td>
+                                        <!-- Payment Method -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="text-slate-300 font-medium" x-text="inv.payment_method || 'Card'"></span>
+                                        </td>
+                                        <!-- Status Badge -->
+                                        <td class="py-3.5 px-4">
+                                            <button type="button" @click="quickToggleInvoiceStatus(inv)"
+                                                class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border transition-all cursor-pointer"
+                                                :class="{
+                                                    'bg-emerald-950/80 text-emerald-300 border-emerald-600 hover:bg-emerald-900': inv.status === 'Paid',
+                                                    'bg-rose-950/80 text-rose-300 border-rose-600 hover:bg-rose-900 animate-pulse': inv.status !== 'Paid' && inv.status !== 'Quote',
+                                                    'bg-sky-950/80 text-sky-300 border-sky-600 hover:bg-sky-900': inv.status === 'Quote'
+                                                }"
+                                                :title="'Click to toggle: currently ' + inv.status">
+                                                <i :class="inv.status === 'Paid' ? 'fa-solid fa-check-circle mr-1' : 'fa-solid fa-clock mr-1'"></i>
+                                                <span x-text="inv.status"></span>
+                                            </button>
+                                        </td>
+                                        <!-- Quick Actions -->
+                                        <td class="py-3.5 px-4 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <!-- View / Print / PDF -->
+                                                <button type="button" @click="openInvoicePreview(inv)"
+                                                    class="p-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/30 text-teal-300 border border-teal-500/30 transition-colors"
+                                                    title="View, Print & PDF">
+                                                    <i class="fa-solid fa-print"></i>
+                                                </button>
+                                                <!-- WhatsApp -->
+                                                <button type="button" @click="sendWhatsAppInvoice(inv)"
+                                                    class="p-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition-colors"
+                                                    title="Send WhatsApp Receipt">
+                                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                                </button>
+                                                <!-- Telegram -->
+                                                <button type="button" @click="sendTelegramInvoice(inv)"
+                                                    class="p-2 rounded-lg bg-sky-500/15 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 transition-colors"
+                                                    title="Send Telegram Push to Phone">
+                                                    <i class="fa-brands fa-telegram text-sm"></i>
+                                                </button>
+                                                <!-- Edit -->
+                                                <button type="button" @click="editInvoice(inv)"
+                                                    class="p-2 rounded-lg bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border transition-colors"
+                                                    title="Edit Invoice">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                                <!-- Delete -->
+                                                <button type="button" @click="deleteInvoice(inv)"
+                                                    class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 border border-rose-500/20 transition-colors"
+                                                    title="Delete Invoice">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -2535,6 +2790,474 @@
         </div>
     </div>
 
+    <!-- INVOICE CREATE / EDIT MODAL -->
+    <div x-show="isInvoiceModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-4xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-6 max-h-[92vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center border-b border-brand-border pb-3.5">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl teal-gradient flex items-center justify-center text-white text-base shadow">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-lg tracking-tight" x-text="invoiceModalMode === 'edit' ? 'Edit Tax Invoice / Receipt' : 'Create Tax Invoice / Receipt'"></h3>
+                        <span class="text-[11px] text-brand-textMuted">Issue professional tax invoice &amp; receipt with live calculations</span>
+                    </div>
+                </div>
+                <button type="button" @click="isInvoiceModalOpen = false" class="text-slate-400 hover:text-white p-1.5 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body Form -->
+            <form @submit.prevent="saveInvoice()" class="space-y-5 text-xs">
+                <!-- Row 1: Invoice Meta -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-brand-inner/70 p-3.5 rounded-xl border border-brand-border/80">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Invoice / Receipt #</label>
+                        <div class="relative">
+                            <input type="text" x-model="invoiceForm.invoice_number" required
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono text-xs outline-none focus:border-brand-teal">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Document Type</label>
+                        <select x-model="invoiceForm.invoice_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                            <option value="Tax Invoice">Tax Invoice</option>
+                            <option value="Receipt">Receipt (Payment Received)</option>
+                            <option value="Quote">Quote / Estimate</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Issue Date</label>
+                        <input type="date" x-model="invoiceForm.invoice_date" required
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono text-xs outline-none focus:border-brand-teal">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Due Date (Optional)</label>
+                        <input type="date" x-model="invoiceForm.due_date"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono text-xs outline-none focus:border-brand-teal">
+                    </div>
+                </div>
+
+                <!-- Row 2: Customer Information -->
+                <div class="bg-brand-inner/70 p-3.5 rounded-xl border border-brand-border/80 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-border/60 pb-2">
+                        <span class="font-bold text-brand-tealLight uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-tag"></i> Customer Information
+                        </span>
+                        <!-- Quick Member Select Dropdown -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400 text-[11px]">Quick Member:</span>
+                            <select @change="onSelectMemberDropdown($event.target.value)" class="bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1 text-slate-200 text-xs outline-none focus:border-brand-teal">
+                                <option value="">-- Select Member / VIP --</option>
+                                <template x-for="m in members" :key="m.id">
+                                    <option :value="m.id" x-text="m.full_name + ' (' + (m.phone || m.email) + ')'"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Customer Name <span class="text-rose-400">*</span></label>
+                            <input type="text" x-model="invoiceForm.customer_name" required placeholder="e.g. John Smith"
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Mobile / Phone</label>
+                            <input type="text" x-model="invoiceForm.customer_phone" placeholder="e.g. 0433 484 882"
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono text-xs outline-none focus:border-brand-teal">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Email (Optional)</label>
+                            <input type="email" x-model="invoiceForm.customer_email" placeholder="customer@example.com"
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Payment Method</label>
+                            <select x-model="invoiceForm.payment_method" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                                <option value="Card / EFTPOS">Card / EFTPOS</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Bank Transfer">Bank Transfer (EFT)</option>
+                                <option value="Afterpay">Afterpay / Zip</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Payment Status</label>
+                            <select x-model="invoiceForm.status" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal font-semibold">
+                                <option value="Paid">Paid (Full)</option>
+                                <option value="Unpaid / Due">Unpaid / Due</option>
+                                <option value="Partial">Partial Payment</option>
+                                <option value="Quote">Quote / Draft</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Address / Note (Optional)</label>
+                            <input type="text" x-model="invoiceForm.customer_address" placeholder="e.g. Springvale VIC"
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Multi-Item Entry Section -->
+                <div class="bg-brand-inner/70 p-3.5 rounded-xl border border-brand-border/80 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-border/60 pb-2.5">
+                        <span class="font-bold text-brand-tealLight uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check"></i> Products &amp; Services Line Items
+                        </span>
+
+                        <!-- Quick Presets -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select @change="onSelectServicePreset($event.target.value); $event.target.value='';" class="bg-brand-darkBg border border-teal-500/50 text-teal-300 rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer">
+                                <option value="">+ Add Salon Service...</option>
+                                <template x-for="(s, idx) in salonServicePresets" :key="idx">
+                                    <option :value="idx" x-text="s.name + ' ($' + s.price.toFixed(2) + ')'"></option>
+                                </template>
+                            </select>
+
+                            <select @change="onSelectStockPreset($event.target.value); $event.target.value='';" class="bg-brand-darkBg border border-amber-500/50 text-amber-300 rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer">
+                                <option value="">+ Add From Stock Inventory...</option>
+                                <template x-for="item in items" :key="item.id">
+                                    <option :value="item.id" x-text="item.name + ' ($' + Number(item.price).toFixed(2) + ')'"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase text-[10px] border-b border-brand-border">
+                                <tr>
+                                    <th class="py-2 px-2 w-7/12 font-semibold">Description / Product Name</th>
+                                    <th class="py-2 px-2 w-2/12 font-semibold">Qty</th>
+                                    <th class="py-2 px-2 w-2/12 font-semibold">Unit Price ($)</th>
+                                    <th class="py-2 px-2 w-2/12 text-right font-semibold">Amount ($)</th>
+                                    <th class="py-2 px-1 w-1/12 text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/50">
+                                <template x-for="(it, idx) in invoiceForm.items" :key="idx">
+                                    <tr class="align-top">
+                                        <!-- Item Description -->
+                                        <td class="py-2 px-2">
+                                            <input type="text" x-model="it.item_name" required placeholder="e.g. Men Custom Toupee / Hair Fitting"
+                                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white text-xs outline-none focus:border-brand-teal font-medium">
+                                            <input type="text" x-model="it.description" placeholder="Optional notes / specifications"
+                                                class="w-full bg-transparent border-0 text-[11px] text-slate-400 px-2 py-0.5 mt-0.5 outline-none placeholder-slate-600 focus:text-white">
+                                        </td>
+                                        <!-- Quantity -->
+                                        <td class="py-2 px-2">
+                                            <input type="number" step="any" min="0.1" x-model.number="it.quantity" required
+                                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-brand-teal text-center">
+                                        </td>
+                                        <!-- Unit Price -->
+                                        <td class="py-2 px-2">
+                                            <div class="relative">
+                                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">$</span>
+                                                <input type="number" step="0.01" min="0" x-model.number="it.unit_price" required
+                                                    class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-6 pr-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-brand-teal">
+                                            </div>
+                                        </td>
+                                        <!-- Line Total Amount -->
+                                        <td class="py-2 px-2 text-right font-mono font-bold text-white text-xs pt-3">
+                                            $<span x-text="((Number(it.quantity) || 0) * (Number(it.unit_price) || 0)).toFixed(2)"></span>
+                                        </td>
+                                        <!-- Delete row -->
+                                        <td class="py-2 px-1 text-center pt-2.5">
+                                            <button type="button" @click="removeInvoiceItem(idx)" :disabled="invoiceForm.items.length <= 1"
+                                                class="text-slate-500 hover:text-rose-400 disabled:opacity-30 disabled:hover:text-slate-500 p-1 transition-colors">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add Row Button -->
+                    <button type="button" @click="addInvoiceItem()"
+                        class="px-3 py-1.5 bg-brand-darkBg hover:bg-slate-800 border border-brand-border rounded-lg text-brand-tealLight hover:text-white font-bold text-xs flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Add Line Item</span>
+                    </button>
+                </div>
+
+                <!-- Row 4: Calculation Summary & Notes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-brand-inner/70 p-4 rounded-xl border border-brand-border/80">
+                    <!-- Left: Notes & Telegram Notification Checkbox -->
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Invoice Notes / Bank Details / Warranty Terms</label>
+                            <textarea x-model="invoiceForm.notes" rows="3" placeholder="Notes printed at the bottom of the receipt..."
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg p-2.5 text-white text-xs outline-none focus:border-brand-teal leading-relaxed"></textarea>
+                        </div>
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="checkbox" id="send_tg_check" x-model="invoiceForm.send_telegram_on_create"
+                                class="w-4 h-4 rounded border-brand-border text-brand-teal focus:ring-0 cursor-pointer">
+                            <label for="send_tg_check" class="text-slate-300 text-xs font-medium cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-brands fa-telegram text-sky-400"></i>
+                                <span>Send instant Telegram push notification to my phone on save</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Calculations -->
+                    <div class="space-y-2 bg-brand-darkBg/60 p-3.5 rounded-xl border border-brand-border/60">
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span>Subtotal:</span>
+                            <span class="font-mono font-bold">$<span x-text="computedInvoiceSubtotal.toFixed(2)"></span></span>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="flex justify-between items-center text-slate-300">
+                            <span>Discount AUD ($):</span>
+                            <input type="number" step="0.01" min="0" x-model.number="invoiceForm.discount"
+                                class="w-24 bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-right text-white font-mono text-xs outline-none focus:border-brand-teal">
+                        </div>
+
+                        <!-- GST Toggle -->
+                        <div class="flex justify-between items-center text-slate-300 pt-1 border-t border-brand-border/40">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" x-model="invoiceForm.tax_included" class="w-3.5 h-3.5 rounded text-brand-teal">
+                                <span class="text-[11px]">Include 10% GST (AU Standard)</span>
+                            </label>
+                            <span class="font-mono text-slate-400 text-xs">GST: $<span x-text="computedInvoiceTax.toFixed(2)"></span></span>
+                        </div>
+
+                        <!-- Grand Total -->
+                        <div class="flex justify-between items-center pt-2 border-t border-brand-border text-white">
+                            <span class="font-heading font-bold text-sm sm:text-base">Grand Total:</span>
+                            <div class="text-right">
+                                <div class="font-mono font-black text-lg sm:text-xl text-emerald-400">
+                                    AUD $<span x-text="computedInvoiceTotal.toFixed(2)"></span>
+                                </div>
+                                <span class="text-[10px] text-slate-400" x-text="invoiceForm.tax_included ? '(Inclusive of 10% GST)' : '(Plus 10% GST)'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="flex items-center justify-between pt-3 border-t border-brand-border">
+                    <button type="button" @click="isInvoiceModalOpen = false"
+                        class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold">
+                        Cancel
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" :disabled="isSavingInvoice"
+                            class="teal-gradient hover:opacity-95 text-white px-5 py-2.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-lg transition-all flex items-center gap-2 disabled:opacity-50">
+                            <i class="fa-solid fa-floppy-disk" :class="{ 'fa-spin': isSavingInvoice }"></i>
+                            <span x-text="isSavingInvoice ? 'Saving to MySQL...' : (invoiceModalMode === 'edit' ? 'Update Invoice' : 'Save Invoice & Generate')"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- INVOICE & RECEIPT PRINT / PREVIEW MODAL -->
+    <div id="printable-invoice-modal" x-show="isInvoicePrintModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-brand-darkBg/95 backdrop-blur-md overflow-y-auto">
+        <div class="max-w-4xl w-full my-6 space-y-4">
+            <!-- Modal Action Bar (Hidden during print) -->
+            <div class="no-print bg-brand-cardBg border border-brand-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl teal-gradient flex items-center justify-center text-white text-lg shadow">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <div class="font-heading font-bold text-white text-base flex items-center gap-2">
+                            <span>Receipt / Invoice Preview</span>
+                            <span class="text-xs font-mono text-brand-tealLight" x-text="selectedInvoice ? '#' + selectedInvoice.invoice_number : ''"></span>
+                        </div>
+                        <span class="text-[11px] text-brand-textMuted">Ready to print, download PDF, or dispatch via WhatsApp / Telegram</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Print Button -->
+                    <button type="button" @click="printInvoice()"
+                        class="px-3.5 py-2 bg-brand-teal hover:bg-teal-600 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Print</span>
+                    </button>
+
+                    <!-- PDF Download Button -->
+                    <button type="button" @click="downloadInvoicePdf()"
+                        class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>PDF</span>
+                    </button>
+
+                    <!-- WhatsApp Button -->
+                    <button type="button" @click="sendWhatsAppInvoice(selectedInvoice)"
+                        class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>WhatsApp</span>
+                    </button>
+
+                    <!-- Telegram Button -->
+                    <button type="button" @click="sendTelegramInvoice(selectedInvoice)" :disabled="isSendingTelegramInvoice"
+                        class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer disabled:opacity-50">
+                        <i class="fa-brands fa-telegram text-sm" :class="{ 'fa-spin': isSendingTelegramInvoice }"></i>
+                        <span>Telegram</span>
+                    </button>
+
+                    <!-- Copy Text Button -->
+                    <button type="button" @click="copyInvoiceText(selectedInvoice)"
+                        class="px-3 py-2 bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer" title="Copy receipt text to clipboard">
+                        <i class="fa-solid fa-copy"></i>
+                        <span class="hidden sm:inline">Copy Text</span>
+                    </button>
+
+                    <!-- Close Button -->
+                    <button type="button" @click="isInvoicePrintModalOpen = false"
+                        class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition-colors">
+                        ✕ Close
+                    </button>
+                </div>
+            </div>
+
+            <!-- ACTUAL PRINTABLE INVOICE DOCUMENT (#printable-invoice) -->
+            <div id="printable-invoice" class="bg-white text-slate-800 p-8 sm:p-12 rounded-2xl shadow-2xl max-w-3xl mx-auto font-sans leading-relaxed border border-slate-200">
+                <template x-if="selectedInvoice">
+                    <div class="space-y-8">
+                        <!-- Invoice Header -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-6">
+                            <div class="space-y-1.5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-heading font-extrabold text-2xl tracking-tight shadow">
+                                        DH
+                                    </div>
+                                    <div>
+                                        <h1 class="font-heading text-2xl font-black text-slate-900 tracking-tight leading-none">DAVID HAIR SYSTEMS</h1>
+                                        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mt-1">Premium Men's Hair Systems &amp; Salon</span>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-slate-600 space-y-0.5 pt-2">
+                                    <div>Shop 62, 46-58 Buckingham Ave, Springvale VIC 3171</div>
+                                    <div>Phone: <strong>+61 433 484 882</strong> &bull; Email: <strong>shc9607@gmail.com</strong></div>
+                                    <div>Web: <strong>www.davidhairshop.com</strong> &bull; ABN: <strong>82 612 948 231</strong></div>
+                                </div>
+                            </div>
+
+                            <!-- Document Title & Status Stamp -->
+                            <div class="text-left sm:text-right space-y-2">
+                                <div class="font-heading font-black text-2xl uppercase tracking-wider text-slate-900" x-text="selectedInvoice.invoice_type || 'TAX INVOICE'"></div>
+                                <div class="inline-block px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider border-2"
+                                    :class="{
+                                        'border-emerald-600 text-emerald-700 bg-emerald-50': selectedInvoice.status === 'Paid',
+                                        'border-rose-600 text-rose-700 bg-rose-50': selectedInvoice.status !== 'Paid' && selectedInvoice.status !== 'Quote',
+                                        'border-sky-600 text-sky-700 bg-sky-50': selectedInvoice.status === 'Quote'
+                                    }" x-text="selectedInvoice.status === 'Paid' ? 'PAID IN FULL' : selectedInvoice.status">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meta Info Grid -->
+                        <div class="grid grid-cols-2 gap-6 text-xs border-b border-slate-200 pb-6">
+                            <!-- Billed To -->
+                            <div class="space-y-1">
+                                <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px] block">BILLED TO:</span>
+                                <div class="text-base font-bold text-slate-900" x-text="selectedInvoice.customer_name"></div>
+                                <div x-show="selectedInvoice.customer_phone" class="text-slate-700">Tel: <strong x-text="selectedInvoice.customer_phone"></strong></div>
+                                <div x-show="selectedInvoice.customer_email" class="text-slate-700" x-text="selectedInvoice.customer_email"></div>
+                                <div x-show="selectedInvoice.customer_address" class="text-slate-700" x-text="selectedInvoice.customer_address"></div>
+                            </div>
+
+                            <!-- Invoice Details -->
+                            <div class="space-y-1 text-right">
+                                <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px] block">INVOICE DETAILS:</span>
+                                <div>Invoice #: <strong class="font-mono text-slate-900" x-text="selectedInvoice.invoice_number"></strong></div>
+                                <div>Date: <strong x-text="selectedInvoice.invoice_date"></strong></div>
+                                <div x-show="selectedInvoice.due_date">Due Date: <strong x-text="selectedInvoice.due_date"></strong></div>
+                                <div>Payment Method: <strong x-text="selectedInvoice.payment_method || 'Card / EFTPOS'"></strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Items Table -->
+                        <div>
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b-2 border-slate-800 text-slate-900 font-bold uppercase text-[11px]">
+                                        <th class="py-2.5 px-2 w-12">#</th>
+                                        <th class="py-2.5 px-2">Item &amp; Description</th>
+                                        <th class="py-2.5 px-2 text-center w-20">Qty</th>
+                                        <th class="py-2.5 px-2 text-right w-28">Unit Price</th>
+                                        <th class="py-2.5 px-2 text-right w-28">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <template x-for="(it, i) in (selectedInvoice.items || [])" :key="i">
+                                        <tr>
+                                            <td class="py-3 px-2 font-mono text-slate-400" x-text="i + 1"></td>
+                                            <td class="py-3 px-2">
+                                                <div class="font-bold text-slate-900" x-text="it.item_name"></div>
+                                                <div x-show="it.description" class="text-[11px] text-slate-500 italic mt-0.5" x-text="it.description"></div>
+                                            </td>
+                                            <td class="py-3 px-2 text-center font-mono font-medium" x-text="it.quantity"></td>
+                                            <td class="py-3 px-2 text-right font-mono" x-text="'$' + Number(it.unit_price).toFixed(2)"></td>
+                                            <td class="py-3 px-2 text-right font-mono font-bold text-slate-900" x-text="'$' + Number(it.amount).toFixed(2)"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Calculations Box -->
+                        <div class="flex justify-end pt-2">
+                            <div class="w-72 space-y-2 text-xs border-t-2 border-slate-900 pt-4">
+                                <div class="flex justify-between text-slate-600">
+                                    <span>Subtotal:</span>
+                                    <span class="font-mono font-bold text-slate-900">$<span x-text="Number(selectedInvoice.subtotal || 0).toFixed(2)"></span></span>
+                                </div>
+                                <template x-if="Number(selectedInvoice.discount || 0) > 0">
+                                    <div class="flex justify-between text-rose-600 font-medium">
+                                        <span>Discount:</span>
+                                        <span class="font-mono">-$<span x-text="Number(selectedInvoice.discount).toFixed(2)"></span></span>
+                                    </div>
+                                </template>
+                                <template x-if="Number(selectedInvoice.tax_amount || 0) > 0">
+                                    <div class="flex justify-between text-slate-600">
+                                        <span>Includes 10% GST:</span>
+                                        <span class="font-mono">$<span x-text="Number(selectedInvoice.tax_amount).toFixed(2)"></span></span>
+                                    </div>
+                                </template>
+                                <div class="flex justify-between text-slate-900 font-bold text-base border-t-2 border-slate-900 pt-2.5">
+                                    <span>TOTAL AUD:</span>
+                                    <span class="font-mono text-xl text-slate-900">$<span x-text="Number(selectedInvoice.total_amount || 0).toFixed(2)"></span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes & Footer Terms -->
+                        <div class="border-t border-slate-200 pt-6 space-y-3 text-[11px] text-slate-500 leading-relaxed">
+                            <div x-show="selectedInvoice.notes" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700">
+                                <strong class="block text-slate-900 mb-1">Notes &amp; Instructions:</strong>
+                                <span x-text="selectedInvoice.notes"></span>
+                            </div>
+
+                            <div class="space-y-1">
+                                <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Systems include 1 complimentary fitting check &amp; styling touch-up within 14 days of appointment.</div>
+                                <div><strong>Direct Bank Deposit (if required):</strong> Bank: ANZ &bull; BSB: 013-006 &bull; Account: 1234-5678 &bull; Name: David Hair Systems</div>
+                            </div>
+
+                            <div class="text-center pt-4 text-slate-400 border-t border-slate-100">
+                                Thank you for choosing David Hair Systems Springvale &bull; www.davidhairshop.com
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
     <!-- ALPINE LOGIC -->
     <script>
         function stockManagerApp() {
@@ -2840,6 +3563,7 @@
                             await this.loadBookings();
                             await this.loadMembers();
                             await this.loadSections();
+                            await this.loadInvoices();
                         } else {
                             this.isAuthenticated = false;
                         }
@@ -2869,6 +3593,7 @@
                             await this.loadBookings();
                             await this.loadMembers();
                             await this.loadSections();
+                            await this.loadInvoices();
                         } else {
                             this.loginError = data.message || 'Login failed.';
                         }
@@ -4215,6 +4940,498 @@
                         }
                     } catch (e) {
                         this.showToast('Reset failed: ' + e.message);
+                    }
+                },
+
+                // ==========================================
+                // INVOICES & RECEIPTS MANAGEMENT METHODS
+                // ==========================================
+                invoices: [],
+                invoiceStats: {
+                    total_count: 0,
+                    total_amount_all: 0,
+                    total_paid: 0,
+                    total_unpaid: 0,
+                    unpaid_count: 0,
+                    this_month_paid: 0
+                },
+                isLoadingInvoices: false,
+                invoiceSearchQuery: '',
+                invoiceStatusFilter: 'All',
+                isInvoiceModalOpen: false,
+                invoiceModalMode: 'create', // 'create' or 'edit'
+                isSavingInvoice: false,
+                isInvoicePrintModalOpen: false,
+                selectedInvoice: null,
+                isSendingTelegramInvoice: false,
+
+                // Invoice Form State
+                invoiceForm: {
+                    id: null,
+                    invoice_number: '',
+                    invoice_type: 'Tax Invoice',
+                    invoice_date: new Date().toISOString().split('T')[0],
+                    due_date: '',
+                    customer_name: '',
+                    customer_phone: '',
+                    customer_email: '',
+                    customer_address: '',
+                    payment_method: 'Card / EFTPOS',
+                    status: 'Paid',
+                    tax_rate: 10,
+                    tax_included: true,
+                    discount: 0,
+                    notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                    send_telegram_on_create: true,
+                    items: [
+                        { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
+                        { item_name: 'VIP 1-on-1 Fitting Consultation', description: 'Cut, blend & perimeter attachment', quantity: 1, unit_price: 150.00, amount: 150.00 }
+                    ]
+                },
+
+                // Preset Services for Quick Selection
+                salonServicePresets: [
+                    { name: 'VIP 1-on-1 Fitting Consultation', price: 150.00, desc: 'Complete custom fitting, sizing & attachment' },
+                    { name: 'Men Custom Toupee (Standard Skin)', price: 650.00, desc: 'Ultra-thin 0.06mm skin base European hair' },
+                    { name: 'Men Custom Toupee (French/Swiss Lace)', price: 680.00, desc: 'Breathable Swiss lace base custom contour' },
+                    { name: 'Toupee Maintenance & Scalp Clean', price: 120.00, desc: 'Deep scalp wash, adhesive removal & re-taping' },
+                    { name: 'Haircut & Natural Hair Blend', price: 60.00, desc: 'Precision blend cut with natural bio-hair' },
+                    { name: 'Base Perimeter Re-bonding Service', price: 80.00, desc: 'Front hairline adhesive touch-up & bond' },
+                    { name: 'Ultra-Hold Contour Tape Roll (36pcs)', price: 35.00, desc: 'Medical-grade 4-week double-sided adhesive' },
+                    { name: 'Ghost Bond XL Adhesive (1.3oz)', price: 45.00, desc: 'Water-based invisible lace scalp bond' },
+                    { name: 'Scalp Protector Dab-On Primer', price: 28.00, desc: 'Sweat & oil barrier skin primer' },
+                    { name: 'Custom Order Booking Deposit', price: 200.00, desc: 'Non-refundable fitting template deposit' }
+                ],
+
+                get filteredInvoices() {
+                    return this.invoices.filter(inv => {
+                        const q = this.invoiceSearchQuery.toLowerCase().trim();
+                        const matchesQuery = !q ||
+                            (inv.invoice_number && inv.invoice_number.toLowerCase().includes(q)) ||
+                            (inv.customer_name && inv.customer_name.toLowerCase().includes(q)) ||
+                            (inv.customer_phone && inv.customer_phone.toLowerCase().includes(q)) ||
+                            (inv.customer_email && inv.customer_email.toLowerCase().includes(q));
+
+                        const matchesStatus = this.invoiceStatusFilter === 'All' || inv.status === this.invoiceStatusFilter;
+                        return matchesQuery && matchesStatus;
+                    });
+                },
+
+                get computedInvoiceSubtotal() {
+                    if (!this.invoiceForm.items || !this.invoiceForm.items.length) return 0;
+                    return this.invoiceForm.items.reduce((sum, it) => {
+                        const q = Number(it.quantity) || 0;
+                        const p = Number(it.unit_price) || 0;
+                        return sum + (q * p);
+                    }, 0);
+                },
+
+                get computedInvoiceTax() {
+                    const net = Math.max(0, this.computedInvoiceSubtotal - (Number(this.invoiceForm.discount) || 0));
+                    if (this.invoiceForm.tax_included) {
+                        return net / 11;
+                    } else {
+                        const rate = Number(this.invoiceForm.tax_rate) || 10;
+                        return net * (rate / 100);
+                    }
+                },
+
+                get computedInvoiceTotal() {
+                    const net = Math.max(0, this.computedInvoiceSubtotal - (Number(this.invoiceForm.discount) || 0));
+                    if (this.invoiceForm.tax_included) {
+                        return net;
+                    } else {
+                        return net + this.computedInvoiceTax;
+                    }
+                },
+
+                async loadInvoices() {
+                    this.isLoadingInvoices = true;
+                    try {
+                        const res = await fetch('api_invoices.php?action=list');
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.invoices = data.invoices || [];
+                            this.invoiceStats = data.stats || this.invoiceStats;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load invoices:', e);
+                    } finally {
+                        this.isLoadingInvoices = false;
+                    }
+                },
+
+                async openNewInvoiceModal() {
+                    this.invoiceModalMode = 'create';
+                    let nextNum = 'INV-' + new Date().toISOString().substring(2, 4) + (new Date().getMonth() + 1).toString().padStart(2, '0') + '-001';
+                    try {
+                        const res = await fetch('api_invoices.php?action=get_next_number');
+                        const data = await res.json();
+                        if (data.status === 'success' && data.next_number) {
+                            nextNum = data.next_number;
+                        }
+                    } catch (e) {}
+
+                    this.invoiceForm = {
+                        id: null,
+                        invoice_number: nextNum,
+                        invoice_type: 'Tax Invoice',
+                        invoice_date: new Date().toISOString().split('T')[0],
+                        due_date: '',
+                        customer_name: '',
+                        customer_phone: '',
+                        customer_email: '',
+                        customer_address: '',
+                        payment_method: 'Card / EFTPOS',
+                        status: 'Paid',
+                        tax_rate: 10,
+                        tax_included: true,
+                        discount: 0,
+                        notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                        send_telegram_on_create: true,
+                        items: [
+                            { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
+                            { item_name: 'VIP 1-on-1 Fitting Consultation', description: 'Cut, blend & perimeter attachment', quantity: 1, unit_price: 150.00, amount: 150.00 }
+                        ]
+                    };
+                    this.isInvoiceModalOpen = true;
+                },
+
+                onSelectMemberDropdown(memberId) {
+                    if (!memberId) return;
+                    const m = this.members.find(mem => String(mem.id) === String(memberId));
+                    if (m) {
+                        this.invoiceForm.customer_name = m.full_name || '';
+                        this.invoiceForm.customer_phone = m.phone || '';
+                        this.invoiceForm.customer_email = m.email || '';
+                        this.showToast(`Selected member: ${m.full_name}`);
+                    }
+                },
+
+                onSelectServicePreset(idx) {
+                    if (idx === '' || idx === undefined) return;
+                    const preset = this.salonServicePresets[parseInt(idx, 10)];
+                    if (preset) {
+                        this.invoiceForm.items.push({
+                            item_name: preset.name,
+                            description: preset.desc,
+                            quantity: 1,
+                            unit_price: preset.price,
+                            amount: preset.price
+                        });
+                        this.showToast(`Added "${preset.name}" ($${preset.price})`);
+                    }
+                },
+
+                onSelectStockPreset(itemId) {
+                    if (!itemId) return;
+                    const item = this.items.find(i => String(i.id) === String(itemId));
+                    if (item) {
+                        const price = Number(item.price) || 0;
+                        const desc = [item.category, item.base, item.size].filter(Boolean).join(' • ');
+                        this.invoiceForm.items.push({
+                            item_name: item.name,
+                            description: desc,
+                            quantity: 1,
+                            unit_price: price,
+                            amount: price
+                        });
+                        this.showToast(`Added stock item: "${item.name}" ($${price})`);
+                    }
+                },
+
+                addInvoiceItem() {
+                    this.invoiceForm.items.push({
+                        item_name: '',
+                        description: '',
+                        quantity: 1,
+                        unit_price: 0,
+                        amount: 0
+                    });
+                },
+
+                removeInvoiceItem(idx) {
+                    if (this.invoiceForm.items.length > 1) {
+                        this.invoiceForm.items.splice(idx, 1);
+                    }
+                },
+
+                async saveInvoice() {
+                    this.isSavingInvoice = true;
+                    try {
+                        const payload = {
+                            ...this.invoiceForm,
+                            subtotal: this.computedInvoiceSubtotal,
+                            tax_amount: this.computedInvoiceTax,
+                            total_amount: this.computedInvoiceTotal
+                        };
+
+                        const action = this.invoiceModalMode === 'edit' ? 'update' : 'create';
+                        const res = await fetch(`api_invoices.php?action=${action}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const data = await res.json();
+
+                        if (data.status === 'success') {
+                            this.showToast(data.message || 'Invoice saved successfully!');
+                            this.isInvoiceModalOpen = false;
+                            await this.loadInvoices();
+
+                            // Automatically open preview modal for the saved invoice
+                            if (data.invoice) {
+                                this.selectedInvoice = data.invoice;
+                                this.isInvoicePrintModalOpen = true;
+                            }
+                        } else {
+                            this.showToast('Save error: ' + (data.message || 'Unknown error'));
+                        }
+                    } catch (e) {
+                        this.showToast('Network error while saving invoice: ' + e.message);
+                    } finally {
+                        this.isSavingInvoice = false;
+                    }
+                },
+
+                async editInvoice(inv) {
+                    try {
+                        const res = await fetch(`api_invoices.php?action=get&id=${inv.id}`);
+                        const data = await res.json();
+                        if (data.status === 'success' && data.invoice) {
+                            const i = data.invoice;
+                            this.invoiceModalMode = 'edit';
+                            this.invoiceForm = {
+                                id: i.id,
+                                invoice_number: i.invoice_number,
+                                invoice_type: i.invoice_type,
+                                invoice_date: i.invoice_date,
+                                due_date: i.due_date || '',
+                                customer_name: i.customer_name,
+                                customer_phone: i.customer_phone || '',
+                                customer_email: i.customer_email || '',
+                                customer_address: i.customer_address || '',
+                                payment_method: i.payment_method || 'Card / EFTPOS',
+                                status: i.status || 'Paid',
+                                tax_rate: Number(i.tax_rate) || 10,
+                                tax_included: true,
+                                discount: Number(i.discount) || 0,
+                                notes: i.notes || '',
+                                send_telegram_on_create: false,
+                                items: (i.items && i.items.length) ? i.items.map(it => ({
+                                    item_name: it.item_name,
+                                    description: it.description || '',
+                                    quantity: Number(it.quantity) || 1,
+                                    unit_price: Number(it.unit_price) || 0,
+                                    amount: Number(it.amount) || 0
+                                })) : [{ item_name: 'Salon Service', description: '', quantity: 1, unit_price: 100, amount: 100 }]
+                            };
+                            this.isInvoicePrintModalOpen = false;
+                            this.isInvoiceModalOpen = true;
+                        }
+                    } catch (e) {
+                        this.showToast('Failed to load invoice details: ' + e.message);
+                    }
+                },
+
+                async deleteInvoice(inv) {
+                    if (!confirm(`Are you sure you want to delete invoice "${inv.invoice_number}" for ${inv.customer_name}?`)) return;
+                    try {
+                        const res = await fetch('api_invoices.php?action=delete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: inv.id })
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast('Invoice deleted successfully');
+                            await this.loadInvoices();
+                        } else {
+                            this.showToast(data.message || 'Delete failed');
+                        }
+                    } catch (e) {
+                        this.showToast('Error deleting invoice: ' + e.message);
+                    }
+                },
+
+                async quickToggleInvoiceStatus(inv) {
+                    const nextStatus = inv.status === 'Paid' ? 'Unpaid / Due' : 'Paid';
+                    try {
+                        const res = await fetch('api_invoices.php?action=update_status', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: inv.id, status: nextStatus })
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            inv.status = nextStatus;
+                            this.showToast(`Invoice #${inv.invoice_number} marked as ${nextStatus}`);
+                            await this.loadInvoices();
+                        }
+                    } catch (e) {
+                        this.showToast('Failed to update status');
+                    }
+                },
+
+                async openInvoicePreview(inv) {
+                    try {
+                        const res = await fetch(`api_invoices.php?action=get&id=${inv.id}`);
+                        const data = await res.json();
+                        if (data.status === 'success' && data.invoice) {
+                            this.selectedInvoice = data.invoice;
+                            this.isInvoicePrintModalOpen = true;
+                        } else {
+                            this.showToast('Failed to load invoice details');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error loading invoice');
+                    }
+                },
+
+                printInvoice() {
+                    window.print();
+                },
+
+                downloadInvoicePdf() {
+                    if (!this.selectedInvoice) return;
+                    const element = document.getElementById('printable-invoice');
+                    if (!element) return;
+
+                    const invNum = this.selectedInvoice.invoice_number || 'INV';
+                    const custName = (this.selectedInvoice.customer_name || 'Customer').replace(/[^a-zA-Z0-9]/g, '_');
+                    const filename = `DavidHair_${invNum}_${custName}.pdf`;
+
+                    this.showToast('Generating high-resolution PDF...');
+
+                    const opt = {
+                        margin: [10, 10, 10, 10],
+                        filename: filename,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, logging: false },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+
+                    if (typeof html2pdf !== 'undefined') {
+                        html2pdf().set(opt).from(element).save().then(() => {
+                            this.showToast(`PDF downloaded: ${filename}`);
+                        }).catch(err => {
+                            console.error(err);
+                            window.print();
+                        });
+                    } else {
+                        window.print();
+                    }
+                },
+
+                sendWhatsAppInvoice(inv) {
+                    if (!inv) return;
+                    const invNum = inv.invoice_number || 'N/A';
+                    const date = inv.invoice_date || '';
+                    const name = inv.customer_name || 'Customer';
+                    const total = Number(inv.total_amount || 0).toFixed(2);
+                    const payment = inv.payment_method || 'Card';
+                    const status = inv.status || 'Paid';
+
+                    let itemsText = '';
+                    if (inv.items && inv.items.length) {
+                        inv.items.forEach(it => {
+                            itemsText += `• ${it.item_name} x ${it.quantity}: $${Number(it.amount).toFixed(2)}\n`;
+                        });
+                    }
+
+                    const message = 
+`🧾 *DAVID HAIR SYSTEMS*
+*${inv.invoice_type || 'Tax Invoice'} / Receipt*
+━━━━━━━━━━━━━━━━━━━━
+🔖 *Invoice #:* ${invNum}
+📅 *Date:* ${date}
+👤 *Customer:* ${name}
+━━━━━━━━━━━━━━━━━━━━
+🛍️ *Purchased Items & Services:*
+${itemsText}--------------------
+💰 *Total Amount:* AUD $${total} (${status.toUpperCase()})
+💳 *Payment:* ${payment}
+━━━━━━━━━━━━━━━━━━━━
+📍 Shop 62, 46-58 Buckingham Ave, Springvale VIC
+📞 +61 433 484 882 | www.davidhairshop.com
+Thank you for choosing David Hair Systems!`;
+
+                    let rawPhone = (inv.customer_phone || '').replace(/[^0-9]/g, '');
+                    if (rawPhone.startsWith('0')) {
+                        rawPhone = '61' + rawPhone.substring(1);
+                    } else if (!rawPhone.startsWith('61') && rawPhone.length === 9) {
+                        rawPhone = '61' + rawPhone;
+                    }
+
+                    const url = rawPhone ? 
+                        `https://wa.me/${rawPhone}?text=${encodeURIComponent(message)}` :
+                        `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(message);
+                    }
+
+                    window.open(url, '_blank');
+                    this.showToast('WhatsApp opened! Receipt text also copied to clipboard.');
+                },
+
+                async sendTelegramInvoice(inv) {
+                    if (!inv) return;
+                    this.isSendingTelegramInvoice = true;
+                    try {
+                        const res = await fetch('api_invoices.php?action=send_telegram', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: inv.id })
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast('✅ Invoice notification sent to your Telegram!');
+                        } else {
+                            this.showToast('Telegram Error: ' + (data.message || 'Check bot settings'));
+                        }
+                    } catch (e) {
+                        this.showToast('Failed to send Telegram message: ' + e.message);
+                    } finally {
+                        this.isSendingTelegramInvoice = false;
+                    }
+                },
+
+                copyInvoiceText(inv) {
+                    if (!inv) return;
+                    const invNum = inv.invoice_number || 'N/A';
+                    const date = inv.invoice_date || '';
+                    const name = inv.customer_name || 'Customer';
+                    const total = Number(inv.total_amount || 0).toFixed(2);
+                    const payment = inv.payment_method || 'Card';
+                    const status = inv.status || 'Paid';
+
+                    let itemsText = '';
+                    if (inv.items && inv.items.length) {
+                        inv.items.forEach(it => {
+                            itemsText += `• ${it.item_name} x ${it.quantity}: $${Number(it.amount).toFixed(2)}\n`;
+                        });
+                    }
+
+                    const text = 
+`[David Hair Systems - ${inv.invoice_type || 'Tax Invoice'}]
+Invoice #: ${invNum}
+Date: ${date}
+Customer: ${name}
+Phone: ${inv.customer_phone || '-'}
+--------------------------------
+${itemsText}--------------------------------
+Subtotal: $${Number(inv.subtotal || 0).toFixed(2)}
+Total AUD: $${total} (${status})
+Payment: ${payment}
+--------------------------------
+David Hair Systems Springvale
+Shop 62, 46-58 Buckingham Ave, Springvale VIC 3171
+Tel: +61 433 484 882 | www.davidhairshop.com`;
+
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(text);
+                        this.showToast('Receipt text copied to clipboard!');
                     }
                 }
             }

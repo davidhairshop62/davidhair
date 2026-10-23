@@ -348,3 +348,99 @@ function dispatch_booking_notifications($conn, $bookingData) {
 
     return $results;
 }
+
+/**
+ * Send Telegram Invoice / Receipt Alert
+ */
+function send_telegram_invoice_alert($conn, $invoice, $customChatId = null) {
+    $settings = get_notification_settings($conn);
+    $botToken = $settings['telegram_bot_token'] ?? '';
+    $chatId = $customChatId ?: ($settings['telegram_chat_id'] ?? '');
+
+    if (empty($botToken) || empty($chatId)) {
+        return ['status' => 'skipped', 'message' => 'Telegram Bot Token or Chat ID not configured.'];
+    }
+
+    $invNum = htmlspecialchars($invoice['invoice_number'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+    $invType = htmlspecialchars($invoice['invoice_type'] ?? 'Tax Invoice', ENT_QUOTES, 'UTF-8');
+    $invDate = htmlspecialchars($invoice['invoice_date'] ?? date('Y-m-d'), ENT_QUOTES, 'UTF-8');
+    $custName = htmlspecialchars($invoice['customer_name'] ?? 'Valued Customer', ENT_QUOTES, 'UTF-8');
+    $custPhone = htmlspecialchars($invoice['customer_phone'] ?? '', ENT_QUOTES, 'UTF-8');
+    $totalAmount = number_format(floatval($invoice['total_amount'] ?? 0), 2);
+    $paymentMethod = htmlspecialchars($invoice['payment_method'] ?? 'Card', ENT_QUOTES, 'UTF-8');
+    $status = htmlspecialchars($invoice['status'] ?? 'Paid', ENT_QUOTES, 'UTF-8');
+    $notes = htmlspecialchars($invoice['notes'] ?? '', ENT_QUOTES, 'UTF-8');
+
+    $msg  = "🧾 <b>[David Hair] {$invType} (#{$invNum})</b>\n";
+    $msg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+    $msg .= "📅 <b>일자:</b> {$invDate}\n";
+    $msg .= "👤 <b>고객명:</b> {$custName}\n";
+    if (!empty($custPhone)) {
+        $msg .= "📞 <b>연락처:</b> {$custPhone}\n";
+    }
+    $msg .= "💳 <b>결제:</b> {$paymentMethod} (<b>{$status}</b>)\n";
+    $msg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+    $msg .= "🛍️ <b>항목 내역:</b>\n";
+
+    if (!empty($invoice['items']) && is_array($invoice['items'])) {
+        foreach ($invoice['items'] as $it) {
+            $iName = htmlspecialchars($it['item_name'] ?? 'Item', ENT_QUOTES, 'UTF-8');
+            $iQty = floatval($it['quantity'] ?? 1);
+            $iPrice = number_format(floatval($it['unit_price'] ?? 0), 2);
+            $iAmount = number_format(floatval($it['amount'] ?? 0), 2);
+            $msg .= "• {$iName} x {$iQty} (\${$iPrice}) = <b>\${$iAmount}</b>\n";
+        }
+    }
+
+    $subtotal = number_format(floatval($invoice['subtotal'] ?? 0), 2);
+    $tax = number_format(floatval($invoice['tax_amount'] ?? 0), 2);
+    $discount = floatval($invoice['discount'] ?? 0);
+
+    $msg .= "──────────────────────\n";
+    if ($discount > 0) {
+        $msg .= "할인(Discount): -\$" . number_format($discount, 2) . "\n";
+    }
+    if (floatval($invoice['tax_amount'] ?? 0) > 0) {
+        $msg .= "GST (10%): \${$tax} 포함\n";
+    }
+    $msg .= "💰 <b>총 결제금액: AUD \${$totalAmount}</b>\n";
+    $msg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+    if (!empty($notes)) {
+        $msg .= "📝 <i>{$notes}</i>\n";
+    }
+    $msg .= "📍 David Hair Systems (Springvale Shop 62)\n";
+    $msg .= "👉 <a href=\"https://www.davidhairshop.com/stock_manager.php\">재고/인보이스 관리 페이지 열기</a>";
+
+    $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+    $postFields = [
+        'chat_id' => $chatId,
+        'text' => $msg,
+        'parse_mode' => 'HTML',
+        'disable_web_page_preview' => true
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($err) {
+        return ['status' => 'error', 'message' => "cURL Error: " . $err];
+    }
+
+    $resData = json_decode($response, true);
+    if ($httpCode === 200 && !empty($resData['ok'])) {
+        return ['status' => 'success', 'data' => $resData];
+    } else {
+        return ['status' => 'error', 'message' => $resData['description'] ?? 'Telegram API error', 'raw' => $response];
+    }
+}
+
