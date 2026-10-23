@@ -2748,21 +2748,33 @@
     <header
         class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-brand-border/80 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Logo -->
-            <a href="#" class="flex items-center gap-2.5 sm:gap-3 group">
-                <div
-                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-lg sm:text-xl shadow-md group-hover:scale-105 transition-transform">
-                    DH
-                </div>
-                <div>
-                    <span
-                        class="font-heading text-lg sm:text-xl font-bold tracking-tight text-brand-textMain block leading-tight">DAVID
-                        HAIR</span>
-                    <span
-                        class="hidden text-[9px] sm:text-[10px] uppercase tracking-widest text-brand-tealLight font-bold">Factory-Direct
-                        & Melbourne Salon</span>
-                </div>
-            </a>
+            <!-- Logo / Brand & Mobile Location -->
+            <div class="flex items-center gap-2 sm:gap-2.5">
+                <!-- Logo (DH icon is home link, DAVID HAIR text hidden on mobile size) -->
+                <a href="#" class="flex items-center gap-2 sm:gap-2.5 group" title="David Hair - Home">
+                    <div
+                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-lg sm:text-xl shadow-md group-hover:scale-105 transition-transform shrink-0">
+                        DH
+                    </div>
+                    <!-- Brand text (Visible on md and up, hidden on mobile size) -->
+                    <div class="hidden md:block">
+                        <span
+                            class="font-heading text-lg sm:text-xl font-bold tracking-tight text-brand-textMain block leading-tight">DAVID
+                            HAIR</span>
+                        <span
+                            class="hidden text-[9px] sm:text-[10px] uppercase tracking-widest text-brand-tealLight font-bold">Factory-Direct
+                            &amp; Melbourne Salon</span>
+                    </div>
+                </a>
+
+                <!-- Mobile Location Button (Event-style button, replaces DAVID HAIR text on mobile size) -->
+                <button type="button" @click="openMapModal()"
+                    class="flex md:hidden items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px] cursor-pointer"
+                    title="Find Us - Melbourne Studio Location &amp; Directions">
+                    <i class="fa-solid fa-location-dot text-teal-400"></i>
+                    <span>Location</span>
+                </button>
+            </div>
 
             <!-- Navigation Links (Desktop) -->
             <nav
