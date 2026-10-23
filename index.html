@@ -2980,6 +2980,14 @@
                     </div>
                 </div>
 
+                <!-- 4. Location Modal Button -->
+                <button type="button" @click="openMapModal()"
+                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1 font-bold text-white uppercase tracking-wider cursor-pointer"
+                    title="Melbourne Studio Location &amp; Directions">
+                    <i class="fa-solid fa-location-dot text-teal-400 text-xs"></i>
+                    <span>LOCATION</span>
+                </button>
+
                 <!-- 5. FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true"
                     class="hover:text-brand-tealLight transition-colors flex items-center gap-1 font-bold text-white uppercase tracking-wider cursor-pointer">
@@ -3260,6 +3268,17 @@
                         <span>FAQ</span>
                     </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Q&amp;A</span>
+                </button>
+
+                <!-- 6. Mobile Location Modal Button -->
+                <button type="button" @click="openMapModal(); mobileMenuOpen = false;"
+                    class="w-full text-left block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors cursor-pointer"
+                    title="Melbourne Studio Location &amp; Directions">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-teal-400"></i>
+                        <span>LOCATION</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">MAP</span>
                 </button>
             </div>
         </div>
