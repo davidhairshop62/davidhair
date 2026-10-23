@@ -2980,14 +2980,6 @@
                     </div>
                 </div>
 
-                <!-- 4. Location Modal Button -->
-                <button type="button" @click="openMapModal()"
-                    class="hover:text-brand-tealLight transition-colors flex items-center gap-1 font-bold text-white uppercase tracking-wider cursor-pointer"
-                    title="Melbourne Studio Location &amp; Directions">
-                    <i class="fa-solid fa-location-dot text-teal-400 text-xs"></i>
-                    <span>LOCATION</span>
-                </button>
-
                 <!-- 5. FAQ Modal Button -->
                 <button type="button" @click="isFaqModalOpen = true"
                     class="hover:text-brand-tealLight transition-colors flex items-center gap-1 font-bold text-white uppercase tracking-wider cursor-pointer">
@@ -2999,6 +2991,14 @@
 
             <!-- Right Utilities -->
             <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Location Quick Button (Styled like Event button) -->
+                <button type="button" @click="openMapModal()"
+                    class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px] cursor-pointer"
+                    title="Melbourne Studio Location &amp; Directions">
+                    <i class="fa-solid fa-location-dot text-teal-400"></i>
+                    <span>Location</span>
+                </button>
+
                 <!-- Welcome Event Quick Button -->
                 <button type="button" @click="isWelcomeModalOpen = true"
                     class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px]"
@@ -3072,6 +3072,16 @@
                 <span class="flex items-center gap-2">
                     <i class="fa-solid fa-gift text-amber-400"></i>
                     <span>First Visit Special: $0 Private Fitting &amp; $50 Voucher</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+
+            <!-- Mobile Location Banner (Styled like Event banner) -->
+            <button type="button" @click="openMapModal(); mobileMenuOpen = false;"
+                class="w-full flex items-center justify-between p-3 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-xs font-bold text-left transition-colors cursor-pointer">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-teal-400"></i>
+                    <span>Studio Location &amp; Directions (Springvale)</span>
                 </span>
                 <i class="fa-solid fa-chevron-right text-xs"></i>
             </button>
@@ -3268,17 +3278,6 @@
                         <span>FAQ</span>
                     </span>
                     <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">Q&amp;A</span>
-                </button>
-
-                <!-- 6. Mobile Location Modal Button -->
-                <button type="button" @click="openMapModal(); mobileMenuOpen = false;"
-                    class="w-full text-left block text-slate-100 font-bold hover:text-brand-tealLight py-2.5 px-2 rounded-lg hover:bg-white/5 uppercase tracking-wider flex items-center justify-between transition-colors cursor-pointer"
-                    title="Melbourne Studio Location &amp; Directions">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-location-dot text-teal-400"></i>
-                        <span>LOCATION</span>
-                    </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono">MAP</span>
                 </button>
             </div>
         </div>
