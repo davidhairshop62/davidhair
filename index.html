@@ -88,28 +88,43 @@
     <!-- Alpine.js -->
     <!-- Application Logic (Preloaded before Alpine.js) -->
     <script>
-        // Global Bridge for cross-frame iframe communication (FFA, Diag, Calculator)
+        // Global Bridge for cross-frame iframe communication (FFA, Diag, Calculator) & QR booking deep-links
         window.dhOpenBookingModal = function() {
-            try {
-                // 1. Dispatch custom events for Alpine
-                window.dispatchEvent(new CustomEvent('open-booking-modal'));
-                window.dispatchEvent(new CustomEvent('close-all-submodals'));
-                window.dispatchEvent(new CustomEvent('close-ffa-modal'));
-                window.dispatchEvent(new CustomEvent('close-diag-modal'));
-                window.dispatchEvent(new CustomEvent('close-calculator-modal'));
+            var attempts = 0;
+            function tryOpen() {
+                attempts++;
+                try {
+                    // 1. Dispatch custom events for Alpine
+                    window.dispatchEvent(new CustomEvent('open-booking-modal'));
+                    window.dispatchEvent(new CustomEvent('close-all-submodals'));
+                    window.dispatchEvent(new CustomEvent('close-ffa-modal'));
+                    window.dispatchEvent(new CustomEvent('close-diag-modal'));
+                    window.dispatchEvent(new CustomEvent('close-calculator-modal'));
 
-                // 2. Direct Alpine proxy mutation on root app
-                var appEl = document.querySelector('[x-data*="davidHairApp"]');
-                if (appEl && appEl._x_dataStack && appEl._x_dataStack[0]) {
-                    var data = appEl._x_dataStack[0];
-                    data.isFfaModalOpen = false;
-                    data.isDiagModalOpen = false;
-                    data.isCalculatorModalOpen = false;
-                    data.isBookingModalOpen = true;
+                    // 2. Direct Alpine proxy mutation on root app
+                    var appEl = document.querySelector('[x-data*="davidHairApp"]');
+                    if (appEl && appEl._x_dataStack && appEl._x_dataStack[0]) {
+                        var data = appEl._x_dataStack[0];
+                        data.isFfaModalOpen = false;
+                        data.isDiagModalOpen = false;
+                        data.isCalculatorModalOpen = false;
+                        data.isWelcomeModalOpen = false;
+                        data.isBookingModalOpen = true;
+                        if (typeof data.fetchMonthStatus === 'function') {
+                            data.fetchMonthStatus();
+                        }
+                        return true;
+                    }
+                } catch(err) {
+                    console.warn('dhOpenBookingModal error:', err);
                 }
-            } catch(err) {
-                console.warn('dhOpenBookingModal error:', err);
+                // Retry if Alpine is still loading from CDN (up to 2.5s)
+                if (attempts < 25) {
+                    setTimeout(tryOpen, 100);
+                }
+                return false;
             }
+            tryOpen();
         };
 
         // Global cross-frame postMessage listener
@@ -121,19 +136,22 @@
             }
         });
 
-        // URL Hash & Param listener on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            if (window.location.search.includes('book') || window.location.hash === '#booking') {
-                setTimeout(function() {
+        // URL Hash & Param listener on page load (Triggered by QR Code: ?book=true or #booking)
+        function dhCheckUrlAndOpenBooking() {
+            try {
+                var s = (window.location.search || '').toLowerCase();
+                var h = (window.location.hash || '').toLowerCase();
+                if (s.includes('book') || s.includes('reserve') || h === '#booking' || h === '#book') {
                     window.dhOpenBookingModal();
-                }, 150);
-            }
-        });
-        window.addEventListener('hashchange', function() {
-            if (window.location.hash === '#booking') {
-                window.dhOpenBookingModal();
-            }
-        });
+                }
+            } catch (e) {}
+        }
+
+        window.addEventListener('DOMContentLoaded', dhCheckUrlAndOpenBooking);
+        window.addEventListener('load', dhCheckUrlAndOpenBooking);
+        window.addEventListener('hashchange', dhCheckUrlAndOpenBooking);
+        document.addEventListener('alpine:initialized', dhCheckUrlAndOpenBooking);
+        document.addEventListener('alpine:init', dhCheckUrlAndOpenBooking);
 
         function davidHairApp() {
             return {
@@ -557,6 +575,15 @@
                 },
 
                 async init() {
+                    // Check URL for booking trigger (QR Code / Deep Link: ?book=true, #booking, etc.)
+                    try {
+                        var s = (window.location.search || '').toLowerCase();
+                        var h = (window.location.hash || '').toLowerCase();
+                        if (s.includes('book') || s.includes('reserve') || h === '#booking' || h === '#book') {
+                            this.openBookingModal();
+                        }
+                    } catch (e) {}
+
                     this.fetchSectionSettings();
 
                     // Always ensure fresh calculator.html on modal open
