@@ -6,6 +6,7 @@ ob_start();
 session_start();
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/notification_helper.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -119,7 +120,10 @@ $adminBookingActions = [
     'delete_booking',
     'save_regular_off_days',
     'add_closure_period',
-    'delete_closure_period'
+    'delete_closure_period',
+    'get_notification_config',
+    'save_notification_config',
+    'test_notification'
 ];
 
 if (in_array($action, $adminBookingActions)) {
@@ -318,10 +322,23 @@ if ($action === 'create_booking') {
 
         $bookingId = $conn->lastInsertId();
 
+        // Dispatch real-time Telegram and Email alerts to Admin
+        $notifyResults = dispatch_booking_notifications($conn, [
+            'booking_id' => $bookingId,
+            'name' => $name,
+            'phone' => $phone,
+            'email' => $email,
+            'service' => $service,
+            'date' => $date,
+            'time' => $time,
+            'notes' => $notes
+        ]);
+
         echo json_encode([
             'status' => 'success',
             'message' => 'Your Springvale fitting appointment has been submitted successfully!',
             'booking_id' => $bookingId,
+            'notifications' => $notifyResults,
             'details' => [
                 'name' => $name,
                 'phone' => $phone,
@@ -573,6 +590,114 @@ if ($action === 'delete_closure_period') {
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         exit;
     }
+}
+
+// 11. GET NOTIFICATION CONFIG (Admin)
+if ($action === 'get_notification_config') {
+    try {
+        $settings = get_notification_settings($conn);
+        // Mask token for display
+        $maskedToken = '';
+        if (!empty($settings['telegram_bot_token'])) {
+            $t = $settings['telegram_bot_token'];
+            $len = strlen($t);
+            $maskedToken = ($len > 10) ? substr($t, 0, 6) . '...' . substr($t, -4) : '******';
+        }
+        $settings['telegram_bot_token_masked'] = $maskedToken;
+        $settings['has_telegram_token'] = !empty($settings['telegram_bot_token']);
+
+        echo json_encode([
+            'status' => 'success',
+            'data' => $settings
+        ]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
+// 12. SAVE NOTIFICATION CONFIG (Admin)
+if ($action === 'save_notification_config') {
+    try {
+        $allowedKeys = [
+            'telegram_bot_token',
+            'telegram_chat_id',
+            'telegram_enabled',
+            'notification_email',
+            'email_enabled',
+            'smtp_host',
+            'smtp_port',
+            'smtp_user',
+            'smtp_pass'
+        ];
+
+        foreach ($allowedKeys as $k) {
+            if (isset($_POST[$k])) {
+                $v = trim($_POST[$k]);
+                // If token is masked string, do not overwrite
+                if ($k === 'telegram_bot_token' && strpos($v, '...') !== false) {
+                    continue;
+                }
+                $stmt = $conn->prepare("
+                    INSERT INTO salon_schedule_settings (setting_key, setting_value)
+                    VALUES (:key, :val)
+                    ON DUPLICATE KEY UPDATE setting_value = :val2
+                ");
+                $stmt->execute([':key' => $k, ':val' => $v, ':val2' => $v]);
+            }
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Notification settings saved successfully.'
+        ]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
+// 13. TEST NOTIFICATION (Admin)
+if ($action === 'test_notification') {
+    $type = $_POST['type'] ?? 'telegram'; // 'telegram' or 'email'
+    $settings = get_notification_settings($conn);
+
+    $testBooking = [
+        'booking_id' => 999,
+        'customer_name' => 'David Hair Test',
+        'phone' => '+61 433 484 882',
+        'email' => 'shc9607@gmail.com',
+        'service_type' => 'Test Fitting Appointment ($0)',
+        'booking_date' => date('Y-m-d'),
+        'booking_time' => '02:00 PM',
+        'notes' => 'This is a test notification to verify Telegram/Email alerts.'
+    ];
+
+    if ($type === 'telegram') {
+        $botToken = trim($_POST['telegram_bot_token'] ?? $settings['telegram_bot_token']);
+        $chatId = trim($_POST['telegram_chat_id'] ?? $settings['telegram_chat_id']);
+
+        if (empty($botToken) || empty($chatId)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please provide both Telegram Bot Token and Chat ID.']);
+            exit;
+        }
+
+        $res = send_telegram_booking_alert($testBooking, $botToken, $chatId);
+        echo json_encode($res);
+        exit;
+    }
+
+    if ($type === 'email') {
+        $email = trim($_POST['notification_email'] ?? $settings['notification_email']);
+        $res = send_email_booking_alert($testBooking, $email);
+        echo json_encode($res);
+        exit;
+    }
+
+    echo json_encode(['status' => 'error', 'message' => 'Unknown notification test type.']);
+    exit;
 }
 
 echo json_encode(['status' => 'error', 'message' => 'Invalid action']);

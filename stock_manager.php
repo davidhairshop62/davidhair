@@ -722,6 +722,12 @@
                             <span>Holiday & Off-Days (휴무일 설정)</span>
                         </button>
 
+                        <!-- Notification Settings (Telegram & Email) -->
+                        <button type="button" @click="openNotificationModal()" class="px-3 py-1.5 bg-brand-inner hover:bg-slate-700 border border-sky-500/40 text-sky-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="Configure Telegram & Email Booking Alerts">
+                            <i class="fa-solid fa-bell text-sky-400"></i>
+                            <span>알림 설정 (Telegram/Email)</span>
+                        </button>
+
                         <!-- Refresh -->
                         <button type="button" @click="loadBookings()" class="px-3 py-1.5 bg-brand-inner hover:bg-slate-700 border border-brand-border text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" title="Refresh Bookings">
                             <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i>
@@ -2081,6 +2087,107 @@
         </div>
     </div>
 
+    <!-- BOOKING NOTIFICATION SETTINGS MODAL (Telegram & Email) -->
+    <div x-show="isNotificationModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-2xl my-6" @click.away="isNotificationModalOpen = false">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 text-base shadow">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-base">예약 실시간 알림 설정 (Telegram &amp; Email)</h3>
+                        <p class="text-[11px] text-brand-textMuted">고객 예약 신청 시 스마트폰 텔레그램 및 이메일로 즉시 자동 전송</p>
+                    </div>
+                </div>
+                <button type="button" @click="isNotificationModalOpen = false" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- 1. Telegram Notification Section -->
+                <div class="bg-brand-inner/70 border border-brand-border rounded-xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-telegram text-sky-400 text-base"></i>
+                            <span class="font-bold text-white text-sm">텔레그램(Telegram) 푸시 알림</span>
+                        </div>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
+                            <input type="checkbox" x-model="notificationConfig.telegram_enabled" true-value="1" false-value="0" class="rounded bg-brand-cardBg border-brand-border text-teal-500 focus:ring-0">
+                            <span class="font-semibold text-xs">알림 켜기</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div>
+                            <label class="block text-slate-400 text-[11px] mb-1 font-semibold">1) Telegram Bot Token (봇 토큰)</label>
+                            <input type="text" x-model="notificationConfig.telegram_bot_token" placeholder="예: 7123456789:AAHxxxxxxxxxxxxxxxxxxxx" class="w-full bg-brand-cardBg border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-teal-400 font-mono">
+                            <div class="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                                <span>💡 텔레그램 앱에서 <b>@BotFather</b> 검색 ➡️ <b>/newbot</b> 입력 후 발급받은 토큰을 붙여넣으세요.</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-400 text-[11px] mb-1 font-semibold">2) Telegram Chat ID (내 채팅 ID)</label>
+                            <input type="text" x-model="notificationConfig.telegram_chat_id" placeholder="예: 123456789" class="w-full bg-brand-cardBg border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-teal-400 font-mono">
+                            <div class="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                                <span>💡 텔레그램에서 <b>@userinfobot</b> 검색 ➡️ <b>/start</b> 누르면 나오는 Id 숫자를 입력하세요.</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-1 flex items-center justify-between">
+                            <span class="text-[10px] text-amber-300">⚠️ 봇을 만든 후 본인 봇 채팅방에 들어가서 <b>[시작]</b>을 먼저 눌러주셔야 메시지가 도착합니다.</span>
+                            <button type="button" @click="testTelegramAlert()" :disabled="isTestingTelegram" class="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/50 text-sky-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shrink-0">
+                                <i class="fa-solid" :class="isTestingTelegram ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+                                <span x-text="isTestingTelegram ? '전송 중...' : '텔레그램 테스트 발송'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Email Notification Section -->
+                <div class="bg-brand-inner/70 border border-brand-border rounded-xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-teal-400 text-sm"></i>
+                            <span class="font-bold text-white text-sm">이메일(Email) 알림</span>
+                        </div>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
+                            <input type="checkbox" x-model="notificationConfig.email_enabled" true-value="1" false-value="0" class="rounded bg-brand-cardBg border-brand-border text-teal-500 focus:ring-0">
+                            <span class="font-semibold text-xs">알림 켜기</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 text-[11px] mb-1 font-semibold">수신 이메일 주소</label>
+                        <div class="flex items-center gap-2">
+                            <input type="email" x-model="notificationConfig.notification_email" placeholder="shc9607@gmail.com" class="flex-1 bg-brand-cardBg border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-teal-400 font-mono">
+                            <button type="button" @click="testEmailAlert()" :disabled="isTestingEmail" class="px-3 py-2 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/50 text-teal-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shrink-0">
+                                <i class="fa-solid" :class="isTestingEmail ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+                                <span x-text="isTestingEmail ? '전송 중...' : '이메일 테스트 발송'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Save -->
+            <div class="flex justify-between items-center pt-3 border-t border-brand-border">
+                <span class="text-[11px] text-slate-400">설정을 저장하면 새 예약 시 즉시 발송됩니다.</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="isNotificationModalOpen = false" class="px-4 py-2 bg-brand-inner border border-brand-border rounded-lg text-slate-300 hover:text-white font-semibold text-xs">
+                        취소
+                    </button>
+                    <button type="button" @click="saveNotificationConfig()" :disabled="isSavingNotificationConfig" class="px-4 py-2 teal-gradient rounded-lg text-white font-bold text-xs shadow hover:opacity-95 flex items-center gap-1.5">
+                        <i class="fa-solid" :class="isSavingNotificationConfig ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+                        <span x-text="isSavingNotificationConfig ? '저장 중...' : '설정 저장 (Save)'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- NEW BOOKING MANUAL MODAL -->
     <div x-show="newBookingModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/90 backdrop-blur-sm overflow-y-auto">
         <div class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl my-6" @click.away="newBookingModalOpen = false">
@@ -2512,6 +2619,20 @@
                 isSavingClosureRules: false,
                 closureRules: { regular_off_days: [0], closure_periods: [] },
                 newClosurePeriod: { start_date: '', end_date: '', reason: '' },
+
+                // Booking Notification Settings state
+                isNotificationModalOpen: false,
+                isLoadingNotificationConfig: false,
+                isSavingNotificationConfig: false,
+                isTestingTelegram: false,
+                isTestingEmail: false,
+                notificationConfig: {
+                    telegram_bot_token: '',
+                    telegram_chat_id: '',
+                    telegram_enabled: '1',
+                    notification_email: 'shc9607@gmail.com',
+                    email_enabled: '1'
+                },
 
                 async init() {
                     await this.checkAuth();
@@ -3675,6 +3796,113 @@
                 openHolidayModal() {
                     this.isHolidayModalOpen = true;
                     this.loadClosureRules();
+                },
+
+                async openNotificationModal() {
+                    this.isNotificationModalOpen = true;
+                    this.isLoadingNotificationConfig = true;
+                    try {
+                        const res = await fetch('/api_booking.php?action=get_notification_config');
+                        const data = await res.json();
+                        if (data.status === 'success' && data.data) {
+                            this.notificationConfig = {
+                                telegram_bot_token: data.data.telegram_bot_token_masked || data.data.telegram_bot_token || '',
+                                telegram_chat_id: data.data.telegram_chat_id || '',
+                                telegram_enabled: data.data.telegram_enabled ?? '1',
+                                notification_email: data.data.notification_email || 'shc9607@gmail.com',
+                                email_enabled: data.data.email_enabled ?? '1'
+                            };
+                        }
+                    } catch (e) {
+                        console.error('Failed to load notification config:', e);
+                    } finally {
+                        this.isLoadingNotificationConfig = false;
+                    }
+                },
+
+                async saveNotificationConfig() {
+                    this.isSavingNotificationConfig = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('telegram_bot_token', this.notificationConfig.telegram_bot_token);
+                        fd.append('telegram_chat_id', this.notificationConfig.telegram_chat_id);
+                        fd.append('telegram_enabled', this.notificationConfig.telegram_enabled);
+                        fd.append('notification_email', this.notificationConfig.notification_email);
+                        fd.append('email_enabled', this.notificationConfig.email_enabled);
+
+                        const res = await fetch('/api_booking.php?action=save_notification_config', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast('알림 설정이 성공적으로 저장되었습니다!');
+                            this.isNotificationModalOpen = false;
+                        } else {
+                            alert(data.message || '저장 실패');
+                        }
+                    } catch (e) {
+                        alert('서버 저장 에러');
+                    } finally {
+                        this.isSavingNotificationConfig = false;
+                    }
+                },
+
+                async testTelegramAlert() {
+                    if (!this.notificationConfig.telegram_bot_token || !this.notificationConfig.telegram_chat_id) {
+                        alert('텔레그램 봇 토큰(Bot Token)과 챗 ID(Chat ID)를 먼저 입력해주세요.');
+                        return;
+                    }
+                    this.isTestingTelegram = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('type', 'telegram');
+                        fd.append('telegram_bot_token', this.notificationConfig.telegram_bot_token);
+                        fd.append('telegram_chat_id', this.notificationConfig.telegram_chat_id);
+
+                        const res = await fetch('/api_booking.php?action=test_notification', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            alert('✅ 텔레그램 테스트 알림이 성공적으로 전송되었습니다! 텔레그램 앱을 확인해보세요.');
+                        } else {
+                            alert('❌ 전송 실패: ' + (data.message || '오류 발생'));
+                        }
+                    } catch (e) {
+                        alert('테스트 발송 서버 오류');
+                    } finally {
+                        this.isTestingTelegram = false;
+                    }
+                },
+
+                async testEmailAlert() {
+                    if (!this.notificationConfig.notification_email) {
+                        alert('수신할 이메일 주소를 입력해주세요.');
+                        return;
+                    }
+                    this.isTestingEmail = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('type', 'email');
+                        fd.append('notification_email', this.notificationConfig.notification_email);
+
+                        const res = await fetch('/api_booking.php?action=test_notification', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            alert('✅ 이메일 테스트 발송 완료: ' + this.notificationConfig.notification_email);
+                        } else {
+                            alert('⚠️ 알림: ' + (data.message || '이메일 발송에 실패했습니다.'));
+                        }
+                    } catch (e) {
+                        alert('테스트 발송 서버 오류');
+                    } finally {
+                        this.isTestingEmail = false;
+                    }
                 },
 
                 isDayRegularOff(dayNum) {
