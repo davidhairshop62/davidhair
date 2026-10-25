@@ -961,8 +961,12 @@
                         items = items.filter(i => i.category === "Men's Toupee" || i.category === "Men's Toupees");
                     } else if (this.stockFilter === "Women's topper" || this.stockFilter === "Women's Toppers" || this.stockFilter === "Women's Topper") {
                         items = items.filter(i => (i.category || '').toLowerCase().includes('topper'));
+                    } else if (this.stockFilter === "Human Hair Wig") {
+                        items = items.filter(i => (i.category || '').toLowerCase() === 'human hair wig');
+                    } else if (this.stockFilter === "Synthetic Wig") {
+                        items = items.filter(i => (i.category || '').toLowerCase() === 'synthetic wig');
                     } else if (this.stockFilter === "Wig") {
-                        items = items.filter(i => (i.category || '').toLowerCase() === 'wig');
+                        items = items.filter(i => (i.category || '').toLowerCase().includes('wig'));
                     } else if (this.stockFilter === "Hair Extension") {
                         items = items.filter(i => (i.category || '').toLowerCase().includes('extension'));
                     }
@@ -974,8 +978,10 @@
                         "Women's topper": 2,
                         "Women's Topper": 2,
                         "Women's Toppers": 2,
-                        "Wig": 3,
-                        "Hair Extension": 4
+                        "Human Hair Wig": 3,
+                        "Synthetic Wig": 4,
+                        "Wig": 5,
+                        "Hair Extension": 6
                     };
 
                     return [...items].sort((a, b) => {
@@ -6272,7 +6278,7 @@
             <!-- Filter Tabs -->
             <div class="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-12">
                 <template
-                    x-for="cat in ['All', 'Men\'s Toupee', 'Women\'s topper', 'Wig', 'Hair Extension']"
+                    x-for="cat in ['All', 'Men\'s Toupee', 'Women\'s topper', 'Human Hair Wig', 'Synthetic Wig', 'Hair Extension']"
                     :key="cat">
                     <button @click="stockFilter = cat"
                         :class="stockFilter === cat ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 border border-brand-border hover:border-slate-500'"

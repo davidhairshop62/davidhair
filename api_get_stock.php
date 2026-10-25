@@ -30,8 +30,12 @@ try {
             $whereConditions[] = "(category = 'Men\'s Toupee' OR category = 'Men\'s Toupees')";
         } elseif (strcasecmp($category, "Women's topper") === 0 || strcasecmp($category, "Women's Toppers") === 0) {
             $whereConditions[] = "(category = 'Women\'s topper' OR category = 'Women\'s Topper' OR category = 'Women\'s Toppers')";
+        } elseif (strcasecmp($category, "Human Hair Wig") === 0) {
+            $whereConditions[] = "category = 'Human Hair Wig'";
+        } elseif (strcasecmp($category, "Synthetic Wig") === 0) {
+            $whereConditions[] = "category = 'Synthetic Wig'";
         } elseif (strcasecmp($category, "Wig") === 0) {
-            $whereConditions[] = "category = 'Wig'";
+            $whereConditions[] = "(category = 'Wig' OR category = 'Human Hair Wig' OR category = 'Synthetic Wig')";
         } elseif (strcasecmp($category, "Hair Extension") === 0) {
             $whereConditions[] = "(category = 'Hair Extension' OR category LIKE '%Extension%')";
         } elseif ($category === 'Skin Systems') {

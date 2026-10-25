@@ -337,7 +337,8 @@
                                 <option value="All">All Categories</option>
                                 <option value="Men's Toupee">Men's Toupee</option>
                                 <option value="Women's topper">Women's topper</option>
-                                <option value="Wig">Wig</option>
+                                <option value="Human Hair Wig">Human Hair Wig</option>
+                                <option value="Synthetic Wig">Synthetic Wig</option>
                                 <option value="Hair Extension">Hair Extension</option>
                             </select>
                         </div>
@@ -568,7 +569,8 @@
                                                 <select x-model="inlineForm.category" class="w-full bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-white text-xs outline-none focus:border-brand-teal">
                                                     <option value="Men's Toupee">Men's Toupee</option>
                                                     <option value="Women's topper">Women's topper</option>
-                                                    <option value="Wig">Wig</option>
+                                                    <option value="Human Hair Wig">Human Hair Wig</option>
+                                                    <option value="Synthetic Wig">Synthetic Wig</option>
                                                     <option value="Hair Extension">Hair Extension</option>
                                                 </select>
                                                 <input type="text" x-model="inlineForm.base" placeholder="Base Construction" class="w-full bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-white text-[11px] outline-none focus:border-brand-teal">
@@ -1942,7 +1944,8 @@
                                 <select x-model="form.category" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
                                     <option value="Men's Toupee">Men's Toupee</option>
                                     <option value="Women's topper">Women's topper</option>
-                                    <option value="Wig">Wig</option>
+                                    <option value="Human Hair Wig">Human Hair Wig</option>
+                                    <option value="Synthetic Wig">Synthetic Wig</option>
                                     <option value="Hair Extension">Hair Extension</option>
                                 </select>
                             </div>
