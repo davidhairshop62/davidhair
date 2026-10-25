@@ -2895,7 +2895,7 @@
                     </div>
                 </a>
 
-                <!-- Mobile Quick Buttons: LOCATION & BOOKING & CALCULATOR (Visible only on mobile size) -->
+                <!-- Mobile Quick Buttons: LOCATION & DIAGNOSTIC & BOOKING & CALCULATOR (Visible only on mobile size) -->
                 <div class="flex md:hidden items-center gap-1 sm:gap-1.5">
                     <!-- Mobile Location Button -->
                     <button type="button" @click="openMapModal()"
@@ -2903,6 +2903,14 @@
                         title="Melbourne Studio Location &amp; Directions">
                         <i class="fa-solid fa-location-dot text-teal-400 text-xs"></i>
                         <span>LOC</span>
+                    </button>
+
+                    <!-- Mobile Diagnostic Button -->
+                    <button type="button" @click="openDiagModal()"
+                        class="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-[10px] sm:text-[11px] font-bold tracking-wide transition-all shadow-sm active:scale-95 min-h-[34px] sm:min-h-[38px] cursor-pointer shrink-0"
+                        title="Hair System &amp; Topper Diagnostic Assessment">
+                        <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
+                        <span>DIAG</span>
                     </button>
 
                     <!-- Mobile Booking Button -->
@@ -3026,22 +3034,7 @@
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                         class="absolute left-0 top-full pt-1 w-[350px] z-50 normal-case">
                         <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1.5 flex flex-col">
-                            <!-- 2.1 Hair System & Topper Diagnostic Assessment (Modal) -->
-                            <button type="button" @click="openDiagModal(); selfCheckOpen = false;"
-                                class="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
-                                    <i class="fa-solid fa-stethoscope text-xs"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between gap-1">
-                                        <span class="font-bold text-xs uppercase tracking-wider text-emerald-300">Hair System &amp; Topper Diagnostic Assessment</span>
-                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono tracking-tight flex-shrink-0">5-STEP</span>
-                                    </div>
-                                    <div class="text-[10px] text-brand-textMuted mt-0.5">Clinical Diagnostic Modal &bull; Norwood &amp; Women's Stages</div>
-                                </div>
-                            </button>
-
-                            <!-- 2.2 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
+                            <!-- 2.1 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
                             <button type="button" @click="openFfaModal(); selfCheckOpen = false;"
                                 class="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-all group/item cursor-pointer">
                                 <div class="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 group-hover/item:scale-105 transition-transform flex-shrink-0 mt-0.5">
@@ -3158,6 +3151,14 @@
                     <span>LOC</span>
                 </button>
 
+                <!-- Diagnostic Quick Button -->
+                <button type="button" @click="openDiagModal()"
+                    class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px] cursor-pointer"
+                    title="Hair System &amp; Topper Diagnostic Assessment">
+                    <i class="fa-solid fa-stethoscope text-emerald-400"></i>
+                    <span>DIAG</span>
+                </button>
+
                 <!-- Booking Quick Button -->
                 <button type="button" @click="openBookingModal()"
                     class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-300 text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[38px] cursor-pointer"
@@ -3249,6 +3250,16 @@
                 <span class="flex items-center gap-2">
                     <i class="fa-solid fa-location-dot text-teal-400"></i>
                     <span>Studio Location &amp; Directions (Springvale)</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+
+            <!-- Mobile Diagnostic Banner -->
+            <button type="button" @click="openDiagModal(); mobileMenuOpen = false;"
+                class="w-full flex items-center justify-between p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-xs font-bold text-left transition-colors cursor-pointer">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-stethoscope text-emerald-400"></i>
+                    <span>Hair System &amp; Topper Diagnostic Assessment</span>
                 </span>
                 <i class="fa-solid fa-chevron-right text-xs"></i>
             </button>
@@ -3372,17 +3383,7 @@
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileSelfCheckOpen }"></i>
                     </button>
                     <div x-show="mobileSelfCheckOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
-                        <!-- 2.1 Hair System & Topper Diagnostic Assessment (Modal) -->
-                        <button type="button" @click="openDiagModal(); mobileMenuOpen = false;"
-                            class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors cursor-pointer">
-                            <div class="flex items-center gap-2 min-w-0 pr-2">
-                                <i class="fa-solid fa-stethoscope text-emerald-400 text-xs flex-shrink-0"></i>
-                                <span class="font-bold uppercase tracking-wider text-emerald-300 text-[11px] leading-tight">Hair System &amp; Topper Diagnostic Assessment</span>
-                            </div>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono flex-shrink-0">5-STEP</span>
-                        </button>
-
-                        <!-- 2.2 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
+                        <!-- 2.1 FFA Clinical Screening & Self-Assessment Tool (Modal) -->
                         <button type="button" @click="openFfaModal(); mobileMenuOpen = false;"
                             class="w-full text-left block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center justify-between transition-colors cursor-pointer">
                             <div class="flex items-center gap-2 min-w-0 pr-2">
