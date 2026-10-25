@@ -52,7 +52,7 @@ try {
     // Table exists or error ignored
 }
 
-// Auto-check stock_items table columns for description, badge, and is_visible
+// Auto-check stock_items table columns for description, badge, is_visible, and gallery_images
 try {
     $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('description', $cols)) {
@@ -63,6 +63,9 @@ try {
     }
     if (!in_array('is_visible', $cols)) {
         $conn->exec("ALTER TABLE stock_items ADD COLUMN is_visible TINYINT(1) NOT NULL DEFAULT 1");
+    }
+    if (!in_array('gallery_images', $cols)) {
+        $conn->exec("ALTER TABLE stock_items ADD COLUMN gallery_images TEXT NULL");
     }
 } catch (Exception $e) {
     // Columns already exist or error ignored
@@ -118,6 +121,15 @@ try {
     if ($action === 'list') {
         $stmt = $conn->query("SELECT * FROM stock_items ORDER BY id DESC");
         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($items as &$item) {
+            if (!empty($item['gallery_images'])) {
+                $decoded = json_decode($item['gallery_images'], true);
+                $item['gallery_images'] = is_array($decoded) ? $decoded : (!empty($item['image']) ? [$item['image']] : []);
+            } else {
+                $item['gallery_images'] = !empty($item['image']) ? [$item['image']] : [];
+            }
+        }
+        unset($item);
         sendJsonResponse(['status' => 'success', 'data' => $items]);
     }
 
@@ -172,6 +184,42 @@ try {
         ]);
     }
 
+    // 6.5. UPLOAD STOCK IMAGES (MULTIPLE FILES)
+    if ($action === 'upload_stock_images') {
+        $uploadedUrls = [];
+        $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+        if (!empty($_FILES['images'])) {
+            $files = $_FILES['images'];
+            $names = is_array($files['name']) ? $files['name'] : [$files['name']];
+            $tmps = is_array($files['tmp_name']) ? $files['tmp_name'] : [$files['tmp_name']];
+            $errors = is_array($files['error']) ? $files['error'] : [$files['error']];
+
+            for ($i = 0; $i < count($names); $i++) {
+                if ($errors[$i] === UPLOAD_ERR_OK && is_uploaded_file($tmps[$i])) {
+                    $ext = strtolower(pathinfo($names[$i], PATHINFO_EXTENSION));
+                    if (in_array($ext, $allowedExts)) {
+                        $newFileName = 'stock_' . time() . '_' . rand(1000, 9999) . '_' . $i . '.' . $ext;
+                        $targetPath = $uploadDir . $newFileName;
+                        if (move_uploaded_file($tmps[$i], $targetPath)) {
+                            $uploadedUrls[] = '/uploads/' . $newFileName;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($uploadedUrls)) {
+            sendJsonResponse([
+                'status' => 'success',
+                'message' => count($uploadedUrls) . ' image(s) uploaded successfully.',
+                'urls' => $uploadedUrls
+            ]);
+        } else {
+            sendJsonResponse(['status' => 'error', 'message' => 'No valid images were uploaded.'], 400);
+        }
+    }
+
     // 7. SAVE STOCK ITEM
     if ($action === 'save') {
         $id = !empty($_POST['id']) ? intval($_POST['id']) : null;
@@ -186,8 +234,21 @@ try {
         $price = floatval($_POST['price'] ?? 0);
         $stockQty = intval($_POST['stockQty'] ?? 1);
         $imageUrl = trim($_POST['image_url'] ?? '');
+        $rawGallery = $_POST['gallery_images'] ?? '';
 
-        // Handle Image File Upload
+        $galleryList = [];
+        if (!empty($rawGallery)) {
+            if (is_array($rawGallery)) {
+                $galleryList = $rawGallery;
+            } else {
+                $decoded = json_decode($rawGallery, true);
+                if (is_array($decoded)) {
+                    $galleryList = $decoded;
+                }
+            }
+        }
+
+        // Handle Image File Upload (single legacy)
         if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
             $fileTmp = $_FILES['image_file']['tmp_name'];
             $fileName = $_FILES['image_file']['name'];
@@ -198,10 +259,53 @@ try {
                 $newFileName = 'stock_' . time() . '_' . rand(1000, 9999) . '.' . $fileExt;
                 $targetPath = $uploadDir . $newFileName;
                 if (move_uploaded_file($fileTmp, $targetPath)) {
-                    $imageUrl = '/uploads/' . $newFileName;
+                    $newUrl = '/uploads/' . $newFileName;
+                    $imageUrl = $newUrl;
+                    if (!in_array($newUrl, $galleryList)) {
+                        array_unshift($galleryList, $newUrl);
+                    }
                 }
             }
         }
+
+        // Handle multiple gallery files upload during save if attached
+        if (!empty($_FILES['gallery_files'])) {
+            $files = $_FILES['gallery_files'];
+            $names = is_array($files['name']) ? $files['name'] : [$files['name']];
+            $tmps = is_array($files['tmp_name']) ? $files['tmp_name'] : [$files['tmp_name']];
+            $errors = is_array($files['error']) ? $files['error'] : [$files['error']];
+            for ($i = 0; $i < count($names); $i++) {
+                if ($errors[$i] === UPLOAD_ERR_OK && is_uploaded_file($tmps[$i])) {
+                    $ext = strtolower(pathinfo($names[$i], PATHINFO_EXTENSION));
+                    if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
+                        $newFileName = 'stock_' . time() . '_' . rand(1000, 9999) . '_' . $i . '.' . $ext;
+                        if (move_uploaded_file($tmps[$i], $uploadDir . $newFileName)) {
+                            $galleryList[] = '/uploads/' . $newFileName;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sanitize gallery list (remove empty/duplicates)
+        $cleanGallery = [];
+        foreach ($galleryList as $g) {
+            $g = trim($g);
+            if (!empty($g) && !in_array($g, $cleanGallery)) {
+                $cleanGallery[] = $g;
+            }
+        }
+
+        // Ensure primary image exists and is in gallery
+        if (!empty($imageUrl)) {
+            if (!in_array($imageUrl, $cleanGallery)) {
+                array_unshift($cleanGallery, $imageUrl);
+            }
+        } elseif (!empty($cleanGallery)) {
+            $imageUrl = $cleanGallery[0];
+        }
+
+        $galleryJson = !empty($cleanGallery) ? json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : null;
 
         $description = trim($_POST['description'] ?? '');
         $badge = trim($_POST['badge'] ?? '');
@@ -212,7 +316,7 @@ try {
         }
 
         if ($id) {
-            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty, description = :description, badge = :badge, is_visible = :is_visible";
+            $sql = "UPDATE stock_items SET sku = :sku, name = :name, category = :category, type = :type, base = :base, size = :size, density = :density, color = :color, price = :price, stockQty = :stockQty, description = :description, badge = :badge, is_visible = :is_visible, gallery_images = :gallery_images";
             if (!empty($imageUrl)) {
                 $sql .= ", image = :image";
             }
@@ -224,6 +328,7 @@ try {
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
                 ':price' => $price, ':stockQty' => $stockQty, ':description' => $description, ':badge' => $badge,
                 ':is_visible' => $is_visible,
+                ':gallery_images' => $galleryJson,
                 ':id' => $id
             ];
             if (!empty($imageUrl)) {
@@ -235,13 +340,17 @@ try {
             if (empty($imageUrl)) {
                 $imageUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
             }
-            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image, description, badge, is_visible) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image, :description, :badge, :is_visible)");
+            if (empty($galleryJson)) {
+                $galleryJson = json_encode([$imageUrl], JSON_UNESCAPED_SLASHES);
+            }
+            $stmt = $conn->prepare("INSERT INTO stock_items (sku, name, category, type, base, size, density, color, price, stockQty, image, description, badge, is_visible, gallery_images) VALUES (:sku, :name, :category, :type, :base, :size, :density, :color, :price, :stockQty, :image, :description, :badge, :is_visible, :gallery_images)");
             $stmt->execute([
                 ':sku' => $sku, ':name' => $name, ':category' => $category, ':type' => $type,
                 ':base' => $base, ':size' => $size, ':density' => $density, ':color' => $color,
                 ':price' => $price, ':stockQty' => $stockQty, ':image' => $imageUrl,
                 ':description' => $description, ':badge' => $badge,
-                ':is_visible' => $is_visible
+                ':is_visible' => $is_visible,
+                ':gallery_images' => $galleryJson
             ]);
             sendJsonResponse(['status' => 'success', 'message' => 'New stock item created successfully.']);
         }

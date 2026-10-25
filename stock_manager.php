@@ -453,6 +453,14 @@
                                                         <input type="file" accept="image/*" @change="quickUploadImage(item, $event)" class="hidden">
                                                     </label>
                                                     
+                                                    <!-- 다중 사진 등록 뱃지 -->
+                                                    <template x-if="item.gallery_images && item.gallery_images.length > 1">
+                                                        <div class="absolute top-1 left-1 bg-brand-darkBg/90 border border-brand-teal/50 text-brand-tealLight text-[10px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1 z-10" title="다중 사진 등록됨">
+                                                            <i class="fa-solid fa-images text-[9px]"></i>
+                                                            <span x-text="item.gallery_images.length"></span>
+                                                        </div>
+                                                    </template>
+
                                                     <!-- 사진 원본 보기 링크 (새 탭) -->
                                                     <a :href="item.image" target="_blank" @click.stop class="absolute bottom-1 right-1 w-6 h-6 rounded-md bg-black/60 hover:bg-black text-slate-300 hover:text-white flex items-center justify-center text-[10px] opacity-0 group-hover/img:opacity-100 transition-opacity shadow" title="사진 원본 보기">
                                                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1860,6 +1868,33 @@
                                     </template>
                                 </div>
 
+                                <!-- 메인사진 아래 다중 등록된 사진이 있다면: 한 줄에 3개씩 보여주기 -->
+                                <template x-if="form.gallery_images && form.gallery_images.length > 1">
+                                    <div class="p-2.5 bg-brand-inner/70 border-b border-brand-border/60">
+                                        <div class="flex items-center justify-between mb-1.5 px-0.5">
+                                            <span class="text-[10px] font-bold text-slate-300 flex items-center gap-1">
+                                                <i class="fa-solid fa-images text-brand-tealLight"></i>
+                                                <span>등록 사진 (<span x-text="form.gallery_images.length"></span>)</span>
+                                            </span>
+                                            <span class="text-[9px] text-brand-tealLight font-mono">한 줄에 3개씩</span>
+                                        </div>
+                                        <!-- 한 줄에 3개씩 그리드 -->
+                                        <div class="grid grid-cols-3 gap-1.5">
+                                            <template x-for="(gImg, idx) in form.gallery_images" :key="idx">
+                                                <div @click="previewGalleryImage(gImg)"
+                                                     class="relative aspect-square rounded-lg overflow-hidden border cursor-pointer transition-all group/thumb bg-brand-darkBg"
+                                                     :class="(imagePreview === gImg) ? 'border-brand-teal ring-2 ring-brand-teal/40 shadow-sm' : 'border-brand-border/70 hover:border-slate-400 opacity-80 hover:opacity-100'">
+                                                    <img :src="gImg" class="w-full h-full object-cover">
+                                                    <!-- 대표사진 뱃지 -->
+                                                    <template x-if="form.image_url === gImg">
+                                                        <span class="absolute top-0.5 left-0.5 bg-brand-teal text-white text-[8px] font-black px-1 rounded shadow">대표</span>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+
                                 <!-- 카드 텍스트 정보 (index.html 카드와 동일) -->
                                 <div class="p-4 space-y-2.5 bg-brand-cardBg">
                                     <div class="flex items-center justify-between">
@@ -2007,14 +2042,115 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block font-bold text-slate-300 mb-1">Upload Product Image File</label>
-                                <input type="file" accept="image/*" @change="handleFileSelect($event)" class="w-full text-slate-300 text-xs file:mr-2 file:py-1.5 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:bg-brand-inner file:text-brand-tealLight file:cursor-pointer hover:file:bg-slate-700">
+                        <!-- MULTI-IMAGE GALLERY MANAGEMENT (다중 이미지 등록 & 대표사진 설정 & 한 줄에 3개씩 표시) -->
+                        <div class="bg-brand-inner/70 p-3.5 rounded-xl border border-brand-border space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="block font-bold text-slate-200 text-xs flex items-center gap-2">
+                                    <i class="fa-solid fa-images text-brand-tealLight"></i>
+                                    <span>Product Gallery & Main Photo (다중 이미지 등록 및 대표사진 설정)</span>
+                                </label>
+                                <span class="text-[11px] text-brand-tealLight font-mono" x-show="form.gallery_images && form.gallery_images.length > 0">
+                                    등록된 사진: <strong x-text="form.gallery_images.length"></strong>장
+                                </span>
                             </div>
+
+                            <!-- 파일 다중 업로드 & URL 직접 입력 -->
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-end">
+                                <div class="md:col-span-6">
+                                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">
+                                        <i class="fa-solid fa-cloud-arrow-up text-brand-tealLight mr-1"></i> 파일 다중 업로드 (여러 개 동시 선택 가능)
+                                    </label>
+                                    <input type="file" 
+                                           accept="image/*" 
+                                           multiple 
+                                           @change="handleMultipleFileSelect($event)" 
+                                           class="w-full text-slate-300 text-xs file:mr-2 file:py-1.5 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:bg-brand-teal/20 file:text-brand-tealLight file:border file:border-brand-teal/30 file:cursor-pointer hover:file:bg-brand-teal/30">
+                                </div>
+
+                                <div class="md:col-span-6">
+                                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">
+                                        <i class="fa-solid fa-link text-brand-tealLight mr-1"></i> 웹 이미지 URL 추가
+                                    </label>
+                                    <div class="flex gap-1.5">
+                                        <input type="text" 
+                                               x-model="newGalleryUrl" 
+                                               @keydown.enter.prevent="addGalleryImageUrl()" 
+                                               placeholder="https://... 이미지 주소 입력" 
+                                               class="flex-1 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-brand-teal text-xs">
+                                        <button type="button" 
+                                                @click="addGalleryImageUrl()" 
+                                                class="px-3 py-1.5 bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/40 text-brand-tealLight rounded-lg text-xs font-bold whitespace-nowrap transition-all">
+                                            + 추가
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 업로드 중 인디케이터 -->
+                            <div x-show="uploadingGallery" x-cloak class="p-2.5 bg-brand-teal/10 border border-brand-teal/30 rounded-lg text-brand-tealLight text-xs flex items-center gap-2">
+                                <i class="fa-solid fa-spinner fa-spin text-sm"></i>
+                                <span>이미지 업로드 중입니다... 잠시만 기다려주세요.</span>
+                            </div>
+
+                            <!-- 다중 등록된 사진 목록: 한 줄에 3개씩 그리드 표시 & 대표사진 선택 -->
                             <div>
-                                <label class="block font-bold text-slate-300 mb-1">Or Image URL</label>
-                                <input type="text" x-model="form.image_url" @input="if(!selectedFile) imagePreview = form.image_url" placeholder="https://..." class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-grip text-brand-tealLight"></i>
+                                        <span>등록된 사진 (한 줄에 3개씩 정렬 · 대표사진을 선택하세요)</span>
+                                    </span>
+                                    <span class="text-[10px] text-slate-400">클릭하거나 '대표 설정' 버튼으로 대표사진 지정</span>
+                                </div>
+
+                                <!-- 3개씩 표시 그리드 -->
+                                <template x-if="form.gallery_images && form.gallery_images.length > 0">
+                                    <div class="grid grid-cols-3 gap-2.5">
+                                        <template x-for="(imgUrl, idx) in form.gallery_images" :key="idx">
+                                            <div @click="previewGalleryImage(imgUrl)"
+                                                 class="relative aspect-square rounded-xl overflow-hidden border bg-brand-darkBg group transition-all cursor-pointer"
+                                                 :class="form.image_url === imgUrl ? 'border-2 border-brand-teal ring-2 ring-brand-teal/40 shadow-lg' : 'border-brand-border/80 hover:border-slate-400'">
+                                                
+                                                <!-- 썸네일 이미지 -->
+                                                <img :src="imgUrl" class="w-full h-full object-cover">
+
+                                                <!-- 대표사진 뱃지 (대표사진일 때) -->
+                                                <template x-if="form.image_url === imgUrl">
+                                                    <div class="absolute top-1.5 left-1.5 bg-brand-teal text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md flex items-center gap-1 z-10">
+                                                        <i class="fa-solid fa-star text-[9px]"></i>
+                                                        <span>대표사진</span>
+                                                    </div>
+                                                </template>
+
+                                                <!-- 대표로 설정 버튼 (대표사진이 아닐 때) -->
+                                                <template x-if="form.image_url !== imgUrl">
+                                                    <button type="button" 
+                                                            @click.stop="setPrimaryImage(imgUrl)"
+                                                            class="absolute bottom-1.5 inset-x-1.5 bg-brand-darkBg/95 hover:bg-brand-teal text-white border border-brand-border/80 text-[10px] font-bold py-1 px-1.5 rounded-md shadow transition-colors flex items-center justify-center gap-1 z-10 opacity-90 group-hover:opacity-100">
+                                                        <i class="fa-regular fa-star text-[9px]"></i>
+                                                        <span>대표 설정</span>
+                                                    </button>
+                                                </template>
+
+                                                <!-- 삭제 버튼 -->
+                                                <button type="button" 
+                                                        @click.stop="removeGalleryImage(idx)" 
+                                                        class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-950/90 text-rose-300 hover:bg-rose-600 hover:text-white border border-rose-500/50 flex items-center justify-center text-xs transition-all shadow z-10" 
+                                                        title="이 사진 삭제">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- 등록된 사진이 없을 때 -->
+                                <template x-if="!form.gallery_images || form.gallery_images.length === 0">
+                                    <div class="p-5 rounded-xl border border-dashed border-brand-border text-center text-slate-400 bg-brand-darkBg/40">
+                                        <i class="fa-regular fa-images text-2xl text-slate-500 mb-1.5 block"></i>
+                                        <p class="text-xs font-semibold text-slate-300">등록된 사진이 없습니다.</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">상단의 '파일 다중 업로드' 또는 'URL 추가'를 통해 여러 장의 사진을 등록하세요.</p>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -3649,17 +3785,44 @@
                     this.modalMode = mode;
                     this.selectedFile = null;
                     this.copiedNotice = '';
+                    this.uploadingGallery = false;
+                    this.newGalleryUrl = '';
+                    this.previewActiveImage = '';
+
                     if (mode === 'edit' && item) {
                         const isVis = (item.is_visible === undefined || item.is_visible === null || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 1 : 0;
-                        this.form = { ...item, image_url: item.image, description: item.description || '', badge: item.badge || '', is_visible: isVis };
-                        this.imagePreview = item.image;
+                        
+                        // Parse gallery images into clean array
+                        let gallery = [];
+                        if (Array.isArray(item.gallery_images)) {
+                            gallery = [...item.gallery_images];
+                        } else if (typeof item.gallery_images === 'string' && item.gallery_images.trim().startsWith('[')) {
+                            try { gallery = JSON.parse(item.gallery_images); } catch(e) { gallery = []; }
+                        }
+                        if (gallery.length === 0 && item.image) {
+                            gallery = [item.image];
+                        } else if (item.image && !gallery.includes(item.image)) {
+                            gallery.unshift(item.image);
+                        }
+
+                        this.form = { 
+                            ...item, 
+                            image_url: item.image || (gallery[0] || ''), 
+                            gallery_images: gallery,
+                            description: item.description || '', 
+                            badge: item.badge || '', 
+                            is_visible: isVis 
+                        };
+                        this.imagePreview = this.form.image_url;
                     } else {
                         this.form = {
                             id: null,
                             sku: 'SKU-DH-' + (100 + this.items.length + 1),
                             name: '', category: "Men's Toupee", type: "Skin Systems",
                             base: "0.03mm Skin", size: '8x10"', density: '90%',
-                            color: '#1B Off Black', price: 450, stockQty: 10, image_url: '',
+                            color: '#1B Off Black', price: 450, stockQty: 10, 
+                            image_url: '',
+                            gallery_images: [],
                             description: '', badge: '', is_visible: 1
                         };
                         this.imagePreview = '';
@@ -3698,6 +3861,9 @@
                     if (!this.form.image_url && this.imagePreview) {
                         this.form.image_url = this.imagePreview;
                     }
+                    if (this.form.gallery_images) {
+                        this.form.gallery_images = [...this.form.gallery_images];
+                    }
                     this.selectedFile = null;
 
                     this.copiedNotice = `"${originalSku}" 제품 정보가 복사되었습니다. SKU 및 세부 사양을 검토/수정한 후 저장하세요.`;
@@ -3706,6 +3872,82 @@
                 copyItemFromTable(item) {
                     this.openModal('edit', item);
                     this.copyAsNewProduct();
+                },
+
+                setPrimaryImage(imgUrl) {
+                    if (!imgUrl) return;
+                    this.form.image_url = imgUrl;
+                    this.imagePreview = imgUrl;
+                    this.previewActiveImage = imgUrl;
+                    if (!this.form.gallery_images) this.form.gallery_images = [];
+                    if (!this.form.gallery_images.includes(imgUrl)) {
+                        this.form.gallery_images.unshift(imgUrl);
+                    }
+                },
+
+                removeGalleryImage(index) {
+                    if (!this.form.gallery_images || index < 0 || index >= this.form.gallery_images.length) return;
+                    const removed = this.form.gallery_images.splice(index, 1)[0];
+                    if (this.form.image_url === removed) {
+                        this.form.image_url = this.form.gallery_images.length > 0 ? this.form.gallery_images[0] : '';
+                        this.imagePreview = this.form.image_url;
+                    }
+                    if (this.previewActiveImage === removed) {
+                        this.previewActiveImage = this.form.image_url;
+                    }
+                },
+
+                addGalleryImageUrl() {
+                    const url = (this.newGalleryUrl || '').trim();
+                    if (!url) return;
+                    if (!this.form.gallery_images) this.form.gallery_images = [];
+                    if (!this.form.gallery_images.includes(url)) {
+                        this.form.gallery_images.push(url);
+                    }
+                    if (!this.form.image_url) {
+                        this.setPrimaryImage(url);
+                    }
+                    this.newGalleryUrl = '';
+                },
+
+                async handleMultipleFileSelect(event) {
+                    const files = event.target.files;
+                    if (!files || files.length === 0) return;
+
+                    this.uploadingGallery = true;
+                    const formData = new FormData();
+                    formData.append('action', 'upload_stock_images');
+                    for (let i = 0; i < files.length; i++) {
+                        formData.append('images[]', files[i]);
+                    }
+
+                    try {
+                        const res = await fetch('/admin_stock_api.php', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.status === 'success' && data.urls && data.urls.length > 0) {
+                            if (!this.form.gallery_images) this.form.gallery_images = [];
+                            data.urls.forEach(u => {
+                                if (!this.form.gallery_images.includes(u)) {
+                                    this.form.gallery_images.push(u);
+                                }
+                            });
+                            if (!this.form.image_url && this.form.gallery_images.length > 0) {
+                                this.setPrimaryImage(this.form.gallery_images[0]);
+                            }
+                        } else {
+                            alert('업로드 실패: ' + (data.message || '알 수 없는 오류'));
+                        }
+                    } catch (e) {
+                        alert('이미지 업로드 오류: ' + e.message);
+                    } finally {
+                        this.uploadingGallery = false;
+                        event.target.value = '';
+                    }
+                },
+
+                previewGalleryImage(imgUrl) {
+                    this.previewActiveImage = imgUrl;
+                    this.imagePreview = imgUrl;
                 },
 
                 handleFileSelect(event) {
@@ -3735,7 +3977,11 @@
                     formData.append('description', this.form.description || '');
                     formData.append('badge', this.form.badge || '');
                     formData.append('is_visible', (this.form.is_visible === undefined || this.form.is_visible === null || this.form.is_visible == 1 || this.form.is_visible === true || this.form.is_visible === '1') ? 1 : 0);
-                    formData.append('image_url', this.form.image_url);
+                    
+                    // Primary Image
+                    formData.append('image_url', this.form.image_url || '');
+                    // Multi-Image Gallery JSON
+                    formData.append('gallery_images', JSON.stringify(this.form.gallery_images || []));
                     if (this.selectedFile) formData.append('image_file', this.selectedFile);
 
                     try {

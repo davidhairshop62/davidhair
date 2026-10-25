@@ -9,11 +9,14 @@ header('Expires: 0');
 require_once __DIR__ . '/config.php';
 
 try {
-    // Ensure is_visible column exists
+    // Ensure columns exist
     try {
         $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
         if (!in_array('is_visible', $cols)) {
             $conn->exec("ALTER TABLE stock_items ADD COLUMN is_visible TINYINT(1) NOT NULL DEFAULT 1");
+        }
+        if (!in_array('gallery_images', $cols)) {
+            $conn->exec("ALTER TABLE stock_items ADD COLUMN gallery_images TEXT NULL");
         }
     } catch (Exception $e) {}
 
@@ -52,7 +55,7 @@ try {
         }
     }
 
-    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image, description, badge, is_visible FROM stock_items";
+    $sql = "SELECT id, sku, name, category, type, base, size, density, color, CAST(price AS FLOAT) as price, stockQty, image, description, badge, is_visible, gallery_images FROM stock_items";
     if (!empty($whereConditions)) {
         $sql .= " WHERE " . implode(" AND ", $whereConditions);
     }
@@ -71,6 +74,16 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($items as &$item) {
+        if (!empty($item['gallery_images'])) {
+            $decoded = json_decode($item['gallery_images'], true);
+            $item['gallery_images'] = is_array($decoded) ? $decoded : (!empty($item['image']) ? [$item['image']] : []);
+        } else {
+            $item['gallery_images'] = !empty($item['image']) ? [$item['image']] : [];
+        }
+    }
+    unset($item);
 
     echo json_encode([
         'status' => 'success',
