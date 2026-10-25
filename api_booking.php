@@ -4,6 +4,7 @@ error_reporting(0);
 ini_set('display_errors', '0');
 ob_start();
 session_start();
+date_default_timezone_set('Australia/Melbourne');
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/notification_helper.php';
@@ -239,7 +240,26 @@ if ($action === 'get_day_slots') {
         $bookedTimes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         $slots = [];
+        $isToday = ($date === date('Y-m-d'));
+        $nowMinutes = intval(date('H')) * 60 + intval(date('i'));
+
         foreach ($standardSlots as $slot) {
+            if ($isToday) {
+                $slotMinutes = 0;
+                if (preg_match('/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i', $slot, $m)) {
+                    $h = intval($m[1]);
+                    $min = intval($m[2]);
+                    $mer = strtoupper($m[3]);
+                    if ($mer === 'PM' && $h < 12) $h += 12;
+                    if ($mer === 'AM' && $h === 12) $h = 0;
+                    $slotMinutes = $h * 60 + $min;
+                }
+                // Do not show available times that are earlier than or equal to current time today
+                if ($slotMinutes <= $nowMinutes) {
+                    continue;
+                }
+            }
+
             $isBooked = in_array($slot, $bookedTimes);
             $slots[] = [
                 'time' => $slot,
@@ -281,6 +301,27 @@ if ($action === 'create_booking') {
     if (empty($name) || empty($phone) || empty($date) || empty($time)) {
         echo json_encode(['status' => 'error', 'message' => 'Please provide Name, Phone, Date, and Time.']);
         exit;
+    }
+
+    $isToday = ($date === date('Y-m-d'));
+    if ($isToday) {
+        $nowMinutes = intval(date('H')) * 60 + intval(date('i'));
+        $slotMinutes = 0;
+        if (preg_match('/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i', $time, $m)) {
+            $h = intval($m[1]);
+            $min = intval($m[2]);
+            $mer = strtoupper($m[3]);
+            if ($mer === 'PM' && $h < 12) $h += 12;
+            if ($mer === 'AM' && $h === 12) $h = 0;
+            $slotMinutes = $h * 60 + $min;
+        }
+        if ($slotMinutes <= $nowMinutes) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => "The selected time slot ({$time}) has already passed today. Please choose a future time."
+            ]);
+            exit;
+        }
     }
 
     try {

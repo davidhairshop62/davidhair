@@ -1235,8 +1235,7 @@
                         days.push({ day: null, dateStr: '', isPast: true, isClosed: false, closedReason: '', dot: null });
                     }
 
-                    const today = new Date();
-                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                    const todayStr = this.getMelbourneDateStr();
 
                     for (let day = 1; day <= totalDays; day++) {
                         const mStr = String(month).padStart(2, '0');
@@ -1303,14 +1302,15 @@
                     try {
                         const res = await fetch(`/api_booking.php?action=get_day_slots&date=${dateStr}`);
                         const data = await res.json();
+                        let rawSlots = [];
                         if (data.status === 'success') {
                             this.selectedDateIsClosed = !!data.is_closed;
                             this.selectedDateClosedReason = data.closed_reason || '';
-                            this.selectedDateSlots = data.slots || [];
+                            rawSlots = data.slots || [];
                         } else {
                             this.selectedDateIsClosed = false;
                             this.selectedDateClosedReason = '';
-                            this.selectedDateSlots = [
+                            rawSlots = [
                                 { time: '11:00 AM', available: true },
                                 { time: '12:00 PM', available: true },
                                 { time: '01:00 PM', available: true },
@@ -1320,9 +1320,71 @@
                                 { time: '05:00 PM', available: true }
                             ];
                         }
+                        this.selectedDateSlots = this.filterTodaySlots(dateStr, rawSlots);
                     } catch (e) {
                         console.error('Failed to load day slots:', e);
                     }
+                },
+
+                filterTodaySlots(dateStr, slots) {
+                    if (!slots || !Array.isArray(slots)) return [];
+                    const todayStr = this.getMelbourneDateStr();
+                    if (dateStr !== todayStr) {
+                        return slots;
+                    }
+                    const nowMinutes = this.getMelbourneCurrentMinutes();
+                    return slots.filter(slot => {
+                        const slotMinutes = this.parseSlotTimeToMinutes(slot.time);
+                        // Do not show available times that are earlier than or equal to current time today
+                        return slotMinutes > nowMinutes;
+                    });
+                },
+
+                getMelbourneDateStr() {
+                    try {
+                        const nf = new Intl.DateTimeFormat('en-CA', {
+                            timeZone: 'Australia/Melbourne',
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        });
+                        return nf.format(new Date());
+                    } catch (e) {
+                        const d = new Date();
+                        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    }
+                },
+
+                getMelbourneCurrentMinutes() {
+                    try {
+                        const parts = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'Australia/Melbourne',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hourCycle: 'h23'
+                        }).formatToParts(new Date());
+                        let h = 0, m = 0;
+                        for (const p of parts) {
+                            if (p.type === 'hour') h = parseInt(p.value, 10);
+                            if (p.type === 'minute') m = parseInt(p.value, 10);
+                        }
+                        return h * 60 + m;
+                    } catch (e) {
+                        const d = new Date();
+                        return d.getHours() * 60 + d.getMinutes();
+                    }
+                },
+
+                parseSlotTimeToMinutes(timeStr) {
+                    if (!timeStr) return 0;
+                    const match = String(timeStr).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                    if (!match) return 0;
+                    let h = parseInt(match[1], 10);
+                    const m = parseInt(match[2], 10);
+                    const mer = match[3].toUpperCase();
+                    if (mer === 'PM' && h < 12) h += 12;
+                    if (mer === 'AM' && h === 12) h = 0;
+                    return h * 60 + m;
                 },
 
                 async submitBooking() {
@@ -9984,7 +10046,7 @@
                                 <template x-if="booking.date && !selectedDateIsClosed">
                                     <div class="space-y-1.5">
                                         <div class="text-[10px] text-slate-400">11:00 AM - 5:00 PM (1-hour slots)</div>
-                                        <div class="grid grid-cols-2 gap-1.5">
+                                        <div class="grid grid-cols-2 gap-1.5" x-show="selectedDateSlots && selectedDateSlots.length > 0">
                                             <template x-for="slot in selectedDateSlots" :key="slot.time">
                                                 <button type="button" 
                                                         @click="if(slot.available) booking.time = slot.time"
@@ -9999,6 +10061,10 @@
                                                     <span x-show="!slot.available" class="block text-[8px] font-normal uppercase text-rose-400">Booked</span>
                                                 </button>
                                             </template>
+                                        </div>
+                                        <div x-show="!selectedDateSlots || selectedDateSlots.length === 0" class="p-4 text-center bg-slate-900/60 border border-slate-800 rounded-lg text-slate-400 text-xs">
+                                            <i class="fa-regular fa-clock text-amber-400 text-base mb-1 block"></i>
+                                            No time slots available for today. Please select another date.
                                         </div>
                                     </div>
                                 </template>
