@@ -6534,30 +6534,135 @@
                     </button>
                 </div>
 
-                <div class="lg:col-span-6 mt-4 lg:mt-0">
-                    <div class="rounded-2xl border border-brand-border overflow-hidden bg-brand-cardBg shadow-xl cursor-pointer group" @click="openMapModal()">
-                        <div class="relative overflow-hidden">
-                            <img decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
-                                alt="Springvale Salon Interior" class="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-500">
-                            <div class="absolute bottom-3 right-3 bg-brand-darkBg/90 backdrop-blur-md border border-teal-500/40 text-teal-300 text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                <div class="lg:col-span-6 mt-4 lg:mt-0"
+                     x-data="{
+                        currentSlide: 0,
+                        slides: [
+                            { src: 'images/salon1.jpg', title: 'Springvale Flagship Salon', caption: 'Private Consultation & Styling Stations' },
+                            { src: 'images/salon2.jpg', title: 'Private Fitting Studio', caption: 'Discrete 1-on-1 VIP Rooms' },
+                            { src: 'images/salon3.jpg', title: 'Specialist Treatment Suite', caption: 'Scalp Health & Deep Cleanse Lounge' }
+                        ],
+                        timer: null,
+                        init() {
+                            this.startAutoPlay();
+                        },
+                        startAutoPlay() {
+                            this.stopAutoPlay();
+                            this.timer = setInterval(() => { this.nextSlide(); }, 4500);
+                        },
+                        stopAutoPlay() {
+                            if (this.timer) clearInterval(this.timer);
+                        },
+                        nextSlide() {
+                            this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+                        },
+                        prevSlide() {
+                            this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+                        },
+                        goToSlide(idx) {
+                            this.currentSlide = idx;
+                            this.startAutoPlay();
+                        }
+                     }"
+                     @mouseenter="stopAutoPlay()"
+                     @mouseleave="startAutoPlay()">
+                    
+                    <div class="rounded-2xl border border-brand-border overflow-hidden bg-brand-cardBg shadow-2xl transition-all hover:border-brand-teal/50">
+                        <!-- Main Carousel Viewport -->
+                        <div class="relative overflow-hidden w-full h-72 sm:h-96 bg-brand-inner select-none group">
+                            <!-- Slides Container -->
+                            <template x-for="(slide, idx) in slides" :key="idx">
+                                <div x-show="currentSlide === idx"
+                                     x-transition:enter="transition ease-out duration-500"
+                                     x-transition:enter-start="opacity-0 scale-98"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-300 absolute inset-0"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-98"
+                                     class="absolute inset-0 w-full h-full">
+                                    <img :src="slide.src" 
+                                         :alt="slide.title" 
+                                         class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                </div>
+                            </template>
+
+                            <!-- Slide Number Counter (Top-Left) -->
+                            <div class="absolute top-3.5 left-3.5 bg-black/70 backdrop-blur-md text-white text-[11px] font-mono font-bold px-3 py-1 rounded-xl border border-white/10 z-20 flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-camera text-brand-tealLight text-[10px]"></i>
+                                <span x-text="(currentSlide + 1) + ' / ' + slides.length"></span>
+                            </div>
+
+                            <!-- Google Map Action Button (Top-Right) -->
+                            <button type="button" 
+                                    @click="openMapModal()" 
+                                    class="absolute top-3.5 right-3.5 bg-brand-darkBg/90 hover:bg-teal-600 text-teal-300 hover:text-white backdrop-blur-md border border-teal-500/40 text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5 transition-all z-20 cursor-pointer">
                                 <i class="fa-solid fa-map-location-dot"></i>
-                                <span>Click to View Google Map</span>
+                                <span>View Google Map</span>
+                            </button>
+
+                            <!-- Carousel Navigation Arrows (Left & Right) -->
+                            <button type="button" 
+                                    @click.stop="prevSlide()" 
+                                    aria-label="Previous Slide"
+                                    class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-110 z-20 shadow-lg border border-white/10 cursor-pointer">
+                                <i class="fa-solid fa-chevron-left text-sm"></i>
+                            </button>
+                            <button type="button" 
+                                    @click.stop="nextSlide()" 
+                                    aria-label="Next Slide"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-110 z-20 shadow-lg border border-white/10 cursor-pointer">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </button>
+
+                            <!-- Carousel Slide Title & Caption (Bottom-Left) -->
+                            <div class="absolute bottom-3 left-4 right-24 z-20">
+                                <h3 class="text-white font-bold text-sm sm:text-base leading-snug drop-shadow-md" x-text="slides[currentSlide].title"></h3>
+                                <p class="text-slate-300 text-[11px] sm:text-xs drop-shadow truncate" x-text="slides[currentSlide].caption"></p>
+                            </div>
+
+                            <!-- Carousel Indicator Dots (Bottom-Right) -->
+                            <div class="absolute bottom-3 right-4 flex items-center gap-1.5 z-20 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded-full border border-white/10 shadow-md">
+                                <template x-for="(s, idx) in slides" :key="idx">
+                                    <button type="button" 
+                                            @click.stop="goToSlide(idx)" 
+                                            :aria-label="'Go to slide ' + (idx + 1)"
+                                            class="transition-all rounded-full cursor-pointer"
+                                            :class="currentSlide === idx ? 'w-5 h-1.5 bg-brand-teal' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'"></button>
+                                </template>
                             </div>
                         </div>
-                        <div class="p-5 sm:p-6">
-                            <div
-                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+
+                        <!-- 3-Thumbnail Preview Bar (한 줄에 3개씩 클릭하여 즉시 이동) -->
+                        <div class="p-3 bg-brand-inner/70 border-b border-brand-border/60">
+                            <div class="grid grid-cols-3 gap-2">
+                                <template x-for="(slide, idx) in slides" :key="idx">
+                                    <div @click="goToSlide(idx)"
+                                         class="relative aspect-[16/10] sm:aspect-[16/9] rounded-xl overflow-hidden border cursor-pointer transition-all bg-brand-darkBg group/thumb"
+                                         :class="currentSlide === idx ? 'border-2 border-brand-teal ring-2 ring-brand-teal/40 shadow-md' : 'border-brand-border/80 hover:border-slate-400 opacity-70 hover:opacity-100'">
+                                        <img :src="slide.src" :alt="slide.title" class="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300">
+                                        <div class="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors"></div>
+                                        <span class="absolute bottom-1 left-1.5 text-[9px] font-bold text-white px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-xs font-mono" x-text="'Salon ' + (idx + 1)"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer Info -->
+                        <div class="p-4 sm:p-5">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
                                 <div>
                                     <div class="font-bold text-white text-sm sm:text-base flex items-center gap-2">
-                                        <span>Springvale Flagship</span>
+                                        <span>Springvale Flagship Studio</span>
                                         <i class="fa-solid fa-location-dot text-brand-bronze text-xs"></i>
                                     </div>
-                                    <div class="text-[11px] sm:text-xs text-brand-textMuted">Private Consultation Rooms • Click to view map on Google Maps
+                                    <div class="text-[11px] sm:text-xs text-brand-textMuted mt-0.5">
+                                        Private 1-on-1 VIP Fitting Rooms • Free Parking Available
                                     </div>
                                 </div>
-                                <span
-                                    class="bg-emerald-950 text-emerald-400 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-emerald-800/60">Open
-                                    Tue - Sat</span>
+                                <span class="bg-emerald-950 text-emerald-400 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-emerald-800/60 whitespace-nowrap">
+                                    Open Tue - Sat
+                                </span>
                             </div>
                         </div>
                     </div>
