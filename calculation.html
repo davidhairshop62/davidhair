@@ -1325,8 +1325,8 @@
         </div>
         <div class="checkbox-grid">
           <label class="check-item">
-            <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in &amp; Professional Install (Bonding / Clip)</span>
-            <span class="check-price">Included ($160)</span>
+            <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in Professional</span>
+            <span class="check-price">+$150 AUD</span>
           </label>
           <label class="check-item">
             <span><input type="checkbox" id="optBleach" onchange="calculate()">Bleached Knots (Natural Frontal Hairline)</span>
@@ -1347,7 +1347,7 @@
     <!-- Right: Live Quote & Cost Breakdown -->
     <div class="card result-card">
       <div class="price-banner">
-        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Salon Fitting Included</div>
+        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Hairpiece Only</div>
         <div class="aud-price" id="finalAudPrice">$700 AUD</div>
         <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $900 AUD</div>
       </div>
@@ -1383,8 +1383,8 @@
           <strong id="valTextureAud">$0 AUD</strong>
         </li>
         <li>
-          <span>Salon Cut-in &amp; Fitting (Bonding / Clip)</span>
-          <strong id="valInstallAud">$160 AUD</strong>
+          <span>Cut-in Professional</span>
+          <strong id="valInstallAud">$0 AUD</strong>
         </li>
         <li>
           <span>Custom Bespoke Craft &amp; Options</span>
@@ -1982,7 +1982,7 @@
     const hairTypeAud = Math.round(hairTypeUsd * retailMultiplier);
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
 
-    const installAud = hasInstall ? 160 : 0;
+    const installAud = hasInstall ? 150 : 0;
     const customFeeAud = (currentOrderType === 'custom') ? 200 : 0;
     const extraOptionsAud = (hasBleach ? 35 : 0) + (hasRoot ? 40 : 0) + (hasRush ? 80 : 0);
 
@@ -2002,7 +2002,7 @@
     // 4. UI updates
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? "Ready-made (In-Stock)" : "Custom Bespoke Order";
-    const installName = hasInstall ? "Salon Fitting Included" : "Hairpiece Only";
+    const installName = hasInstall ? "Cut-in Professional" : "Hairpiece Only";
 
     document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${installName}`;
     document.getElementById('finalAudPrice').textContent = `$${finalAud.toLocaleString()} AUD`;
@@ -2131,7 +2131,7 @@
     const price = document.getElementById('finalAudPrice').textContent;
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? 'Ready-made (In-Stock)' : 'Custom Bespoke Order';
-    const installText = document.getElementById('optInstall').checked ? 'Included (Cut-in & Fitting)' : 'Excluded (Hairpiece Only)';
+    const installText = document.getElementById('optInstall').checked ? 'Cut-in Professional (+$150 AUD)' : 'Excluded (Hairpiece Only)';
 
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
     const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $450)' : '';
