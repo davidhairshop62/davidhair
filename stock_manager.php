@@ -425,15 +425,17 @@
                                         </div>
                                     </th>
 
-                                    <!-- 6. Sort by Display / Visibility -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('is_visible')" title="클릭하여 메인 노출 여부 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>Display (노출)</span>
-                                            <i class="fa-solid" :class="getSortIcon('is_visible')"></i>
+                                    <!-- 6. Actions & Display (노출/숨김 & 관리 한 컬럼으로 통합) -->
+                                    <th class="py-3.5 px-4 text-right whitespace-nowrap">
+                                        <div class="flex items-center justify-end gap-2.5">
+                                            <button type="button" @click="sortBy('is_visible')" class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors text-brand-textMuted font-bold text-[11px] uppercase group" title="클릭하여 노출/숨김 정렬">
+                                                <span>노출(Display)</span>
+                                                <i class="fa-solid text-[10px]" :class="getSortIcon('is_visible')"></i>
+                                            </button>
+                                            <span class="text-brand-border select-none">|</span>
+                                            <span>Actions (관리)</span>
                                         </div>
                                     </th>
-
-                                    <th class="py-3.5 px-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-brand-border/60">
@@ -505,31 +507,40 @@
                                                     <button type="button" @click="quickUpdateStockQty(item, 1)" class="w-6 h-6 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-xs border border-brand-border transition-colors shadow-sm" title="재고 1개 증가">+</button>
                                                 </div>
                                             </td>
-                                            <!-- 노출 / 숨김 토글 스위치 버튼 -->
-                                            <td class="py-3 px-4 whitespace-nowrap align-top">
-                                                <button type="button" 
-                                                        @click="toggleItemVisibility(item)" 
-                                                        :disabled="togglingItemIds.includes(item.id)"
-                                                        :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') 
-                                                            ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' 
-                                                            : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
-                                                        class="px-2.5 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm cursor-pointer select-none active:scale-95"
-                                                        :title="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '현재 메인페이지 노출 중 (클릭 시 숨김)' : '현재 메인페이지 숨김 상태 (클릭 시 노출)'">
-                                                    <span class="w-2 h-2 rounded-full" 
-                                                          :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'"></span>
-                                                    <i class="fa-solid text-[11px]" 
-                                                       :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
-                                                    <span x-text="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '노출 (Visible)' : '숨김 (Hidden)'"></span>
-                                                    <i x-show="togglingItemIds.includes(item.id)" class="fa-solid fa-spinner fa-spin text-[10px] ml-1 text-brand-tealLight"></i>
-                                                </button>
-                                            </td>
-                                            <td class="py-3 px-4 text-right space-x-1 whitespace-nowrap align-top">
-                                                <button type="button" @click="startInlineEdit(item)" class="bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700 text-xs px-2.5 py-1.5 rounded transition-colors font-bold shadow-sm" title="라인 상에서 바로 수정">
-                                                    <i class="fa-solid fa-pen mr-1"></i>라인수정
-                                                </button>
-                                                <button type="button" @click="openModal('edit', item)" class="bg-brand-inner hover:bg-slate-700 text-slate-200 border border-brand-border text-xs px-2 py-1.5 rounded transition-colors font-semibold" title="상세 모달 열기">상세</button>
-                                                <button type="button" @click="copyItemFromTable(item)" class="bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs px-2 py-1.5 rounded transition-colors font-semibold" title="Copy to New Product"><i class="fa-solid fa-copy"></i></button>
-                                                <button type="button" @click="deleteItem(item)" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs px-2 py-1.5 rounded transition-colors font-semibold"><i class="fa-solid fa-trash-can"></i></button>
+                                            <!-- 노출/숨김, 라인수정, 상세, 복사, 삭제 버튼을 한 컬럼으로 통합 -->
+                                            <td class="py-3 px-3 text-right whitespace-nowrap align-top">
+                                                <div class="inline-flex items-center justify-end gap-1">
+                                                    <!-- 1. 노출 / 숨김 토글 버튼 -->
+                                                    <button type="button" 
+                                                            @click="toggleItemVisibility(item)" 
+                                                            :disabled="togglingItemIds.includes(item.id)"
+                                                            :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') 
+                                                                ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' 
+                                                                : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
+                                                            class="px-2 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1 transition-all shadow-sm cursor-pointer select-none active:scale-95 shrink-0"
+                                                            :title="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '현재 메인페이지 노출 중 (클릭 시 숨김)' : '현재 메인페이지 숨김 상태 (클릭 시 노출)'">
+                                                        <span class="w-1.5 h-1.5 rounded-full" 
+                                                              :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'"></span>
+                                                        <i class="fa-solid text-[10px]" 
+                                                           :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                        <span x-text="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '노출' : '숨김'"></span>
+                                                        <i x-show="togglingItemIds.includes(item.id)" class="fa-solid fa-spinner fa-spin text-[10px] ml-0.5 text-brand-tealLight"></i>
+                                                    </button>
+
+                                                    <!-- 2. 라인수정 버튼 -->
+                                                    <button type="button" @click="startInlineEdit(item)" class="bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700 text-xs px-2 py-1.5 rounded-lg transition-colors font-bold shadow-sm inline-flex items-center gap-1 shrink-0" title="라인 상에서 바로 수정">
+                                                        <i class="fa-solid fa-pen text-[10px]"></i>라인수정
+                                                    </button>
+
+                                                    <!-- 3. 상세 버튼 -->
+                                                    <button type="button" @click="openModal('edit', item)" class="bg-brand-inner hover:bg-slate-700 text-slate-200 border border-brand-border text-xs px-2.5 py-1.5 rounded-lg transition-colors font-semibold shadow-sm shrink-0" title="상세 모달 열기">상세</button>
+
+                                                    <!-- 4. 복사 버튼 -->
+                                                    <button type="button" @click="copyItemFromTable(item)" class="bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs px-2 py-1.5 rounded-lg transition-colors font-semibold shadow-sm shrink-0" title="Copy to New Product"><i class="fa-solid fa-copy text-xs"></i></button>
+
+                                                    <!-- 5. 삭제 버튼 -->
+                                                    <button type="button" @click="deleteItem(item)" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs px-2 py-1.5 rounded-lg transition-colors font-semibold shadow-sm shrink-0" title="Delete Product"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -609,26 +620,26 @@
                                                     <span class="text-slate-400 text-[10px]">pcs</span>
                                                 </div>
                                             </td>
-                                            <!-- 인라인 수정: 노출 / 숨김 토글 -->
-                                            <td class="py-3 px-3 align-top whitespace-nowrap">
-                                                <button type="button" 
-                                                        @click="inlineForm.is_visible = !inlineForm.is_visible" 
-                                                        :class="inlineForm.is_visible ? 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
-                                                        class="px-2.5 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm">
-                                                    <span class="w-2 h-2 rounded-full" :class="inlineForm.is_visible ? 'bg-emerald-400' : 'bg-slate-500'"></span>
-                                                    <i class="fa-solid text-[11px]" :class="inlineForm.is_visible ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
-                                                    <span x-text="inlineForm.is_visible ? '노출' : '숨김'"></span>
-                                                </button>
-                                            </td>
-                                            <td class="py-3 px-3 align-top text-right space-x-1 whitespace-nowrap">
-                                                <button type="button" @click="saveInlineEdit()" :disabled="inlineSaving" class="bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs px-3 py-1.5 rounded shadow transition-all inline-flex items-center gap-1">
-                                                    <i class="fa-solid fa-check" x-show="!inlineSaving"></i>
-                                                    <i class="fa-solid fa-spinner fa-spin" x-show="inlineSaving"></i>
-                                                    <span x-text="inlineSaving ? '저장...' : '저장'"></span>
-                                                </button>
-                                                <button type="button" @click="cancelInlineEdit()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-2.5 py-1.5 rounded transition-all">
-                                                    취소
-                                                </button>
+                                            <!-- 인라인 수정: 노출 / 숨김 토글 및 저장 / 취소 (한 컬럼으로 통합) -->
+                                            <td class="py-3 px-3 align-top text-right whitespace-nowrap">
+                                                <div class="inline-flex items-center justify-end gap-1.5">
+                                                    <button type="button" 
+                                                            @click="inlineForm.is_visible = !inlineForm.is_visible" 
+                                                            :class="inlineForm.is_visible ? 'bg-emerald-950/90 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
+                                                            class="px-2 py-1.5 rounded-lg border text-xs font-bold inline-flex items-center gap-1 transition-all shadow-sm">
+                                                        <span class="w-1.5 h-1.5 rounded-full" :class="inlineForm.is_visible ? 'bg-emerald-400' : 'bg-slate-500'"></span>
+                                                        <i class="fa-solid text-[10px]" :class="inlineForm.is_visible ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                        <span x-text="inlineForm.is_visible ? '노출' : '숨김'"></span>
+                                                    </button>
+                                                    <button type="button" @click="saveInlineEdit()" :disabled="inlineSaving" class="bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition-all inline-flex items-center gap-1">
+                                                        <i class="fa-solid fa-check" x-show="!inlineSaving"></i>
+                                                        <i class="fa-solid fa-spinner fa-spin" x-show="inlineSaving"></i>
+                                                        <span x-text="inlineSaving ? '저장...' : '저장'"></span>
+                                                    </button>
+                                                    <button type="button" @click="cancelInlineEdit()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg transition-all">
+                                                        취소
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
