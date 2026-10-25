@@ -9870,8 +9870,8 @@
                     <form @submit.prevent="submitBooking()" class="space-y-4 text-xs">
                         <!-- Service Selection -->
                         <div>
-                            <label class="block font-bold text-slate-300 mb-1">Select Service</label>
-                            <select x-model="booking.service" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal font-medium">
+                            <label class="block font-bold text-slate-200 mb-1.5 text-base sm:text-lg">Select Service</label>
+                            <select x-model="booking.service" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3.5 py-2.5 text-white outline-none focus:border-brand-teal font-medium text-base sm:text-lg" style="font-size: 1.125rem;">
                                 <option x-show="booking.service && !['Free Consultation & Hairline Assessment ($0 Free)', 'Cut-in Professional ($150 AUD)', 'Bonding Tape 2-3 weeks ($50 AUD)', 'Bonding Tape + Lace Glue 3-4 weeks ($70 AUD)', 'Bonding (Full Glue 4-5 weeks) ($90 AUD)', 'Daily Clip and Tape ($30 AUD)', 'Maintenance Hair Cut ($20 AUD)', 'Shampoo ($20 AUD)', 'Unit Shampoo and Treatment ($30 AUD)', 'Colour From ($50 AUD)', 'Perm From ($50 AUD)', 'Bleached Knots (Natural Frontal Hairline) ($35 AUD)', 'Root Shadowing / Transition Color ($40 AUD)', 'Rush Factory Production (5~6 Weeks) ($80 AUD)'].includes(booking.service)" :value="booking.service" x-text="booking.service"></option>
                                 <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
                                 <option value="Cut-in Professional ($150 AUD)">Cut-in Professional ($150 AUD)</option>
