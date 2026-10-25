@@ -232,44 +232,44 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
             <!-- Top Navigation Tab Switcher -->
-            <div class="flex items-center gap-3 border-b border-brand-border pb-3 overflow-x-auto">
+            <div class="flex items-center gap-2 sm:gap-2.5 border-b border-brand-border pb-3 overflow-x-auto">
                 <button @click="activeTab = 'stock'" 
                         :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-boxes-stacked"></i> Stock Inventory Manager
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-boxes-stacked"></i> Stock
                 </button>
                 <button @click="activeTab = 'ai_styles'; loadAiStyles()" 
                         :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-scissors text-amber-400"></i> AI Simulator Hairstyles
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-scissors text-amber-400"></i> AI Styles
                 </button>
                 <button @click="activeTab = 'bookings'; loadBookings()" 
                         :class="activeTab === 'bookings' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Springvale Fitting Bookings
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Bookings
                     <template x-if="pendingBookingsCount > 0">
-                        <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
+                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'members'; loadMembers()" 
                         :class="activeTab === 'members' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-users-gear text-purple-400"></i> Members &amp; VIP Performance
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-users-gear text-purple-400"></i> Members
                     <template x-if="members.length > 0">
-                        <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
+                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'sections'; loadSections()" 
                         :class="activeTab === 'sections' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-layer-group text-sky-400"></i> Section &amp; Menu Manager
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-layer-group text-sky-400"></i> Sections
                 </button>
                 <button @click="activeTab = 'invoices'; loadInvoices()" 
                         :class="activeTab === 'invoices' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-file-invoice-dollar text-amber-300"></i> Invoices &amp; Receipts
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-file-invoice-dollar text-amber-300"></i> Invoices
                     <template x-if="invoices.length > 0">
-                        <span class="ml-1.5 px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
+                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
                     </template>
                 </button>
             </div>
