@@ -1359,6 +1359,14 @@
             <span class="check-price">+$30 AUD</span>
           </label>
           <label class="check-item">
+            <span><input type="checkbox" id="optColour" onchange="calculate()">Colour From</span>
+            <span class="check-price">+$50 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optPerm" onchange="calculate()">Perm From</span>
+            <span class="check-price">+$50 AUD</span>
+          </label>
+          <label class="check-item">
             <span><input type="checkbox" id="optBleach" onchange="calculate()">Bleached Knots (Natural Frontal Hairline)</span>
             <span class="check-price">+$35 AUD</span>
           </label>
@@ -1421,7 +1429,7 @@
           <strong id="valBondingAud">$0 AUD</strong>
         </li>
         <li>
-          <span>Salon Maintenance &amp; Wash (<span id="lblMaint">None</span>)</span>
+          <span>Salon Maintenance &amp; Styling (<span id="lblMaint">None</span>)</span>
           <strong id="valMaintAud">$0 AUD</strong>
         </li>
         <li>
@@ -1811,6 +1819,8 @@
       if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
       if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
       if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
+      if (document.getElementById('optColour')) document.getElementById('optColour').checked = false;
+      if (document.getElementById('optPerm')) document.getElementById('optPerm').checked = false;
     } else {
       // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services excluded
       document.getElementById('sizeW').value = '4';
@@ -1826,6 +1836,8 @@
       if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
       if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
       if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
+      if (document.getElementById('optColour')) document.getElementById('optColour').checked = false;
+      if (document.getElementById('optPerm')) document.getElementById('optPerm').checked = false;
     }
     refreshChips();
     calculate();
@@ -1922,6 +1934,8 @@
     if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
     if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
     if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
+    if (document.getElementById('optColour')) document.getElementById('optColour').checked = false;
+    if (document.getElementById('optPerm')) document.getElementById('optPerm').checked = false;
 
     // Reset Hair Colors: uncheck all, check #1B
     document.querySelectorAll('input[name="hairColor"]').forEach(cb => {
@@ -1967,6 +1981,8 @@
     const hasMaintCut = document.getElementById('optMaintCut') ? document.getElementById('optMaintCut').checked : false;
     const hasShampoo = document.getElementById('optShampoo') ? document.getElementById('optShampoo').checked : false;
     const hasUnitTreatment = document.getElementById('optUnitTreatment') ? document.getElementById('optUnitTreatment').checked : false;
+    const hasColour = document.getElementById('optColour') ? document.getElementById('optColour').checked : false;
+    const hasPerm = document.getElementById('optPerm') ? document.getElementById('optPerm').checked : false;
 
     // Hair Color calculation
     // High colors (#8 & above): #8, #18, #613, #60, #Silver
@@ -2052,7 +2068,9 @@
     const maintCutAud = hasMaintCut ? 20 : 0;
     const shampooAud = hasShampoo ? 20 : 0;
     const unitTreatmentAud = hasUnitTreatment ? 30 : 0;
-    const salonMaintAud = maintCutAud + shampooAud + unitTreatmentAud;
+    const colourAud = hasColour ? 50 : 0;
+    const permAud = hasPerm ? 50 : 0;
+    const salonMaintAud = maintCutAud + shampooAud + unitTreatmentAud + colourAud + permAud;
 
     let bondingAud = 0;
     let bondingName = '';
@@ -2171,6 +2189,8 @@
     if (hasMaintCut) maintList.push('Hair Cut ($20)');
     if (hasShampoo) maintList.push('Shampoo ($20)');
     if (hasUnitTreatment) maintList.push('Unit Treatment ($30)');
+    if (hasColour) maintList.push('Colour ($50)');
+    if (hasPerm) maintList.push('Perm ($50)');
     const maintDesc = maintList.length > 0 ? maintList.join(', ') : 'None';
 
     const lblMaint = document.getElementById('lblMaint');
@@ -2239,6 +2259,8 @@
     if (document.getElementById('optMaintCut') && document.getElementById('optMaintCut').checked) copyMaintList.push('Maintenance Hair Cut ($20)');
     if (document.getElementById('optShampoo') && document.getElementById('optShampoo').checked) copyMaintList.push('Shampoo ($20)');
     if (document.getElementById('optUnitTreatment') && document.getElementById('optUnitTreatment').checked) copyMaintList.push('Unit Shampoo & Treatment ($30)');
+    if (document.getElementById('optColour') && document.getElementById('optColour').checked) copyMaintList.push('Colour From ($50)');
+    if (document.getElementById('optPerm') && document.getElementById('optPerm').checked) copyMaintList.push('Perm From ($50)');
     const maintText = copyMaintList.length > 0 ? copyMaintList.join(', ') : 'Excluded';
 
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
