@@ -995,9 +995,9 @@
           <span id="areaDisplay" style="color:var(--accent); font-size:0.9rem;">Size: 16" (7+9)</span>
         </div>
         <div class="preset-chips" id="presetChipsContainer">
-          <span class="chip" data-w="6" data-l="8" onclick="setSize(6, 8)">6" × 8" (Men's Small · $600)</span>
-          <span class="chip active" data-w="7" data-l="9" onclick="setSize(7, 9)">7" × 9" (Men's Std · <span class="chip-strike">$520</span><span class="chip-promo-price">$420</span>) <span class="badge-special">Limited Special</span></span>
-          <span class="chip" data-w="8" data-l="10" onclick="setSize(8, 10)">8" × 10" (Men's Large · $600)</span>
+          <span class="chip" data-w="6" data-l="7" onclick="setSize(6, 7)">6" × 7" (Men's Small · $600)</span>
+          <span class="chip active" data-w="7" data-l="9" onclick="setSize(7, 9)">7" × 9" (Men's Std · <span class="chip-strike">$650</span><span class="chip-promo-price">$450</span>) <span class="badge-special">Limited Special</span></span>
+          <span class="chip" data-w="8" data-l="10" onclick="setSize(8, 10)">8" × 10" (Men's Large · $700)</span>
           <span class="chip" data-w="10" data-l="12" onclick="setSize(10, 12)">10" × 12" (Full Cap · $800)</span>
         </div>
         <div class="size-inputs">
@@ -1356,7 +1356,7 @@
       <ul class="breakdown-list">
         <li>
           <span>Base &amp; Cap Construction (<span id="lblArea">8×10"</span>, <span id="lblCap">Silk Part</span>)</span>
-          <strong id="valBaseAud">$420 AUD</strong>
+          <strong id="valBaseAud">$450 AUD</strong>
         </li>
         <li>
           <span>Hair Length Option (<span id="lblLength">6"</span>)</span>
@@ -1667,9 +1667,10 @@
     '4x4': { men: 400, women: 400 },
     '5x5': { men: 450, women: 450 },
     '6x6': { men: 500, women: 500 },
+    '6x7': { men: 600, women: 600 },
     '6x8': { men: 600, women: 600 },
-    '7x9': { men: 420, women: 600 },
-    '8x10': { men: 600, women: 700 },
+    '7x9': { men: 450, women: 650 },
+    '8x10': { men: 700, women: 700 },
     '10x12': { men: 800, women: 800 }
   };
 
@@ -1680,7 +1681,7 @@
     { w: 4, l: 4, labelMen: 'Mini Top', labelWomen: "Women's Std", forMen: false, forWomen: true },
     { w: 5, l: 5, labelMen: 'Crown/Part', labelWomen: 'Crown/Part', forMen: false, forWomen: true },
     { w: 6, l: 6, labelMen: 'Medium', labelWomen: "Women's Med", forMen: false, forWomen: true },
-    { w: 6, l: 8, labelMen: "Men's Small", labelWomen: 'Large Top', forMen: true, forWomen: false },
+    { w: 6, l: 7, labelMen: "Men's Small", labelWomen: 'Large Top', forMen: true, forWomen: false },
     { w: 7, l: 9, labelMen: "Men's Std", labelWomen: 'XL Topper', forMen: true, forWomen: false, isSpecial: true },
     { w: 8, l: 10, labelMen: "Men's Large", labelWomen: 'Full Topper', forMen: true, forWomen: false },
     { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: true, forWomen: true }
@@ -1707,8 +1708,8 @@
       if (sum <= 12) return 450 + (sum - 10) * 25;
       if (sum <= 14) return 500 + (sum - 12) * 50;
       if (sum <= 16) return 550 + (sum - 14) * 25;
-      if (sum <= 18) return 600;
-      if (sum <= 22) return 600 + (sum - 18) * 50;
+      if (sum <= 18) return 700;
+      if (sum <= 22) return 700 + (sum - 18) * 25;
       return Math.round((800 + (sum - 22) * 40) / 10) * 10;
     } else {
       if (sum <= 5) return 250;
@@ -1742,7 +1743,7 @@
 
       let contentHtml;
       if (currentCategory === 'men' && item.w === 7 && item.l === 9) {
-        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$520</span><span class="chip-promo-price">$420</span>) <span class="badge-special">Limited Special</span>`;
+        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$650</span><span class="chip-promo-price">$450</span>) <span class="badge-special">Limited Special</span>`;
       } else {
         contentHtml = `${item.w}" × ${item.l}" (${desc} · $${price})`;
       }
@@ -1884,7 +1885,7 @@
     const isSpecial7x9 = (currentCategory === 'men' && ((w === 7 && l === 9) || (w === 9 && l === 7)));
 
     if (isSpecial7x9) {
-      document.getElementById('areaDisplay').innerHTML = `Size: ${sizeSum}" (${w}" + ${l}") · Base: <span style="text-decoration:line-through; opacity:0.6; margin-right:4px;">$520</span><strong style="color:var(--accent);">$420 AUD</strong> <span class="badge-special" style="vertical-align:middle; margin-left:4px;">Limited Special</span>`;
+      document.getElementById('areaDisplay').innerHTML = `Size: ${sizeSum}" (${w}" + ${l}") · Base: <span style="text-decoration:line-through; opacity:0.6; margin-right:4px;">$650</span><strong style="color:var(--accent);">$450 AUD</strong> <span class="badge-special" style="vertical-align:middle; margin-left:4px;">Limited Special</span>`;
     } else {
       document.getElementById('areaDisplay').textContent = `Size: ${sizeSum}" (${w}" + ${l}") · Base: $${rawBaseAud} AUD`;
     }
@@ -1951,7 +1952,7 @@
     const textureDisplayName = textureNames[textureVal] || 'Straight';
 
     // 1. Factory base cost (USD) calculation from Base Size AUD table
-    // User calibrated base rates: e.g. Men 7x9 = $420 AUD, Women 4x4 = $400 AUD, etc.
+    // User calibrated base rates: e.g. Men 7x9 = $450 AUD, Women 4x4 = $400 AUD, etc.
     const retailMultiplier = 3.0;
     const baseCapAud = Math.round(rawBaseAud * wCap);
     const baseCapUsd = baseCapAud / retailMultiplier;
@@ -2069,7 +2070,7 @@
     if (valTextureAud) valTextureAud.textContent = `+$${textureAddAud.toLocaleString()} AUD`;
 
     if (isSpecial7x9 && wCap === 1.0) {
-      document.getElementById('valBaseAud').innerHTML = `<span style="text-decoration:line-through; font-weight:normal; opacity:0.6; font-size:0.85em; margin-right:4px;">$520</span>$${baseCapAud.toLocaleString()} AUD`;
+      document.getElementById('valBaseAud').innerHTML = `<span style="text-decoration:line-through; font-weight:normal; opacity:0.6; font-size:0.85em; margin-right:4px;">$650</span>$${baseCapAud.toLocaleString()} AUD`;
     } else {
       document.getElementById('valBaseAud').textContent = `$${baseCapAud.toLocaleString()} AUD`;
     }
@@ -2133,7 +2134,7 @@
     const installText = document.getElementById('optInstall').checked ? 'Included (Cut-in & Fitting)' : 'Excluded (Hairpiece Only)';
 
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
-    const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $420)' : '';
+    const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $450)' : '';
 
     const summary = `[David Hair Melbourne - Quotation Summary]\n` +
       `• Category: ${catName}\n` +
