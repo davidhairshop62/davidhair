@@ -1331,19 +1331,31 @@
             <span class="check-price">+$150 AUD</span>
           </label>
           <label class="check-item">
-            <span><input type="checkbox" id="optBondingTape" name="bondingService" value="50" data-name="Bonding (Tape 2-3 wks)" onchange="selectBonding(this)">Bonding+Hair Cut+Shampoo (Tape 2-3 weeks)</span>
+            <span><input type="checkbox" id="optBondingTape" name="bondingService" value="50" data-name="Bonding Tape (2-3 wks)" onchange="selectBonding(this)">Bonding Tape 2-3 weeks</span>
             <span class="check-price">+$50 AUD</span>
           </label>
           <label class="check-item">
-            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding (Tape + Lace Glue 3-4 wks)" onchange="selectBonding(this)">Bonding+Hair Cut+Shampoo (Tape + Lace Glue 3-4 weeks)</span>
+            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding Tape + Lace Glue (3-4 wks)" onchange="selectBonding(this)">Bonding Tape + Lace Glue 3-4 weeks</span>
             <span class="check-price">+$70 AUD</span>
           </label>
           <label class="check-item">
-            <span><input type="checkbox" id="optBondingFullGlue" name="bondingService" value="90" data-name="Bonding (Full Glue 4-5 wks)" onchange="selectBonding(this)">Bonding (Full Glue 4-5 weeks)</span>
+            <span><input type="checkbox" id="optBondingFullGlue" name="bondingService" value="90" data-name="Bonding Full Glue (4-5 wks)" onchange="selectBonding(this)">Bonding (Full Glue 4-5 weeks)</span>
             <span class="check-price">+$90 AUD</span>
           </label>
           <label class="check-item">
             <span><input type="checkbox" id="optBondingDailyClip" name="bondingService" value="30" data-name="Daily Clip and Tape" onchange="selectBonding(this)">Daily Clip and Tape</span>
+            <span class="check-price">+$30 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optMaintCut" onchange="calculate()">Maintenance Hair Cut</span>
+            <span class="check-price">+$20 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optShampoo" onchange="calculate()">Shampoo</span>
+            <span class="check-price">+$20 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optUnitTreatment" onchange="calculate()">Unit Shampoo and Treatment</span>
             <span class="check-price">+$30 AUD</span>
           </label>
           <label class="check-item">
@@ -1407,6 +1419,10 @@
         <li>
           <span>Salon Bonding (<span id="lblBonding">None</span>)</span>
           <strong id="valBondingAud">$0 AUD</strong>
+        </li>
+        <li>
+          <span>Salon Maintenance &amp; Wash (<span id="lblMaint">None</span>)</span>
+          <strong id="valMaintAud">$0 AUD</strong>
         </li>
         <li>
           <span>Custom Bespoke Craft &amp; Options</span>
@@ -1792,6 +1808,9 @@
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
         cb.checked = false;
       });
+      if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
+      if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
+      if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
     } else {
       // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services excluded
       document.getElementById('sizeW').value = '4';
@@ -1804,6 +1823,9 @@
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
         cb.checked = false;
       });
+      if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
+      if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
+      if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
     }
     refreshChips();
     calculate();
@@ -1897,6 +1919,9 @@
     document.getElementById('optBleach').checked = false;
     document.getElementById('optRoot').checked = false;
     document.getElementById('optRush').checked = false;
+    if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
+    if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
+    if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
 
     // Reset Hair Colors: uncheck all, check #1B
     document.querySelectorAll('input[name="hairColor"]').forEach(cb => {
@@ -1939,6 +1964,9 @@
     const hasBleach = document.getElementById('optBleach').checked;
     const hasRoot = document.getElementById('optRoot').checked;
     const hasRush = document.getElementById('optRush').checked;
+    const hasMaintCut = document.getElementById('optMaintCut') ? document.getElementById('optMaintCut').checked : false;
+    const hasShampoo = document.getElementById('optShampoo') ? document.getElementById('optShampoo').checked : false;
+    const hasUnitTreatment = document.getElementById('optUnitTreatment') ? document.getElementById('optUnitTreatment').checked : false;
 
     // Hair Color calculation
     // High colors (#8 & above): #8, #18, #613, #60, #Silver
@@ -2021,6 +2049,10 @@
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
 
     const installAud = hasInstall ? 150 : 0;
+    const maintCutAud = hasMaintCut ? 20 : 0;
+    const shampooAud = hasShampoo ? 20 : 0;
+    const unitTreatmentAud = hasUnitTreatment ? 30 : 0;
+    const salonMaintAud = maintCutAud + shampooAud + unitTreatmentAud;
 
     let bondingAud = 0;
     let bondingName = '';
@@ -2037,7 +2069,7 @@
     const rawProductAud = baseCapAud + lengthAddAud + hairTypeAud + densityAddAud;
     const roundedProductAud = Math.round(rawProductAud / 10) * 10;
 
-    const finalAud = roundedProductAud + installAud + bondingAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
+    const finalAud = roundedProductAud + installAud + bondingAud + salonMaintAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
 
     // Comparison price for alternative order type
     const altAud = (currentOrderType === 'ready') ? (finalAud + 200) : (finalAud - 200);
@@ -2050,13 +2082,11 @@
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? "Ready-made (In-Stock)" : "Custom Bespoke Order";
     let salonServiceName = "Hairpiece Only";
-    if (hasInstall && bondingAud > 0) {
-      salonServiceName = "Cut-in & Salon Bonding";
-    } else if (hasInstall) {
-      salonServiceName = "Cut-in Professional";
-    } else if (bondingAud > 0) {
-      salonServiceName = "Salon Bonding";
-    }
+    const services = [];
+    if (hasInstall) services.push("Cut-in");
+    if (bondingAud > 0) services.push("Bonding");
+    if (salonMaintAud > 0) services.push("Maintenance");
+    if (services.length > 0) salonServiceName = services.join(' & ');
 
     document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${salonServiceName}`;
     document.getElementById('finalAudPrice').textContent = `$${finalAud.toLocaleString()} AUD`;
@@ -2136,6 +2166,18 @@
     if (lblBonding) lblBonding.textContent = bondingName || 'None';
     const valBondingAud = document.getElementById('valBondingAud');
     if (valBondingAud) valBondingAud.textContent = bondingAud > 0 ? `+$${bondingAud.toLocaleString()} AUD` : '$0 AUD';
+
+    const maintList = [];
+    if (hasMaintCut) maintList.push('Hair Cut ($20)');
+    if (hasShampoo) maintList.push('Shampoo ($20)');
+    if (hasUnitTreatment) maintList.push('Unit Treatment ($30)');
+    const maintDesc = maintList.length > 0 ? maintList.join(', ') : 'None';
+
+    const lblMaint = document.getElementById('lblMaint');
+    if (lblMaint) lblMaint.textContent = maintDesc;
+    const valMaintAud = document.getElementById('valMaintAud');
+    if (valMaintAud) valMaintAud.textContent = salonMaintAud > 0 ? `+$${salonMaintAud.toLocaleString()} AUD` : '$0 AUD';
+
     document.getElementById('valExtraAud').textContent = `+$${(customFeeAud + extraOptionsAud).toLocaleString()} AUD`;
 
     // Admin panel updates
@@ -2193,6 +2235,12 @@
     const checkedBondingEl = document.querySelector('input[name="bondingService"]:checked');
     const bondingText = checkedBondingEl ? `${checkedBondingEl.getAttribute('data-name')} (+$${checkedBondingEl.value} AUD)` : 'Excluded';
 
+    const copyMaintList = [];
+    if (document.getElementById('optMaintCut') && document.getElementById('optMaintCut').checked) copyMaintList.push('Maintenance Hair Cut ($20)');
+    if (document.getElementById('optShampoo') && document.getElementById('optShampoo').checked) copyMaintList.push('Shampoo ($20)');
+    if (document.getElementById('optUnitTreatment') && document.getElementById('optUnitTreatment').checked) copyMaintList.push('Unit Shampoo & Treatment ($30)');
+    const maintText = copyMaintList.length > 0 ? copyMaintList.join(', ') : 'Excluded';
+
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
     const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $450)' : '';
 
@@ -2209,6 +2257,7 @@
       `• Hair Texture: ${textureText}\n` +
       `• Salon Cut-in: ${installText}\n` +
       `• Salon Bonding: ${bondingText}\n` +
+      `• Salon Maintenance: ${maintText}\n` +
       `----------------------------------------\n` +
       `▶ Total Quote: ${price}`;
 
