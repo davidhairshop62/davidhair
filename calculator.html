@@ -1684,16 +1684,16 @@
 
   const BASE_SIZE_PRICES = {
     '2x3': { men: 250, women: 250 },
-    '2x4': { men: 280, women: 280 },
+    '2x4': { men: 280, women: 300 },
     '3x4': { men: 350, women: 350 },
-    '4x4': { men: 400, women: 400 },
-    '5x5': { men: 450, women: 450 },
-    '6x6': { men: 500, women: 500 },
+    '4x4': { men: 400, women: 500 },
+    '5x5': { men: 450, women: 550 },
+    '6x6': { men: 500, women: 600 },
     '6x7': { men: 600, women: 600 },
     '6x8': { men: 600, women: 600 },
     '7x9': { men: 450, women: 650 },
     '8x10': { men: 700, women: 700 },
-    '10x12': { men: 800, women: 800 }
+    '10x12': { men: 800, women: 1000 }
   };
 
   const PRESET_CHIP_DATA = [
@@ -1706,7 +1706,8 @@
     { w: 6, l: 7, labelMen: "Men's Small", labelWomen: 'Large Top', forMen: true, forWomen: false },
     { w: 7, l: 9, labelMen: "Men's Std", labelWomen: 'XL Topper', forMen: true, forWomen: false, isSpecial: true },
     { w: 8, l: 10, labelMen: "Men's Large", labelWomen: 'Full Topper', forMen: true, forWomen: false },
-    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: true, forWomen: true }
+    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: true, forWomen: false },
+    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: false, forWomen: true }
   ];
 
   function getBaseSizePrice(w, l, category) {
@@ -1735,16 +1736,16 @@
       return Math.round((800 + (sum - 22) * 40) / 10) * 10;
     } else {
       if (sum <= 5) return 250;
-      if (sum <= 6) return 280;
+      if (sum <= 6) return 300;
       if (sum <= 7) return 350;
-      if (sum <= 8) return 400;
-      if (sum <= 10) return 400 + (sum - 8) * 25;
-      if (sum <= 12) return 450 + (sum - 10) * 25;
-      if (sum <= 14) return 500 + (sum - 12) * 50;
-      if (sum <= 16) return 600;
-      if (sum <= 18) return 600 + (sum - 16) * 50;
-      if (sum <= 22) return 700 + (sum - 18) * 25;
-      return Math.round((800 + (sum - 22) * 40) / 10) * 10;
+      if (sum <= 8) return 500;
+      if (sum <= 10) return 500 + (sum - 8) * 25;
+      if (sum <= 12) return 550 + (sum - 10) * 25;
+      if (sum <= 14) return 600;
+      if (sum <= 16) return 650;
+      if (sum <= 18) return 700;
+      if (sum <= 22) return 700 + (sum - 18) * 75;
+      return Math.round((1000 + (sum - 22) * 50) / 10) * 10;
     }
   }
 
@@ -1989,7 +1990,7 @@
     const textureDisplayName = textureNames[textureVal] || 'Straight';
 
     // 1. Factory base cost (USD) calculation from Base Size AUD table
-    // User calibrated base rates: e.g. Men 7x9 = $450 AUD, Women 4x4 = $400 AUD, etc.
+    // User calibrated base rates: e.g. Men 7x9 = $450 AUD, Women 4x4 = $500 AUD, etc.
     const retailMultiplier = 3.0;
     const baseCapAud = Math.round(rawBaseAud * wCap);
     const baseCapUsd = baseCapAud / retailMultiplier;
