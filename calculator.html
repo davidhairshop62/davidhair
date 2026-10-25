@@ -623,6 +623,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       border: 1.5px solid var(--border);
       padding: 9px 12px;
       border-radius: 8px;
@@ -642,6 +643,7 @@
       font-weight: 700;
       color: var(--accent);
       font-size: 0.82rem;
+      white-space: nowrap;
     }
 
     /* Hair Color Checkbox Grid */
@@ -1325,8 +1327,24 @@
         </div>
         <div class="checkbox-grid">
           <label class="check-item">
-            <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in Professional</span>
+            <span><input type="checkbox" id="optInstall" onchange="calculate()" checked>Cut-in Professional</span>
             <span class="check-price">+$150 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optBondingTape" name="bondingService" value="50" data-name="Bonding (Tape 2-3 wks)" onchange="selectBonding(this)">Bonding+Hair Cut+Shampoo (Tape 2-3 weeks)</span>
+            <span class="check-price">+$50 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding (Tape + Lace Glue 3-4 wks)" onchange="selectBonding(this)" checked>Bonding+Hair Cut+Shampoo (Tape + Lace Glue 3-4 weeks)</span>
+            <span class="check-price">+$70 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optBondingFullGlue" name="bondingService" value="90" data-name="Bonding (Full Glue 4-5 wks)" onchange="selectBonding(this)">Bonding (Full Glue 4-5 weeks)</span>
+            <span class="check-price">+$90 AUD</span>
+          </label>
+          <label class="check-item">
+            <span><input type="checkbox" id="optBondingDailyClip" name="bondingService" value="30" data-name="Daily Clip and Tape" onchange="selectBonding(this)">Daily Clip and Tape</span>
+            <span class="check-price">+$30 AUD</span>
           </label>
           <label class="check-item">
             <span><input type="checkbox" id="optBleach" onchange="calculate()">Bleached Knots (Natural Frontal Hairline)</span>
@@ -1347,9 +1365,9 @@
     <!-- Right: Live Quote & Cost Breakdown -->
     <div class="card result-card">
       <div class="price-banner">
-        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Hairpiece Only</div>
-        <div class="aud-price" id="finalAudPrice">$700 AUD</div>
-        <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $900 AUD</div>
+        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Cut-in &amp; Salon Bonding</div>
+        <div class="aud-price" id="finalAudPrice">$670 AUD</div>
+        <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $870 AUD</div>
       </div>
 
       <div class="section-title">📋 Itemized Customer Quotation (AUD)</div>
@@ -1384,7 +1402,11 @@
         </li>
         <li>
           <span>Cut-in Professional</span>
-          <strong id="valInstallAud">$0 AUD</strong>
+          <strong id="valInstallAud">$150 AUD</strong>
+        </li>
+        <li>
+          <span>Salon Bonding (<span id="lblBonding">Tape + Lace Glue 3-4 wks</span>)</span>
+          <strong id="valBondingAud">+$70 AUD</strong>
         </li>
         <li>
           <span>Custom Bespoke Craft &amp; Options</span>
@@ -1758,16 +1780,19 @@
     document.getElementById('btnWomen').classList.toggle('active', cat === 'women');
 
     if (cat === 'men') {
-      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon cut-in excluded
+      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, Cut-in & Tape+Glue bonding checked
       document.getElementById('sizeW').value = '7';
       document.getElementById('sizeL').value = '9';
       document.getElementById('hairLength').value = '6';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
       document.getElementById('hairType').value = 'standard';
-      document.getElementById('optInstall').checked = false;
+      document.getElementById('optInstall').checked = true;
+      document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
+        cb.checked = (cb.id === 'optBondingTapeGlue');
+      });
     } else {
-      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon cut-in excluded
+      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services excluded
       document.getElementById('sizeW').value = '4';
       document.getElementById('sizeL').value = '4';
       document.getElementById('hairLength').value = '10';
@@ -1775,6 +1800,9 @@
       document.getElementById('density').value = '1.0';
       document.getElementById('hairType').value = 'standard';
       document.getElementById('optInstall').checked = false;
+      document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
+        cb.checked = false;
+      });
     }
     refreshChips();
     calculate();
@@ -1805,6 +1833,15 @@
         chip.classList.remove('active');
       }
     });
+  }
+
+  function selectBonding(el) {
+    if (el && el.checked) {
+      document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
+        if (cb !== el) cb.checked = false;
+      });
+    }
+    calculate();
   }
 
   function toggleColorItem(checkbox) {
@@ -1983,6 +2020,15 @@
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
 
     const installAud = hasInstall ? 150 : 0;
+
+    let bondingAud = 0;
+    let bondingName = '';
+    const checkedBonding = document.querySelector('input[name="bondingService"]:checked');
+    if (checkedBonding) {
+      bondingAud = parseInt(checkedBonding.value, 10) || 0;
+      bondingName = checkedBonding.getAttribute('data-name') || '';
+    }
+
     const customFeeAud = (currentOrderType === 'custom') ? 200 : 0;
     const extraOptionsAud = (hasBleach ? 35 : 0) + (hasRoot ? 40 : 0) + (hasRush ? 80 : 0);
 
@@ -1990,7 +2036,7 @@
     const rawProductAud = baseCapAud + lengthAddAud + hairTypeAud + densityAddAud;
     const roundedProductAud = Math.round(rawProductAud / 10) * 10;
 
-    const finalAud = roundedProductAud + installAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
+    const finalAud = roundedProductAud + installAud + bondingAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
 
     // Comparison price for alternative order type
     const altAud = (currentOrderType === 'ready') ? (finalAud + 200) : (finalAud - 200);
@@ -2002,9 +2048,16 @@
     // 4. UI updates
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? "Ready-made (In-Stock)" : "Custom Bespoke Order";
-    const installName = hasInstall ? "Cut-in Professional" : "Hairpiece Only";
+    let salonServiceName = "Hairpiece Only";
+    if (hasInstall && bondingAud > 0) {
+      salonServiceName = "Cut-in & Salon Bonding";
+    } else if (hasInstall) {
+      salonServiceName = "Cut-in Professional";
+    } else if (bondingAud > 0) {
+      salonServiceName = "Salon Bonding";
+    }
 
-    document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${installName}`;
+    document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${salonServiceName}`;
     document.getElementById('finalAudPrice').textContent = `$${finalAud.toLocaleString()} AUD`;
     document.getElementById('compareTypeText').textContent =
       currentOrderType === 'ready'
@@ -2078,6 +2131,10 @@
     document.getElementById('valHairTypeAud').textContent = `+$${hairTypeAud.toLocaleString()} AUD`;
     document.getElementById('valDensityAud').textContent = `+$${densityAddAud.toLocaleString()} AUD`;
     document.getElementById('valInstallAud').textContent = `$${installAud.toLocaleString()} AUD`;
+    const lblBonding = document.getElementById('lblBonding');
+    if (lblBonding) lblBonding.textContent = bondingName || 'None';
+    const valBondingAud = document.getElementById('valBondingAud');
+    if (valBondingAud) valBondingAud.textContent = bondingAud > 0 ? `+$${bondingAud.toLocaleString()} AUD` : '$0 AUD';
     document.getElementById('valExtraAud').textContent = `+$${(customFeeAud + extraOptionsAud).toLocaleString()} AUD`;
 
     // Admin panel updates
@@ -2131,7 +2188,9 @@
     const price = document.getElementById('finalAudPrice').textContent;
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? 'Ready-made (In-Stock)' : 'Custom Bespoke Order';
-    const installText = document.getElementById('optInstall').checked ? 'Cut-in Professional (+$150 AUD)' : 'Excluded (Hairpiece Only)';
+    const installText = document.getElementById('optInstall').checked ? 'Cut-in Professional (+$150 AUD)' : 'Excluded';
+    const checkedBondingEl = document.querySelector('input[name="bondingService"]:checked');
+    const bondingText = checkedBondingEl ? `${checkedBondingEl.getAttribute('data-name')} (+$${checkedBondingEl.value} AUD)` : 'Excluded';
 
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
     const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $450)' : '';
@@ -2147,7 +2206,8 @@
       `• Hair Color: ${colorText}\n` +
       `• Grey Hair Mix: ${greyText}\n` +
       `• Hair Texture: ${textureText}\n` +
-      `• Salon Service: ${installText}\n` +
+      `• Salon Cut-in: ${installText}\n` +
+      `• Salon Bonding: ${bondingText}\n` +
       `----------------------------------------\n` +
       `▶ Total Quote: ${price}`;
 
