@@ -1327,7 +1327,7 @@
         </div>
         <div class="checkbox-grid">
           <label class="check-item">
-            <span><input type="checkbox" id="optInstall" onchange="calculate()" checked>Cut-in Professional</span>
+            <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in Professional</span>
             <span class="check-price">+$150 AUD</span>
           </label>
           <label class="check-item">
@@ -1335,7 +1335,7 @@
             <span class="check-price">+$50 AUD</span>
           </label>
           <label class="check-item">
-            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding (Tape + Lace Glue 3-4 wks)" onchange="selectBonding(this)" checked>Bonding+Hair Cut+Shampoo (Tape + Lace Glue 3-4 weeks)</span>
+            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding (Tape + Lace Glue 3-4 wks)" onchange="selectBonding(this)">Bonding+Hair Cut+Shampoo (Tape + Lace Glue 3-4 weeks)</span>
             <span class="check-price">+$70 AUD</span>
           </label>
           <label class="check-item">
@@ -1365,9 +1365,9 @@
     <!-- Right: Live Quote & Cost Breakdown -->
     <div class="card result-card">
       <div class="price-banner">
-        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Cut-in &amp; Salon Bonding</div>
-        <div class="aud-price" id="finalAudPrice">$670 AUD</div>
-        <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $870 AUD</div>
+        <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Hairpiece Only</div>
+        <div class="aud-price" id="finalAudPrice">$450 AUD</div>
+        <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $650 AUD</div>
       </div>
 
       <div class="section-title">📋 Itemized Customer Quotation (AUD)</div>
@@ -1402,11 +1402,11 @@
         </li>
         <li>
           <span>Cut-in Professional</span>
-          <strong id="valInstallAud">$150 AUD</strong>
+          <strong id="valInstallAud">$0 AUD</strong>
         </li>
         <li>
-          <span>Salon Bonding (<span id="lblBonding">Tape + Lace Glue 3-4 wks</span>)</span>
-          <strong id="valBondingAud">+$70 AUD</strong>
+          <span>Salon Bonding (<span id="lblBonding">None</span>)</span>
+          <strong id="valBondingAud">$0 AUD</strong>
         </li>
         <li>
           <span>Custom Bespoke Craft &amp; Options</span>
@@ -1780,16 +1780,16 @@
     document.getElementById('btnWomen').classList.toggle('active', cat === 'women');
 
     if (cat === 'men') {
-      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, Cut-in & Tape+Glue bonding checked
+      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services unchecked
       document.getElementById('sizeW').value = '7';
       document.getElementById('sizeL').value = '9';
       document.getElementById('hairLength').value = '6';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
       document.getElementById('hairType').value = 'standard';
-      document.getElementById('optInstall').checked = true;
+      document.getElementById('optInstall').checked = false;
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
-        cb.checked = (cb.id === 'optBondingTapeGlue');
+        cb.checked = false;
       });
     } else {
       // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services excluded
