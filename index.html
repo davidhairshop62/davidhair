@@ -686,7 +686,7 @@
                 claimWelcomeOffer() {
                     this.closeWelcomeModal(true);
                     if (this.booking) {
-                        this.booking.service = 'Free Consultation & Hairline Assessment ($0 Free)';
+                        this.booking.service = 'Free Consultation (15 mins)';
                         this.booking.notes = 'Welcome Event Voucher Applied: $50 First-order styling voucher (FIRST50)';
                     }
                     this.isBookingModalOpen = true;
@@ -968,8 +968,15 @@
                 selectedDateClosedReason: '',
                 isBookingSubmitting: false,
                 bookingSuccessData: null,
+                fittingServices: [
+                    { label: 'Free Consultation', duration: '15 mins', value: 'Free Consultation (15 mins)', icon: 'fa-regular fa-comments' },
+                    { label: 'Collecting Order and Fitting', duration: '45 mins', value: 'Collecting Order and Fitting (45 mins)', icon: 'fa-solid fa-box-open' },
+                    { label: 'Maintenance', duration: '60 min', value: 'Maintenance (60 min)', icon: 'fa-solid fa-screwdriver-wrench' },
+                    { label: 'Cleaning Hair Piece', duration: '30 min', value: 'Cleaning Hair Piece (30 min)', icon: 'fa-solid fa-soap' },
+                    { label: 'Rebonding & Cut', duration: '90 mins', value: 'Rebonding & Cut (90 mins)', icon: 'fa-solid fa-scissors' }
+                ],
                 booking: {
-                    service: 'Free Consultation & Hairline Assessment ($0 Free)',
+                    service: 'Free Consultation (15 mins)',
                     date: '',
                     time: '',
                     name: '',
@@ -1251,7 +1258,7 @@
                 },
 
                 bookStockFit(item) {
-                    this.booking.service = 'Cut-in Professional ($150 AUD)';
+                    this.booking.service = 'Collecting Order and Fitting (45 mins)';
                     this.booking.notes = `Stock item fitting request: ${item.name} (${item.sku})`;
                     this.isBookingModalOpen = true;
                     this.fetchMonthStatus();
@@ -1473,7 +1480,7 @@
                 resetBookingForm() {
                     this.bookingSuccessData = null;
                     this.booking = {
-                        service: 'Free Consultation & Hairline Assessment ($0 Free)',
+                        service: 'Free Consultation (15 mins)',
                         date: '',
                         time: '',
                         name: '',
@@ -1486,7 +1493,12 @@
                     this.fetchMonthStatus();
                 },
 
-                openBookingModal() {
+                openBookingModal(serviceName) {
+                    if (serviceName && this.fittingServices && this.fittingServices.some(s => s.value === serviceName)) {
+                        this.booking.service = serviceName;
+                    } else if (!this.booking.service || (this.fittingServices && !this.fittingServices.some(s => s.value === this.booking.service))) {
+                        this.booking.service = 'Free Consultation (15 mins)';
+                    }
                     this.isBookingModalOpen = true;
                     this.fetchMonthStatus();
                 },
@@ -10281,26 +10293,62 @@
                     </div>
 
                     <form @submit.prevent="submitBooking()" class="space-y-4 text-xs">
-                        <!-- Service Selection -->
-                        <div>
-                            <label class="block font-bold text-slate-200 mb-1.5 text-base sm:text-lg">Select Service</label>
-                            <select x-model="booking.service" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3.5 py-2.5 text-white outline-none focus:border-brand-teal font-medium text-base sm:text-lg" style="font-size: 1.125rem;">
-                                <option x-show="booking.service && !['Free Consultation & Hairline Assessment ($0 Free)', 'Cut-in Professional ($150 AUD)', 'Bonding Tape 2-3 weeks ($50 AUD)', 'Bonding Tape + Lace Glue 3-4 weeks ($70 AUD)', 'Bonding (Full Glue 4-5 weeks) ($90 AUD)', 'Daily Clip and Tape ($30 AUD)', 'Maintenance Hair Cut ($20 AUD)', 'Shampoo ($20 AUD)', 'Unit Shampoo and Treatment ($30 AUD)', 'Colour From ($50 AUD)', 'Perm From ($50 AUD)', 'Bleached Knots (Natural Frontal Hairline) ($35 AUD)', 'Root Shadowing / Transition Color ($40 AUD)', 'Rush Factory Production (5~6 Weeks) ($80 AUD)'].includes(booking.service)" :value="booking.service" x-text="booking.service"></option>
-                                <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
-                                <option value="Cut-in Professional ($150 AUD)">Cut-in Professional ($150 AUD)</option>
-                                <option value="Bonding Tape 2-3 weeks ($50 AUD)">Bonding Tape 2-3 weeks ($50 AUD)</option>
-                                <option value="Bonding Tape + Lace Glue 3-4 weeks ($70 AUD)">Bonding Tape + Lace Glue 3-4 weeks ($70 AUD)</option>
-                                <option value="Bonding (Full Glue 4-5 weeks) ($90 AUD)">Bonding (Full Glue 4-5 weeks) ($90 AUD)</option>
-                                <option value="Daily Clip and Tape ($30 AUD)">Daily Clip and Tape ($30 AUD)</option>
-                                <option value="Maintenance Hair Cut ($20 AUD)">Maintenance Hair Cut ($20 AUD)</option>
-                                <option value="Shampoo ($20 AUD)">Shampoo ($20 AUD)</option>
-                                <option value="Unit Shampoo and Treatment ($30 AUD)">Unit Shampoo and Treatment ($30 AUD)</option>
-                                <option value="Colour From ($50 AUD)">Colour From ($50 AUD)</option>
-                                <option value="Perm From ($50 AUD)">Perm From ($50 AUD)</option>
-                                <option value="Bleached Knots (Natural Frontal Hairline) ($35 AUD)">Bleached Knots (Natural Frontal Hairline) ($35 AUD)</option>
-                                <option value="Root Shadowing / Transition Color ($40 AUD)">Root Shadowing / Transition Color ($40 AUD)</option>
-                                <option value="Rush Factory Production (5~6 Weeks) ($80 AUD)">Rush Factory Production (5~6 Weeks) ($80 AUD)</option>
-                            </select>
+                        <!-- Service Selection (Option Buttons - Single Choice) -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="block font-bold text-slate-200 text-sm sm:text-base flex items-center gap-2">
+                                    <span>Select Service</span>
+                                    <span class="text-[10px] font-semibold text-brand-tealLight bg-teal-950/70 border border-brand-teal/30 px-2 py-0.5 rounded-full uppercase tracking-wider">Choose 1</span>
+                                </label>
+                                <span class="text-[11px] text-slate-400 hidden sm:inline-flex items-center gap-1 font-mono">
+                                    <i class="fa-regular fa-clock text-brand-tealLight"></i>
+                                    <span x-text="(fittingServices.find(s => s.value === booking.service) || {}).duration || ''"></span>
+                                </span>
+                            </div>
+
+                            <div role="radiogroup" aria-label="Select Service" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
+                                <template x-for="(svc, idx) in fittingServices" :key="svc.value">
+                                    <button type="button" 
+                                            role="radio"
+                                            :aria-checked="booking.service === svc.value"
+                                            @click="booking.service = svc.value"
+                                            :class="[
+                                                booking.service === svc.value 
+                                                    ? 'border-brand-teal bg-gradient-to-r from-teal-950/80 to-slate-900/90 text-white shadow-md ring-1 ring-brand-teal/60 scale-[1.01]' 
+                                                    : 'border-brand-border/70 bg-brand-darkBg/90 hover:bg-slate-800/80 hover:border-slate-500 text-slate-300',
+                                                idx === 4 ? 'sm:col-span-2' : ''
+                                            ]"
+                                            class="p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer group">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                                                 :class="booking.service === svc.value ? 'bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40' : 'bg-slate-800 text-slate-400 group-hover:text-slate-200 border border-slate-700/60'">
+                                                <i :class="svc.icon" class="text-xs"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="text-xs sm:text-sm font-bold truncate leading-tight transition-colors" 
+                                                     :class="booking.service === svc.value ? 'text-white' : 'text-slate-200 group-hover:text-white'"
+                                                     x-text="svc.label"></div>
+                                                <div class="text-[10px] leading-tight mt-1 flex items-center gap-1 font-mono"
+                                                     :class="booking.service === svc.value ? 'text-teal-300' : 'text-slate-400'">
+                                                    <i class="fa-regular fa-clock text-[9px]"></i>
+                                                    <span x-text="svc.duration"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="shrink-0 flex items-center">
+                                            <template x-if="booking.service === svc.value">
+                                                <span class="w-5 h-5 rounded-full bg-brand-teal/20 text-brand-tealLight border border-brand-teal/60 flex items-center justify-center text-[10px] shadow-sm">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </span>
+                                            </template>
+                                            <template x-if="booking.service !== svc.value">
+                                                <span class="w-5 h-5 rounded-full border border-slate-700 bg-slate-900/60 group-hover:border-slate-500 transition-colors"></span>
+                                            </template>
+                                        </div>
+                                    </button>
+                                </template>
+                            </div>
+                            <input type="hidden" name="service" :value="booking.service">
                         </div>
 
                         <!-- 2-COLUMN: CALENDAR ON LEFT, TIME SLOTS ON RIGHT -->

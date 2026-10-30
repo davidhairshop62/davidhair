@@ -2626,6 +2626,11 @@
                 <div>
                     <label class="block font-bold text-slate-300 mb-1">Fitting Service *</label>
                     <select x-model="newBookingForm.service_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white outline-none focus:border-brand-teal">
+                        <option value="Free Consultation (15 mins)">Free Consultation (15 mins)</option>
+                        <option value="Collecting Order and Fitting (45 mins)">Collecting Order and Fitting (45 mins)</option>
+                        <option value="Maintenance (60 min)">Maintenance (60 min)</option>
+                        <option value="Cleaning Hair Piece (30 min)">Cleaning Hair Piece (30 min)</option>
+                        <option value="Rebonding & Cut (90 mins)">Rebonding & Cut (90 mins)</option>
                         <option value="Free Consultation & Hairline Assessment ($0 Free)">Free Consultation & Hairline Assessment ($0 Free)</option>
                         <option value="Cut-in Professional ($150 AUD)">Cut-in Professional ($150 AUD)</option>
                         <option value="Bonding Tape 2-3 weeks ($50 AUD)">Bonding Tape 2-3 weeks ($50 AUD)</option>
@@ -3481,7 +3486,7 @@
                     customer_name: '',
                     phone: '',
                     email: '',
-                    service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                    service_type: 'Free Consultation (15 mins)',
                     booking_date: '',
                     booking_time: '11:00 AM',
                     notes: ''
@@ -4713,7 +4718,7 @@
                         customer_name: '',
                         phone: '',
                         email: '',
-                        service_type: 'Free Consultation & Hairline Assessment ($0 Free)',
+                        service_type: 'Free Consultation (15 mins)',
                         booking_date: dateStr || this.formatDate(new Date()),
                         booking_time: timeSlot ? this.convertSlotToAmPm(timeSlot) : '11:00 AM',
                         notes: ''
