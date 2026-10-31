@@ -9,6 +9,8 @@ function sendJsonResponse($data, $statusCode = 200) {
     if (ob_get_length()) ob_clean();
     http_response_code($statusCode);
     header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -40,20 +42,12 @@ try {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    // Ensure header menu titles match standard navigation
-    $conn->exec("UPDATE site_sections SET menu_title = 'SELF CHECK', menu_icon = 'fa-clipboard-check' WHERE section_key = 'hair-diagnosis-hub'");
-    $conn->exec("UPDATE site_sections SET menu_title = 'TRY ON' WHERE section_key = 'ai-simulator'");
-    $conn->exec("UPDATE site_sections SET menu_title = 'B/A' WHERE section_key = 'transformations'");
-
-    // Ensure FFA section exists in site_sections table and has order 2, and diagnosis hub has order 3
+    // Ensure FFA section exists in site_sections table if missing
     try {
-        $conn->exec("UPDATE site_sections SET sort_order = 3 WHERE section_key = 'hair-diagnosis-hub' AND sort_order = 2");
         $checkFfa = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'frontal-fibrosing-alopecia'");
         if ($checkFfa && $checkFfa->fetchColumn() == 0) {
             $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
                 VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FRONTAL', 'fa-head-side-mask', 'NEW', 2)");
-        } else {
-            $conn->exec("UPDATE site_sections SET menu_title = 'FRONTAL', sort_order = 2, is_visible = 1, in_menu = 1 WHERE section_key = 'frontal-fibrosing-alopecia'");
         }
     } catch(Exception $eFfa) {}
 

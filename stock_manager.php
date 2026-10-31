@@ -5860,6 +5860,23 @@
                         });
                         const data = await res.json();
                         if (data.status === 'success') {
+                            try {
+                                const orders = {};
+                                const visibility = {};
+                                const in_menu = {};
+                                this.sections.forEach(s => {
+                                    orders[s.section_key] = Number(s.sort_order);
+                                    visibility[s.section_key] = Number(s.is_visible) === 1;
+                                    in_menu[s.section_key] = Number(s.in_menu) === 1;
+                                });
+                                localStorage.setItem('dh_sections_cache', JSON.stringify({
+                                    visibility,
+                                    in_menu,
+                                    orders,
+                                    sections: this.sections,
+                                    timestamp: Date.now()
+                                }));
+                            } catch (eCache) {}
                             this.showToast('All section & menu configurations saved to database!');
                         } else {
                             this.showToast(data.message || 'Save failed.');

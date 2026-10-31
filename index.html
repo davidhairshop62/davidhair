@@ -168,13 +168,6 @@
                     this.isCalculatorModalOpen = false;
                     this.isBookingModalOpen = true;
                 },
-                init() {
-                    if (window.location.search.includes('book') || window.location.hash === '#booking') {
-                        this.openBookingModal();
-                    }
-                    this.fetchSectionSettings();
-                    this.checkMemberSession();
-                },
                 isStockDetailModalOpen: false,
                 selectedStockDetail: null,
                 stockDetailActiveImage: '',
@@ -264,7 +257,13 @@
                     } catch(e) {}
                     return {};
                 })(),
-                sectionsList: [],
+                sectionsList: (function() {
+                    try {
+                        const c = localStorage.getItem('dh_sections_cache');
+                        if (c) return JSON.parse(c).sections || [];
+                    } catch(e) {}
+                    return [];
+                })(),
 
                 isSectionVisible(key) {
                     if (key === 'builder') return false;
@@ -285,20 +284,52 @@
                 },
 
                 getSectionOrder(key, defaultOrder = 50) {
-                    if (key === 'hero') return 1;
-                    if (key === 'frontal-fibrosing-alopecia') return 2;
-                    let ord = defaultOrder;
-                    if (this.sectionsOrderMap && key in this.sectionsOrderMap) {
-                        ord = Number(this.sectionsOrderMap[key]);
-                    } else if (this.sectionsList && this.sectionsList.length > 0) {
+                    if (this.sectionsOrderMap && key in this.sectionsOrderMap && this.sectionsOrderMap[key] !== undefined && this.sectionsOrderMap[key] !== null) {
+                        return Number(this.sectionsOrderMap[key]);
+                    }
+                    if (this.sectionsList && this.sectionsList.length > 0) {
                         const s = this.sectionsList.find(x => x.section_key === key);
-                        if (s && s.sort_order !== undefined) ord = Number(s.sort_order);
+                        if (s && s.sort_order !== undefined && s.sort_order !== null) return Number(s.sort_order);
                     }
-                    // Prevent any other section from displacing hero (1) or FFA (2)
-                    if (ord <= 2) {
-                        ord = (key === 'hair-diagnosis-hub') ? 3 : ord + 2;
+                    return defaultOrder;
+                },
+
+                applySectionsOrder(sections) {
+                    const main = document.getElementById('main-content');
+                    if (!main) return;
+                    let list = (Array.isArray(sections) && sections.length > 0) ? sections : this.sectionsList;
+                    if (!list || list.length === 0) {
+                        if (this.sectionsOrderMap && Object.keys(this.sectionsOrderMap).length > 0) {
+                            list = Object.keys(this.sectionsOrderMap).map(k => ({
+                                section_key: k,
+                                sort_order: Number(this.sectionsOrderMap[k]) || 50
+                            }));
+                        }
                     }
-                    return ord;
+                    if (!list || list.length === 0) return;
+
+                    const sorted = [...list].sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+                    sorted.forEach(sec => {
+                        const key = sec.section_key;
+                        if (!key) return;
+                        const el = document.getElementById(key);
+                        if (el && el.parentElement === main) {
+                            main.appendChild(el);
+                            el.style.order = String(Number(sec.sort_order) || 50);
+                            if (key === 'factory') {
+                                const perks = document.getElementById('factory-perks');
+                                if (perks && perks.parentElement === main) {
+                                    main.appendChild(perks);
+                                    perks.style.order = String(Number(sec.sort_order) || 50);
+                                }
+                            }
+                        }
+                    });
+
+                    const builder = document.getElementById('builder');
+                    if (builder && builder.parentElement === main) main.appendChild(builder);
+                    const faq = document.getElementById('faq');
+                    if (faq && faq.parentElement === main) main.appendChild(faq);
                 },
 
                 getProductsMenuOrder() {
@@ -369,9 +400,12 @@
                                 localStorage.setItem('dh_sections_cache', JSON.stringify({
                                     visibility: this.sectionsMap,
                                     in_menu: this.sectionsMenuMap,
-                                    orders: this.sectionsOrderMap
+                                    orders: this.sectionsOrderMap,
+                                    sections: this.sectionsList,
+                                    timestamp: Date.now()
                                 }));
                             } catch(e) {}
+                            this.applySectionsOrder(data.sections);
                         }
                     } catch(e) {
                         console.warn('Could not load dynamic sections:', e);
@@ -597,7 +631,22 @@
                         }
                     } catch (e) {}
 
+                    this.applySectionsOrder();
                     this.fetchSectionSettings();
+
+                    // Listen for storage events (e.g. admin changed order in stock manager in another tab)
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'dh_sections_cache' && e.newValue) {
+                            try {
+                                const p = JSON.parse(e.newValue);
+                                if (p.orders) this.sectionsOrderMap = p.orders;
+                                if (p.sections) this.sectionsList = p.sections;
+                                if (p.visibility) this.sectionsMap = p.visibility;
+                                if (p.in_menu) this.sectionsMenuMap = p.in_menu;
+                                this.applySectionsOrder(p.sections);
+                            } catch (err) {}
+                        }
+                    });
 
                     // Always ensure fresh calculator.html on modal open
                     this.$watch('isCalculatorModalOpen', (isOpen) => {
@@ -3592,7 +3641,6 @@
 
     <!-- 2. HERO SECTION WITH VIDEO BACKGROUND -->
     <section id="hero" x-show="isSectionVisible('hero')"
-        style="order: 1;"
         :style="'order: ' + getSectionOrder('hero', 1) + ';'"
         :class="isTopSection('hero') ? 'pt-28 sm:pt-36' : 'py-16 sm:py-20'"
         class="relative pb-16 sm:pb-20 overflow-hidden bg-brand-darkBg"
@@ -3730,7 +3778,6 @@
     <!-- 1:1 Aspect Ratio Video Showcase, Elastic Headband & Breathability Focus  -->
     <!-- ========================================================================= -->
     <section id="frontal-fibrosing-alopecia"
-        style="order: 2;"
         :style="'order: ' + getSectionOrder('frontal-fibrosing-alopecia', 2) + ';'"
         :class="isTopSection('frontal-fibrosing-alopecia') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-24'"
         class="scroll-mt-20 bg-gradient-to-b from-brand-darkBg via-[#0B152E] to-brand-darkBg border-y border-brand-border/80 relative overflow-hidden"
@@ -4018,7 +4065,6 @@
     <!-- [OPTION 2] VISUAL DIAGRAM & HAIRLINE MATRIX                               -->
     <!-- ========================================================================= -->
     <section id="hair-diagnosis-hub" x-show="isSectionVisible('hair-diagnosis-hub')"
-        style="order: 3;"
         :style="'order: ' + getSectionOrder('hair-diagnosis-hub', 3) + ';'"
         :class="isTopSection('hair-diagnosis-hub') ? 'pt-28 sm:pt-36 pb-16 sm:pb-20' : 'py-16 sm:py-20'"
         class="bg-gradient-to-b from-brand-darkBg via-[#0D152F] to-brand-darkBg border-y border-brand-border/80 relative overflow-hidden">
@@ -9314,7 +9360,7 @@
     </section>
 
     <!-- 7.5 CLIENT VALUE PERKS & REFERRAL PROGRAM -->
-    <section x-show="isSectionVisible('factory')"
+    <section id="factory-perks" x-show="isSectionVisible('factory')"
         :style="'order: ' + getSectionOrder('factory', 12) + ';'"
         class="py-12 bg-gradient-to-r from-brand-cardBg via-[#131D38] to-brand-cardBg border-b border-brand-border/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -9628,6 +9674,36 @@
             </div>
         </div>
     </section>
+
+    <!-- Synchronous Layout Reordering for Cached Section Settings -->
+    <script>
+        (function() {
+            try {
+                var c = localStorage.getItem('dh_sections_cache');
+                if (!c) return;
+                var p = JSON.parse(c);
+                var list = p.sections || (p.orders ? Object.keys(p.orders).map(function(k) { return { section_key: k, sort_order: p.orders[k] }; }) : null);
+                if (!list || !list.length) return;
+                var sorted = list.slice().sort(function(a, b) { return (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0); });
+                var main = document.getElementById('main-content');
+                if (!main) return;
+                sorted.forEach(function(s) {
+                    var el = document.getElementById(s.section_key);
+                    if (el && el.parentElement === main) {
+                        main.appendChild(el);
+                        el.style.order = String(Number(s.sort_order) || 50);
+                        if (s.section_key === 'factory') {
+                            var perks = document.getElementById('factory-perks');
+                            if (perks && perks.parentElement === main) {
+                                main.appendChild(perks);
+                                perks.style.order = String(Number(s.sort_order) || 50);
+                            }
+                        }
+                    }
+                });
+            } catch(e) {}
+        })();
+    </script>
     </main>
     <!-- GOOGLE MAPS LOCATION MODAL -->
     <div x-show="isMapModalOpen" x-cloak
