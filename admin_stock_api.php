@@ -71,6 +71,87 @@ try {
     // Columns already exist or error ignored
 }
 
+// Auto-create calculator_pricing table & seed default pricing
+function getDefaultCalculatorPricing() {
+    return [
+        'retail_multiplier' => 3.0,
+        'custom_fee_aud' => 200,
+        'base_size_prices' => [
+            '2x3' => ['men' => 250, 'women' => 250],
+            '2x4' => ['men' => 280, 'women' => 300],
+            '3x4' => ['men' => 350, 'women' => 350],
+            '4x4' => ['men' => 400, 'women' => 500],
+            '5x5' => ['men' => 450, 'women' => 550],
+            '6x6' => ['men' => 500, 'women' => 600],
+            '6x7' => ['men' => 600, 'women' => 600],
+            '6x8' => ['men' => 600, 'women' => 600],
+            '7x9' => ['men' => 450, 'women' => 650, 'men_strike' => 650],
+            '8x10' => ['men' => 700, 'women' => 700],
+            '10x12' => ['men' => 800, 'women' => 1000]
+        ],
+        'length_weights' => [
+            '6' => 1.0,
+            '8' => 1.5,
+            '10' => 1.8,
+            '12' => 2.0,
+            '14' => 4.0,
+            '16' => 6.0,
+            '18' => 8.0,
+            '20' => 10.0
+        ],
+        'hair_type_surcharges_usd' => [
+            'standard' => 0,
+            'remy' => 40,
+            'virgin' => 90
+        ],
+        'texture_prices_aud' => [
+            'straight' => 0,
+            'natural_wave' => 10,
+            'body_wave' => 30,
+            'deep_wave' => 50,
+            'curl' => 50,
+            'tight_curl' => 100
+        ],
+        'grey_hair_step_aud' => 10,
+        'salon_services_aud' => [
+            'install_cut_in' => 150,
+            'bonding_daily_clip' => 30,
+            'bonding_tape_2_3w' => 50,
+            'bonding_tape_lace_3_4w' => 70,
+            'bonding_full_glue_4_5w' => 90,
+            'maint_hair_cut' => 20,
+            'maint_shampoo' => 20,
+            'maint_unit_treatment' => 30,
+            'maint_colour' => 50,
+            'maint_perm' => 50
+        ],
+        'craftsmanship_aud' => [
+            'bleached_knots' => 35,
+            'root_shadowing' => 40,
+            'rush_production' => 80
+        ]
+    ];
+}
+
+try {
+    $conn->exec("CREATE TABLE IF NOT EXISTS calculator_pricing (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        config_key VARCHAR(64) NOT NULL UNIQUE,
+        config_json LONGTEXT NOT NULL,
+        updated_by VARCHAR(100) DEFAULT 'admin',
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    $checkPricing = $conn->query("SELECT COUNT(*) FROM calculator_pricing WHERE config_key = 'main_pricing'");
+    if ($checkPricing->fetchColumn() == 0) {
+        $defaultJson = json_encode(getDefaultCalculatorPricing(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $insPricing = $conn->prepare("INSERT INTO calculator_pricing (config_key, config_json, updated_by) VALUES ('main_pricing', :json, 'system')");
+        $insPricing->execute([':json' => $defaultJson]);
+    }
+} catch (Exception $e) {
+    // Ignore table exists or initialization errors
+}
+
 $action = $_REQUEST['action'] ?? 'list';
 
 try {
@@ -149,6 +230,32 @@ try {
         }
         unset($it);
         sendJsonResponse(['status' => 'success', 'data' => $items]);
+    }
+
+    // 6. PUBLIC GET CALCULATOR PRICING
+    if ($action === 'get_calculator_pricing') {
+        $stmt = $conn->prepare("SELECT config_json, updated_at FROM calculator_pricing WHERE config_key = 'main_pricing' LIMIT 1");
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row && !empty($row['config_json'])) {
+            $data = json_decode($row['config_json'], true);
+            if ($data) {
+                sendJsonResponse([
+                    'status' => 'success',
+                    'pricing' => $data,
+                    'updated_at' => $row['updated_at']
+                ]);
+            }
+        }
+
+        // Fallback to default pricing
+        $defaults = getDefaultCalculatorPricing();
+        sendJsonResponse([
+            'status' => 'success',
+            'pricing' => $defaults,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
     }
 
     // AUTHENTICATION GUARD FOR WRITE OPERATIONS (save, delete)
@@ -447,6 +554,77 @@ try {
         } else {
             sendJsonResponse(['status' => 'error', 'message' => 'Invalid ID.']);
         }
+    }
+
+
+
+    // 11. SAVE CALCULATOR PRICING (Admin only)
+    if ($action === 'save_calculator_pricing') {
+        if (empty($_SESSION['admin_user'])) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Unauthorized: Admin login required.'], 401);
+        }
+
+        $rawInput = file_get_contents('php://input');
+        $pricingData = null;
+
+        if (!empty($rawInput)) {
+            $jsonDecoded = json_decode($rawInput, true);
+            if (isset($jsonDecoded['pricing'])) {
+                $pricingData = $jsonDecoded['pricing'];
+            } else if (is_array($jsonDecoded)) {
+                $pricingData = $jsonDecoded;
+            }
+        }
+
+        if (!$pricingData && !empty($_POST['pricing'])) {
+            $pricingData = is_array($_POST['pricing']) ? $_POST['pricing'] : json_decode($_POST['pricing'], true);
+        }
+
+        if (empty($pricingData) || !is_array($pricingData)) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid pricing payload provided.']);
+        }
+
+        // Merge with defaults to ensure all required keys exist
+        $defaults = getDefaultCalculatorPricing();
+        $mergedPricing = array_replace_recursive($defaults, $pricingData);
+
+        $jsonStr = json_encode($mergedPricing, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $user = $_SESSION['admin_user'] ?? 'admin';
+
+        $stmt = $conn->prepare("INSERT INTO calculator_pricing (config_key, config_json, updated_by)
+                                VALUES ('main_pricing', :json, :user)
+                                ON DUPLICATE KEY UPDATE config_json = VALUES(config_json), updated_by = VALUES(updated_by)");
+        $stmt->execute([':json' => $jsonStr, ':user' => $user]);
+
+        sendJsonResponse([
+            'status' => 'success',
+            'message' => 'Calculator pricing updated successfully.',
+            'pricing' => $mergedPricing,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    // 12. RESET CALCULATOR PRICING TO DEFAULT (Admin only)
+    if ($action === 'reset_calculator_pricing') {
+        if (empty($_SESSION['admin_user'])) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Unauthorized: Admin login required.'], 401);
+        }
+
+        $defaults = getDefaultCalculatorPricing();
+        $jsonStr = json_encode($defaults, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $user = $_SESSION['admin_user'] ?? 'admin';
+
+        $stmt = $conn->prepare("INSERT INTO calculator_pricing (config_key, config_json, updated_by)
+                                VALUES ('main_pricing', :json, :user)
+                                ON DUPLICATE KEY UPDATE config_json = VALUES(config_json), updated_by = VALUES(updated_by)");
+        $stmt->execute([':json' => $jsonStr, ':user' => $user]);
+
+        sendJsonResponse([
+            'status' => 'success',
+            'message' => 'Calculator pricing reset to factory defaults.',
+            'pricing' => $defaults,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
     }
 
 } catch (PDOException $e) {

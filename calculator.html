@@ -1517,8 +1517,9 @@
   // State management
   let currentCategory = 'men';   // 'men' or 'women'
   let currentOrderType = 'ready'; // 'ready' or 'custom'
+  let PRICING_CONFIG = null;
 
-  // Hair length weight factor table
+  // Hair length weight factor table (mutable for DB sync)
   const lengthWeights = {
     6: 1.0,
     8: 1.5,
@@ -1790,7 +1791,8 @@
 
       let contentHtml;
       if (currentCategory === 'men' && item.w === 7 && item.l === 9) {
-        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$650</span><span class="chip-promo-price">$450</span>) <span class="badge-special">Limited Special</span>`;
+        const strikePrice = (PRICING_CONFIG && PRICING_CONFIG.base_size_prices && PRICING_CONFIG.base_size_prices['7x9'] && PRICING_CONFIG.base_size_prices['7x9'].men_strike) ? PRICING_CONFIG.base_size_prices['7x9'].men_strike : 650;
+        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$${strikePrice}</span><span class="chip-promo-price">$${price}</span>) <span class="badge-special">Limited Special</span>`;
       } else {
         contentHtml = `${item.w}" × ${item.l}" (${desc} · $${price})`;
       }
@@ -2035,7 +2037,7 @@
 
     // 1. Factory base cost (USD) calculation from Base Size AUD table
     // User calibrated base rates: e.g. Men 7x9 = $450 AUD, Women 4x4 = $500 AUD, etc.
-    const retailMultiplier = 3.0;
+    const retailMultiplier = (PRICING_CONFIG && PRICING_CONFIG.retail_multiplier) ? PRICING_CONFIG.retail_multiplier : 3.0;
     const baseCapAud = Math.round(rawBaseAud * wCap);
     const baseCapUsd = baseCapAud / retailMultiplier;
 
@@ -2044,8 +2046,12 @@
 
     // Hair material upgrade surcharge (USD)
     let hairTypeUsd = 0;
-    if (hairType === 'remy') hairTypeUsd = 40.0;
-    if (hairType === 'virgin') hairTypeUsd = 90.0;
+    if (hairType === 'remy') {
+      hairTypeUsd = (PRICING_CONFIG && PRICING_CONFIG.hair_type_surcharges_usd && PRICING_CONFIG.hair_type_surcharges_usd.remy !== undefined) ? PRICING_CONFIG.hair_type_surcharges_usd.remy : 40.0;
+    }
+    if (hairType === 'virgin') {
+      hairTypeUsd = (PRICING_CONFIG && PRICING_CONFIG.hair_type_surcharges_usd && PRICING_CONFIG.hair_type_surcharges_usd.virgin !== undefined) ? PRICING_CONFIG.hair_type_surcharges_usd.virgin : 90.0;
+    }
 
     // Subtotal before density factor (USD)
     const subTotalUsd = baseCapUsd + lengthAddUsd + hairTypeUsd;
@@ -2064,12 +2070,20 @@
     const hairTypeAud = Math.round(hairTypeUsd * retailMultiplier);
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
 
-    const installAud = hasInstall ? 150 : 0;
-    const maintCutAud = hasMaintCut ? 20 : 0;
-    const shampooAud = hasShampoo ? 20 : 0;
-    const unitTreatmentAud = hasUnitTreatment ? 30 : 0;
-    const colourAud = hasColour ? 50 : 0;
-    const permAud = hasPerm ? 50 : 0;
+    const installPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.install_cut_in !== undefined) ? PRICING_CONFIG.salon_services_aud.install_cut_in : 150;
+    const installAud = hasInstall ? installPrice : 0;
+
+    const maintCutPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_hair_cut !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_hair_cut : 20;
+    const shampooPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_shampoo !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_shampoo : 20;
+    const unitTreatmentPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_unit_treatment !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_unit_treatment : 30;
+    const colourPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_colour !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_colour : 50;
+    const permPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_perm !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_perm : 50;
+
+    const maintCutAud = hasMaintCut ? maintCutPrice : 0;
+    const shampooAud = hasShampoo ? shampooPrice : 0;
+    const unitTreatmentAud = hasUnitTreatment ? unitTreatmentPrice : 0;
+    const colourAud = hasColour ? colourPrice : 0;
+    const permAud = hasPerm ? permPrice : 0;
     const salonMaintAud = maintCutAud + shampooAud + unitTreatmentAud + colourAud + permAud;
 
     let bondingAud = 0;
@@ -2080,8 +2094,13 @@
       bondingName = checkedBonding.getAttribute('data-name') || '';
     }
 
-    const customFeeAud = (currentOrderType === 'custom') ? 200 : 0;
-    const extraOptionsAud = (hasBleach ? 35 : 0) + (hasRoot ? 40 : 0) + (hasRush ? 80 : 0);
+    const customFeeRate = (PRICING_CONFIG && PRICING_CONFIG.custom_fee_aud !== undefined) ? PRICING_CONFIG.custom_fee_aud : 200;
+    const customFeeAud = (currentOrderType === 'custom') ? customFeeRate : 0;
+
+    const bleachPrice = (PRICING_CONFIG && PRICING_CONFIG.craftsmanship_aud && PRICING_CONFIG.craftsmanship_aud.bleached_knots !== undefined) ? PRICING_CONFIG.craftsmanship_aud.bleached_knots : 35;
+    const rootPrice = (PRICING_CONFIG && PRICING_CONFIG.craftsmanship_aud && PRICING_CONFIG.craftsmanship_aud.root_shadowing !== undefined) ? PRICING_CONFIG.craftsmanship_aud.root_shadowing : 40;
+    const rushPrice = (PRICING_CONFIG && PRICING_CONFIG.craftsmanship_aud && PRICING_CONFIG.craftsmanship_aud.rush_production !== undefined) ? PRICING_CONFIG.craftsmanship_aud.rush_production : 80;
+    const extraOptionsAud = (hasBleach ? bleachPrice : 0) + (hasRoot ? rootPrice : 0) + (hasRush ? rushPrice : 0);
 
     // Rounding to nearest $10
     const rawProductAud = baseCapAud + lengthAddAud + hairTypeAud + densityAddAud;
@@ -2311,10 +2330,68 @@
     document.body.removeChild(ta);
   }
 
-  // Initial calculation & Admin authentication check
+  async function loadPricingFromApi() {
+    try {
+      const res = await fetch('admin_stock_api.php?action=get_calculator_pricing', { cache: 'no-store' });
+      const data = await res.json();
+      if (data && data.status === 'success' && data.pricing) {
+        applyPricingConfig(data.pricing);
+      }
+    } catch (e) {
+      console.log('Using local default calculator pricing fallback:', e);
+    }
+  }
+
+  function applyPricingConfig(cfg) {
+    if (!cfg) return;
+    PRICING_CONFIG = cfg;
+
+    // 1. Update Base Size Prices
+    if (cfg.base_size_prices) {
+      Object.keys(cfg.base_size_prices).forEach(k => {
+        BASE_SIZE_PRICES[k] = Object.assign({}, BASE_SIZE_PRICES[k] || {}, cfg.base_size_prices[k]);
+      });
+    }
+
+    // 2. Update Hair Length Weights
+    if (cfg.length_weights) {
+      Object.keys(cfg.length_weights).forEach(k => {
+        lengthWeights[k] = parseFloat(cfg.length_weights[k]);
+      });
+    }
+
+    // 3. Update Texture Prices
+    if (cfg.texture_prices_aud) {
+      Object.keys(cfg.texture_prices_aud).forEach(k => {
+        texturePrices[k] = parseFloat(cfg.texture_prices_aud[k]);
+      });
+    }
+
+    // 4. Update bonding service input values in DOM
+    if (cfg.salon_services_aud) {
+      const s = cfg.salon_services_aud;
+      const bTape = document.getElementById('optBondingTape');
+      if (bTape && s.bonding_tape_2_3w !== undefined) bTape.value = s.bonding_tape_2_3w;
+
+      const bTapeGlue = document.getElementById('optBondingTapeGlue');
+      if (bTapeGlue && s.bonding_tape_lace_3_4w !== undefined) bTapeGlue.value = s.bonding_tape_lace_3_4w;
+
+      const bFullGlue = document.getElementById('optBondingFullGlue');
+      if (bFullGlue && s.bonding_full_glue_4_5w !== undefined) bFullGlue.value = s.bonding_full_glue_4_5w;
+
+      const bDaily = document.getElementById('optBondingDailyClip');
+      if (bDaily && s.bonding_daily_clip !== undefined) bDaily.value = s.bonding_daily_clip;
+    }
+
+    refreshChips();
+    calculate();
+  }
+
+  // Initial calculation & Admin authentication check & Dynamic Pricing load
   refreshChips();
   calculate();
   checkAdminAuth();
+  loadPricingFromApi();
 </script>
 
 </body>

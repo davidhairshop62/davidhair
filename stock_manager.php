@@ -206,6 +206,18 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'pricing'">
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="savePricingConfig()" :disabled="isSavingPricing" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2 disabled:opacity-50">
+                                <i class="fa-solid fa-spinner fa-spin" x-show="isSavingPricing"></i>
+                                <i class="fa-solid fa-floppy-disk" x-show="!isSavingPricing"></i>
+                                <span x-text="isSavingPricing ? 'Saving...' : 'Save Pricing'"></span>
+                            </button>
+                            <button @click="loadPricingConfig()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Reload Pricing">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingPricing }"></i>
+                            </button>
+                        </div>
+                    </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
                         <i class="fa-solid fa-power-off"></i> Logout
@@ -271,6 +283,11 @@
                     <template x-if="invoices.length > 0">
                         <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
                     </template>
+                </button>
+                <button @click="activeTab = 'pricing'; loadPricingConfig()" 
+                        :class="activeTab === 'pricing' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-calculator text-brand-tealLight"></i> Quote Pricing
                 </button>
             </div>
 
@@ -1782,6 +1799,556 @@
                                 </template>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: CALCULATOR PRICING MANAGER -->
+            <div x-show="activeTab === 'pricing'" x-cloak class="space-y-6">
+                <!-- Top Overview & Action Header Card -->
+                <div class="bg-brand-cardBg border border-brand-border p-5 sm:p-6 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-brand-tealLight bg-brand-teal/20 px-2.5 py-0.5 rounded-full border border-brand-teal/30">Live Calculator Sync</span>
+                            <span x-show="pricingLastUpdated" class="text-[11px] text-slate-400 font-mono">Last updated: <span class="text-slate-300 font-semibold" x-text="pricingLastUpdated"></span></span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white font-heading mt-1 flex items-center gap-2.5">
+                            <i class="fa-solid fa-calculator text-brand-tealLight"></i>
+                            Quote &amp; Cost Calculator Pricing Manager
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            온라인 견적 계산기(<code class="text-brand-tealLight bg-slate-900 px-1 py-0.5 rounded">calculator.html</code>)의 베이스 사이즈별 기본 가격, 모발 길이 가중치, 원사 등급, 컬/텍스처 및 살롱 시술비를 실시간으로 수정합니다.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <a href="calculator.html" target="_blank" class="px-3.5 py-2.5 bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-brand-tealLight"></i>
+                            <span>Open Calculator</span>
+                        </a>
+                        <button type="button" @click="resetPricingConfig()" :disabled="isSavingPricing" class="px-3.5 py-2.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset Defaults</span>
+                        </button>
+                        <button type="button" @click="savePricingConfig()" :disabled="isSavingPricing" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                            <i class="fa-solid fa-spinner fa-spin" x-show="isSavingPricing"></i>
+                            <i class="fa-solid fa-floppy-disk" x-show="!isSavingPricing"></i>
+                            <span x-text="isSavingPricing ? 'Saving Pricing...' : 'Save All Pricing'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div x-show="isLoadingPricing" class="p-12 text-center bg-brand-cardBg border border-brand-border rounded-2xl">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-brand-tealLight mb-2"></i>
+                    <p class="text-xs text-slate-400">Loading calculator pricing configuration...</p>
+                </div>
+
+                <div x-show="!isLoadingPricing && pricingConfig" class="space-y-6">
+                    <!-- Pricing Sub-Tabs -->
+                    <div class="flex items-center gap-2 border-b border-brand-border/70 pb-2.5 overflow-x-auto text-xs font-bold">
+                        <button type="button" @click="pricingActiveSubTab = 'base_sizes'"
+                                :class="pricingActiveSubTab === 'base_sizes' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-ruler-combined"></i> 1. Base Sizes (AUD)
+                        </button>
+                        <button type="button" @click="pricingActiveSubTab = 'lengths_hair'"
+                                :class="pricingActiveSubTab === 'lengths_hair' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-arrows-up-down"></i> 2. Hair Length &amp; Fiber Grade
+                        </button>
+                        <button type="button" @click="pricingActiveSubTab = 'textures_grey'"
+                                :class="pricingActiveSubTab === 'textures_grey' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 3. Texture, Wave &amp; Grey Mix
+                        </button>
+                        <button type="button" @click="pricingActiveSubTab = 'salon_services'"
+                                :class="pricingActiveSubTab === 'salon_services' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-scissors"></i> 4. Salon Fitting &amp; Bonding
+                        </button>
+                        <button type="button" @click="pricingActiveSubTab = 'craft_custom'"
+                                :class="pricingActiveSubTab === 'craft_custom' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-hand-holding-dollar"></i> 5. Craftsmanship &amp; Custom Order
+                        </button>
+                    </div>
+
+                    <!-- SUB-TAB 1: BASE SIZES -->
+                    <div x-show="pricingActiveSubTab === 'base_sizes'" class="space-y-4">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                            <div class="p-4 sm:p-5 border-b border-brand-border bg-brand-inner/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                        <span>Base Size Standard Price Table (AUD)</span>
+                                        <span class="text-[10px] text-brand-tealLight bg-teal-950 border border-teal-500/30 px-2 py-0.5 rounded-full font-mono">11 Presets</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">계산기 칩 프리셋 및 가로x세로 기본가에 적용되는 가격표입니다. (단위: AUD $)</p>
+                                </div>
+                                <div class="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                                    <i class="fa-solid fa-fire text-amber-400"></i>
+                                    <span>7" × 9" Men's Std는 특별 프로모션 적용 항목입니다.</span>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
+                                        <tr>
+                                            <th class="py-3 px-4">Size (W" × L")</th>
+                                            <th class="py-3 px-4">Size Sum (W+L)</th>
+                                            <th class="py-3 px-4">Men's Base Price ($ AUD)</th>
+                                            <th class="py-3 px-4">Women's Base Price ($ AUD)</th>
+                                            <th class="py-3 px-4">Special Notes / Promo Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-brand-border/60">
+                                        <template x-for="(szKey) in Object.keys(pricingConfig.base_size_prices || {})" :key="szKey">
+                                            <tr class="hover:bg-brand-inner/30 transition-colors">
+                                                <td class="py-3 px-4 font-mono font-bold text-white text-sm" x-text="szKey"></td>
+                                                <td class="py-3 px-4 text-slate-400 font-mono text-xs" x-text="szKey.split('x').reduce((a,b)=>parseInt(a)+parseInt(b), 0) + ' inches'"></td>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-slate-400 font-mono">$</span>
+                                                        <input type="number" 
+                                                               x-model.number="pricingConfig.base_size_prices[szKey].men" 
+                                                               min="0" step="10"
+                                                               class="w-28 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-slate-400 font-mono">$</span>
+                                                        <input type="number" 
+                                                               x-model.number="pricingConfig.base_size_prices[szKey].women" 
+                                                               min="0" step="10"
+                                                               class="w-28 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <template x-if="szKey === '7x9'">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-[10px] text-slate-400">Regular (Strike): $</span>
+                                                            <input type="number" 
+                                                                   x-model.number="pricingConfig.base_size_prices['7x9'].men_strike" 
+                                                                   min="0" step="10"
+                                                                   class="w-24 bg-brand-darkBg border border-amber-500/40 rounded-lg px-2 py-1 text-amber-300 font-mono font-bold text-xs focus:border-amber-400 outline-none">
+                                                            <span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded font-bold">Promo Badge</span>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="szKey !== '7x9'">
+                                                        <span class="text-slate-500 text-[11px]">- Standard Rate -</span>
+                                                    </template>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-TAB 2: LENGTHS & HAIR FIBER -->
+                    <div x-show="pricingActiveSubTab === 'lengths_hair'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Hair Length Factors -->
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-arrows-up-down text-brand-tealLight"></i>
+                                    <span>Hair Length Weight Factors</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">모발 길이에 따른 중량 가중치 배율입니다. (6" = 1.0x 기준)</p>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <template x-for="(len) in Object.keys(pricingConfig.length_weights || {})" :key="len">
+                                    <div class="bg-brand-inner/70 border border-brand-border p-3 rounded-xl space-y-1.5">
+                                        <div class="flex justify-between items-center text-xs">
+                                            <span class="font-bold text-white" x-text="len + ' inch'"></span>
+                                            <span class="text-[10px] text-brand-tealLight font-mono">Length</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <input type="number" 
+                                                   x-model.number="pricingConfig.length_weights[len]" 
+                                                   min="0.5" max="20" step="0.1"
+                                                   class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-center">
+                                            <span class="text-slate-400 text-xs">x</span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Hair Fiber Surcharges (USD) & Multiplier -->
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-5">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-gem text-amber-400"></i>
+                                    <span>Hair Fiber Grade &amp; Multiplier</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">원사 등급별 공장 원가(USD) 추가금 및 소매가(AUD) 환산 배율입니다.</p>
+                            </div>
+
+                            <div class="space-y-3.5">
+                                <div>
+                                    <label class="block font-bold text-slate-300 mb-1 text-xs">Retail Multiplier (AUD 소매가 환산 배율)</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.retail_multiplier" 
+                                               min="1.0" max="10.0" step="0.1"
+                                               class="w-32 bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold text-sm focus:border-brand-teal outline-none">
+                                        <span class="text-xs text-slate-400">× USD 원가 (기본값: 3.0 배수)</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-brand-border/60 pt-3 space-y-3">
+                                    <div class="text-xs font-bold text-slate-300">Hair Fiber Grade Upgrades (USD Factory Base)</div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div class="bg-brand-inner/70 border border-brand-border p-3 rounded-xl space-y-1">
+                                            <span class="text-xs font-bold text-white block">Standard Hair</span>
+                                            <span class="text-[10px] text-slate-400 block mb-1">일반 인모 (기본)</span>
+                                            <div class="text-sm font-mono font-bold text-slate-400 pt-1">$0 USD</div>
+                                        </div>
+
+                                        <div class="bg-brand-inner/70 border border-brand-border p-3 rounded-xl space-y-1">
+                                            <span class="text-xs font-bold text-teal-300 block">100% Remy Hair</span>
+                                            <span class="text-[10px] text-slate-400 block mb-1">레미 헤어 (살롱급)</span>
+                                            <div class="flex items-center gap-1">
+                                                <span class="text-slate-400 font-mono text-xs">$</span>
+                                                <input type="number" 
+                                                       x-model.number="pricingConfig.hair_type_surcharges_usd.remy" 
+                                                       min="0" step="5"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                <span class="text-slate-400 text-[10px]">USD</span>
+                                            </div>
+                                            <div class="text-[10px] text-teal-400/80 font-mono mt-0.5">
+                                                ≈ $<span x-text="Math.round((pricingConfig.hair_type_surcharges_usd.remy || 0) * (pricingConfig.retail_multiplier || 3))"></span> AUD
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-brand-inner/70 border border-brand-border p-3 rounded-xl space-y-1">
+                                            <span class="text-xs font-bold text-amber-300 block">Virgin Cuticle</span>
+                                            <span class="text-[10px] text-slate-400 block mb-1">최고급 버진 헤어</span>
+                                            <div class="flex items-center gap-1">
+                                                <span class="text-slate-400 font-mono text-xs">$</span>
+                                                <input type="number" 
+                                                       x-model.number="pricingConfig.hair_type_surcharges_usd.virgin" 
+                                                       min="0" step="5"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                <span class="text-slate-400 text-[10px]">USD</span>
+                                            </div>
+                                            <div class="text-[10px] text-amber-400/80 font-mono mt-0.5">
+                                                ≈ $<span x-text="Math.round((pricingConfig.hair_type_surcharges_usd.virgin || 0) * (pricingConfig.retail_multiplier || 3))"></span> AUD
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-TAB 3: TEXTURE & GREY MIX -->
+                    <div x-show="pricingActiveSubTab === 'textures_grey'" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <!-- Hair Texture / Wave Prices -->
+                        <div class="md:col-span-8 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-water text-sky-400"></i>
+                                    <span>Hair Texture &amp; Wave Options (AUD)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">컬 및 웨이브 스타일에 따른 단일 선택 추가 금액입니다. (단위: AUD $)</p>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <template x-for="(texKey) in Object.keys(pricingConfig.texture_prices_aud || {})" :key="texKey">
+                                    <div class="bg-brand-inner/70 border border-brand-border p-3 rounded-xl space-y-1.5">
+                                        <div class="text-xs font-bold text-white capitalize" x-text="texKey.replace('_', ' ')"></div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-slate-400 font-mono text-xs">+$</span>
+                                            <input type="number" 
+                                                   x-model.number="pricingConfig.texture_prices_aud[texKey]" 
+                                                   min="0" step="5"
+                                                   class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                            <span class="text-slate-400 text-xs">AUD</span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Grey Hair Mix Rate -->
+                        <div class="md:col-span-4 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-sliders text-purple-400"></i>
+                                    <span>Grey Hair Mix Rate</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">새치 혼합 비율에 따른 단계별 추가금</p>
+                            </div>
+                            <div class="bg-brand-inner/70 border border-brand-border p-4 rounded-xl space-y-3">
+                                <label class="block font-bold text-slate-300 text-xs">10% 단계별 추가금 (Step Rate)</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 font-mono text-sm">+$</span>
+                                    <input type="number" 
+                                           x-model.number="pricingConfig.grey_hair_step_aud" 
+                                           min="0" step="5"
+                                           class="w-28 bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold text-sm focus:border-brand-teal outline-none">
+                                    <span class="text-xs text-slate-400">AUD / 10%</span>
+                                </div>
+                                <div class="text-[11px] text-slate-400 space-y-1 bg-brand-darkBg/60 p-2.5 rounded-lg border border-brand-border/60">
+                                    <div>예: 10% = +$<span x-text="pricingConfig.grey_hair_step_aud"></span> AUD</div>
+                                    <div>예: 30% = +$<span x-text="(pricingConfig.grey_hair_step_aud || 0) * 3"></span> AUD</div>
+                                    <div>예: 50% = +$<span x-text="(pricingConfig.grey_hair_step_aud || 0) * 5"></span> AUD</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-TAB 4: SALON SERVICES -->
+                    <div x-show="pricingActiveSubTab === 'salon_services'" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <!-- Cut-in & Bonding -->
+                        <div class="md:col-span-6 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-tape text-emerald-400"></i>
+                                    <span>Fitting &amp; Bonding Services (AUD)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">전문 컷트 및 가발 부착(Bonding) 시술 옵션 금액</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Cut-in Professional</div>
+                                        <div class="text-[11px] text-slate-400">디자이너 전문 스타일 컷인 시술</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.install_cut_in" 
+                                               min="0" step="10"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Daily Clip and Tape</div>
+                                        <div class="text-[11px] text-slate-400">데일리 클립 &amp; 테이프</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.bonding_daily_clip" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Bonding Tape (2-3 weeks)</div>
+                                        <div class="text-[11px] text-slate-400">테이프 본딩 (2~3주 지속)</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.bonding_tape_2_3w" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Bonding Tape + Lace Glue (3-4 weeks)</div>
+                                        <div class="text-[11px] text-slate-400">테이프 + 레이스 글루 (3~4주 지속)</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.bonding_tape_lace_3_4w" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Full Glue Bonding (4-5 weeks)</div>
+                                        <div class="text-[11px] text-slate-400">풀 글루 전두 본딩 (4~5주 지속)</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.bonding_full_glue_4_5w" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Salon Maintenance Care -->
+                        <div class="md:col-span-6 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-spray-can-sparkles text-amber-300"></i>
+                                    <span>Salon Maintenance &amp; Care Services (AUD)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">살롱 정기 케어, 샴푸, 트리트먼트, 염색, 펌 서비스</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Maintenance Hair Cut</div>
+                                        <div class="text-[11px] text-slate-400">주기적 리터치 / 다듬기 컷</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.maint_hair_cut" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Shampoo</div>
+                                        <div class="text-[11px] text-slate-400">본머리 &amp; 두피 샴푸</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.maint_shampoo" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Unit Shampoo &amp; Treatment</div>
+                                        <div class="text-[11px] text-slate-400">가발 피스 전용 세척 &amp; 영양 클리닉</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.maint_unit_treatment" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Colour From</div>
+                                        <div class="text-[11px] text-slate-400">모발 컬러 염색 시술</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.maint_colour" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Perm From</div>
+                                        <div class="text-[11px] text-slate-400">웨이브 / 볼륨 펌 시술</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.salon_services_aud.maint_perm" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-TAB 5: CRAFTSMANSHIP & CUSTOM ORDER -->
+                    <div x-show="pricingActiveSubTab === 'craft_custom'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Custom Bespoke Order Fee -->
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-crown text-amber-400"></i>
+                                    <span>Custom Bespoke Order Fee (AUD)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">기성 제품(Ready-made) 대비 1:1 두상 맞춤 제작(Custom Bespoke) 시 부과되는 추가 수수료</p>
+                            </div>
+                            <div class="bg-brand-inner/70 border border-brand-border p-4 rounded-xl space-y-2">
+                                <label class="block font-bold text-slate-300 text-xs">Custom Order Surcharge ($ AUD)</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 font-mono text-sm">+$</span>
+                                    <input type="number" 
+                                           x-model.number="pricingConfig.custom_fee_aud" 
+                                           min="0" step="10"
+                                           class="w-32 bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold text-base focus:border-brand-teal outline-none">
+                                    <span class="text-xs text-slate-400">AUD (기본값: $200)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Craftsmanship Options -->
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-xl space-y-4">
+                            <div class="border-b border-brand-border pb-3">
+                                <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-wand-magic text-purple-400"></i>
+                                    <span>Special Craftsmanship Add-ons (AUD)</span>
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-1">공장 특수 가공 및 급행 제작 수수료</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Bleached Knots</div>
+                                        <div class="text-[11px] text-slate-400">헤어라인 매듭 탈색 가공</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">+$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.craftsmanship_aud.bleached_knots" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                        <span class="text-slate-400 text-xs">AUD</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Root Shadowing / Transition Color</div>
+                                        <div class="text-[11px] text-slate-400">모근 자연스러운 음영 그라데이션</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">+$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.craftsmanship_aud.root_shadowing" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                        <span class="text-slate-400 text-xs">AUD</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-brand-inner/70 border border-brand-border rounded-xl">
+                                    <div>
+                                        <div class="text-xs font-bold text-rose-300">Rush Factory Production</div>
+                                        <div class="text-[11px] text-slate-400">5~6주 공장 우선 급행 제작</div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 font-mono text-xs">+$</span>
+                                        <input type="number" 
+                                               x-model.number="pricingConfig.craftsmanship_aud.rush_production" 
+                                               min="0" step="5"
+                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none text-right">
+                                        <span class="text-slate-400 text-xs">AUD</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3513,10 +4080,83 @@
                     email_enabled: '1'
                 },
 
+                // Calculator Pricing state
+                pricingConfig: null,
+                isLoadingPricing: false,
+                isSavingPricing: false,
+                pricingActiveSubTab: 'base_sizes', // 'base_sizes', 'lengths_hair', 'textures_grey', 'salon_services', 'craft_custom'
+                pricingLastUpdated: '',
+
                 async init() {
                     await this.checkAuth();
                     this.initWeek();
                     await this.loadClosureRules();
+                },
+
+                async loadPricingConfig() {
+                    this.isLoadingPricing = true;
+                    try {
+                        const res = await fetch('admin_stock_api.php?action=get_calculator_pricing', { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data && data.status === 'success' && data.pricing) {
+                            this.pricingConfig = data.pricing;
+                            this.pricingLastUpdated = data.updated_at || '';
+                        } else {
+                            this.showToast('Failed to load calculator pricing.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Error connecting to pricing API.', 'error');
+                    } finally {
+                        this.isLoadingPricing = false;
+                    }
+                },
+
+                async savePricingConfig() {
+                    if (!this.pricingConfig) return;
+                    this.isSavingPricing = true;
+                    try {
+                        const res = await fetch('admin_stock_api.php?action=save_calculator_pricing', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ pricing: this.pricingConfig })
+                        });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.pricingConfig = data.pricing;
+                            this.pricingLastUpdated = data.updated_at || '';
+                            this.showToast('✅ Calculator pricing saved successfully!');
+                        } else {
+                            this.showToast(data.message || 'Failed to save pricing.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error while saving pricing.', 'error');
+                    } finally {
+                        this.isSavingPricing = false;
+                    }
+                },
+
+                async resetPricingConfig() {
+                    if (!confirm('Are you sure you want to reset all calculator prices to factory defaults? Any custom modifications will be replaced.')) {
+                        return;
+                    }
+                    this.isSavingPricing = true;
+                    try {
+                        const res = await fetch('admin_stock_api.php?action=reset_calculator_pricing', {
+                            method: 'POST'
+                        });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.pricingConfig = data.pricing;
+                            this.pricingLastUpdated = data.updated_at || '';
+                            this.showToast('🔄 Calculator pricing reset to factory defaults.');
+                        } else {
+                            this.showToast(data.message || 'Failed to reset pricing.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error while resetting pricing.', 'error');
+                    } finally {
+                        this.isSavingPricing = false;
+                    }
                 },
 
                 get totalQty() {
