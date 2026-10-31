@@ -85,7 +85,7 @@ function getDefaultCalculatorPricing() {
             '6x6' => ['men' => 500, 'women' => 600],
             '6x7' => ['men' => 600, 'women' => 600],
             '6x8' => ['men' => 600, 'women' => 600],
-            '7x9' => ['men' => 450, 'women' => 650, 'men_strike' => 650],
+            '7x9' => ['men' => 680, 'women' => 650, 'men_strike' => 700],
             '8x10' => ['men' => 700, 'women' => 700],
             '10x12' => ['men' => 800, 'women' => 1000]
         ],
