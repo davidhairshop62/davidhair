@@ -231,8 +231,8 @@
                          :class="{
                              'border-brand-border hover:border-teal-500/50': sec.is_visible && (!draggedSec || draggedSec.id !== sec.id) && dragOverId !== sec.id,
                              'border-rose-900/40 bg-[#161B2E]/60 opacity-80': !sec.is_visible && (!draggedSec || draggedSec.id !== sec.id) && dragOverId !== sec.id,
-                             'opacity-40 border-2 border-dashed border-teal-400 bg-teal-950/30 scale-[0.98]': draggedSec && draggedSec.id === sec.id,
-                             'border-t-4 border-t-teal-400 bg-[#152347] shadow-2xl scale-[1.01] -translate-y-1': dragOverId === sec.id && draggedSec && draggedSec.id !== sec.id
+                             'opacity-40 border-2 border-dashed border-teal-400 bg-teal-950/30': draggedSec && draggedSec.id === sec.id,
+                             'ring-2 ring-teal-400 border-teal-400 bg-[#152347] shadow-xl': dragOverId === sec.id && draggedSec && draggedSec.id !== sec.id
                          }"
                          draggable="true"
                          @dragstart="onDragStart($event, sec)"
@@ -246,13 +246,13 @@
                             <!-- Left Info & Badges -->
                             <div class="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
                                 <!-- Drag Handle -->
-                                <div class="cursor-grab active:cursor-grabbing text-slate-500 hover:text-teal-400 p-1.5 flex items-center justify-center shrink-0 transition-colors mt-0.5 rounded hover:bg-slate-800"
+                                <div class="cursor-grab active:cursor-grabbing text-slate-400 hover:text-teal-400 p-1.5 flex items-center justify-center shrink-0 transition-colors mt-0.5 rounded hover:bg-slate-800"
                                      title="Drag to reorder section">
-                                    <i class="fa-solid fa-grip-vertical text-base sm:text-lg"></i>
+                                    <i class="fa-solid fa-grip-vertical text-base sm:text-lg pointer-events-none"></i>
                                 </div>
 
                                 <!-- Sort Order / Icon Box -->
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 mt-0.5 shadow-sm"
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 mt-0.5 shadow-sm pointer-events-none"
                                      :class="sec.is_visible ? 'teal-gradient' : 'bg-slate-800 text-slate-400 border border-slate-700'">
                                     <i :class="sec.menu_icon || 'fa-solid fa-layer-group'"></i>
                                 </div>
@@ -597,13 +597,18 @@
 
                 onDragStart(evt, sec) {
                     this.draggedSec = sec;
-                    evt.dataTransfer.effectAllowed = 'move';
-                    evt.dataTransfer.setData('text/plain', sec.id);
+                    this.dragOverId = null;
+                    try {
+                        evt.dataTransfer.effectAllowed = 'move';
+                        evt.dataTransfer.setData('text/plain', String(sec.id));
+                    } catch (e) {}
                 },
 
                 onDragOver(evt, sec) {
                     evt.preventDefault();
-                    evt.dataTransfer.dropEffect = 'move';
+                    if (evt.dataTransfer) {
+                        evt.dataTransfer.dropEffect = 'move';
+                    }
                     if (this.draggedSec && this.draggedSec.id !== sec.id) {
                         this.dragOverId = sec.id;
                     }
@@ -616,6 +621,9 @@
                 },
 
                 onDragLeave(evt, sec) {
+                    if (evt.currentTarget && evt.relatedTarget && evt.currentTarget.contains(evt.relatedTarget)) {
+                        return;
+                    }
                     if (this.dragOverId === sec.id) {
                         this.dragOverId = null;
                     }
@@ -657,7 +665,6 @@
                 },
 
                 normalizeAndSaveOrders() {
-                    this.sections.sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
                     this.sections.forEach((s, idx) => {
                         s.sort_order = idx + 1;
                     });
