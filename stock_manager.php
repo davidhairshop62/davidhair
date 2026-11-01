@@ -206,6 +206,17 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'gallery'">
+                        <div class="flex items-center gap-2">
+                            <button @click="openGalleryCaseModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> Add B/A Case
+                            </button>
+                            <a href="gallery.html" target="_blank" class="px-3 py-2.5 bg-brand-inner hover:bg-slate-700 border border-brand-border rounded-lg text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-brand-tealLight"></i>
+                                <span class="hidden sm:inline">Preview Gallery</span>
+                            </a>
+                        </div>
+                    </template>
                     <template x-if="activeTab === 'pricing'">
                         <div class="flex items-center gap-2">
                             <button type="button" @click="savePricingConfig()" :disabled="isSavingPricing" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2 disabled:opacity-50">
@@ -282,6 +293,14 @@
                     <i class="fa-solid fa-file-invoice-dollar text-amber-300"></i> Invoices
                     <template x-if="invoices.length > 0">
                         <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
+                    </template>
+                </button>
+                <button @click="activeTab = 'gallery'; loadGalleryCases()" 
+                        :class="activeTab === 'gallery' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i> B/A Gallery
+                    <template x-if="galleryCases.length > 0">
+                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="galleryCases.length"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'pricing'; loadPricingConfig()" 
@@ -2354,7 +2373,287 @@
                 </div>
             </div>
 
+            <!-- TAB 8: BEFORE / AFTER GALLERY MANAGER -->
+            <div x-show="activeTab === 'gallery'" x-cloak class="space-y-6">
+                <!-- Summary Stats Bar -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Total B/A Cases</div>
+                        <div class="text-2xl font-extrabold text-white mt-1" x-text="galleryCases.length"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Men Cases</span>
+                            <i class="fa-solid fa-mars text-xs"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-sky-300 mt-1" x-text="galleryCases.filter(c => c.gender === 'male').length"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm">
+                        <div class="text-xs font-bold text-pink-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Women Cases</span>
+                            <i class="fa-solid fa-venus text-xs"></i>
+                        </div>
+                        <div class="text-2xl font-extrabold text-pink-300 mt-1" x-text="galleryCases.filter(c => c.gender === 'female').length"></div>
+                    </div>
+                    <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl shadow-sm flex flex-col justify-between">
+                        <div class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
+                            <span>Client Preview</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                        </div>
+                        <a href="gallery.html" target="_blank" class="mt-2 inline-flex items-center gap-1.5 text-xs text-amber-300 font-bold hover:underline">
+                            <span>Open Public Gallery</span>
+                            <i class="fa-solid fa-external-link text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Toolbar -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Gender filter -->
+                        <select x-model="galleryGenderFilter" class="bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+                            <option value="all">모든 성별 (All Genders)</option>
+                            <option value="male">남성 (Men)</option>
+                            <option value="female">여성 (Women)</option>
+                        </select>
+                        <!-- Category filter -->
+                        <select x-model="galleryCategoryFilter" class="bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+                            <option value="all">모든 종류 (All Categories)</option>
+                            <option value="투페">투페 (Toupee)</option>
+                            <option value="가발">전두가발 (Full Wig)</option>
+                            <option value="톱퍼">톱퍼 (Topper)</option>
+                            <option value="헤어피스">기타 헤어피스</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <!-- Keyword Search -->
+                        <div class="relative w-full sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" x-model="gallerySearchQuery" placeholder="검색 (제목, 설명, 모질)..."
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-brand-tealLight">
+                        </div>
+
+                        <!-- Add Case Button -->
+                        <button type="button" @click="openGalleryCaseModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>새 사례 등록</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cases List Table -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-brand-inner/70 text-slate-300 uppercase tracking-wider font-bold border-b border-brand-border">
+                                <tr>
+                                    <th class="py-3.5 px-4 w-12 text-center">#</th>
+                                    <th class="py-3.5 px-4 w-28">BEFORE</th>
+                                    <th class="py-3.5 px-4 w-52">AFTER 1~4 각도</th>
+                                    <th class="py-3.5 px-4">구분 / 제품명 / 시술 설명</th>
+                                    <th class="py-3.5 px-4 w-36">모질 &amp; 연령대</th>
+                                    <th class="py-3.5 px-4 w-28 text-center">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60 text-slate-200">
+                                <template x-for="(c, idx) in filteredGalleryCases" :key="c.id">
+                                    <tr class="hover:bg-brand-inner/40 transition-colors">
+                                        <td class="py-3 px-4 text-center text-slate-400 font-mono" x-text="c.id"></td>
+                                        <td class="py-3 px-4">
+                                            <div class="relative w-16 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-rose-500/30">
+                                                <img :src="c.before_img" alt="Before" class="w-full h-full object-cover">
+                                                <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[8px] font-extrabold px-1 rounded">BEFORE</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-teal-500/40">
+                                                    <img :src="c.after_img1" alt="After 1" class="w-full h-full object-cover">
+                                                    <span class="absolute bottom-0 inset-x-0 bg-teal-900/90 text-white text-[7px] text-center font-bold">#1 대표</span>
+                                                </div>
+                                                <template x-if="c.after_img2">
+                                                    <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
+                                                        <img :src="c.after_img2" alt="After 2" class="w-full h-full object-cover">
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#2 측면</span>
+                                                    </div>
+                                                </template>
+                                                <template x-if="c.after_img3">
+                                                    <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
+                                                        <img :src="c.after_img3" alt="After 3" class="w-full h-full object-cover">
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#3 후면</span>
+                                                    </div>
+                                                </template>
+                                                <template x-if="c.after_img4">
+                                                    <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
+                                                        <img :src="c.after_img4" alt="After 4" class="w-full h-full object-cover">
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#4 탑뷰</span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center gap-1.5 mb-1">
+                                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold" 
+                                                    :class="c.gender === 'male' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40' : 'bg-pink-500/20 text-pink-300 border border-pink-500/40'"
+                                                    x-text="c.gender === 'male' ? '남성' : '여성'"></span>
+                                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40" x-text="c.category"></span>
+                                            </div>
+                                            <div class="font-bold text-white text-sm" x-text="c.title"></div>
+                                            <div class="text-slate-400 text-xs mt-1 line-clamp-2 leading-relaxed" x-text="c.description || '-'"></div>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="text-slate-300 text-xs" x-text="c.hair_type || '인모 100%'"></div>
+                                            <div class="text-slate-400 text-[11px] mt-0.5" x-text="c.age_group ? ('연령: ' + c.age_group) : ''"></div>
+                                        </td>
+                                        <td class="py-3 px-4 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <button type="button" @click="openGalleryCaseModal('edit', c)" class="p-2 rounded-lg bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer" title="수정">
+                                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                                </button>
+                                                <button type="button" @click="deleteGalleryCase(c.id, c.title)" class="p-2 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 transition cursor-pointer" title="삭제">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="filteredGalleryCases.length === 0">
+                                    <tr>
+                                        <td colspan="6" class="py-12 text-center text-slate-400">
+                                            <i class="fa-regular fa-image text-3xl mb-2 text-slate-500 block"></i>
+                                            등록된 Before &amp; After 사례가 없거나 검색 결과가 없습니다.
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </main>
+    </div>
+
+    <!-- BEFORE & AFTER GALLERY CASE REGISTER/EDIT MODAL -->
+    <div x-show="galleryCaseModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-brand-darkBg/90 backdrop-blur-md overflow-y-auto">
+        <div class="bg-brand-cardBg border border-brand-border rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl my-6 max-h-[92vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3 shrink-0">
+                <h3 class="font-heading font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i>
+                    <span x-text="galleryModalMode === 'edit' ? 'Before & After 사례 수정' : '새 Before & After 시공 사례 등록'"></span>
+                </h3>
+                <button type="button" @click="galleryCaseModalOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveGalleryCase()" class="space-y-4 text-xs overflow-y-auto flex-1 custom-scrollbar pr-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-200 mb-1">성별 구분 <span class="text-rose-400">*</span></label>
+                        <select x-model="galleryForm.gender" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
+                            <option value="male">남성 (Male)</option>
+                            <option value="female">여성 (Female)</option>
+                            <option value="unisex">공용 (Unisex)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-200 mb-1">제품 종류 <span class="text-rose-400">*</span></label>
+                        <select x-model="galleryForm.category" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
+                            <option value="투페">투페 (부분가발)</option>
+                            <option value="가발">전두가발 (Full Wig)</option>
+                            <option value="톱퍼">톱퍼 (정수리 볼륨)</option>
+                            <option value="헤어피스">기타 헤어피스</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-200 mb-1">시공 제목 <span class="text-rose-400">*</span></label>
+                    <input type="text" x-model="galleryForm.title" required placeholder="예: 40대 M자 및 정수리 탈모 극복 0.03mm 초극박 스킨 투페" 
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-tealLight">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-200 mb-1">상세 설명 / 고객 고민 및 해결 방법</label>
+                    <textarea x-model="galleryForm.description" rows="3" placeholder="시공 전 고객님의 모발 상태, 적용한 맞춤 베이스 및 연출한 스타일링 특징을 상세히 작성해주세요."
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-tealLight"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-200 mb-1">모질 / 스펙</label>
+                        <input type="text" x-model="galleryForm.hair_type" placeholder="예: 100% 버진 레미모 / 다크 브라운"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-200 mb-1">연령대</label>
+                        <input type="text" x-model="galleryForm.age_group" placeholder="예: 30대, 40대, 50대"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
+                    </div>
+                </div>
+
+                <!-- Photos Section -->
+                <div class="border-t border-brand-border pt-3 space-y-3">
+                    <div class="font-bold text-white text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-images text-brand-tealLight"></i>
+                        <span>사진 등록 (Before 1장 필수 + After 최대 4장)</span>
+                    </div>
+
+                    <!-- Before -->
+                    <div class="bg-brand-darkBg/80 p-3 rounded-xl border border-rose-500/30">
+                        <label class="block font-bold text-rose-400 mb-1 flex items-center justify-between">
+                            <span>1. BEFORE 사진 (시술 전) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-slate-400">필수</span>
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2 items-center">
+                            <input type="file" @change="onGalleryFileChange($event, 'before')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
+                            <input type="text" x-model="galleryForm.before_img" placeholder="또는 이미지 URL (images/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white">
+                        </div>
+                    </div>
+
+                    <!-- After 1 -->
+                    <div class="bg-brand-darkBg/80 p-3 rounded-xl border border-teal-500/30">
+                        <label class="block font-bold text-teal-300 mb-1 flex items-center justify-between">
+                            <span>2. AFTER 1 사진 (대표 완성 정면) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-slate-400">필수</span>
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2 items-center">
+                            <input type="file" @change="onGalleryFileChange($event, 'after1')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
+                            <input type="text" x-model="galleryForm.after_img1" placeholder="또는 이미지 URL" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white">
+                        </div>
+                    </div>
+
+                    <!-- After 2, 3, 4 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 2 (측면)</label>
+                            <input type="file" @change="onGalleryFileChange($event, 'after2')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" x-model="galleryForm.after_img2" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 3 (후면/각도)</label>
+                            <input type="file" @change="onGalleryFileChange($event, 'after3')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" x-model="galleryForm.after_img3" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 4 (탑뷰/디테일)</label>
+                            <input type="file" @change="onGalleryFileChange($event, 'after4')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" x-model="galleryForm.after_img4" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-3 shrink-0">
+                    <button type="button" @click="galleryCaseModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium cursor-pointer">취소</button>
+                    <button type="submit" :disabled="isSavingGalleryCase" class="teal-gradient hover:opacity-95 text-white font-bold px-6 py-2 rounded-xl transition shadow flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                        <i class="fa-solid fa-check"></i>
+                        <span x-text="galleryModalMode === 'edit' ? '수정 저장하기' : '갤러리에 등록하기'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- STOCK ITEM EDIT MODAL -->
@@ -6353,6 +6652,168 @@ Thank you for choosing David Hair Systems!`;
                         this.showToast('Failed to send Telegram message: ' + e.message);
                     } finally {
                         this.isSendingTelegramInvoice = false;
+                    }
+                },
+
+                // B/A Gallery State
+                galleryCases: [],
+                isLoadingGallery: false,
+                isSavingGalleryCase: false,
+                gallerySearchQuery: '',
+                galleryGenderFilter: 'all',
+                galleryCategoryFilter: 'all',
+                galleryCaseModalOpen: false,
+                galleryModalMode: 'add',
+                galleryForm: {
+                    id: null,
+                    gender: 'male',
+                    category: '투페',
+                    title: '',
+                    description: '',
+                    hair_type: '',
+                    age_group: '',
+                    before_img: '',
+                    after_img1: '',
+                    after_img2: '',
+                    after_img3: '',
+                    after_img4: ''
+                },
+                galleryFiles: {
+                    before: null,
+                    after1: null,
+                    after2: null,
+                    after3: null,
+                    after4: null
+                },
+
+                get filteredGalleryCases() {
+                    return this.galleryCases.filter(c => {
+                        const matchGender = (this.galleryGenderFilter === 'all' || c.gender === this.galleryGenderFilter);
+                        const matchCat = (this.galleryCategoryFilter === 'all' || c.category === this.galleryCategoryFilter);
+                        const q = this.gallerySearchQuery.trim().toLowerCase();
+                        const matchQuery = !q || (
+                            (c.title || '') + ' ' + (c.description || '') + ' ' + (c.hair_type || '') + ' ' + (c.category || '')
+                        ).toLowerCase().includes(q);
+                        return matchGender && matchCat && matchQuery;
+                    });
+                },
+
+                async loadGalleryCases() {
+                    this.isLoadingGallery = true;
+                    try {
+                        const res = await fetch('api_gallery.php', { cache: 'no-store' });
+                        const json = await res.json();
+                        if (json && json.success) {
+                            this.galleryCases = json.data || [];
+                        } else {
+                            this.showToast('갤러리 데이터를 불러오지 못했습니다.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('갤러리 API 연결 실패: ' + e.message, 'error');
+                    } finally {
+                        this.isLoadingGallery = false;
+                    }
+                },
+
+                openGalleryCaseModal(mode = 'add', item = null) {
+                    this.galleryModalMode = mode;
+                    this.galleryFiles = { before: null, after1: null, after2: null, after3: null, after4: null };
+                    if (mode === 'edit' && item) {
+                        this.galleryForm = { ...item };
+                    } else {
+                        this.galleryForm = {
+                            id: null,
+                            gender: 'male',
+                            category: '투페',
+                            title: '',
+                            description: '',
+                            hair_type: '',
+                            age_group: '',
+                            before_img: '',
+                            after_img1: '',
+                            after_img2: '',
+                            after_img3: '',
+                            after_img4: ''
+                        };
+                    }
+                    this.galleryCaseModalOpen = true;
+                },
+
+                onGalleryFileChange(e, slot) {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                        this.galleryFiles[slot] = file;
+                    }
+                },
+
+                async saveGalleryCase() {
+                    if (!this.galleryForm.title) {
+                        this.showToast('제목을 입력해주세요.', 'error');
+                        return;
+                    }
+                    this.isSavingGalleryCase = true;
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', this.galleryModalMode === 'edit' ? 'update' : 'create');
+                        if (this.galleryForm.id) formData.append('id', this.galleryForm.id);
+                        formData.append('gender', this.galleryForm.gender);
+                        formData.append('category', this.galleryForm.category);
+                        formData.append('title', this.galleryForm.title);
+                        formData.append('description', this.galleryForm.description || '');
+                        formData.append('hair_type', this.galleryForm.hair_type || '');
+                        formData.append('age_group', this.galleryForm.age_group || '');
+
+                        if (this.galleryFiles.before) formData.append('before_file', this.galleryFiles.before);
+                        formData.append('before_img', this.galleryForm.before_img || '');
+
+                        if (this.galleryFiles.after1) formData.append('after1_file', this.galleryFiles.after1);
+                        formData.append('after_img1', this.galleryForm.after_img1 || '');
+
+                        if (this.galleryFiles.after2) formData.append('after2_file', this.galleryFiles.after2);
+                        formData.append('after_img2', this.galleryForm.after_img2 || '');
+
+                        if (this.galleryFiles.after3) formData.append('after3_file', this.galleryFiles.after3);
+                        formData.append('after_img3', this.galleryForm.after_img3 || '');
+
+                        if (this.galleryFiles.after4) formData.append('after4_file', this.galleryFiles.after4);
+                        formData.append('after_img4', this.galleryForm.after_img4 || '');
+
+                        const res = await fetch('api_gallery.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const json = await res.json();
+                        if (json && json.success) {
+                            this.showToast(this.galleryModalMode === 'edit' ? '✅ 성공적으로 수정되었습니다.' : '✅ 새 시공 사례가 등록되었습니다.');
+                            this.galleryCaseModalOpen = false;
+                            await this.loadGalleryCases();
+                        } else {
+                            this.showToast('등록/수정 실패: ' + (json.message || '오류 발생'), 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('통신 오류: ' + e.message, 'error');
+                    } finally {
+                        this.isSavingGalleryCase = false;
+                    }
+                },
+
+                async deleteGalleryCase(id, title) {
+                    if (!confirm(`'${title}' 시공 사례를 정말 삭제하시겠습니까?`)) return;
+                    try {
+                        const res = await fetch('api_gallery.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: 'action=delete&id=' + encodeURIComponent(id)
+                        });
+                        const json = await res.json();
+                        if (json && json.success) {
+                            this.showToast('✅ 삭제되었습니다.');
+                            await this.loadGalleryCases();
+                        } else {
+                            this.showToast('삭제 실패: ' + (json.message || ''), 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('통신 오류: ' + e.message, 'error');
                     }
                 },
 
