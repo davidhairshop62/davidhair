@@ -2439,6 +2439,10 @@
                             <i class="fa-solid fa-plus"></i>
                             <span>새 사례 등록</span>
                         </button>
+                        <button type="button" x-show="galleryCases.length > 0" @click="deleteAllGalleryCases()" class="px-3 py-2 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer" title="모든 사례 삭제">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>전체 삭제</span>
+                        </button>
                     </div>
                 </div>
 
@@ -6965,6 +6969,26 @@ Thank you for choosing David Hair Systems!`;
                         const json = await res.json();
                         if (json && json.success) {
                             this.showToast('✅ 삭제되었습니다.');
+                            await this.loadGalleryCases();
+                        } else {
+                            this.showToast('삭제 실패: ' + (json.message || ''), 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('통신 오류: ' + e.message, 'error');
+                    }
+                },
+
+                async deleteAllGalleryCases() {
+                    if (!confirm('경고: 등록된 모든 Before & After 시공 사례를 정말 삭제하시겠습니까?\n삭제 후 자동으로 다시 생성되지 않습니다.')) return;
+                    try {
+                        const res = await fetch('api_gallery.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: 'action=delete_all'
+                        });
+                        const json = await res.json();
+                        if (json && json.success) {
+                            this.showToast('✅ 모든 갤러리 사례가 삭제되었습니다.');
                             await this.loadGalleryCases();
                         } else {
                             this.showToast('삭제 실패: ' + (json.message || ''), 'error');

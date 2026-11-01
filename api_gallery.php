@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 
-// 1. Auto-create gallery_items table
+// 1. Auto-create gallery_items table (NEVER automatically re-seed on count==0)
 try {
     $conn->exec("CREATE TABLE IF NOT EXISTS gallery_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,9 +45,8 @@ try {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    // Auto seed if empty
-    $count = $conn->query("SELECT COUNT(*) FROM gallery_items")->fetchColumn();
-    if ($count == 0) {
+    // Explicit seed action only (e.g. ?action=seed_default)
+    if (isset($_GET['action']) && $_GET['action'] === 'seed_default') {
         $seedStmt = $conn->prepare("INSERT INTO gallery_items 
             (gender, category, title, description, hair_type, age_group, before_img, after_img1, after_img2, after_img3, after_img4, sort_order) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -100,6 +99,7 @@ try {
         foreach ($seedData as $row) {
             $seedStmt->execute($row);
         }
+        sendJsonResponse(['success' => true, 'message' => '샘플 데이터 6개가 초기화되었습니다.']);
     }
 } catch (Exception $e) {
     sendJsonResponse(['success' => false, 'error' => 'DB 초기화 실패: ' . $e->getMessage()], 500);
@@ -162,11 +162,17 @@ if ($method === 'GET') {
     }
 }
 
-// POST: 등록 / 수정 / 삭제
+// POST: 등록 / 수정 / 삭제 / 전체삭제
 if ($method === 'POST') {
     $action = $_POST['action'] ?? ($_GET['action'] ?? 'create');
 
-    // 삭제 처리
+    // 전체 삭제 (Delete All)
+    if ($action === 'delete_all') {
+        $conn->exec("TRUNCATE TABLE gallery_items");
+        sendJsonResponse(['success' => true, 'message' => '모든 Before & After 시공 사례가 삭제되었습니다.']);
+    }
+
+    // 단일 삭제 처리
     if ($action === 'delete') {
         $id = intval($_POST['id'] ?? ($_GET['id'] ?? 0));
         if ($id <= 0) {
@@ -247,4 +253,3 @@ if ($method === 'POST') {
         sendJsonResponse(['success' => true, 'message' => '성공적으로 수정되었습니다.']);
     }
 }
-

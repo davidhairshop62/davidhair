@@ -354,9 +354,10 @@
                 });
                 const res = await fetch(`api_gallery.php?${params.toString()}`);
                 const json = await res.json();
-                if (json.success && json.data && json.data.length > 0) {
+                if (json && json.success && Array.isArray(json.data)) {
+                    // Always respect server DB data even if 0 items (all deleted)!
                     galleryData = json.data;
-                    document.getElementById('countDisplay').textContent = json.count || galleryData.length;
+                    document.getElementById('countDisplay').textContent = json.count !== undefined ? json.count : galleryData.length;
                     renderGallery(galleryData);
                     return;
                 }
@@ -364,21 +365,27 @@
                 console.warn('API connection fallback:', err);
             }
 
-            // Local fallback filter
-            let filtered = DEFAULT_SEED_DATA.filter(item => {
-                const matchGender = (currentGender === 'all' || item.gender === currentGender);
-                let cat = item.category;
-                if (currentCategory === '투페') cat = 'Toupee';
-                if (currentCategory === '가발') cat = 'Full Wig';
-                if (currentCategory === '톱퍼') cat = 'Topper';
-                const matchCategory = (currentCategory === 'all' || item.category === currentCategory || item.category === cat);
-                const matchKeyword = !currentKeyword || 
-                    (item.title + ' ' + item.description + ' ' + (item.hair_type || '') + ' ' + item.category).toLowerCase().includes(currentKeyword.toLowerCase());
-                return matchGender && matchCategory && matchKeyword;
-            });
-            galleryData = filtered;
-            document.getElementById('countDisplay').textContent = filtered.length;
-            renderGallery(filtered);
+            // Only fallback if opened as local file protocol without server
+            if (window.location.protocol === 'file:') {
+                let filtered = DEFAULT_SEED_DATA.filter(item => {
+                    const matchGender = (currentGender === 'all' || item.gender === currentGender);
+                    let cat = item.category;
+                    if (currentCategory === '투페') cat = 'Toupee';
+                    if (currentCategory === '가발') cat = 'Full Wig';
+                    if (currentCategory === '톱퍼') cat = 'Topper';
+                    const matchCategory = (currentCategory === 'all' || item.category === currentCategory || item.category === cat);
+                    const matchKeyword = !currentKeyword || 
+                        (item.title + ' ' + item.description + ' ' + (item.hair_type || '') + ' ' + item.category).toLowerCase().includes(currentKeyword.toLowerCase());
+                    return matchGender && matchCategory && matchKeyword;
+                });
+                galleryData = filtered;
+                document.getElementById('countDisplay').textContent = filtered.length;
+                renderGallery(filtered);
+            } else {
+                galleryData = [];
+                document.getElementById('countDisplay').textContent = 0;
+                renderGallery([]);
+            }
         }
 
         // 2. Render Cards
