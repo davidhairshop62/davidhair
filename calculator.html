@@ -920,10 +920,246 @@
       color: var(--primary);
     }
 
-    .btn-action.primary {
-      background: var(--accent);
-      color: #fff;
+    /* Order Settings Box: Quantity & Coupon */
+    .order-settings-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .order-setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .order-setting-row + .order-setting-row {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .setting-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .setting-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .setting-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .setting-hint {
+      font-size: 0.76rem;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    /* Quantity Stepper Control */
+    .qty-control-wrapper {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .qty-stepper-btn {
+      width: 36px;
+      height: 36px;
+      background: #f1f5f9;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .qty-stepper-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .qty-stepper-btn:active {
+      background: #cbd5e1;
+    }
+
+    .qty-number-input {
+      width: 48px;
+      height: 36px;
+      border: none;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+      outline: none;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .qty-number-input::-webkit-outer-spin-button,
+    .qty-number-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Coupon Input Group */
+    .coupon-box-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .coupon-text-input {
+      width: 110px;
+      padding: 7px 10px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0f172a;
+      text-transform: uppercase;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .coupon-text-input:focus {
+      border-color: #0d9488;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
+
+    .coupon-apply-btn {
+      padding: 7px 14px;
+      background: #0d9488;
+      color: #ffffff;
+      border: none;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .coupon-apply-btn:hover {
+      background: #0f766e;
+    }
+
+    .coupon-notice {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .coupon-notice.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .coupon-notice.error {
+      background: #fff1f2;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+    }
+
+    /* Strikethrough & Badges in Price Banner */
+    .banner-pricing-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .strike-original-price {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      text-decoration: line-through;
+      font-weight: 600;
+    }
+
+    .discount-badge-banner {
+      margin-top: 6px;
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .coupon-tag {
+      background: #ccfbf1;
+      color: #0f766e;
+      border: 1px solid #5eead4;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 99px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .breakdown-divider {
+      border-bottom: 2px dashed #e2e8f0 !important;
+      margin: 10px 0 !important;
+      padding: 0 !important;
+    }
+
+    .breakdown-list li.text-emerald-600 strong,
+    .breakdown-list li.text-emerald-600 span {
+      color: #059669 !important;
+    }
+
+    .breakdown-list li.text-teal-600 strong,
+    .breakdown-list li.text-teal-600 span {
+      color: #0d9488 !important;
+    }
+
+    .promo-tag {
+      color: #059669 !important;
+      font-weight: 800;
+    }
+
+    .strike {
+      text-decoration: line-through;
+      color: #94a3b8;
+      margin-right: 4px;
+      font-weight: normal;
+    }
+
+    .bonding-radio-item {
+      transition: all 0.15s ease;
+    }
+
+    .bonding-radio-item:has(input:checked) {
       border-color: var(--accent);
+      background: rgba(13, 148, 136, 0.05);
+      box-shadow: 0 0 0 1px var(--accent);
     }
   </style>
 </head>
@@ -1328,24 +1564,41 @@
         <div class="checkbox-grid">
           <label class="check-item">
             <span><input type="checkbox" id="optInstall" onchange="calculate()">Cut-in Professional</span>
-            <span class="check-price">+$150 AUD</span>
+            <span class="check-price" id="priceLabelInstall">+$150 AUD</span>
           </label>
-          <label class="check-item">
-            <span><input type="checkbox" id="optBondingTape" name="bondingService" value="50" data-name="Bonding Tape (2-3 wks)" onchange="selectBonding(this)">Bonding Tape 2-3 weeks</span>
-            <span class="check-price">+$50 AUD</span>
+        </div>
+
+        <!-- 9.1 Salon Bonding Service (Strict Single Selection) -->
+        <div style="margin-top: 14px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: #334155;">
+            Salon Bonding Service <span style="font-size: 0.76rem; color: #0d9488; font-weight: 600;">(Single Selection Only · 1개만 선택)</span>
+          </span>
+          <button type="button" onclick="clearBonding()" style="background: none; border: none; color: #64748b; font-size: 0.74rem; font-weight: 600; cursor: pointer; text-decoration: underline;">선택 해제 (None)</button>
+        </div>
+        <div class="checkbox-grid">
+          <label class="check-item bonding-radio-item" id="itemBondingTape">
+            <span><input type="radio" id="optBondingTape" name="bondingService" value="50" data-name="Bonding Tape (2-3 wks)" onclick="toggleBonding(this)">Bonding Tape 2-3 weeks</span>
+            <span class="check-price" id="priceLabelBondingTape">+$50 AUD</span>
           </label>
-          <label class="check-item">
-            <span><input type="checkbox" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding Tape + Lace Glue (3-4 wks)" onchange="selectBonding(this)">Bonding Tape + Lace Glue 3-4 weeks</span>
-            <span class="check-price">+$70 AUD</span>
+          <label class="check-item bonding-radio-item" id="itemBondingTapeGlue">
+            <span><input type="radio" id="optBondingTapeGlue" name="bondingService" value="70" data-name="Bonding Tape + Lace Glue (3-4 wks)" onclick="toggleBonding(this)">Bonding Tape + Lace Glue 3-4 weeks</span>
+            <span class="check-price" id="priceLabelBondingTapeGlue">+$70 AUD</span>
           </label>
-          <label class="check-item">
-            <span><input type="checkbox" id="optBondingFullGlue" name="bondingService" value="90" data-name="Bonding Full Glue (4-5 wks)" onchange="selectBonding(this)">Bonding (Full Glue 4-5 weeks)</span>
-            <span class="check-price">+$90 AUD</span>
+          <label class="check-item bonding-radio-item" id="itemBondingFullGlue">
+            <span><input type="radio" id="optBondingFullGlue" name="bondingService" value="90" data-name="Bonding Full Glue (4-5 wks)" onclick="toggleBonding(this)">Bonding (Full Glue 4-5 weeks)</span>
+            <span class="check-price" id="priceLabelBondingFullGlue">+$90 AUD</span>
           </label>
-          <label class="check-item">
-            <span><input type="checkbox" id="optBondingDailyClip" name="bondingService" value="30" data-name="Daily Clip and Tape" onchange="selectBonding(this)">Daily Clip and Tape</span>
-            <span class="check-price">+$30 AUD</span>
+          <label class="check-item bonding-radio-item" id="itemBondingDailyClip">
+            <span><input type="radio" id="optBondingDailyClip" name="bondingService" value="30" data-name="Daily Clip and Tape" onclick="toggleBonding(this)">Daily Clip and Tape</span>
+            <span class="check-price" id="priceLabelBondingDailyClip">+$30 AUD</span>
           </label>
+        </div>
+
+        <!-- 9.2 Salon Maintenance & Styling -->
+        <div style="margin-top: 14px; margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; color: #334155;">
+          Salon Maintenance &amp; Styling
+        </div>
+        <div class="checkbox-grid">
           <label class="check-item">
             <span><input type="checkbox" id="optMaintCut" onchange="calculate()">Maintenance Hair Cut</span>
             <span class="check-price">+$20 AUD</span>
@@ -1366,6 +1619,13 @@
             <span><input type="checkbox" id="optPerm" onchange="calculate()">Perm From</span>
             <span class="check-price">+$50 AUD</span>
           </label>
+        </div>
+
+        <!-- 9.3 Factory Craftsmanship Add-ons -->
+        <div style="margin-top: 14px; margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; color: #334155;">
+          Factory Craftsmanship Add-ons
+        </div>
+        <div class="checkbox-grid">
           <label class="check-item">
             <span><input type="checkbox" id="optBleach" onchange="calculate()">Bleached Knots (Natural Frontal Hairline)</span>
             <span class="check-price">+$35 AUD</span>
@@ -1384,9 +1644,46 @@
 
     <!-- Right: Live Quote & Cost Breakdown -->
     <div class="card result-card">
+      <!-- Order Settings Box: Quantity & Coupon -->
+      <div class="order-settings-card">
+        <div class="order-setting-row">
+          <div class="setting-title-wrap">
+            <span class="setting-icon">📦</span>
+            <div>
+              <div class="setting-title">Order Quantity (수량)</div>
+              <div class="setting-hint">15% Bulk Discount for 2+ units (2개 이상 15% 할인)</div>
+            </div>
+          </div>
+          <div class="qty-control-wrapper">
+            <button type="button" class="qty-stepper-btn" onclick="stepQty(-1)" title="Decrease quantity">−</button>
+            <input type="number" id="orderQty" class="qty-number-input" value="1" min="1" max="99" oninput="onQtyChange()" onchange="onQtyChange()">
+            <button type="button" class="qty-stepper-btn" onclick="stepQty(1)" title="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <div class="order-setting-row promo-setting-row">
+          <div class="setting-title-wrap">
+            <span class="setting-icon">🎟️</span>
+            <div>
+              <div class="setting-title">Promo Coupon (쿠폰)</div>
+              <div class="setting-hint">50% OFF Cut-in &amp; Bonding (Code: DAVID50)</div>
+            </div>
+          </div>
+          <div class="coupon-box-wrapper">
+            <input type="text" id="couponCode" class="coupon-text-input" placeholder="DAVID50" oninput="onCouponChange()" onchange="onCouponChange()">
+            <button type="button" class="coupon-apply-btn" onclick="onCouponChange()">Apply</button>
+          </div>
+        </div>
+        <div id="couponNotice" class="coupon-notice" style="display:none;"></div>
+      </div>
+
       <div class="price-banner">
         <div class="label" id="bannerSubTitle">Men's Toupee · Ready-made · Hairpiece Only</div>
-        <div class="aud-price" id="finalAudPrice">$680 AUD</div>
+        <div class="banner-pricing-wrap">
+          <div class="strike-original-price" id="originalAudPrice" style="display:none;">$0 AUD</div>
+          <div class="aud-price" id="finalAudPrice">$680 AUD</div>
+        </div>
+        <div class="discount-badge-banner" id="discountBannerBadge" style="display:none;">🎉 15% Multi-Unit Discount Applied</div>
         <div class="sub-compare" id="compareTypeText">💡 Custom Bespoke Order: $880 AUD</div>
       </div>
 
@@ -1421,11 +1718,11 @@
           <strong id="valTextureAud">$0 AUD</strong>
         </li>
         <li>
-          <span>Cut-in Professional</span>
+          <span>Cut-in Professional <span id="badgeCouponCutin" class="coupon-tag" style="display:none;">50% OFF</span></span>
           <strong id="valInstallAud">$0 AUD</strong>
         </li>
         <li>
-          <span>Salon Bonding (<span id="lblBonding">None</span>)</span>
+          <span>Salon Bonding (<span id="lblBonding">None</span>) <span id="badgeCouponBonding" class="coupon-tag" style="display:none;">50% OFF</span></span>
           <strong id="valBondingAud">$0 AUD</strong>
         </li>
         <li>
@@ -1435,6 +1732,28 @@
         <li>
           <span>Custom Bespoke Craft &amp; Options</span>
           <strong id="valExtraAud">$0 AUD</strong>
+        </li>
+        <!-- Order Quantity, Subtotal and Discounts -->
+        <li class="breakdown-divider"></li>
+        <li class="breakdown-unit-row">
+          <span>Unit Configuration (1 piece)</span>
+          <strong id="valUnitAud">$680 AUD</strong>
+        </li>
+        <li class="breakdown-qty-row">
+          <span>Order Quantity</span>
+          <strong id="valQtyCount">1 unit</strong>
+        </li>
+        <li class="breakdown-subtotal-row" id="rowSubtotal" style="display:none;">
+          <span>Subtotal (<span id="lblSubtotalCalc">2 units × $680</span>)</span>
+          <strong id="valSubtotalAud">$1,360 AUD</strong>
+        </li>
+        <li class="breakdown-discount-row text-emerald-600 font-bold" id="rowQtyDiscount" style="display:none;">
+          <span>🎉 Multi-Piece Discount (15% OFF for 2+ units)</span>
+          <strong id="valQtyDiscountAud">-$204 AUD</strong>
+        </li>
+        <li class="breakdown-coupon-row text-teal-600 font-bold" id="rowCouponDiscount" style="display:none;">
+          <span>🎟️ Promo Coupon Savings (50% OFF Salon)</span>
+          <strong id="valCouponDiscountAud">-$100 AUD</strong>
         </li>
       </ul>
 
@@ -1801,6 +2120,55 @@
     }).join('');
   }
 
+  // Order Quantity Helpers
+  function stepQty(delta) {
+    const qtyInput = document.getElementById('orderQty');
+    let val = parseInt(qtyInput.value, 10) || 1;
+    val += delta;
+    if (val < 1) val = 1;
+    if (val > 99) val = 99;
+    qtyInput.value = val;
+    calculate();
+  }
+
+  function onQtyChange() {
+    const qtyInput = document.getElementById('orderQty');
+    let val = parseInt(qtyInput.value, 10);
+    if (isNaN(val) || val < 1) val = 1;
+    if (val > 99) val = 99;
+    qtyInput.value = val;
+    calculate();
+  }
+
+  function onCouponChange() {
+    calculate();
+  }
+
+  // Bonding Single Selection Helpers (Exclusive with toggle-off capability)
+  let prevCheckedBonding = null;
+
+  function toggleBonding(el) {
+    if (prevCheckedBonding === el) {
+      el.checked = false;
+      prevCheckedBonding = null;
+    } else {
+      prevCheckedBonding = el;
+    }
+    calculate();
+  }
+
+  function clearBonding() {
+    document.querySelectorAll('input[name="bondingService"]').forEach(rb => {
+      rb.checked = false;
+    });
+    prevCheckedBonding = null;
+    calculate();
+  }
+
+  function selectBonding(el) {
+    toggleBonding(el);
+  }
+
   function setCategory(cat) {
     currentCategory = cat;
     document.getElementById('btnMen').classList.toggle('active', cat === 'men');
@@ -1818,6 +2186,7 @@
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
         cb.checked = false;
       });
+      prevCheckedBonding = null;
       if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
       if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
       if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
@@ -1835,6 +2204,7 @@
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
         cb.checked = false;
       });
+      prevCheckedBonding = null;
       if (document.getElementById('optMaintCut')) document.getElementById('optMaintCut').checked = false;
       if (document.getElementById('optShampoo')) document.getElementById('optShampoo').checked = false;
       if (document.getElementById('optUnitTreatment')) document.getElementById('optUnitTreatment').checked = false;
@@ -1870,15 +2240,6 @@
         chip.classList.remove('active');
       }
     });
-  }
-
-  function selectBonding(el) {
-    if (el && el.checked) {
-      document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
-        if (cb !== el) cb.checked = false;
-      });
-    }
-    calculate();
   }
 
   function toggleColorItem(checkbox) {
@@ -2071,8 +2432,80 @@
     const hairTypeAud = Math.round(hairTypeUsd * retailMultiplier);
     const densityAddAud = Math.round(densityAddUsd * retailMultiplier);
 
+    // Cut-in Professional
     const installPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.install_cut_in !== undefined) ? PRICING_CONFIG.salon_services_aud.install_cut_in : 150;
-    const installAud = hasInstall ? installPrice : 0;
+    let installAud = hasInstall ? installPrice : 0;
+
+    // Coupon Code Check (DAVID50, PROMO50)
+    const couponInput = document.getElementById('couponCode');
+    const couponCodeVal = couponInput ? couponInput.value.trim().toUpperCase() : '';
+    const isCouponValid = (couponCodeVal === 'DAVID50' || couponCodeVal === 'PROMO50');
+
+    // Bonding Services
+    let bondingAud = 0;
+    let bondingName = '';
+    const checkedBonding = document.querySelector('input[name="bondingService"]:checked');
+    if (checkedBonding) {
+      bondingAud = parseInt(checkedBonding.value, 10) || 0;
+      bondingName = checkedBonding.getAttribute('data-name') || '';
+    }
+
+    // Dynamic price labels for Section 9
+    const tapeInput = document.getElementById('optBondingTape');
+    const tapeGlueInput = document.getElementById('optBondingTapeGlue');
+    const fullGlueInput = document.getElementById('optBondingFullGlue');
+    const dailyClipInput = document.getElementById('optBondingDailyClip');
+
+    const tapeBase = tapeInput ? (parseInt(tapeInput.value, 10) || 50) : 50;
+    const tapeGlueBase = tapeGlueInput ? (parseInt(tapeGlueInput.value, 10) || 70) : 70;
+    const fullGlueBase = fullGlueInput ? (parseInt(fullGlueInput.value, 10) || 90) : 90;
+    const dailyClipBase = dailyClipInput ? (parseInt(dailyClipInput.value, 10) || 30) : 30;
+
+    const lblInstall = document.getElementById('priceLabelInstall');
+    if (lblInstall) {
+      lblInstall.innerHTML = isCouponValid
+        ? `<span class="strike">+$${installPrice}</span><span class="promo-tag">+$${Math.round(installPrice * 0.5)} AUD (50% OFF)</span>`
+        : `+$${installPrice} AUD`;
+    }
+    const lblTape = document.getElementById('priceLabelBondingTape');
+    if (lblTape) {
+      lblTape.innerHTML = isCouponValid
+        ? `<span class="strike">+$${tapeBase}</span><span class="promo-tag">+$${Math.round(tapeBase * 0.5)} AUD (50% OFF)</span>`
+        : `+$${tapeBase} AUD`;
+    }
+    const lblTapeGlue = document.getElementById('priceLabelBondingTapeGlue');
+    if (lblTapeGlue) {
+      lblTapeGlue.innerHTML = isCouponValid
+        ? `<span class="strike">+$${tapeGlueBase}</span><span class="promo-tag">+$${Math.round(tapeGlueBase * 0.5)} AUD (50% OFF)</span>`
+        : `+$${tapeGlueBase} AUD`;
+    }
+    const lblFullGlue = document.getElementById('priceLabelBondingFullGlue');
+    if (lblFullGlue) {
+      lblFullGlue.innerHTML = isCouponValid
+        ? `<span class="strike">+$${fullGlueBase}</span><span class="promo-tag">+$${Math.round(fullGlueBase * 0.5)} AUD (50% OFF)</span>`
+        : `+$${fullGlueBase} AUD`;
+    }
+    const lblDailyClip = document.getElementById('priceLabelBondingDailyClip');
+    if (lblDailyClip) {
+      lblDailyClip.innerHTML = isCouponValid
+        ? `<span class="strike">+$${dailyClipBase}</span><span class="promo-tag">+$${Math.round(dailyClipBase * 0.5)} AUD (50% OFF)</span>`
+        : `+$${dailyClipBase} AUD`;
+    }
+
+    // Apply 50% discount on Cut-in and Bonding if coupon is valid
+    let cutinDiscountAud = 0;
+    let bondingDiscountAud = 0;
+    if (isCouponValid) {
+      if (hasInstall) {
+        cutinDiscountAud = Math.round(installAud * 0.5);
+        installAud = installAud - cutinDiscountAud;
+      }
+      if (bondingAud > 0) {
+        bondingDiscountAud = Math.round(bondingAud * 0.5);
+        bondingAud = bondingAud - bondingDiscountAud;
+      }
+    }
+    const totalCouponDiscountAud = cutinDiscountAud + bondingDiscountAud;
 
     const maintCutPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_hair_cut !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_hair_cut : 20;
     const shampooPrice = (PRICING_CONFIG && PRICING_CONFIG.salon_services_aud && PRICING_CONFIG.salon_services_aud.maint_shampoo !== undefined) ? PRICING_CONFIG.salon_services_aud.maint_shampoo : 20;
@@ -2087,14 +2520,6 @@
     const permAud = hasPerm ? permPrice : 0;
     const salonMaintAud = maintCutAud + shampooAud + unitTreatmentAud + colourAud + permAud;
 
-    let bondingAud = 0;
-    let bondingName = '';
-    const checkedBonding = document.querySelector('input[name="bondingService"]:checked');
-    if (checkedBonding) {
-      bondingAud = parseInt(checkedBonding.value, 10) || 0;
-      bondingName = checkedBonding.getAttribute('data-name') || '';
-    }
-
     const customFeeRate = (PRICING_CONFIG && PRICING_CONFIG.custom_fee_aud !== undefined) ? PRICING_CONFIG.custom_fee_aud : 200;
     const customFeeAud = (currentOrderType === 'custom') ? customFeeRate : 0;
 
@@ -2107,10 +2532,27 @@
     const rawProductAud = baseCapAud + lengthAddAud + hairTypeAud + densityAddAud;
     const roundedProductAud = Math.round(rawProductAud / 10) * 10;
 
-    const finalAud = roundedProductAud + installAud + bondingAud + salonMaintAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
+    // Unit Price (1 piece configuration)
+    const unitAud = roundedProductAud + installAud + bondingAud + salonMaintAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
+
+    // Quantity & 15% Bulk Discount Calculation
+    const qtyInput = document.getElementById('orderQty');
+    let qty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+    if (isNaN(qty) || qty < 1) qty = 1;
+
+    const subtotalAud = unitAud * qty;
+    const isQtyDiscountEligible = (qty >= 2);
+    const qtyDiscountAud = isQtyDiscountEligible ? Math.round(subtotalAud * 0.15) : 0;
+    const finalAud = subtotalAud - qtyDiscountAud;
+
+    // Original undiscounted price for comparison display
+    const originalCutin = hasInstall ? installPrice : 0;
+    const originalBonding = checkedBonding ? (parseInt(checkedBonding.value, 10) || 0) : 0;
+    const originalUnitAud = roundedProductAud + originalCutin + originalBonding + salonMaintAud + customFeeAud + extraOptionsAud + colorAddAud + textureAddAud + greyAddAud;
+    const originalTotalAud = originalUnitAud * qty;
 
     // Comparison price for alternative order type
-    const altAud = (currentOrderType === 'ready') ? (finalAud + 200) : (finalAud - 200);
+    const altAud = (currentOrderType === 'ready') ? (finalAud + (200 * qty)) : (finalAud - (200 * qty));
 
     // 3. Hair grams and raw material cost estimation (14" baseline with 40g)
     const estimatedGrams = 40.0 * (sizeSum / 14.0) * lengthGramFactor[hairLen] * wDensity;
@@ -2127,7 +2569,46 @@
     if (services.length > 0) salonServiceName = services.join(' & ');
 
     document.getElementById('bannerSubTitle').textContent = `${catName} · ${orderName} · ${salonServiceName}`;
+
+    // Original strike price in banner
+    const origPriceEl = document.getElementById('originalAudPrice');
+    if (origPriceEl) {
+      if (originalTotalAud > finalAud) {
+        origPriceEl.style.display = 'block';
+        origPriceEl.textContent = `$${originalTotalAud.toLocaleString()} AUD`;
+      } else {
+        origPriceEl.style.display = 'none';
+      }
+    }
+
     document.getElementById('finalAudPrice').textContent = `$${finalAud.toLocaleString()} AUD`;
+
+    const discountBannerBadge = document.getElementById('discountBannerBadge');
+    if (discountBannerBadge) {
+      if (qty >= 2) {
+        discountBannerBadge.style.display = 'inline-block';
+        discountBannerBadge.textContent = `🎉 15% Multi-Unit Discount Applied (-$${qtyDiscountAud.toLocaleString()} AUD)`;
+      } else {
+        discountBannerBadge.style.display = 'none';
+      }
+    }
+
+    const couponNotice = document.getElementById('couponNotice');
+    if (couponNotice) {
+      if (couponCodeVal === '') {
+        couponNotice.style.display = 'none';
+        couponNotice.className = 'coupon-notice';
+      } else if (isCouponValid) {
+        couponNotice.style.display = 'block';
+        couponNotice.className = 'coupon-notice success';
+        couponNotice.innerHTML = `✅ Promo Code <strong>${couponCodeVal}</strong> Applied: 50% OFF Cut-in &amp; Bonding (-$${(totalCouponDiscountAud * qty).toLocaleString()} AUD saved)`;
+      } else {
+        couponNotice.style.display = 'block';
+        couponNotice.className = 'coupon-notice error';
+        couponNotice.innerHTML = `⚠️ Invalid Code. Please try <strong>DAVID50</strong> or <strong>PROMO50</strong>`;
+      }
+    }
+
     document.getElementById('compareTypeText').textContent =
       currentOrderType === 'ready'
         ? `💡 Custom Bespoke Order: $${altAud.toLocaleString()} AUD`
@@ -2200,11 +2681,24 @@
     document.getElementById('valLengthAud').textContent = `+$${lengthAddAud.toLocaleString()} AUD`;
     document.getElementById('valHairTypeAud').textContent = `+$${hairTypeAud.toLocaleString()} AUD`;
     document.getElementById('valDensityAud').textContent = `+$${densityAddAud.toLocaleString()} AUD`;
-    document.getElementById('valInstallAud').textContent = `$${installAud.toLocaleString()} AUD`;
+    
+    document.getElementById('valInstallAud').textContent = (hasInstall && isCouponValid)
+      ? `$${installAud.toLocaleString()} AUD (50% OFF)`
+      : `$${installAud.toLocaleString()} AUD`;
+
     const lblBonding = document.getElementById('lblBonding');
     if (lblBonding) lblBonding.textContent = bondingName || 'None';
     const valBondingAud = document.getElementById('valBondingAud');
-    if (valBondingAud) valBondingAud.textContent = bondingAud > 0 ? `+$${bondingAud.toLocaleString()} AUD` : '$0 AUD';
+    if (valBondingAud) {
+      valBondingAud.textContent = (bondingAud > 0 && isCouponValid)
+        ? `+$${bondingAud.toLocaleString()} AUD (50% OFF)`
+        : (bondingAud > 0 ? `+$${bondingAud.toLocaleString()} AUD` : '$0 AUD');
+    }
+
+    const badgeCutin = document.getElementById('badgeCouponCutin');
+    if (badgeCutin) badgeCutin.style.display = (hasInstall && isCouponValid) ? 'inline-block' : 'none';
+    const badgeBonding = document.getElementById('badgeCouponBonding');
+    if (badgeBonding) badgeBonding.style.display = (bondingAud > 0 && isCouponValid) ? 'inline-block' : 'none';
 
     const maintList = [];
     if (hasMaintCut) maintList.push('Hair Cut ($20)');
@@ -2221,16 +2715,58 @@
 
     document.getElementById('valExtraAud').textContent = `+$${(customFeeAud + extraOptionsAud).toLocaleString()} AUD`;
 
+    // Unit & Multi-Piece breakdown rows
+    const valUnitAud = document.getElementById('valUnitAud');
+    if (valUnitAud) valUnitAud.textContent = `$${unitAud.toLocaleString()} AUD`;
+
+    const valQtyCount = document.getElementById('valQtyCount');
+    if (valQtyCount) valQtyCount.textContent = `${qty} ${qty > 1 ? 'units' : 'unit'}`;
+
+    const rowSubtotal = document.getElementById('rowSubtotal');
+    const valSubtotalAud = document.getElementById('valSubtotalAud');
+    const lblSubtotalCalc = document.getElementById('lblSubtotalCalc');
+    if (rowSubtotal && valSubtotalAud && lblSubtotalCalc) {
+      if (qty >= 2) {
+        rowSubtotal.style.display = 'flex';
+        lblSubtotalCalc.textContent = `${qty} units × $${unitAud.toLocaleString()} AUD`;
+        valSubtotalAud.textContent = `$${subtotalAud.toLocaleString()} AUD`;
+      } else {
+        rowSubtotal.style.display = 'none';
+      }
+    }
+
+    const rowQtyDiscount = document.getElementById('rowQtyDiscount');
+    const valQtyDiscountAud = document.getElementById('valQtyDiscountAud');
+    if (rowQtyDiscount && valQtyDiscountAud) {
+      if (qty >= 2) {
+        rowQtyDiscount.style.display = 'flex';
+        valQtyDiscountAud.textContent = `-$${qtyDiscountAud.toLocaleString()} AUD (15% OFF)`;
+      } else {
+        rowQtyDiscount.style.display = 'none';
+      }
+    }
+
+    const rowCouponDiscount = document.getElementById('rowCouponDiscount');
+    const valCouponDiscountAud = document.getElementById('valCouponDiscountAud');
+    if (rowCouponDiscount && valCouponDiscountAud) {
+      if (totalCouponDiscountAud > 0) {
+        rowCouponDiscount.style.display = 'flex';
+        valCouponDiscountAud.textContent = `-$${(totalCouponDiscountAud * qty).toLocaleString()} AUD (50% OFF)`;
+      } else {
+        rowCouponDiscount.style.display = 'none';
+      }
+    }
+
     // Admin panel updates
     const fxRate = parseFloat(document.getElementById('fxRate').value) || 1.52;
     const factoryCostAud = Math.round(totalFactoryUsd * fxRate);
-    const netProfitAud = finalAud - factoryCostAud;
+    const netProfitAud = finalAud - (factoryCostAud * qty);
     const marginPercent = finalAud > 0 ? ((netProfitAud / finalAud) * 100).toFixed(1) : 0;
 
-    document.getElementById('valHairGrams').textContent = `approx. ${estimatedGrams.toFixed(1)} g`;
-    document.getElementById('valRawHairUsd').textContent = `$${rawHairCostUsd.toFixed(2)} USD`;
-    document.getElementById('valFactoryUsd').textContent = `$${totalFactoryUsd.toFixed(2)} USD`;
-    document.getElementById('valFactoryAud').textContent = `approx. $${factoryCostAud.toLocaleString()} AUD`;
+    document.getElementById('valHairGrams').textContent = `approx. ${estimatedGrams.toFixed(1)} g (ea)`;
+    document.getElementById('valRawHairUsd').textContent = `$${rawHairCostUsd.toFixed(2)} USD (ea)`;
+    document.getElementById('valFactoryUsd').textContent = `$${(totalFactoryUsd * qty).toFixed(2)} USD (${qty} units)`;
+    document.getElementById('valFactoryAud').textContent = `approx. $${(factoryCostAud * qty).toLocaleString()} AUD`;
     document.getElementById('valNetProfit').textContent = `$${netProfitAud.toLocaleString()} AUD (${marginPercent}%)`;
   }
 
@@ -2272,9 +2808,26 @@
     const price = document.getElementById('finalAudPrice').textContent;
     const catName = currentCategory === 'men' ? "Men's Toupee" : "Women's Hair Topper";
     const orderName = currentOrderType === 'ready' ? 'Ready-made (In-Stock)' : 'Custom Bespoke Order';
-    const installText = document.getElementById('optInstall').checked ? 'Cut-in Professional (+$150 AUD)' : 'Excluded';
+
+    const qty = parseInt(document.getElementById('orderQty').value, 10) || 1;
+    const couponInput = document.getElementById('couponCode');
+    const enteredCoupon = couponInput ? couponInput.value.trim().toUpperCase() : '';
+    const isCouponValid = (enteredCoupon === 'DAVID50' || enteredCoupon === 'PROMO50');
+
+    let installText = 'Excluded';
+    if (document.getElementById('optInstall').checked) {
+      installText = isCouponValid ? 'Cut-in Professional ($75 AUD, 50% Coupon Applied)' : 'Cut-in Professional (+$150 AUD)';
+    }
+
     const checkedBondingEl = document.querySelector('input[name="bondingService"]:checked');
-    const bondingText = checkedBondingEl ? `${checkedBondingEl.getAttribute('data-name')} (+$${checkedBondingEl.value} AUD)` : 'Excluded';
+    let bondingText = 'Excluded';
+    if (checkedBondingEl) {
+      const origBondVal = parseInt(checkedBondingEl.value, 10) || 0;
+      const finalBondVal = isCouponValid ? Math.round(origBondVal * 0.5) : origBondVal;
+      bondingText = isCouponValid
+        ? `${checkedBondingEl.getAttribute('data-name')} ($${finalBondVal} AUD, 50% Coupon Applied)`
+        : `${checkedBondingEl.getAttribute('data-name')} (+$${origBondVal} AUD)`;
+    }
 
     const copyMaintList = [];
     if (document.getElementById('optMaintCut') && document.getElementById('optMaintCut').checked) copyMaintList.push('Maintenance Hair Cut ($20)');
@@ -2287,9 +2840,10 @@
     const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
     const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $680)' : '';
 
-    const summary = `[David Hair Melbourne - Quotation Summary]\n` +
+    let summary = `[David Hair Melbourne - Quotation Summary]\n` +
       `• Category: ${catName}\n` +
       `• Order Type: ${orderName}\n` +
+      `• Quantity: ${qty} ${qty > 1 ? 'units' : 'unit'}\n` +
       `• Base Size: ${w}" × ${l}" (Size: ${sizeSum}")${sizePromoNote}\n` +
       `• Hair Length: ${hairLen} inch\n` +
       `• Hair Density: ${denText}\n` +
@@ -2302,7 +2856,17 @@
       `• Salon Bonding: ${bondingText}\n` +
       `• Salon Maintenance: ${maintText}\n` +
       `----------------------------------------\n` +
-      `▶ Total Quote: ${price}`;
+      `• Unit Price: ${document.getElementById('valUnitAud').textContent}\n`;
+
+    if (qty >= 2) {
+      summary += `• Subtotal: ${document.getElementById('valSubtotalAud').textContent}\n` +
+                 `• Multi-piece Discount: ${document.getElementById('valQtyDiscountAud').textContent}\n`;
+    }
+    if (isCouponValid && (document.getElementById('optInstall').checked || checkedBondingEl)) {
+      summary += `• Promo Coupon: ${enteredCoupon} (50% OFF Cut-in & Bonding Applied)\n`;
+    }
+    summary += `----------------------------------------\n` +
+               `▶ Total Quote: ${price}`;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(summary).then(() => {
