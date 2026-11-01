@@ -9,4 +9,26 @@ Disallow: /backups/
 Disallow: /scratch/
 Disallow: /scripts/
 
+# AI Search & Answer Engine Crawlers (Explicitly Allowed for GEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://davidhairshop.com/sitemap.xml
