@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Hair Studio - Before & After Transformation Gallery</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            darkBg: '#080E1E',
+                            cardBg: '#0F1A34',
+                            inner: '#162347',
+                            border: '#223460',
+                            teal: '#0d9488',
+                            tealLight: '#2dd4bf',
+                            gold: '#f59e0b',
+                            goldLight: '#fbbf24',
+                            textMain: '#f1f5f9',
+                            textMuted: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .teal-gradient {
+            background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(45, 212, 191, 0.3);
+            border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(45, 212, 191, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-brand-darkBg text-brand-textMain min-h-screen font-sans selection:bg-teal-500 selection:text-white custom-scrollbar pb-16">
+
+    <!-- Top Navigation / Header -->
+    <header class="sticky top-0 z-40 bg-brand-darkBg/95 backdrop-blur-md border-b border-brand-border/70 px-4 sm:px-8 py-3.5 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-500 to-sky-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-teal-500/20">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <span>BEFORE & AFTER</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/20 text-brand-tealLight border border-teal-500/30 uppercase font-mono tracking-wider">Gallery</span>
+                    </h1>
+                    <p class="text-[11px] text-brand-textMuted hidden sm:block">10년 젊어지는 기적의 변화 • 맞춤 가발 & 투페 & 톱퍼 시공 갤러리</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button type="button" onclick="openAddModal()" 
+                    class="gold-gradient hover:opacity-90 text-slate-950 font-bold px-3.5 sm:px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+                    <span class="hidden sm:inline">새 사례 등록</span>
+                    <span class="sm:hidden">등록</span>
+                </button>
+
+                <!-- Iframe or Close window button -->
+                <button type="button" onclick="closeGallery()" 
+                    class="w-8 h-8 rounded-xl bg-brand-inner hover:bg-slate-800 border border-brand-border text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                    title="닫기">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+
+        <!-- Control Bar: Filter Tabs & Search -->
+        <section class="bg-brand-cardBg/90 border border-brand-border rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur mb-8 space-y-4">
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                
+                <!-- 1. Gender Tabs (전체 / 남성 / 여성) -->
+                <div class="flex items-center bg-brand-darkBg p-1 rounded-xl border border-brand-border self-start shrink-0" id="genderTabs">
+                    <button type="button" onclick="setGender('all')" data-gender="all"
+                        class="gender-btn active px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-gradient-to-r from-teal-500 to-sky-500 text-slate-950 shadow">
+                        전체 성별
+                    </button>
+                    <button type="button" onclick="setGender('male')" data-gender="male"
+                        class="gender-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-mars text-sky-400"></i>
+                        <span>남성 (Men)</span>
+                    </button>
+                    <button type="button" onclick="setGender('female')" data-gender="female"
+                        class="gender-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-venus text-pink-400"></i>
+                        <span>여성 (Women)</span>
+                    </button>
+                </div>
+
+                <!-- 2. Category Filter Pills (투페, 가발, 톱퍼 등) -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2" id="categoryTabs">
+                    <button type="button" onclick="setCategory('all')" data-cat="all"
+                        class="cat-btn active px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/20 text-brand-tealLight border border-teal-500/40 transition">
+                        전체 종류
+                    </button>
+                    <button type="button" onclick="setCategory('투페')" data-cat="투페"
+                        class="cat-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-inner text-slate-300 hover:text-white border border-brand-border transition">
+                        투페 (부분가발)
+                    </button>
+                    <button type="button" onclick="setCategory('가발')" data-cat="가발"
+                        class="cat-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-inner text-slate-300 hover:text-white border border-brand-border transition">
+                        전두가발 (Full Wig)
+                    </button>
+                    <button type="button" onclick="setCategory('톱퍼')" data-cat="톱퍼"
+                        class="cat-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-inner text-slate-300 hover:text-white border border-brand-border transition">
+                        톱퍼 (정수리 볼륨)
+                    </button>
+                </div>
+
+                <!-- 3. Keyword Search Input -->
+                <div class="relative flex-1 lg:max-w-xs">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="debounceSearch()" placeholder="키워드 검색 (제목, 설명, 모질)..."
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-xl pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-tealLight transition">
+                    <button type="button" onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="flex items-center justify-between text-xs text-brand-textMuted pt-2 border-t border-brand-border/60">
+                <span id="resultCountText">검색 결과: <strong class="text-brand-tealLight" id="countDisplay">0</strong>개 사례</span>
+                <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group text-amber-400"></i>
+                    <span>각도별 4컷(After 1~4) 비교 뷰어 지원</span>
+                </span>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <!-- JS renders items here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-24 bg-brand-cardBg/50 border border-brand-border/60 rounded-3xl p-8">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-500 text-2xl">
+                <i class="fa-regular fa-image"></i>
+            </div>
+            <h3 class="text-base font-bold text-white mb-1">조건에 맞는 시공 사례가 없습니다</h3>
+            <p class="text-xs text-brand-textMuted max-w-sm mx-auto mb-5">필터 또는 검색어를 변경해보시거나, 새로운 비포&애프터 사례를 등록해주세요.</p>
+            <button type="button" onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-brand-inner hover:bg-slate-700 text-xs text-slate-200 border border-brand-border font-medium transition">
+                필터 초기화
+            </button>
+        </div>
+
+    </main>
+
+    <!-- 1. FULLSCREEN COMPARISON & ANGLE VIEWER MODAL -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto">
+        <div class="relative w-full max-w-5xl bg-brand-cardBg border border-brand-border rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-brand-border bg-brand-inner/70 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span id="detailBadgeGender" class="text-xs px-2.5 py-0.5 rounded-full font-bold"></span>
+                    <span id="detailBadgeCategory" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30"></span>
+                    <h3 id="detailTitle" class="text-base sm:text-lg font-bold text-white line-clamp-1"></h3>
+                </div>
+                <button type="button" onclick="closeDetailModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6 custom-scrollbar">
+                
+                <!-- Side-by-Side Comparison -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Before Box -->
+                    <div class="bg-brand-darkBg border border-rose-500/30 rounded-2xl p-3 flex flex-col">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-rose-400 flex items-center gap-1.5 uppercase tracking-wider">
+                                <i class="fa-solid fa-circle text-[8px]"></i> BEFORE (시술 전)
+                            </span>
+                            <span class="text-[11px] text-slate-400" id="detailAgeGroup"></span>
+                        </div>
+                        <div class="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-slate-800">
+                            <img id="detailBeforeImg" src="" alt="Before" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- After Box -->
+                    <div class="bg-brand-darkBg border border-teal-500/30 rounded-2xl p-3 flex flex-col">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-teal-300 flex items-center gap-1.5 uppercase tracking-wider">
+                                <i class="fa-solid fa-sparkles text-[10px]"></i> AFTER (완성 스타일)
+                            </span>
+                            <span class="text-[11px] text-brand-tealLight font-mono" id="detailCurrentAngle">대표 정면 각도</span>
+                        </div>
+                        <div class="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-slate-800">
+                            <img id="detailAfterImg" src="" alt="After" class="w-full h-full object-cover transition-opacity duration-200">
+                        </div>
+                        <!-- After Multi-Angle Thumbnails (AFTER 1, 2, 3, 4) -->
+                        <div class="mt-3">
+                            <p class="text-[11px] text-slate-400 mb-1.5 font-medium">다양한 각도 사진 선택 (클릭하여 교체):</p>
+                            <div class="flex items-center gap-2 overflow-x-auto pb-1" id="detailAfterThumbs">
+                                <!-- Thumbnails injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details & Description -->
+                <div class="bg-brand-inner/60 border border-brand-border rounded-2xl p-4 sm:p-5 space-y-2">
+                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-amber-400"></i>
+                        <span>시술 및 스타일링 상세 설명</span>
+                    </h4>
+                    <p id="detailDesc" class="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line"></p>
+                    <div class="pt-2 flex flex-wrap gap-4 text-xs text-brand-textMuted border-t border-brand-border/60">
+                        <div id="detailHairTypeWrapper">모질/사양: <span id="detailHairType" class="text-slate-200 font-medium"></span></div>
+                        <div id="detailDateWrapper">등록일: <span id="detailDate" class="text-slate-400"></span></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3.5 border-t border-brand-border bg-brand-inner/70 flex items-center justify-between shrink-0">
+                <button type="button" onclick="deleteCurrentItem()" class="text-xs text-rose-400 hover:text-rose-300 hover:underline flex items-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-trash-can"></i> 이 사례 삭제
+                </button>
+                <button type="button" onclick="closeDetailModal()" class="px-5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold transition">
+                    닫기
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. NEW ENTRY REGISTRATION MODAL -->
+    <div id="addModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="relative w-full max-w-2xl bg-brand-cardBg border border-brand-border rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            
+            <div class="flex items-center justify-between px-6 py-4 border-b border-brand-border bg-brand-inner shrink-0">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-amber-400"></i>
+                    <span>새 Before & After 시공 사례 등록</span>
+                </h3>
+                <button type="button" onclick="closeAddModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="addGalleryForm" onsubmit="submitGalleryForm(event)" class="p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar text-xs">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Gender -->
+                    <div>
+                        <label class="block font-semibold text-slate-200 mb-1">성별 구분 <span class="text-rose-400">*</span></label>
+                        <select name="gender" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none">
+                            <option value="male">남성 (Male)</option>
+                            <option value="female">여성 (Female)</option>
+                            <option value="unisex">공용 (Unisex)</option>
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label class="block font-semibold text-slate-200 mb-1">제품 종류 <span class="text-rose-400">*</span></label>
+                        <select name="category" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none">
+                            <option value="투페">투페 (부분가발)</option>
+                            <option value="가발">전두가발 (Full Wig)</option>
+                            <option value="톱퍼">톱퍼 (정수리 볼륨)</option>
+                            <option value="헤어피스">기타 헤어피스</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label class="block font-semibold text-slate-200 mb-1">시공 제목 <span class="text-rose-400">*</span></label>
+                    <input type="text" name="title" required placeholder="예: 40대 M자 및 정수리 탈모 극복 0.03mm 초극박 스킨 투페" 
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block font-semibold text-slate-200 mb-1">상세 설명 / 고객 고민 및 해결 방법</label>
+                    <textarea name="description" rows="3" placeholder="시공 전 고객님의 모발 상태, 적용한 맞춤 베이스 및 연출한 스타일링 특징을 상세히 작성해주세요."
+                        class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-200 mb-1">모질 / 스펙</label>
+                        <input type="text" name="hair_type" placeholder="예: 100% 버진 레미모 / 다크 브라운"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-200 mb-1">연령대</label>
+                        <input type="text" name="age_group" placeholder="예: 30대 후반, 40대"
+                            class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white focus:border-brand-tealLight outline-none">
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="border-t border-brand-border pt-4">
+                    <h4 class="font-bold text-white mb-2 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-images text-brand-tealLight"></i>
+                        <span>사진 등록 (Before 1장 + After 최대 4장)</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400 mb-3">PC에서 사진 파일을 직접 선택하거나, 이미지 웹 경로(URL)를 입력할 수 있습니다.</p>
+
+                    <!-- BEFORE (Required) -->
+                    <div class="bg-brand-darkBg/60 p-3 rounded-xl border border-rose-500/30 mb-3">
+                        <label class="block font-bold text-rose-400 mb-1.5 flex items-center justify-between">
+                            <span>1. BEFORE 사진 (시술 전) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-slate-500">필수</span>
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="file" name="before_file" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
+                            <input type="text" name="before_img" placeholder="또는 이미지 URL 입력 (images/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white">
+                        </div>
+                    </div>
+
+                    <!-- AFTER 1 (Required) -->
+                    <div class="bg-brand-darkBg/60 p-3 rounded-xl border border-teal-500/30 mb-3">
+                        <label class="block font-bold text-teal-300 mb-1.5 flex items-center justify-between">
+                            <span>2. AFTER 1 사진 (대표 완성 정면) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-slate-500">필수</span>
+                        </label>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="file" name="after1_file" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
+                            <input type="text" name="after_img1" placeholder="또는 이미지 URL 입력" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white">
+                        </div>
+                    </div>
+
+                    <!-- AFTER 2, 3, 4 (Optional) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="bg-brand-darkBg/60 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 2 (측면)</label>
+                            <input type="file" name="after2_file" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" name="after_img2" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                        <div class="bg-brand-darkBg/60 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 3 (후면/각도)</label>
+                            <input type="file" name="after3_file" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" name="after_img3" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                        <div class="bg-brand-darkBg/60 p-2.5 rounded-xl border border-brand-border">
+                            <label class="block font-semibold text-slate-300 mb-1">AFTER 4 (탑뷰/디테일)</label>
+                            <input type="file" name="after4_file" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                            <input type="text" name="after_img4" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4 border-t border-brand-border flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium">취소</button>
+                    <button type="submit" id="submitBtn" class="gold-gradient hover:opacity-90 text-slate-950 font-bold px-6 py-2 rounded-xl transition shadow flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>갤러리에 등록하기</span>
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        let currentGender = 'all';
+        let currentCategory = 'all';
+        let currentKeyword = '';
+        let galleryData = [];
+        let activeDetailItem = null;
+        let searchDebounceTimer = null;
+
+        const DEFAULT_SEED_DATA = [
+            {
+                id: 1,
+                gender: 'male',
+                category: '투페',
+                title: 'M자 및 정수리 탈모 극복 0.03mm 초극박 스킨 투페',
+                description: '이마 헤어라인과 정수리 밀도 저하로 고민하시던 고객님께 초극박 스킨 베이스 투페를 시공하여 10년 이상 젊어진 자연스러운 올백 헤어스타일을 완성했습니다.',
+                hair_type: '100% 인모 / 유럽풍 내추럴 블랙',
+                age_group: '40대',
+                before_img: 'images/transformations/man1_before.webp',
+                after_img1: 'images/transformations/man1_after.webp',
+                after_img2: 'images/transformations/man1_after.jpg',
+                after_img3: null,
+                after_img4: null
+            },
+            {
+                id: 2,
+                gender: 'male',
+                category: '투페',
+                title: '스위스 레이스 통기성 프리미엄 남성 부분가발',
+                description: '땀이 많고 활동적인 라이프스타일을 가진 고객님을 위한 100% 스위스 레이스 부분가발. 경계선이 전혀 티나지 않는 내추럴 댄디 컷 스타일입니다.',
+                hair_type: '천연 인모 100% / 소프트 볼륨',
+                age_group: '30대',
+                before_img: 'images/transformations/man2_before.webp',
+                after_img1: 'images/transformations/man2_after.webp',
+                after_img2: 'images/transformations/man2_after.jpg',
+                after_img3: null,
+                after_img4: null
+            },
+            {
+                id: 3,
+                gender: 'male',
+                category: '가발',
+                title: '정수리 광범위 탈모 전두형 모노필라멘트 풀 커버 가발',
+                description: '두피 전체의 자연스러운 밀도 회복과 두상에 맞춘 3D 입체 성형 프레임으로 장시간 착용에도 가볍고 편안한 클래식 포마드 스타일을 연출했습니다.',
+                hair_type: '프리미엄 레미모 / 다크 브라운',
+                age_group: '50대',
+                before_img: 'images/transformations/man3_before.webp',
+                after_img1: 'images/transformations/man3_after.webp',
+                after_img2: 'images/transformations/man3_after.jpg',
+                after_img3: null,
+                after_img4: null
+            },
+            {
+                id: 4,
+                gender: 'female',
+                category: '톱퍼',
+                title: '정수리 가르마 탈모 보완 100% 실크탑 여성 톱퍼',
+                description: '가르마 라인의 빈모를 완벽히 가려주는 숨쉬는 리얼스칼프 실크탑 톱퍼. 본 머리와 자연스럽게 믹스되어 풍성한 뿌리 볼륨을 되찾아 드렸습니다.',
+                hair_type: '버진 레미모 / 초코 브라운',
+                age_group: '40대',
+                before_img: 'images/transformations/woman1_before.webp',
+                after_img1: 'images/transformations/woman1_after.webp',
+                after_img2: 'images/transformations/woman1_after.jpg',
+                after_img3: null,
+                after_img4: null
+            },
+            {
+                id: 5,
+                gender: 'female',
+                category: '톱퍼',
+                title: '앞머리 라인 & 크라운 동시 커버 하이브리드 헤어피스',
+                description: '앞이마 축소 및 정수리 풍성함을 동시에 잡는 맞춤형 하이브리드 톱퍼. 클립형으로 3초 만에 간편 탈착이 가능합니다.',
+                hair_type: '프리미엄 실크 인모 / 내추럴 웨이브',
+                age_group: '50대',
+                before_img: 'images/transformations/woman2_before.webp',
+                after_img1: 'images/transformations/woman2_after.webp',
+                after_img2: 'images/transformations/woman2_after.jpg',
+                after_img3: null,
+                after_img4: null
+            },
+            {
+                id: 6,
+                gender: 'female',
+                category: '가발',
+                title: '항암 및 전두 탈모 케어 메디컬 프리미엄 여성 전두가발',
+                description: '민감해진 두피를 감싸는 오가닉 순면 안감과 인체공학적 탄력 밴드가 결합된 여성 전용 풀 커버리지 가발. 우아한 미디움 C컬 펌 스타일링.',
+                hair_type: '100% 최고급 버진헤어 / 애쉬 모카',
+                age_group: '30대',
+                before_img: 'images/transformations/woman3_before.webp',
+                after_img1: 'images/transformations/woman3_after.webp',
+                after_img2: 'images/transformations/woman3_after.jpg',
+                after_img3: null,
+                after_img4: null
+            }
+        ];
+
+        // 1. Fetch Gallery Data from DB
+        async function fetchGallery() {
+            try {
+                const params = new URLSearchParams({
+                    gender: currentGender,
+                    category: currentCategory,
+                    keyword: currentKeyword
+                });
+                const res = await fetch(`api_gallery.php?${params.toString()}`);
+                const json = await res.json();
+                if (json.success && json.data && json.data.length > 0) {
+                    galleryData = json.data;
+                    document.getElementById('countDisplay').textContent = json.count || galleryData.length;
+                    renderGallery(galleryData);
+                    return;
+                }
+            } catch (err) {
+                console.warn('API connection fallback:', err);
+            }
+
+            // Local fallback filter
+            let filtered = DEFAULT_SEED_DATA.filter(item => {
+                const matchGender = (currentGender === 'all' || item.gender === currentGender);
+                const matchCategory = (currentCategory === 'all' || item.category === currentCategory);
+                const matchKeyword = !currentKeyword || 
+                    (item.title + ' ' + item.description + ' ' + (item.hair_type || '') + ' ' + item.category).toLowerCase().includes(currentKeyword.toLowerCase());
+                return matchGender && matchCategory && matchKeyword;
+            });
+            galleryData = filtered;
+            document.getElementById('countDisplay').textContent = filtered.length;
+            renderGallery(filtered);
+        }
+
+        // 2. Render Cards
+        function renderGallery(items) {
+            const grid = document.getElementById('galleryGrid');
+            const empty = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            items.forEach((item, index) => {
+                const afterImgs = [item.after_img1, item.after_img2, item.after_img3, item.after_img4].filter(Boolean);
+                const genderLabel = item.gender === 'male' ? '남성' : (item.gender === 'female' ? '여성' : '공용');
+                const genderClass = item.gender === 'male' 
+                    ? 'bg-sky-500/20 text-sky-300 border-sky-500/30' 
+                    : (item.gender === 'female' ? 'bg-pink-500/20 text-pink-300 border-pink-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30');
+
+                const card = document.createElement('div');
+                card.className = "bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden p-4 sm:p-5 flex flex-col justify-between shadow-xl hover:border-teal-500/50 transition-all group";
+                
+                card.innerHTML = `
+                    <div>
+                        <!-- Header Badges -->
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-brand-border/50">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold border ${genderClass}">
+                                    ${item.gender === 'male' ? '<i class="fa-solid fa-mars mr-1"></i>' : (item.gender === 'female' ? '<i class="fa-solid fa-venus mr-1"></i>' : '')}${genderLabel}
+                                </span>
+                                <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                    ${item.category}
+                                </span>
+                            </div>
+                            ${item.age_group ? `<span class="text-[11px] text-brand-textMuted font-mono">${item.age_group}</span>` : ''}
+                        </div>
+
+                        <!-- Side by Side Preview Container (3:4 ratio) -->
+                        <div class="relative grid grid-cols-2 gap-2 aspect-[4/3] rounded-xl overflow-hidden bg-slate-950 p-1.5 border border-slate-800 shadow-inner group/img cursor-pointer"
+                             onclick="openDetailModal(${item.id})">
+                            <!-- Before -->
+                            <div class="relative w-full h-full rounded-lg overflow-hidden">
+                                <img src="${item.before_img}" alt="Before" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300" loading="lazy">
+                                <div class="absolute bottom-2 left-2 bg-rose-700/90 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded tracking-wider shadow">
+                                    BEFORE
+                                </div>
+                            </div>
+                            <!-- After (Main) -->
+                            <div class="relative w-full h-full rounded-lg overflow-hidden">
+                                <img src="${item.after_img1}" alt="After" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300" loading="lazy">
+                                <div class="absolute bottom-2 right-2 bg-teal-600/90 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded tracking-wider shadow">
+                                    AFTER
+                                </div>
+                                ${afterImgs.length > 1 ? `
+                                    <div class="absolute top-2 right-2 bg-slate-950/80 border border-white/20 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                                        <i class="fa-solid fa-camera-rotate text-[9px]"></i> +${afterImgs.length - 1}각도
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Title & Description -->
+                        <div class="pt-4">
+                            <h3 class="font-bold text-sm sm:text-base text-white group-hover:text-brand-tealLight transition-colors mb-1 line-clamp-1">
+                                ${item.title}
+                            </h3>
+                            <p class="text-xs text-brand-textMuted line-clamp-2 leading-relaxed">
+                                ${item.description || 'David Hair Studio 맞춤 시공으로 10년 젊어진 내추럴 헤어스타일'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Card Action Button -->
+                    <div class="pt-4 mt-3 border-t border-brand-border/60">
+                        <button type="button" onclick="openDetailModal(${item.id})"
+                            class="w-full py-2.5 rounded-xl bg-brand-inner hover:bg-teal-500 hover:text-slate-950 font-bold text-xs text-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-arrows-left-right"></i>
+                            <span>상세 각도 & 비교 뷰어 열기</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. Filter Actions
+        function setGender(g) {
+            currentGender = g;
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                if (btn.dataset.gender === g) {
+                    btn.className = "gender-btn active px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all bg-gradient-to-r from-teal-500 to-sky-500 text-slate-950 shadow";
+                } else {
+                    btn.className = "gender-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-white flex items-center gap-1.5";
+                }
+            });
+            fetchGallery();
+        }
+
+        function setCategory(c) {
+            currentCategory = c;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === c) {
+                    btn.className = "cat-btn active px-3 py-1.5 rounded-full text-xs font-semibold bg-teal-500/20 text-brand-tealLight border border-teal-500/40 transition";
+                } else {
+                    btn.className = "cat-btn px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-inner text-slate-300 hover:text-white border border-brand-border transition";
+                }
+            });
+            fetchGallery();
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchDebounceTimer);
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            currentKeyword = input.value.trim();
+            clearBtn.classList.toggle('hidden', currentKeyword === '');
+
+            searchDebounceTimer = setTimeout(() => {
+                fetchGallery();
+            }, 300);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            currentKeyword = '';
+            fetchGallery();
+        }
+
+        function resetFilters() {
+            currentGender = 'all';
+            currentCategory = 'all';
+            clearSearch();
+            setGender('all');
+            setCategory('all');
+        }
+
+        // 4. Detail Modal & Multi-Angle Switcher
+        function openDetailModal(id) {
+            const item = galleryData.find(i => i.id == id);
+            if (!item) return;
+            activeDetailItem = item;
+
+            const modal = document.getElementById('detailModal');
+            document.getElementById('detailTitle').textContent = item.title;
+            document.getElementById('detailDesc').textContent = item.description || '시술 정보가 등록되지 않았습니다.';
+            document.getElementById('detailHairType').textContent = item.hair_type || '맞춤 100% 인모 사양';
+            document.getElementById('detailAgeGroup').textContent = item.age_group ? `연령대: ${item.age_group}` : '';
+            document.getElementById('detailDate').textContent = item.created_at ? item.created_at.substring(0, 10) : '';
+
+            // Badges
+            const badgeG = document.getElementById('detailBadgeGender');
+            badgeG.textContent = item.gender === 'male' ? '남성 (Men)' : (item.gender === 'female' ? '여성 (Women)' : '공용');
+            badgeG.className = `text-xs px-2.5 py-0.5 rounded-full font-bold border ${item.gender === 'male' ? 'bg-sky-500/20 text-sky-300 border-sky-500/30' : 'bg-pink-500/20 text-pink-300 border-pink-500/30'}`;
+
+            document.getElementById('detailBadgeCategory').textContent = item.category;
+
+            // Before image
+            document.getElementById('detailBeforeImg').src = item.before_img;
+
+            // After images list (1 to 4)
+            const afterImgs = [
+                { url: item.after_img1, label: '정면 (대표)' },
+                { url: item.after_img2, label: '측면' },
+                { url: item.after_img3, label: '후면/각도' },
+                { url: item.after_img4, label: '탑뷰/디테일' }
+            ].filter(a => a.url);
+
+            const mainAfter = document.getElementById('detailAfterImg');
+            mainAfter.src = afterImgs[0].url;
+            document.getElementById('detailCurrentAngle').textContent = afterImgs[0].label;
+
+            const thumbsContainer = document.getElementById('detailAfterThumbs');
+            thumbsContainer.innerHTML = '';
+            afterImgs.forEach((imgObj, idx) => {
+                const thumb = document.createElement('div');
+                thumb.className = `relative cursor-pointer shrink-0 rounded-lg overflow-hidden border-2 transition-all w-16 h-16 ${idx === 0 ? 'border-brand-tealLight scale-105' : 'border-slate-700 opacity-70 hover:opacity-100'}`;
+                thumb.innerHTML = `
+                    <img src="${imgObj.url}" alt="${imgObj.label}" class="w-full h-full object-cover">
+                    <span class="absolute bottom-0 inset-x-0 bg-black/80 text-[8px] text-center text-teal-300 py-0.5">${imgObj.label}</span>
+                `;
+                thumb.onclick = () => {
+                    mainAfter.src = imgObj.url;
+                    document.getElementById('detailCurrentAngle').textContent = imgObj.label;
+                    thumbsContainer.querySelectorAll('div').forEach(d => {
+                        d.className = "relative cursor-pointer shrink-0 rounded-lg overflow-hidden border-2 border-slate-700 opacity-70 hover:opacity-100 transition-all w-16 h-16";
+                    });
+                    thumb.className = "relative cursor-pointer shrink-0 rounded-lg overflow-hidden border-2 border-brand-tealLight scale-105 transition-all w-16 h-16";
+                };
+                thumbsContainer.appendChild(thumb);
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            activeDetailItem = null;
+        }
+
+        // 5. Add Modal & Submit
+        function openAddModal() {
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        async function submitGalleryForm(e) {
+            e.preventDefault();
+            const form = document.getElementById('addGalleryForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 등록 중...`;
+
+            try {
+                const res = await fetch('api_gallery.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const json = await res.json();
+                if (json.success) {
+                    alert('새 비포&애프터 사례가 성공적으로 등록되었습니다.');
+                    form.reset();
+                    closeAddModal();
+                    fetchGallery();
+                } else {
+                    alert('등록 실패: ' + (json.message || '오류가 발생했습니다.'));
+                }
+            } catch (err) {
+                alert('서버 통신 오류: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> 갤러리에 등록하기`;
+            }
+        }
+
+        // 6. Delete Item
+        async function deleteCurrentItem() {
+            if (!activeDetailItem) return;
+            if (!confirm(`'${activeDetailItem.title}' 사례를 정말 삭제하시겠습니까?`)) return;
+
+            try {
+                const res = await fetch('api_gallery.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=delete&id=${activeDetailItem.id}`
+                });
+                const json = await res.json();
+                if (json.success) {
+                    alert('삭제되었습니다.');
+                    closeDetailModal();
+                    fetchGallery();
+                } else {
+                    alert('삭제 실패: ' + json.message);
+                }
+            } catch (err) {
+                alert('통신 오류: ' + err.message);
+            }
+        }
+
+        // 7. Close Gallery (Inside iframe modal or standalone)
+        function closeGallery() {
+            if (window.parent && window.parent !== window) {
+                // Post message to parent window or call Alpine event
+                window.parent.postMessage('closeGalleryModal', '*');
+                if (window.parent.document) {
+                    const evt = new CustomEvent('close-gallery-modal');
+                    window.parent.dispatchEvent(evt);
+                }
+            } else {
+                window.history.back();
+            }
+        }
+
+        // ESC Key to close modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDetailModal();
+                closeAddModal();
+            }
+        });
+
+        // Initialize on load
+        fetchGallery();
+    </script>
+</body>
+</html>
