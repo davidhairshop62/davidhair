@@ -2461,15 +2461,25 @@
                                     <tr class="hover:bg-brand-inner/40 transition-colors">
                                         <td class="py-3 px-4 text-center text-slate-400 font-mono" x-text="c.id"></td>
                                         <td class="py-3 px-4">
-                                            <div class="relative w-16 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-rose-500/30">
-                                                <img :src="c.before_img" alt="Before" class="w-full h-full object-cover">
+                                            <div class="relative w-16 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-rose-500/40 group cursor-pointer shadow hover:border-rose-400 transition"
+                                                 @click="openLightbox(c.before_img, 'BEFORE - ' + c.title)"
+                                                 title="클릭하여 원본 사진 보기">
+                                                <img :src="c.before_img" alt="Before" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px]">
+                                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                                </div>
                                                 <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[8px] font-extrabold px-1 rounded">BEFORE</span>
                                             </div>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex items-center gap-1.5 flex-wrap">
-                                                <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-teal-500/40">
-                                                    <img :src="c.after_img1" alt="After 1" class="w-full h-full object-cover">
+                                                <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-teal-500/40 group cursor-pointer shadow hover:border-teal-300 transition"
+                                                     @click="openLightbox(c.after_img1, 'AFTER 1 (대표) - ' + c.title)"
+                                                     title="클릭하여 원본 사진 보기">
+                                                    <img :src="c.after_img1" alt="After 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[8px]">
+                                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                                    </div>
                                                     <span class="absolute bottom-0 inset-x-0 bg-teal-900/90 text-white text-[7px] text-center font-bold">#1 대표</span>
                                                 </div>
                                                 <template x-if="c.after_img2">
@@ -2594,53 +2604,172 @@
                     </div>
                 </div>
 
-                <!-- Photos Section -->
-                <div class="border-t border-brand-border pt-3 space-y-3">
-                    <div class="font-bold text-white text-xs flex items-center gap-1.5">
-                        <i class="fa-solid fa-images text-brand-tealLight"></i>
-                        <span>사진 등록 (Before 1장 필수 + After 최대 4장)</span>
+                <!-- Photos Section (150x150 Preview with Lightbox Modal) -->
+                <div class="border-t border-brand-border pt-4 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="font-bold text-white text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-images text-brand-tealLight"></i>
+                            <span>등록 사진 (150x150 미리보기 • 클릭 시 고화질 모달 확대)</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">150×150 Thumbnail Zoom</span>
                     </div>
 
-                    <!-- Before -->
-                    <div class="bg-brand-darkBg/80 p-3 rounded-xl border border-rose-500/30">
-                        <label class="block font-bold text-rose-400 mb-1 flex items-center justify-between">
-                            <span>1. BEFORE 사진 (시술 전) <span class="text-rose-400">*</span></span>
-                            <span class="text-[10px] text-slate-400">필수</span>
+                    <!-- 1. BEFORE PHOTO (150x150) -->
+                    <div class="bg-brand-darkBg/90 p-3.5 rounded-2xl border border-rose-500/30 space-y-2.5">
+                        <label class="block font-bold text-rose-400 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 1. BEFORE 사진 (시술 전) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-rose-400/80 font-mono font-bold">필수</span>
                         </label>
                         <div class="flex flex-col sm:flex-row gap-2 items-center">
                             <input type="file" @change="onGalleryFileChange($event, 'before')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
-                            <input type="text" x-model="galleryForm.before_img" placeholder="또는 이미지 URL (images/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white">
+                            <input type="text" x-model="galleryForm.before_img" @input="if(!galleryFiles.before) galleryPreviews.before = galleryForm.before_img" placeholder="또는 이미지 URL (images/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
                         </div>
+
+                        <!-- 150x150 Preview Container -->
+                        <template x-if="galleryPreviews.before || galleryForm.before_img">
+                            <div class="pt-2 flex items-center gap-4 bg-slate-950/80 p-2.5 rounded-xl border border-rose-500/20">
+                                <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-900 border-2 border-rose-500/60 shadow-lg group cursor-pointer shrink-0"
+                                     @click="openLightbox(galleryPreviews.before || galleryForm.before_img, 'BEFORE 사진 (시술 전)')"
+                                     title="클릭하여 큰 사진으로 보기">
+                                    <img :src="galleryPreviews.before || galleryForm.before_img" alt="Before 150x150" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
+                                        <i class="fa-solid fa-magnifying-glass-plus text-xl text-rose-400 mb-1"></i>
+                                        <span class="text-[10px] font-bold">클릭하여 확대</span>
+                                    </div>
+                                    <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">150×150</span>
+                                </div>
+                                <div class="text-xs text-slate-300 space-y-1">
+                                    <div class="font-bold text-rose-400 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-check-circle"></i> 등록된 BEFORE 사진
+                                    </div>
+                                    <p class="text-[11px] text-slate-400">사진을 클릭하시면 고화질 원본 모달 팝업으로 확대됩니다.</p>
+                                    <button type="button" @click="galleryForm.before_img = ''; galleryPreviews.before = ''; galleryFiles.before = null;" 
+                                        class="text-rose-400 hover:text-rose-300 text-[11px] underline flex items-center gap-1 mt-1 cursor-pointer">
+                                        <i class="fa-solid fa-trash-can text-[10px]"></i> 이 사진 지우기
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
                     </div>
 
-                    <!-- After 1 -->
-                    <div class="bg-brand-darkBg/80 p-3 rounded-xl border border-teal-500/30">
-                        <label class="block font-bold text-teal-300 mb-1 flex items-center justify-between">
-                            <span>2. AFTER 1 사진 (대표 완성 정면) <span class="text-rose-400">*</span></span>
-                            <span class="text-[10px] text-slate-400">필수</span>
+                    <!-- 2. AFTER 1 PHOTO (150x150) -->
+                    <div class="bg-brand-darkBg/90 p-3.5 rounded-2xl border border-teal-500/30 space-y-2.5">
+                        <label class="block font-bold text-teal-300 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 2. AFTER 1 대표 사진 (완성 정면) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-teal-400/80 font-mono font-bold">필수</span>
                         </label>
                         <div class="flex flex-col sm:flex-row gap-2 items-center">
                             <input type="file" @change="onGalleryFileChange($event, 'after1')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
-                            <input type="text" x-model="galleryForm.after_img1" placeholder="또는 이미지 URL" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white">
+                            <input type="text" x-model="galleryForm.after_img1" @input="if(!galleryFiles.after1) galleryPreviews.after1 = galleryForm.after_img1" placeholder="또는 이미지 URL" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
                         </div>
+
+                        <!-- 150x150 Preview Container -->
+                        <template x-if="galleryPreviews.after1 || galleryForm.after_img1">
+                            <div class="pt-2 flex items-center gap-4 bg-slate-950/80 p-2.5 rounded-xl border border-teal-500/20">
+                                <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-900 border-2 border-teal-500/60 shadow-lg group cursor-pointer shrink-0"
+                                     @click="openLightbox(galleryPreviews.after1 || galleryForm.after_img1, 'AFTER 1 대표 사진 (완성 정면)')"
+                                     title="클릭하여 큰 사진으로 보기">
+                                    <img :src="galleryPreviews.after1 || galleryForm.after_img1" alt="After 1 150x150" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
+                                        <i class="fa-solid fa-magnifying-glass-plus text-xl text-teal-300 mb-1"></i>
+                                        <span class="text-[10px] font-bold">클릭하여 확대</span>
+                                    </div>
+                                    <span class="absolute bottom-1 left-1 bg-teal-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">150×150</span>
+                                </div>
+                                <div class="text-xs text-slate-300 space-y-1">
+                                    <div class="font-bold text-teal-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-check-circle"></i> 등록된 AFTER 1 대표 사진
+                                    </div>
+                                    <p class="text-[11px] text-slate-400">사진을 클릭하시면 고화질 원본 모달 팝업으로 확대됩니다.</p>
+                                    <button type="button" @click="galleryForm.after_img1 = ''; galleryPreviews.after1 = ''; galleryFiles.after1 = null;" 
+                                        class="text-rose-400 hover:text-rose-300 text-[11px] underline flex items-center gap-1 mt-1 cursor-pointer">
+                                        <i class="fa-solid fa-trash-can text-[10px]"></i> 이 사진 지우기
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
                     </div>
 
-                    <!-- After 2, 3, 4 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
-                            <label class="block font-semibold text-slate-300 mb-1">AFTER 2 (측면)</label>
-                            <input type="file" @change="onGalleryFileChange($event, 'after2')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                            <input type="text" x-model="galleryForm.after_img2" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
-                        </div>
-                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
-                            <label class="block font-semibold text-slate-300 mb-1">AFTER 3 (후면/각도)</label>
-                            <input type="file" @change="onGalleryFileChange($event, 'after3')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                            <input type="text" x-model="galleryForm.after_img3" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
-                        </div>
-                        <div class="bg-brand-darkBg/80 p-2.5 rounded-xl border border-brand-border">
-                            <label class="block font-semibold text-slate-300 mb-1">AFTER 4 (탑뷰/디테일)</label>
-                            <input type="file" @change="onGalleryFileChange($event, 'after4')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                            <input type="text" x-model="galleryForm.after_img4" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                    <!-- 3. AFTER 2, 3, 4 MULTI-ANGLES (150x150 each) -->
+                    <div>
+                        <div class="text-xs font-bold text-slate-300 mb-2">3. 추가 각도 사진 (AFTER 2, 3, 4 선택 입력)</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            
+                            <!-- AFTER 2 (150x150) -->
+                            <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
+                                <div>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 2 (측면)</label>
+                                    <input type="file" @change="onGalleryFileChange($event, 'after2')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                                    <input type="text" x-model="galleryForm.after_img2" @input="if(!galleryFiles.after2) galleryPreviews.after2 = galleryForm.after_img2" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                </div>
+                                <template x-if="galleryPreviews.after2 || galleryForm.after_img2">
+                                    <div class="mt-2.5 flex flex-col items-center">
+                                        <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
+                                             @click="openLightbox(galleryPreviews.after2 || galleryForm.after_img2, 'AFTER 2 (측면 각도)')"
+                                             title="클릭하여 확대">
+                                            <img :src="galleryPreviews.after2 || galleryForm.after_img2" alt="After 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
+                                                <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
+                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                            </div>
+                                            <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
+                                        </div>
+                                        <button type="button" @click="galleryForm.after_img2 = ''; galleryPreviews.after2 = ''; galleryFiles.after2 = null;" 
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- AFTER 3 (150x150) -->
+                            <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
+                                <div>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 3 (후면/각도)</label>
+                                    <input type="file" @change="onGalleryFileChange($event, 'after3')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                                    <input type="text" x-model="galleryForm.after_img3" @input="if(!galleryFiles.after3) galleryPreviews.after3 = galleryForm.after_img3" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                </div>
+                                <template x-if="galleryPreviews.after3 || galleryForm.after_img3">
+                                    <div class="mt-2.5 flex flex-col items-center">
+                                        <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
+                                             @click="openLightbox(galleryPreviews.after3 || galleryForm.after_img3, 'AFTER 3 (후면 각도)')"
+                                             title="클릭하여 확대">
+                                            <img :src="galleryPreviews.after3 || galleryForm.after_img3" alt="After 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
+                                                <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
+                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                            </div>
+                                            <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
+                                        </div>
+                                        <button type="button" @click="galleryForm.after_img3 = ''; galleryPreviews.after3 = ''; galleryFiles.after3 = null;" 
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- AFTER 4 (150x150) -->
+                            <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
+                                <div>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 4 (탑뷰/디테일)</label>
+                                    <input type="file" @change="onGalleryFileChange($event, 'after4')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
+                                    <input type="text" x-model="galleryForm.after_img4" @input="if(!galleryFiles.after4) galleryPreviews.after4 = galleryForm.after_img4" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                </div>
+                                <template x-if="galleryPreviews.after4 || galleryForm.after_img4">
+                                    <div class="mt-2.5 flex flex-col items-center">
+                                        <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
+                                             @click="openLightbox(galleryPreviews.after4 || galleryForm.after_img4, 'AFTER 4 (탑뷰/디테일)')"
+                                             title="클릭하여 확대">
+                                            <img :src="galleryPreviews.after4 || galleryForm.after_img4" alt="After 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
+                                                <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
+                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                            </div>
+                                            <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
+                                        </div>
+                                        <button type="button" @click="galleryForm.after_img4 = ''; galleryPreviews.after4 = ''; galleryFiles.after4 = null;" 
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                    </div>
+                                </template>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -6685,6 +6814,23 @@ Thank you for choosing David Hair Systems!`;
                     after3: null,
                     after4: null
                 },
+                galleryPreviews: {
+                    before: '',
+                    after1: '',
+                    after2: '',
+                    after3: '',
+                    after4: ''
+                },
+                lightboxOpen: false,
+                lightboxSrc: '',
+                lightboxTitle: '',
+
+                openLightbox(src, title = '사진 확대 보기') {
+                    if (!src) return;
+                    this.lightboxSrc = src;
+                    this.lightboxTitle = title;
+                    this.lightboxOpen = true;
+                },
 
                 get filteredGalleryCases() {
                     return this.galleryCases.filter(c => {
@@ -6718,8 +6864,14 @@ Thank you for choosing David Hair Systems!`;
                 openGalleryCaseModal(mode = 'add', item = null) {
                     this.galleryModalMode = mode;
                     this.galleryFiles = { before: null, after1: null, after2: null, after3: null, after4: null };
+                    this.galleryPreviews = { before: '', after1: '', after2: '', after3: '', after4: '' };
                     if (mode === 'edit' && item) {
                         this.galleryForm = { ...item };
+                        this.galleryPreviews.before = item.before_img || '';
+                        this.galleryPreviews.after1 = item.after_img1 || '';
+                        this.galleryPreviews.after2 = item.after_img2 || '';
+                        this.galleryPreviews.after3 = item.after_img3 || '';
+                        this.galleryPreviews.after4 = item.after_img4 || '';
                     } else {
                         this.galleryForm = {
                             id: null,
@@ -6743,6 +6895,11 @@ Thank you for choosing David Hair Systems!`;
                     const file = e.target.files && e.target.files[0];
                     if (file) {
                         this.galleryFiles[slot] = file;
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            this.galleryPreviews[slot] = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
                     }
                 },
 
@@ -6857,5 +7014,34 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
             }
         }
     </script>
+    <!-- IMAGE LIGHTBOX / ZOOM MODAL -->
+    <div x-show="lightboxOpen" x-cloak
+         @keydown.escape.window="lightboxOpen = false"
+         class="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-hidden"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95">
+        <div @click.away="lightboxOpen = false"
+             class="relative max-w-4xl max-h-[90vh] bg-brand-cardBg border border-brand-border rounded-3xl overflow-hidden shadow-2xl flex flex-col">
+            <!-- Lightbox Header -->
+            <div class="px-5 py-3.5 bg-brand-inner/90 border-b border-brand-border flex items-center justify-between shrink-0">
+                <span class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass-plus text-brand-tealLight"></i>
+                    <span x-text="lightboxTitle || '사진 확대 보기'"></span>
+                </span>
+                <button type="button" @click="lightboxOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Lightbox Image -->
+            <div class="p-4 flex items-center justify-center bg-slate-950/90 max-h-[80vh] overflow-auto">
+                <img :src="lightboxSrc" alt="Enlarged Photo" class="max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl border border-slate-800">
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
