@@ -47,9 +47,18 @@ try {
         $checkFfa = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'frontal-fibrosing-alopecia'");
         if ($checkFfa && $checkFfa->fetchColumn() == 0) {
             $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
-                VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FRONTAL', 'fa-head-side-mask', 'NEW', 2)");
+                VALUES ('frontal-fibrosing-alopecia', 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe', 'Products & Ordering', 'Breathable front fringe headband hairpiece with 1:1 video showcase for FFA hair loss.', 1, 1, 'FRONTAL', 'fa-head-side-mask', 'NEW', 3)");
         }
     } catch(Exception $eFfa) {}
+
+    // Ensure Medical Wigs section exists in site_sections table if missing
+    try {
+        $checkMed = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'medical-wigs'");
+        if ($checkMed && $checkMed->fetchColumn() == 0) {
+            $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
+                VALUES ('medical-wigs', 'Medical Wigs & Alopecia Solutions (Private Health & NDIS)', 'Products & Ordering', '100% human hair medical & fashion full wigs with Australian private health fund rebate & NDIS invoice guidance in 100% private Springvale suite.', 1, 1, 'MEDICAL WIGS', 'fa-hand-holding-heart', 'REBATE', 2)");
+        }
+    } catch(Exception $eMed) {}
 
     // Check count and seed if empty
     $countStmt = $conn->query("SELECT COUNT(*) FROM site_sections");
@@ -68,6 +77,18 @@ try {
                 'sort_order' => 1
             ],
             [
+                'section_key' => 'medical-wigs',
+                'name' => 'Medical Wigs & Alopecia Solutions (Private Health & NDIS)',
+                'category' => 'Products & Ordering',
+                'description' => '100% human hair medical & fashion full wigs with Australian private health fund rebate & NDIS invoice guidance in 100% private Springvale suite.',
+                'is_visible' => 1,
+                'in_menu' => 1,
+                'menu_title' => 'MEDICAL WIGS',
+                'menu_icon' => 'fa-hand-holding-heart',
+                'menu_badge' => 'REBATE',
+                'sort_order' => 2
+            ],
+            [
                 'section_key' => 'frontal-fibrosing-alopecia',
                 'name' => 'Frontal Fibrosing Alopecia (FFA) & Headband Fringe',
                 'category' => 'Products & Ordering',
@@ -77,7 +98,7 @@ try {
                 'menu_title' => 'FRONTAL',
                 'menu_icon' => 'fa-head-side-mask',
                 'menu_badge' => 'NEW',
-                'sort_order' => 2
+                'sort_order' => 3
             ],
             [
                 'section_key' => 'hair-diagnosis-hub',
