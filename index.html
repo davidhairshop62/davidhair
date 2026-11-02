@@ -3373,15 +3373,15 @@
                     <span>BOOK</span>
                 </button>
 
-                <!-- 5. LOGIN / SIGNUP Button -->
+                <!-- 5. LOGIN / SIGNUP Icon Button -->
                 <div class="flex items-center shrink-0">
-                    <!-- Guest: LOGIN/SIGNUP Button -->
+                    <!-- Guest: LOGIN/SIGNUP Icon Button -->
                     <div x-show="!currentMember" class="flex items-center">
                         <button type="button" @click="openSignInModal()"
-                            class="px-2.5 sm:px-3 py-1.5 rounded-lg teal-gradient hover:opacity-95 text-white text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
-                            title="VIP Membership Sign In / Sign Up">
-                            <i class="fa-solid fa-right-to-bracket text-xs"></i>
-                            <span>LOGIN / SIGNUP</span>
+                            class="w-8 h-8 rounded-lg teal-gradient hover:opacity-95 text-white transition-all flex items-center justify-center shadow-md active:scale-95 cursor-pointer shrink-0 border border-teal-400/40"
+                            title="VIP Membership Sign In / Sign Up"
+                            aria-label="Sign In or Sign Up">
+                            <i class="fa-solid fa-circle-user text-base"></i>
                         </button>
                     </div>
 
