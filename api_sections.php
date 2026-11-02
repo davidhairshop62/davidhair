@@ -56,7 +56,9 @@ try {
         $checkMed = $conn->query("SELECT COUNT(*) FROM site_sections WHERE section_key = 'medical-wigs'");
         if ($checkMed && $checkMed->fetchColumn() == 0) {
             $conn->exec("INSERT INTO site_sections (section_key, name, category, description, is_visible, in_menu, menu_title, menu_icon, menu_badge, sort_order) 
-                VALUES ('medical-wigs', 'Medical Wigs & Alopecia Solutions (Private Health & NDIS)', 'Products & Ordering', '100% human hair medical & fashion full wigs with Australian private health fund rebate & NDIS invoice guidance in 100% private Springvale suite.', 1, 1, 'MEDICAL WIGS', 'fa-hand-holding-heart', 'REBATE', 2)");
+                VALUES ('medical-wigs', 'Medical Wigs & Alopecia Solutions (Private Health & NDIS)', 'Products & Ordering', '100% human hair medical & fashion full wigs with Australian private health fund rebate & NDIS invoice guidance in 100% private Springvale suite.', 1, 1, 'MEDICAL', 'fa-hand-holding-heart', 'REBATE', 2)");
+        } else {
+            $conn->exec("UPDATE site_sections SET menu_title = 'MEDICAL' WHERE section_key = 'medical-wigs' AND menu_title != 'MEDICAL'");
         }
     } catch(Exception $eMed) {}
 
@@ -83,7 +85,7 @@ try {
                 'description' => '100% human hair medical & fashion full wigs with Australian private health fund rebate & NDIS invoice guidance in 100% private Springvale suite.',
                 'is_visible' => 1,
                 'in_menu' => 1,
-                'menu_title' => 'MEDICAL WIGS',
+                'menu_title' => 'MEDICAL',
                 'menu_icon' => 'fa-hand-holding-heart',
                 'menu_badge' => 'REBATE',
                 'sort_order' => 2
