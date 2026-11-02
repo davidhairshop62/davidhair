@@ -3038,10 +3038,10 @@
 
     <!-- 1. GLOBAL HEADER / NAVIGATION -->
     <header
-        class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-brand-border/80 transition-all duration-300 whitespace-nowrap overflow-x-clip">
-        <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 xl:gap-4 flex-nowrap whitespace-nowrap">
+        class="fixed top-0 left-0 right-0 z-40 glass-nav border-b border-brand-border/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 xl:gap-4 flex-nowrap">
             <!-- Logo / Brand & Mobile Location + Booking Buttons -->
-            <div class="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 shrink-0 flex-nowrap whitespace-nowrap">
+            <div class="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 shrink-0 flex-nowrap">
                 <!-- Logo (DH icon & brand, hidden on mobile screens under md) -->
                 <a href="#" class="hidden md:flex items-center gap-2 sm:gap-2.5 group shrink-0 whitespace-nowrap" title="David Hair - Home">
                     <div
@@ -3055,7 +3055,7 @@
                     </div>
                 </a>
 
-                <!-- Mobile Quick Buttons: LOCATION & DIAGNOSTIC & BOOKING & CALCULATOR (Visible only on mobile size) -->
+                <!-- Mobile Quick Buttons: LOCATION & DIAGNOSTIC & CALCULATOR & BOOKING (Visible only on mobile size) -->
                 <div class="flex md:hidden items-center gap-1 sm:gap-1.5 shrink-0">
                     <!-- Mobile Location Button -->
                     <button type="button" @click="openMapModal()"
@@ -3073,20 +3073,20 @@
                         <span>DIAG</span>
                     </button>
 
-                    <!-- Mobile Booking Button -->
-                    <button type="button" @click="openBookingModal()"
-                        class="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-300 text-[10px] sm:text-[11px] font-bold tracking-wide transition-all shadow-sm active:scale-95 min-h-[34px] sm:min-h-[38px] cursor-pointer shrink-0"
-                        title="Book Private 1-on-1 Consultation &amp; Fitting Suite">
-                        <i class="fa-solid fa-calendar-check text-amber-400 text-xs"></i>
-                        <span>BOOK</span>
-                    </button>
-
                     <!-- Mobile Calculator / Quote Button -->
                     <button type="button" @click="isCalculatorModalOpen = true"
                         class="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-2 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/40 text-sky-300 text-[10px] sm:text-[11px] font-bold tracking-wide transition-all shadow-sm active:scale-95 min-h-[34px] sm:min-h-[38px] cursor-pointer shrink-0"
                         title="Instant Custom Quote &amp; Cost Calculator">
                         <i class="fa-solid fa-calculator text-sky-400 text-xs"></i>
                         <span>QUOTE</span>
+                    </button>
+
+                    <!-- Mobile Booking Button -->
+                    <button type="button" @click="openBookingModal()"
+                        class="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-300 text-[10px] sm:text-[11px] font-bold tracking-wide transition-all shadow-sm active:scale-95 min-h-[34px] sm:min-h-[38px] cursor-pointer shrink-0"
+                        title="Book Private 1-on-1 Consultation &amp; Fitting Suite">
+                        <i class="fa-solid fa-calendar-check text-amber-400 text-xs"></i>
+                        <span>BOOK</span>
                     </button>
                 </div>
             </div>
@@ -3110,33 +3110,8 @@
                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                         x-transition:leave-end="opacity-0 translate-y-1 scale-95"
                         class="absolute left-0 top-full pt-1 w-64 z-50 normal-case">
-                            <a href="#medical-wigs" x-show="isSectionVisible('medical-wigs') && isSectionInMenu('medical-wigs')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
-                                <div class="w-8 h-8 rounded-lg bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-hand-holding-heart text-xs"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('medical-wigs', 'Medical')">Medical</div>
-                                    <div class="text-[10px] text-brand-textMuted">Health Rebates &amp; Private Suite</div>
-                                </div>
-                            </a>
-                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
-                                <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-boxes-stacked text-xs"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</div>
-                                    <div class="text-[10px] text-brand-textMuted">Ready-to-Ship Inventory</div>
-                                </div>
-                            </a>
-                            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform">
-                                    <i class="fa-solid fa-scissors text-xs"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</div>
-                                    <div class="text-[10px] text-brand-textMuted">Melbourne Private Studio</div>
-                                </div>
-                            </a>
+                        <div class="rounded-xl bg-brand-cardBg/95 backdrop-blur-md border border-brand-border shadow-2xl p-2 space-y-1 flex flex-col">
+                            <!-- 1.1 All Solutions (11) (전체 제품군) -->
                             <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-layer-group text-xs"></i>
@@ -3146,6 +3121,27 @@
                                     <div class="text-[10px] text-brand-textMuted">Wigs, Systems &amp; Extensions</div>
                                 </div>
                             </a>
+                            <!-- 1.2 Stock (재고) -->
+                            <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
+                                    <i class="fa-solid fa-boxes-stacked text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('stock', 'Stock')">Stock</div>
+                                    <div class="text-[10px] text-brand-textMuted">Ready-to-Ship Inventory</div>
+                                </div>
+                            </a>
+                            <!-- 1.3 Salon (살롱) -->
+                            <a href="#salon" x-show="isSectionVisible('salon') && isSectionInMenu('salon')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-105 transition-transform">
+                                    <i class="fa-solid fa-scissors text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-xs uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</div>
+                                    <div class="text-[10px] text-brand-textMuted">Melbourne Private Studio</div>
+                                </div>
+                            </a>
+                            <!-- 1.4 Factory (공장) -->
                             <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-industry text-xs"></i>
@@ -3155,6 +3151,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Direct Manufacturing &amp; Craft</div>
                                 </div>
                             </a>
+                            <!-- 1.5 B2B Wholesale (B2B) -->
                             <a href="#b2b" x-show="isSectionVisible('b2b') && isSectionInMenu('b2b')" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-slate-200 hover:text-white transition-colors group/item">
                                 <div class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-handshake text-xs"></i>
@@ -3164,6 +3161,7 @@
                                     <div class="text-[10px] text-brand-textMuted">Salon &amp; Wholesale Partner</div>
                                 </div>
                             </a>
+                            <!-- 1.6 Academy Course (아카데미) -->
                             <a href="#wig-training" @click="productsOpen = false" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-brand-inner text-amber-300 hover:text-amber-200 transition-colors group/item border-t border-brand-border/40 mt-1">
                                 <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover/item:scale-105 transition-transform">
                                     <i class="fa-solid fa-graduation-cap text-xs"></i>
@@ -3341,60 +3339,60 @@
 
             </nav>
 
-            <!-- Right Utilities -->
-            <div class="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0 flex-nowrap whitespace-nowrap">
-                <!-- Location Quick Button -->
+            <!-- Right Utilities: LOC, DIAG, QUOTE, BOOK, LOGIN/SIGNUP -->
+            <div class="flex items-center gap-1 sm:gap-1.5 xl:gap-2 shrink-0 flex-nowrap whitespace-nowrap">
+                <!-- 1. Location Quick Button -->
                 <button type="button" @click="openMapModal()"
-                    class="hidden xl:flex items-center gap-1 xl:gap-1.5 px-2 xl:px-2.5 py-1.5 xl:py-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-[11px] xl:text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[36px] xl:min-h-[38px] cursor-pointer shrink-0 whitespace-nowrap"
+                    class="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/40 text-teal-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
                     title="Melbourne Studio Location &amp; Directions">
-                    <i class="fa-solid fa-location-dot text-teal-400"></i>
+                    <i class="fa-solid fa-location-dot text-teal-400 text-xs"></i>
                     <span>LOC</span>
                 </button>
 
-                <!-- Diagnostic Quick Button -->
+                <!-- 2. Diagnostic Quick Button -->
                 <button type="button" @click="openDiagModal()"
-                    class="hidden xl:flex items-center gap-1 xl:gap-1.5 px-2 xl:px-2.5 py-1.5 xl:py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-[11px] xl:text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[36px] xl:min-h-[38px] cursor-pointer shrink-0 whitespace-nowrap"
+                    class="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
                     title="Hair System &amp; Topper Diagnostic Assessment">
-                    <i class="fa-solid fa-stethoscope text-emerald-400"></i>
+                    <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
                     <span>DIAG</span>
                 </button>
 
-                <!-- Booking Quick Button -->
-                <button type="button" @click="openBookingModal()"
-                    class="hidden md:flex items-center gap-1 xl:gap-1.5 px-2.5 xl:px-3 py-1.5 xl:py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-300 text-[11px] xl:text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[36px] xl:min-h-[38px] cursor-pointer shrink-0 whitespace-nowrap"
-                    title="Book Private 1-on-1 Consultation &amp; Fitting">
-                    <i class="fa-solid fa-calendar-check text-amber-400"></i>
-                    <span>BOOK</span>
-                </button>
-
-                <!-- Calculator Quick Button -->
+                <!-- 3. Calculator / Quote Quick Button -->
                 <button type="button" @click="isCalculatorModalOpen = true"
-                    class="hidden xl:flex items-center gap-1 xl:gap-1.5 px-2 xl:px-2.5 py-1.5 xl:py-2 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/40 text-sky-300 text-[11px] xl:text-xs font-bold transition-all shadow-sm active:scale-95 min-h-[36px] xl:min-h-[38px] cursor-pointer shrink-0 whitespace-nowrap"
+                    class="hidden md:flex items-center gap-1 px-2 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/40 text-sky-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
                     title="Instant Custom Quote &amp; Cost Calculator">
-                    <i class="fa-solid fa-calculator text-sky-400"></i>
+                    <i class="fa-solid fa-calculator text-sky-400 text-xs"></i>
                     <span>QUOTE</span>
                 </button>
 
-                <!-- Membership Sign In / Sign Up or Profile Chip -->
-                <div class="flex items-center gap-1.5">
-                    <!-- Guest: Icon-Only Sign In / Sign Up Button -->
+                <!-- 4. Booking Quick Button -->
+                <button type="button" @click="openBookingModal()"
+                    class="hidden md:flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-300 text-[11px] font-bold transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
+                    title="Book Private 1-on-1 Consultation &amp; Fitting">
+                    <i class="fa-solid fa-calendar-check text-amber-400 text-xs"></i>
+                    <span>BOOK</span>
+                </button>
+
+                <!-- 5. LOGIN / SIGNUP Button -->
+                <div class="flex items-center shrink-0">
+                    <!-- Guest: LOGIN/SIGNUP Button -->
                     <div x-show="!currentMember" class="flex items-center">
                         <button type="button" @click="openSignInModal()"
-                            class="w-[38px] h-[38px] sm:w-10 sm:h-10 rounded-lg teal-gradient hover:opacity-95 text-white transition-all flex items-center justify-center shadow-md active:scale-95 cursor-pointer shrink-0"
-                            title="Sign In / Sign Up (VIP Membership)"
-                            aria-label="Sign In or Sign Up">
-                            <i class="fa-solid fa-circle-user text-lg"></i>
+                            class="px-2.5 sm:px-3 py-1.5 rounded-lg teal-gradient hover:opacity-95 text-white text-[11px] font-bold transition-all flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
+                            title="VIP Membership Sign In / Sign Up">
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                            <span>LOGIN / SIGNUP</span>
                         </button>
                     </div>
 
                     <!-- Authenticated: Profile Badge & Logout -->
                     <div x-show="currentMember" x-cloak class="flex items-center gap-1.5">
                         <button type="button" @click="openMemberProfileModal()"
-                            class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-brand-cardBg hover:bg-brand-inner border border-teal-500/50 text-xs font-semibold transition-all flex items-center gap-2 min-h-[38px] shadow-sm cursor-pointer"
+                            class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-brand-cardBg hover:bg-brand-inner border border-teal-500/50 text-xs font-semibold transition-all flex items-center gap-2 shadow-sm cursor-pointer"
                             title="Open My VIP Dashboard">
                             <div class="w-6 h-6 rounded-full teal-gradient flex items-center justify-center font-bold text-white text-[10px]" x-text="currentMember ? currentMember.full_name.charAt(0).toUpperCase() : 'M'"></div>
-                            <div class="text-left leading-tight hidden xs:block sm:block">
-                                <div class="text-white font-bold truncate max-w-[110px] flex items-center gap-1">
+                            <div class="text-left leading-tight hidden xs:block">
+                                <div class="text-white font-bold truncate max-w-[100px] flex items-center gap-1">
                                     <span x-text="currentMember ? currentMember.full_name : ''"></span>
                                     <span class="text-[9px] px-1 py-0.2 rounded font-mono" :class="{
                                         'bg-amber-500/20 text-amber-300': currentMember && currentMember.tier === 'Bronze',
@@ -3403,23 +3401,19 @@
                                         'bg-purple-500/20 text-purple-300': currentMember && currentMember.tier === 'VIP Partner'
                                     }" x-text="currentMember ? currentMember.tier : ''"></span>
                                 </div>
-                                <div class="text-[10px] text-brand-tealLight font-mono">
-                                    <span x-text="Number((currentMember && currentMember.points) || 0).toLocaleString()"></span> pts
-                                </div>
                             </div>
                         </button>
                         <button type="button" @click="memberLogout()"
-                            class="w-9 h-9 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs transition-colors flex items-center justify-center min-h-[38px] cursor-pointer"
+                            class="w-8 h-8 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-xs transition-colors flex items-center justify-center cursor-pointer"
                             title="Sign Out">
                             <i class="fa-solid fa-power-off"></i>
                         </button>
                     </div>
                 </div>
 
-
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Hamburger Button -->
                 <button @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="lg:hidden text-slate-200 text-xl p-2 rounded-lg border min-w-[44px] min-h-[44px] flex items-center justify-center transition-all duration-200 cursor-pointer"
+                    class="lg:hidden text-slate-200 text-xl p-2 rounded-lg border min-w-[40px] min-h-[40px] flex items-center justify-center transition-all duration-200 cursor-pointer"
                     :class="mobileMenuOpen ? 'bg-[#202E55] text-brand-tealLight border-teal-500/50 shadow-inner' : 'hover:bg-brand-cardBg border-brand-border/60'"
                     aria-label="Toggle navigation menu">
                     <i :class="mobileMenuOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'"></i>
@@ -3529,11 +3523,11 @@
                         <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 text-slate-400" :class="{ 'rotate-180': mobileProductsOpen }"></i>
                     </button>
                     <div x-show="mobileProductsOpen" class="pl-3 space-y-1 mt-1 bg-[#121933]/60 rounded-xl p-2.5 border border-slate-700/50 flex flex-col">
-                        <a href="#medical-wigs" x-show="isSectionVisible('medical-wigs') && isSectionInMenu('medical-wigs')" @click="mobileMenuOpen = false"
+                        <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-hand-holding-heart text-rose-400 text-xs"></i>
-                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('medical-wigs', 'Medical')">Medical</span>
-                            <span class="text-rose-300 text-[10px]">($250-$600+ Rebate)</span>
+                            <i class="fa-solid fa-layer-group text-sky-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions (11)')">All Solutions (11)</span>
+                            <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
                         </a>
                         <a href="#stock" x-show="isSectionVisible('stock') && isSectionInMenu('stock')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
@@ -3547,12 +3541,6 @@
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('salon', 'Salon')">Salon</span>
                             <span class="text-slate-400 text-[10px]">(Melbourne Studio)</span>
                         </a>
-                        <a href="#products-range" x-show="isSectionVisible('products-range') && isSectionInMenu('products-range')" @click="mobileMenuOpen = false"
-                            class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-layer-group text-sky-400 text-xs"></i>
-                            <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('products-range', 'All Solutions')">All Solutions</span>
-                            <span class="text-slate-400 text-[10px]">(Wigs &amp; Systems)</span>
-                        </a>
                         <a href="#factory" x-show="isSectionVisible('factory') && isSectionInMenu('factory')" @click="mobileMenuOpen = false"
                             class="block text-slate-200 hover:text-white font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-industry text-purple-400 text-xs"></i>
@@ -3564,6 +3552,12 @@
                             <i class="fa-solid fa-handshake text-blue-400 text-xs"></i>
                             <span class="font-bold uppercase tracking-wider" x-text="getMenuTitle('b2b', 'B2B Wholesale')">B2B Wholesale</span>
                             <span class="text-slate-400 text-[10px]">(Salon Partnership)</span>
+                        </a>
+                        <a href="#wig-training" @click="mobileMenuOpen = false"
+                            class="block text-amber-300 hover:text-amber-200 font-medium py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs flex items-center gap-2 transition-colors border-t border-slate-700/50 mt-1">
+                            <i class="fa-solid fa-graduation-cap text-amber-400 text-xs"></i>
+                            <span class="font-bold uppercase tracking-wider">Academy Course</span>
+                            <span class="text-amber-400/80 text-[10px]">(Wig Maker &amp; Extensionist)</span>
                         </a>
                     </div>
                 </div>
