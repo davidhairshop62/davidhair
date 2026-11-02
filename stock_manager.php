@@ -2412,17 +2412,17 @@
                     <div class="flex flex-wrap items-center gap-2">
                         <!-- Gender filter -->
                         <select x-model="galleryGenderFilter" class="bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
-                            <option value="all">모든 성별 (All Genders)</option>
-                            <option value="male">남성 (Men)</option>
-                            <option value="female">여성 (Women)</option>
+                            <option value="all">All Genders</option>
+                            <option value="male">Men</option>
+                            <option value="female">Women</option>
                         </select>
                         <!-- Category filter -->
                         <select x-model="galleryCategoryFilter" class="bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
-                            <option value="all">모든 종류 (All Categories)</option>
-                            <option value="투페">투페 (Toupee)</option>
-                            <option value="가발">전두가발 (Full Wig)</option>
-                            <option value="톱퍼">톱퍼 (Topper)</option>
-                            <option value="헤어피스">기타 헤어피스</option>
+                            <option value="all">All Categories</option>
+                            <option value="Toupee">Toupee (Partial System)</option>
+                            <option value="Full Wig">Full Cap Wig</option>
+                            <option value="Topper">Hair Topper</option>
+                            <option value="Hairpiece">Hairpiece / Other</option>
                         </select>
                     </div>
 
@@ -2430,18 +2430,18 @@
                         <!-- Keyword Search -->
                         <div class="relative w-full sm:w-64">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                            <input type="text" x-model="gallerySearchQuery" placeholder="검색 (제목, 설명, 모질)..."
+                            <input type="text" x-model="gallerySearchQuery" placeholder="Search (title, description, specs)..."
                                 class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-brand-tealLight">
                         </div>
 
                         <!-- Add Case Button -->
                         <button type="button" @click="openGalleryCaseModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
                             <i class="fa-solid fa-plus"></i>
-                            <span>새 사례 등록</span>
+                            <span>Add B/A Case</span>
                         </button>
-                        <button type="button" x-show="galleryCases.length > 0" @click="deleteAllGalleryCases()" class="px-3 py-2 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer" title="모든 사례 삭제">
+                        <button type="button" x-show="galleryCases.length > 0" @click="deleteAllGalleryCases()" class="px-3 py-2 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer" title="Delete All Cases">
                             <i class="fa-solid fa-trash-can"></i>
-                            <span>전체 삭제</span>
+                            <span>Delete All</span>
                         </button>
                     </div>
                 </div>
@@ -2454,10 +2454,10 @@
                                 <tr>
                                     <th class="py-3.5 px-4 w-12 text-center">#</th>
                                     <th class="py-3.5 px-4 w-28">BEFORE</th>
-                                    <th class="py-3.5 px-4 w-52">AFTER 1~4 각도</th>
-                                    <th class="py-3.5 px-4">구분 / 제품명 / 시술 설명</th>
-                                    <th class="py-3.5 px-4 w-36">모질 &amp; 연령대</th>
-                                    <th class="py-3.5 px-4 w-28 text-center">관리</th>
+                                    <th class="py-3.5 px-4 w-52">AFTER Angles (1~4)</th>
+                                    <th class="py-3.5 px-4">Category / Title / Details</th>
+                                    <th class="py-3.5 px-4 w-36">Hair Type &amp; Age</th>
+                                    <th class="py-3.5 px-4 w-28 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-brand-border/60 text-slate-200">
@@ -2465,43 +2465,43 @@
                                     <tr class="hover:bg-brand-inner/40 transition-colors">
                                         <td class="py-3 px-4 text-center text-slate-400 font-mono" x-text="c.id"></td>
                                         <td class="py-3 px-4">
-                                            <div class="relative w-16 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-rose-500/40 group cursor-pointer shadow hover:border-rose-400 transition"
-                                                 @click="openLightbox(c.before_img, 'BEFORE - ' + c.title)"
-                                                 title="클릭하여 원본 사진 보기">
-                                                <img :src="c.before_img" alt="Before" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
-                                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px]">
-                                                    <i class="fa-solid fa-magnifying-glass-plus"></i>
-                                                </div>
-                                                <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[8px] font-extrabold px-1 rounded">BEFORE</span>
-                                            </div>
+                                             <div class="relative w-16 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-rose-500/40 group cursor-pointer shadow hover:border-rose-400 transition"
+                                                  @click="openLightbox(c.before_img, 'BEFORE - ' + c.title)"
+                                                  title="Click to view original photo">
+                                                 <img :src="c.before_img" alt="Before" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px]">
+                                                     <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                                 </div>
+                                                 <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[8px] font-extrabold px-1 rounded">BEFORE</span>
+                                             </div>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex items-center gap-1.5 flex-wrap">
                                                 <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-teal-500/40 group cursor-pointer shadow hover:border-teal-300 transition"
-                                                     @click="openLightbox(c.after_img1, 'AFTER 1 (대표) - ' + c.title)"
-                                                     title="클릭하여 원본 사진 보기">
+                                                     @click="openLightbox(c.after_img1, 'AFTER 1 (Main) - ' + c.title)"
+                                                     title="Click to view original photo">
                                                     <img :src="c.after_img1" alt="After 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[8px]">
                                                         <i class="fa-solid fa-magnifying-glass-plus"></i>
                                                     </div>
-                                                    <span class="absolute bottom-0 inset-x-0 bg-teal-900/90 text-white text-[7px] text-center font-bold">#1 대표</span>
+                                                    <span class="absolute bottom-0 inset-x-0 bg-teal-900/90 text-white text-[7px] text-center font-bold">#1 Main</span>
                                                 </div>
                                                 <template x-if="c.after_img2">
                                                     <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
                                                         <img :src="c.after_img2" alt="After 2" class="w-full h-full object-cover">
-                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#2 측면</span>
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#2 Side</span>
                                                     </div>
                                                 </template>
                                                 <template x-if="c.after_img3">
                                                     <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
                                                         <img :src="c.after_img3" alt="After 3" class="w-full h-full object-cover">
-                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#3 후면</span>
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#3 Back</span>
                                                     </div>
                                                 </template>
                                                 <template x-if="c.after_img4">
                                                     <div class="relative w-12 aspect-[3/4] rounded-lg overflow-hidden bg-slate-950 border border-brand-border">
                                                         <img :src="c.after_img4" alt="After 4" class="w-full h-full object-cover">
-                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#4 탑뷰</span>
+                                                        <span class="absolute bottom-0 inset-x-0 bg-slate-900/90 text-slate-300 text-[7px] text-center">#4 Top</span>
                                                     </div>
                                                 </template>
                                             </div>
@@ -2510,22 +2510,22 @@
                                             <div class="flex items-center gap-1.5 mb-1">
                                                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold" 
                                                     :class="c.gender === 'male' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40' : 'bg-pink-500/20 text-pink-300 border border-pink-500/40'"
-                                                    x-text="c.gender === 'male' ? '남성' : '여성'"></span>
-                                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40" x-text="c.category"></span>
+                                                    x-text="c.gender === 'male' ? 'Men' : 'Women'"></span>
+                                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40" x-text="c.category === '투페' ? 'Toupee' : (c.category === '가발' ? 'Full Wig' : (c.category === '톱퍼' ? 'Topper' : (c.category === '헤어피스' ? 'Hairpiece' : c.category)))"></span>
                                             </div>
                                             <div class="font-bold text-white text-sm" x-text="c.title"></div>
                                             <div class="text-slate-400 text-xs mt-1 line-clamp-2 leading-relaxed" x-text="c.description || '-'"></div>
                                         </td>
                                         <td class="py-3 px-4">
-                                            <div class="text-slate-300 text-xs" x-text="c.hair_type || '인모 100%'"></div>
-                                            <div class="text-slate-400 text-[11px] mt-0.5" x-text="c.age_group ? ('연령: ' + c.age_group) : ''"></div>
+                                            <div class="text-slate-300 text-xs" x-text="c.hair_type || '100% Human Hair'"></div>
+                                            <div class="text-slate-400 text-[11px] mt-0.5" x-text="c.age_group ? ('Age: ' + c.age_group) : ''"></div>
                                         </td>
                                         <td class="py-3 px-4 text-center">
                                             <div class="flex items-center justify-center gap-1.5">
-                                                <button type="button" @click="openGalleryCaseModal('edit', c)" class="p-2 rounded-lg bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer" title="수정">
+                                                <button type="button" @click="openGalleryCaseModal('edit', c)" class="p-2 rounded-lg bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square text-xs"></i>
                                                 </button>
-                                                <button type="button" @click="deleteGalleryCase(c.id, c.title)" class="p-2 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 transition cursor-pointer" title="삭제">
+                                                <button type="button" @click="deleteGalleryCase(c.id, c.title)" class="p-2 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 transition cursor-pointer" title="Delete">
                                                     <i class="fa-solid fa-trash-can text-xs"></i>
                                                 </button>
                                             </div>
@@ -2536,7 +2536,7 @@
                                     <tr>
                                         <td colspan="6" class="py-12 text-center text-slate-400">
                                             <i class="fa-regular fa-image text-3xl mb-2 text-slate-500 block"></i>
-                                            등록된 Before &amp; After 사례가 없거나 검색 결과가 없습니다.
+                                            No Before &amp; After cases found or match your search criteria.
                                         </td>
                                     </tr>
                                 </template>
@@ -2555,7 +2555,7 @@
             <div class="flex justify-between items-center border-b border-brand-border pb-3 shrink-0">
                 <h3 class="font-heading font-bold text-white text-base sm:text-lg flex items-center gap-2">
                     <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i>
-                    <span x-text="galleryModalMode === 'edit' ? 'Before & After 사례 수정' : '새 Before & After 시공 사례 등록'"></span>
+                    <span x-text="galleryModalMode === 'edit' ? 'Edit Before & After Case' : 'Register New Before & After Case'"></span>
                 </h3>
                 <button type="button" @click="galleryCaseModalOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
@@ -2565,45 +2565,49 @@
             <form @submit.prevent="saveGalleryCase()" class="space-y-4 text-xs overflow-y-auto flex-1 custom-scrollbar pr-1">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-200 mb-1">성별 구분 <span class="text-rose-400">*</span></label>
+                        <label class="block font-bold text-slate-200 mb-1">Gender <span class="text-rose-400">*</span></label>
                         <select x-model="galleryForm.gender" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
-                            <option value="male">남성 (Male)</option>
-                            <option value="female">여성 (Female)</option>
-                            <option value="unisex">공용 (Unisex)</option>
+                            <option value="male">Men (Male)</option>
+                            <option value="female">Women (Female)</option>
+                            <option value="unisex">Unisex</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-200 mb-1">제품 종류 <span class="text-rose-400">*</span></label>
+                        <label class="block font-bold text-slate-200 mb-1">Product Category <span class="text-rose-400">*</span></label>
                         <select x-model="galleryForm.category" required class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
-                            <option value="투페">투페 (부분가발)</option>
-                            <option value="가발">전두가발 (Full Wig)</option>
-                            <option value="톱퍼">톱퍼 (정수리 볼륨)</option>
-                            <option value="헤어피스">기타 헤어피스</option>
+                            <option value="Toupee">Toupee (Partial Hair System)</option>
+                            <option value="Full Wig">Full Cap Wig</option>
+                            <option value="Topper">Hair Topper (Crown Volume)</option>
+                            <option value="Hairpiece">Hairpiece / Other</option>
+                            <option value="투페" x-show="galleryForm.category === '투페'">Toupee (투페)</option>
+                            <option value="가발" x-show="galleryForm.category === '가발'">Full Wig (전두가발)</option>
+                            <option value="톱퍼" x-show="galleryForm.category === '톱퍼'">Topper (톱퍼)</option>
+                            <option value="헤어피스" x-show="galleryForm.category === '헤어피스'">Hairpiece (헤어피스)</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-200 mb-1">시공 제목 <span class="text-rose-400">*</span></label>
-                    <input type="text" x-model="galleryForm.title" required placeholder="예: 40대 M자 및 정수리 탈모 극복 0.03mm 초극박 스킨 투페" 
+                    <label class="block font-bold text-slate-200 mb-1">Case Title <span class="text-rose-400">*</span></label>
+                    <input type="text" x-model="galleryForm.title" required placeholder="e.g. 0.03mm Ultra-Thin Skin Men's Toupee for Receding Hairline & Crown" 
                         class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-tealLight">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-200 mb-1">상세 설명 / 고객 고민 및 해결 방법</label>
-                    <textarea x-model="galleryForm.description" rows="3" placeholder="시공 전 고객님의 모발 상태, 적용한 맞춤 베이스 및 연출한 스타일링 특징을 상세히 작성해주세요."
+                    <label class="block font-bold text-slate-200 mb-1">Case Description / Hair Loss Concern &amp; Solution</label>
+                    <textarea x-model="galleryForm.description" rows="3" placeholder="Describe the client's hair situation before fitting, customized base specs, hair system type, and finished styling details..."
                         class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-tealLight"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-200 mb-1">모질 / 스펙</label>
-                        <input type="text" x-model="galleryForm.hair_type" placeholder="예: 100% 버진 레미모 / 다크 브라운"
+                        <label class="block font-bold text-slate-200 mb-1">Hair Type / Specs</label>
+                        <input type="text" x-model="galleryForm.hair_type" placeholder="e.g. 100% Virgin Remy Human Hair / Natural Dark Brown"
                             class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-200 mb-1">연령대</label>
-                        <input type="text" x-model="galleryForm.age_group" placeholder="예: 30대, 40대, 50대"
+                        <label class="block font-bold text-slate-200 mb-1">Age Group</label>
+                        <input type="text" x-model="galleryForm.age_group" placeholder="e.g. 30s, 40s, 50s"
                             class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none">
                     </div>
                 </div>
@@ -2613,7 +2617,7 @@
                     <div class="flex items-center justify-between">
                         <div class="font-bold text-white text-xs flex items-center gap-1.5">
                             <i class="fa-solid fa-images text-brand-tealLight"></i>
-                            <span>등록 사진 (150x150 미리보기 • 클릭 시 고화질 모달 확대)</span>
+                            <span>Case Photos (150×150 Thumbnail • Click to enlarge in HD modal)</span>
                         </div>
                         <span class="text-[10px] text-slate-400 font-mono">150×150 Thumbnail Zoom</span>
                     </div>
@@ -2621,35 +2625,35 @@
                     <!-- 1. BEFORE PHOTO (150x150) -->
                     <div class="bg-brand-darkBg/90 p-3.5 rounded-2xl border border-rose-500/30 space-y-2.5">
                         <label class="block font-bold text-rose-400 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 1. BEFORE 사진 (시술 전) <span class="text-rose-400">*</span></span>
-                            <span class="text-[10px] text-rose-400/80 font-mono font-bold">필수</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 1. BEFORE Photo (Before Fitting) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-rose-400/80 font-mono font-bold">REQUIRED</span>
                         </label>
                         <div class="flex flex-col sm:flex-row gap-2 items-center">
                             <input type="file" @change="onGalleryFileChange($event, 'before')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
-                            <input type="text" x-model="galleryForm.before_img" @input="if(!galleryFiles.before) galleryPreviews.before = galleryForm.before_img" placeholder="또는 이미지 URL (images/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
+                            <input type="text" x-model="galleryForm.before_img" @input="if(!galleryFiles.before) galleryPreviews.before = galleryForm.before_img" placeholder="Or image URL (images/transformations/...)" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
                         </div>
 
                         <!-- 150x150 Preview Container -->
                         <template x-if="galleryPreviews.before || galleryForm.before_img">
                             <div class="pt-2 flex items-center gap-4 bg-slate-950/80 p-2.5 rounded-xl border border-rose-500/20">
                                 <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-900 border-2 border-rose-500/60 shadow-lg group cursor-pointer shrink-0"
-                                     @click="openLightbox(galleryPreviews.before || galleryForm.before_img, 'BEFORE 사진 (시술 전)')"
-                                     title="클릭하여 큰 사진으로 보기">
+                                     @click="openLightbox(galleryPreviews.before || galleryForm.before_img, 'BEFORE Photo (Before Fitting)')"
+                                     title="Click to view large photo">
                                     <img :src="galleryPreviews.before || galleryForm.before_img" alt="Before 150x150" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
                                         <i class="fa-solid fa-magnifying-glass-plus text-xl text-rose-400 mb-1"></i>
-                                        <span class="text-[10px] font-bold">클릭하여 확대</span>
+                                        <span class="text-[10px] font-bold">Click to Enlarge</span>
                                     </div>
                                     <span class="absolute bottom-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">150×150</span>
                                 </div>
                                 <div class="text-xs text-slate-300 space-y-1">
                                     <div class="font-bold text-rose-400 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-check-circle"></i> 등록된 BEFORE 사진
+                                        <i class="fa-solid fa-check-circle"></i> Uploaded BEFORE Photo
                                     </div>
-                                    <p class="text-[11px] text-slate-400">사진을 클릭하시면 고화질 원본 모달 팝업으로 확대됩니다.</p>
+                                    <p class="text-[11px] text-slate-400">Click thumbnail to view high-resolution image in full modal.</p>
                                     <button type="button" @click="galleryForm.before_img = ''; galleryPreviews.before = ''; galleryFiles.before = null;" 
                                         class="text-rose-400 hover:text-rose-300 text-[11px] underline flex items-center gap-1 mt-1 cursor-pointer">
-                                        <i class="fa-solid fa-trash-can text-[10px]"></i> 이 사진 지우기
+                                        <i class="fa-solid fa-trash-can text-[10px]"></i> Remove this photo
                                     </button>
                                 </div>
                             </div>
@@ -2659,35 +2663,35 @@
                     <!-- 2. AFTER 1 PHOTO (150x150) -->
                     <div class="bg-brand-darkBg/90 p-3.5 rounded-2xl border border-teal-500/30 space-y-2.5">
                         <label class="block font-bold text-teal-300 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 2. AFTER 1 대표 사진 (완성 정면) <span class="text-rose-400">*</span></span>
-                            <span class="text-[10px] text-teal-400/80 font-mono font-bold">필수</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px]"></i> 2. AFTER 1 Main Photo (Front / Result) <span class="text-rose-400">*</span></span>
+                            <span class="text-[10px] text-teal-400/80 font-mono font-bold">REQUIRED</span>
                         </label>
                         <div class="flex flex-col sm:flex-row gap-2 items-center">
                             <input type="file" @change="onGalleryFileChange($event, 'after1')" accept="image/*" class="w-full sm:w-1/2 text-slate-300 text-xs">
-                            <input type="text" x-model="galleryForm.after_img1" @input="if(!galleryFiles.after1) galleryPreviews.after1 = galleryForm.after_img1" placeholder="또는 이미지 URL" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
+                            <input type="text" x-model="galleryForm.after_img1" @input="if(!galleryFiles.after1) galleryPreviews.after1 = galleryForm.after_img1" placeholder="Or image URL" class="w-full sm:w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white text-xs">
                         </div>
 
                         <!-- 150x150 Preview Container -->
                         <template x-if="galleryPreviews.after1 || galleryForm.after_img1">
                             <div class="pt-2 flex items-center gap-4 bg-slate-950/80 p-2.5 rounded-xl border border-teal-500/20">
                                 <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-900 border-2 border-teal-500/60 shadow-lg group cursor-pointer shrink-0"
-                                     @click="openLightbox(galleryPreviews.after1 || galleryForm.after_img1, 'AFTER 1 대표 사진 (완성 정면)')"
-                                     title="클릭하여 큰 사진으로 보기">
+                                     @click="openLightbox(galleryPreviews.after1 || galleryForm.after_img1, 'AFTER 1 Main Photo (Front / Result)')"
+                                     title="Click to view large photo">
                                     <img :src="galleryPreviews.after1 || galleryForm.after_img1" alt="After 1 150x150" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
                                         <i class="fa-solid fa-magnifying-glass-plus text-xl text-teal-300 mb-1"></i>
-                                        <span class="text-[10px] font-bold">클릭하여 확대</span>
+                                        <span class="text-[10px] font-bold">Click to Enlarge</span>
                                     </div>
                                     <span class="absolute bottom-1 left-1 bg-teal-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">150×150</span>
                                 </div>
                                 <div class="text-xs text-slate-300 space-y-1">
                                     <div class="font-bold text-teal-300 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-check-circle"></i> 등록된 AFTER 1 대표 사진
+                                        <i class="fa-solid fa-check-circle"></i> Uploaded AFTER 1 Main Photo
                                     </div>
-                                    <p class="text-[11px] text-slate-400">사진을 클릭하시면 고화질 원본 모달 팝업으로 확대됩니다.</p>
+                                    <p class="text-[11px] text-slate-400">Click thumbnail to view high-resolution image in full modal.</p>
                                     <button type="button" @click="galleryForm.after_img1 = ''; galleryPreviews.after1 = ''; galleryFiles.after1 = null;" 
                                         class="text-rose-400 hover:text-rose-300 text-[11px] underline flex items-center gap-1 mt-1 cursor-pointer">
-                                        <i class="fa-solid fa-trash-can text-[10px]"></i> 이 사진 지우기
+                                        <i class="fa-solid fa-trash-can text-[10px]"></i> Remove this photo
                                     </button>
                                 </div>
                             </div>
@@ -2696,30 +2700,30 @@
 
                     <!-- 3. AFTER 2, 3, 4 MULTI-ANGLES (150x150 each) -->
                     <div>
-                        <div class="text-xs font-bold text-slate-300 mb-2">3. 추가 각도 사진 (AFTER 2, 3, 4 선택 입력)</div>
+                        <div class="text-xs font-bold text-slate-300 mb-2">3. Additional Angle Photos (AFTER 2, 3, 4 Optional)</div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             
                             <!-- AFTER 2 (150x150) -->
                             <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
                                 <div>
-                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 2 (측면)</label>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 2 (Side)</label>
                                     <input type="file" @change="onGalleryFileChange($event, 'after2')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                                    <input type="text" x-model="galleryForm.after_img2" @input="if(!galleryFiles.after2) galleryPreviews.after2 = galleryForm.after_img2" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                    <input type="text" x-model="galleryForm.after_img2" @input="if(!galleryFiles.after2) galleryPreviews.after2 = galleryForm.after_img2" placeholder="Image URL" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
                                 </div>
                                 <template x-if="galleryPreviews.after2 || galleryForm.after_img2">
                                     <div class="mt-2.5 flex flex-col items-center">
                                         <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
-                                             @click="openLightbox(galleryPreviews.after2 || galleryForm.after_img2, 'AFTER 2 (측면 각도)')"
-                                             title="클릭하여 확대">
+                                             @click="openLightbox(galleryPreviews.after2 || galleryForm.after_img2, 'AFTER 2 (Side Angle)')"
+                                             title="Click to enlarge">
                                             <img :src="galleryPreviews.after2 || galleryForm.after_img2" alt="After 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
                                                 <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
-                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                                <span class="text-[9px] font-bold">Enlarge</span>
                                             </div>
                                             <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
                                         </div>
                                         <button type="button" @click="galleryForm.after_img2 = ''; galleryPreviews.after2 = ''; galleryFiles.after2 = null;" 
-                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">Remove</button>
                                     </div>
                                 </template>
                             </div>
@@ -2727,24 +2731,24 @@
                             <!-- AFTER 3 (150x150) -->
                             <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
                                 <div>
-                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 3 (후면/각도)</label>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 3 (Back)</label>
                                     <input type="file" @change="onGalleryFileChange($event, 'after3')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                                    <input type="text" x-model="galleryForm.after_img3" @input="if(!galleryFiles.after3) galleryPreviews.after3 = galleryForm.after_img3" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                    <input type="text" x-model="galleryForm.after_img3" @input="if(!galleryFiles.after3) galleryPreviews.after3 = galleryForm.after_img3" placeholder="Image URL" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
                                 </div>
                                 <template x-if="galleryPreviews.after3 || galleryForm.after_img3">
                                     <div class="mt-2.5 flex flex-col items-center">
                                         <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
-                                             @click="openLightbox(galleryPreviews.after3 || galleryForm.after_img3, 'AFTER 3 (후면 각도)')"
-                                             title="클릭하여 확대">
+                                             @click="openLightbox(galleryPreviews.after3 || galleryForm.after_img3, 'AFTER 3 (Back Angle)')"
+                                             title="Click to enlarge">
                                             <img :src="galleryPreviews.after3 || galleryForm.after_img3" alt="After 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
                                                 <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
-                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                                <span class="text-[9px] font-bold">Enlarge</span>
                                             </div>
                                             <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
                                         </div>
                                         <button type="button" @click="galleryForm.after_img3 = ''; galleryPreviews.after3 = ''; galleryFiles.after3 = null;" 
-                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">Remove</button>
                                     </div>
                                 </template>
                             </div>
@@ -2752,24 +2756,24 @@
                             <!-- AFTER 4 (150x150) -->
                             <div class="bg-brand-darkBg/90 p-3 rounded-2xl border border-brand-border flex flex-col justify-between">
                                 <div>
-                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 4 (탑뷰/디테일)</label>
+                                    <label class="block font-bold text-slate-200 mb-1 text-xs">AFTER 4 (Top / Crown)</label>
                                     <input type="file" @change="onGalleryFileChange($event, 'after4')" accept="image/*" class="w-full text-slate-300 text-[10px] mb-1">
-                                    <input type="text" x-model="galleryForm.after_img4" @input="if(!galleryFiles.after4) galleryPreviews.after4 = galleryForm.after_img4" placeholder="URL 입력" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
+                                    <input type="text" x-model="galleryForm.after_img4" @input="if(!galleryFiles.after4) galleryPreviews.after4 = galleryForm.after_img4" placeholder="Image URL" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-[11px] text-white">
                                 </div>
                                 <template x-if="galleryPreviews.after4 || galleryForm.after_img4">
                                     <div class="mt-2.5 flex flex-col items-center">
                                         <div class="relative w-[150px] h-[150px] rounded-xl overflow-hidden bg-slate-950 border-2 border-brand-border group cursor-pointer shadow-md"
-                                             @click="openLightbox(galleryPreviews.after4 || galleryForm.after_img4, 'AFTER 4 (탑뷰/디테일)')"
-                                             title="클릭하여 확대">
+                                             @click="openLightbox(galleryPreviews.after4 || galleryForm.after_img4, 'AFTER 4 (Top / Crown Angle)')"
+                                             title="Click to enlarge">
                                             <img :src="galleryPreviews.after4 || galleryForm.after_img4" alt="After 4" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity text-white">
                                                 <i class="fa-solid fa-magnifying-glass-plus text-lg text-amber-300 mb-0.5"></i>
-                                                <span class="text-[9px] font-bold">확대 보기</span>
+                                                <span class="text-[9px] font-bold">Enlarge</span>
                                             </div>
                                             <span class="absolute bottom-1 left-1 bg-slate-900/90 text-amber-300 text-[8px] font-bold px-1 rounded">150×150</span>
                                         </div>
                                         <button type="button" @click="galleryForm.after_img4 = ''; galleryPreviews.after4 = ''; galleryFiles.after4 = null;" 
-                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">삭제</button>
+                                            class="text-rose-400 hover:text-rose-300 text-[10px] underline mt-1 cursor-pointer">Remove</button>
                                     </div>
                                 </template>
                             </div>
@@ -2779,10 +2783,10 @@
                 </div>
 
                 <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-3 shrink-0">
-                    <button type="button" @click="galleryCaseModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium cursor-pointer">취소</button>
+                    <button type="button" @click="galleryCaseModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium cursor-pointer">Cancel</button>
                     <button type="submit" :disabled="isSavingGalleryCase" class="teal-gradient hover:opacity-95 text-white font-bold px-6 py-2 rounded-xl transition shadow flex items-center gap-2 cursor-pointer disabled:opacity-50">
                         <i class="fa-solid fa-check"></i>
-                        <span x-text="galleryModalMode === 'edit' ? '수정 저장하기' : '갤러리에 등록하기'"></span>
+                        <span x-text="galleryModalMode === 'edit' ? 'Save Changes' : 'Publish to Gallery'"></span>
                     </button>
                 </div>
             </form>
@@ -6800,7 +6804,7 @@ Thank you for choosing David Hair Systems!`;
                 galleryForm: {
                     id: null,
                     gender: 'male',
-                    category: '투페',
+                    category: 'Toupee',
                     title: '',
                     description: '',
                     hair_type: '',
@@ -6829,7 +6833,7 @@ Thank you for choosing David Hair Systems!`;
                 lightboxSrc: '',
                 lightboxTitle: '',
 
-                openLightbox(src, title = '사진 확대 보기') {
+                openLightbox(src, title = 'Photo Zoom Preview') {
                     if (!src) return;
                     this.lightboxSrc = src;
                     this.lightboxTitle = title;
@@ -6839,7 +6843,12 @@ Thank you for choosing David Hair Systems!`;
                 get filteredGalleryCases() {
                     return this.galleryCases.filter(c => {
                         const matchGender = (this.galleryGenderFilter === 'all' || c.gender === this.galleryGenderFilter);
-                        const matchCat = (this.galleryCategoryFilter === 'all' || c.category === this.galleryCategoryFilter);
+                        const matchCat = (this.galleryCategoryFilter === 'all' || 
+                                          c.category === this.galleryCategoryFilter ||
+                                          (this.galleryCategoryFilter === 'Toupee' && c.category === '투페') ||
+                                          (this.galleryCategoryFilter === 'Full Wig' && c.category === '가발') ||
+                                          (this.galleryCategoryFilter === 'Topper' && c.category === '톱퍼') ||
+                                          (this.galleryCategoryFilter === 'Hairpiece' && c.category === '헤어피스'));
                         const q = this.gallerySearchQuery.trim().toLowerCase();
                         const matchQuery = !q || (
                             (c.title || '') + ' ' + (c.description || '') + ' ' + (c.hair_type || '') + ' ' + (c.category || '')
@@ -6856,10 +6865,10 @@ Thank you for choosing David Hair Systems!`;
                         if (json && json.success) {
                             this.galleryCases = json.data || [];
                         } else {
-                            this.showToast('갤러리 데이터를 불러오지 못했습니다.', 'error');
+                            this.showToast('Failed to load gallery data.', 'error');
                         }
                     } catch (e) {
-                        this.showToast('갤러리 API 연결 실패: ' + e.message, 'error');
+                        this.showToast('Gallery API connection failed: ' + e.message, 'error');
                     } finally {
                         this.isLoadingGallery = false;
                     }
@@ -6871,6 +6880,12 @@ Thank you for choosing David Hair Systems!`;
                     this.galleryPreviews = { before: '', after1: '', after2: '', after3: '', after4: '' };
                     if (mode === 'edit' && item) {
                         this.galleryForm = { ...item };
+                        // Normalize legacy Korean categories to English
+                        if (this.galleryForm.category === '투페') this.galleryForm.category = 'Toupee';
+                        else if (this.galleryForm.category === '가발') this.galleryForm.category = 'Full Wig';
+                        else if (this.galleryForm.category === '톱퍼') this.galleryForm.category = 'Topper';
+                        else if (this.galleryForm.category === '헤어피스') this.galleryForm.category = 'Hairpiece';
+
                         this.galleryPreviews.before = item.before_img || '';
                         this.galleryPreviews.after1 = item.after_img1 || '';
                         this.galleryPreviews.after2 = item.after_img2 || '';
@@ -6880,7 +6895,7 @@ Thank you for choosing David Hair Systems!`;
                         this.galleryForm = {
                             id: null,
                             gender: 'male',
-                            category: '투페',
+                            category: 'Toupee',
                             title: '',
                             description: '',
                             hair_type: '',
@@ -6909,7 +6924,7 @@ Thank you for choosing David Hair Systems!`;
 
                 async saveGalleryCase() {
                     if (!this.galleryForm.title) {
-                        this.showToast('제목을 입력해주세요.', 'error');
+                        this.showToast('Please enter a case title.', 'error');
                         return;
                     }
                     this.isSavingGalleryCase = true;
@@ -6945,21 +6960,21 @@ Thank you for choosing David Hair Systems!`;
                         });
                         const json = await res.json();
                         if (json && json.success) {
-                            this.showToast(this.galleryModalMode === 'edit' ? '✅ 성공적으로 수정되었습니다.' : '✅ 새 시공 사례가 등록되었습니다.');
+                            this.showToast(this.galleryModalMode === 'edit' ? '✅ Case updated successfully.' : '✅ New B/A case published to gallery.');
                             this.galleryCaseModalOpen = false;
                             await this.loadGalleryCases();
                         } else {
-                            this.showToast('등록/수정 실패: ' + (json.message || '오류 발생'), 'error');
+                            this.showToast('Save failed: ' + (json.message || 'Error occurred'), 'error');
                         }
                     } catch (e) {
-                        this.showToast('통신 오류: ' + e.message, 'error');
+                        this.showToast('Network error: ' + e.message, 'error');
                     } finally {
                         this.isSavingGalleryCase = false;
                     }
                 },
 
                 async deleteGalleryCase(id, title) {
-                    if (!confirm(`'${title}' 시공 사례를 정말 삭제하시겠습니까?`)) return;
+                    if (!confirm(`Are you sure you want to delete the case '${title}'?`)) return;
                     try {
                         const res = await fetch('api_gallery.php', {
                             method: 'POST',
@@ -6968,18 +6983,18 @@ Thank you for choosing David Hair Systems!`;
                         });
                         const json = await res.json();
                         if (json && json.success) {
-                            this.showToast('✅ 삭제되었습니다.');
+                            this.showToast('✅ Case deleted successfully.');
                             await this.loadGalleryCases();
                         } else {
-                            this.showToast('삭제 실패: ' + (json.message || ''), 'error');
+                            this.showToast('Delete failed: ' + (json.message || ''), 'error');
                         }
                     } catch (e) {
-                        this.showToast('통신 오류: ' + e.message, 'error');
+                        this.showToast('Network error: ' + e.message, 'error');
                     }
                 },
 
                 async deleteAllGalleryCases() {
-                    if (!confirm('경고: 등록된 모든 Before & After 시공 사례를 정말 삭제하시겠습니까?\n삭제 후 자동으로 다시 생성되지 않습니다.')) return;
+                    if (!confirm('WARNING: Are you sure you want to delete ALL Before & After cases?\nThis action cannot be undone.')) return;
                     try {
                         const res = await fetch('api_gallery.php', {
                             method: 'POST',
@@ -6988,13 +7003,13 @@ Thank you for choosing David Hair Systems!`;
                         });
                         const json = await res.json();
                         if (json && json.success) {
-                            this.showToast('✅ 모든 갤러리 사례가 삭제되었습니다.');
+                            this.showToast('✅ All gallery cases have been deleted.');
                             await this.loadGalleryCases();
                         } else {
-                            this.showToast('삭제 실패: ' + (json.message || ''), 'error');
+                            this.showToast('Delete failed: ' + (json.message || ''), 'error');
                         }
                     } catch (e) {
-                        this.showToast('통신 오류: ' + e.message, 'error');
+                        this.showToast('Network error: ' + e.message, 'error');
                     }
                 },
 
@@ -7054,7 +7069,7 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
             <div class="px-5 py-3.5 bg-brand-inner/90 border-b border-brand-border flex items-center justify-between shrink-0">
                 <span class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-magnifying-glass-plus text-brand-tealLight"></i>
-                    <span x-text="lightboxTitle || '사진 확대 보기'"></span>
+                    <span x-text="lightboxTitle || 'Photo Zoom Preview'"></span>
                 </span>
                 <button type="button" @click="lightboxOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
