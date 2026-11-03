@@ -18,6 +18,10 @@ rsync -avz \
   --exclude='.DS_Store' \
   --exclude='node_modules/' \
   --exclude='uploads/' \
+  --exclude='backups/' \
+  --exclude='*.dmg' \
+  --exclude='*.zip' \
+  --exclude='*.tar.gz' \
   -e "ssh -i $SSH_KEY -o ConnectTimeout=10" \
   "$PROJECT_ROOT/" "$SERVER_TARGET"
 
