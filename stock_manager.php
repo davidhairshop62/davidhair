@@ -45,6 +45,9 @@
     <!-- html2pdf.js for Client-Side PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <!-- Chart.js for Daily Visitor Analytics Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         [x-cloak] { display: none !important; }
         .teal-gradient { background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%); }
@@ -229,6 +232,21 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'analytics'">
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="exportAnalyticsCsv()" class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Export CSV Report">
+                                <i class="fa-solid fa-file-csv text-emerald-400"></i>
+                                <span class="hidden sm:inline">CSV 내보내기</span>
+                            </button>
+                            <button type="button" @click="syncApacheLogs()" :disabled="isSyncingLogs" class="bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700 text-cyan-200 text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50" title="Sync Apache Web Server Access Logs">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isSyncingLogs }"></i>
+                                <span class="hidden sm:inline">서버 로그 동기화</span>
+                            </button>
+                            <button type="button" @click="loadAnalytics()" :disabled="isLoadingAnalytics" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Analytics">
+                                <i class="fa-solid fa-arrows-rotate" :class="{ 'fa-spin': isLoadingAnalytics }"></i>
+                            </button>
+                        </div>
+                    </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
                         <i class="fa-solid fa-power-off"></i> Logout
@@ -307,6 +325,14 @@
                         :class="activeTab === 'pricing' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
                         class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
                     <i class="fa-solid fa-calculator text-brand-tealLight"></i> Quote Pricing
+                </button>
+                <button @click="activeTab = 'analytics'; loadAnalytics()" 
+                        :class="activeTab === 'analytics' ? 'bg-cyan-600 text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
+                    <i class="fa-solid fa-chart-line text-cyan-400"></i> 방문자 분석
+                    <template x-if="analyticsKpi.today_visitors > 0">
+                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-cyan-500/30 text-cyan-300 border border-cyan-500/40" x-text="'오늘 ' + analyticsKpi.today_visitors + '명'"></span>
+                    </template>
                 </button>
             </div>
 
@@ -2546,6 +2572,518 @@
                 </div>
             </div>
 
+            <!-- TAB 9: WEBSITE VISITOR DAILY ANALYTICS -->
+            <div x-show="activeTab === 'analytics'" x-cloak class="space-y-6">
+
+                <!-- 1. Header & Date Filter Toolbar -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 shadow-lg space-y-4">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-md">
+                                    <i class="fa-solid fa-chart-line text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="font-heading text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                                        매일 방문자 분석 리포트
+                                        <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono font-semibold border border-cyan-500/30">Live Analytics</span>
+                                    </h2>
+                                    <p class="text-xs text-brand-textMuted mt-0.5">David Hair 웹사이트의 일별 방문자 추이, 인기 페이지, 유입 경로, 기기 및 고객 행동 분석</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Range Presets -->
+                        <div class="flex flex-wrap items-center gap-1.5 bg-brand-darkBg/90 p-1.5 rounded-xl border border-brand-border text-xs">
+                            <button type="button" @click="setAnalyticsPeriod('today')" 
+                                    :class="analyticsPeriod === 'today' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">오늘</button>
+                            <button type="button" @click="setAnalyticsPeriod('yesterday')" 
+                                    :class="analyticsPeriod === 'yesterday' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">어제</button>
+                            <button type="button" @click="setAnalyticsPeriod('7days')" 
+                                    :class="analyticsPeriod === '7days' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">최근 7일</button>
+                            <button type="button" @click="setAnalyticsPeriod('14days')" 
+                                    :class="analyticsPeriod === '14days' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">최근 14일</button>
+                            <button type="button" @click="setAnalyticsPeriod('30days')" 
+                                    :class="analyticsPeriod === '30days' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">최근 30일</button>
+                            <button type="button" @click="setAnalyticsPeriod('this_month')" 
+                                    :class="analyticsPeriod === 'this_month' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">이번 달</button>
+                            <button type="button" @click="setAnalyticsPeriod('custom')" 
+                                    :class="analyticsPeriod === 'custom' ? 'bg-cyan-600 text-white font-bold shadow' : 'text-slate-400 hover:text-white'" 
+                                    class="px-3 py-1.5 rounded-lg transition-all">직접 설정</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Date Picker & Filter Options -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-brand-border/60 text-xs">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Custom Date Inputs (if custom is active) -->
+                            <div x-show="analyticsPeriod === 'custom'" class="flex items-center gap-2">
+                                <input type="date" x-model="analyticsStartDate" class="bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white text-xs outline-none">
+                                <span class="text-slate-500">~</span>
+                                <input type="date" x-model="analyticsEndDate" class="bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white text-xs outline-none">
+                                <button type="button" @click="loadAnalytics('custom')" class="px-3 py-1.5 bg-cyan-700 hover:bg-cyan-600 text-white rounded-lg font-bold">조회</button>
+                            </div>
+
+                            <!-- Filter Toggles -->
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white select-none">
+                                <input type="checkbox" x-model="analyticsExcludeAdmin" @change="loadAnalytics()" class="rounded border-slate-700 text-cyan-500 focus:ring-0">
+                                <span>관리자 접속 제외</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white select-none">
+                                <input type="checkbox" x-model="analyticsExcludeBots" @change="loadAnalytics()" class="rounded border-slate-700 text-cyan-500 focus:ring-0">
+                                <span>검색엔진/봇 제외</span>
+                            </label>
+                        </div>
+
+                        <!-- Action Toolbar -->
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="exportAnalyticsCsv()" class="px-3 py-1.5 bg-brand-darkBg hover:bg-slate-800 border border-brand-border rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Export CSV">
+                                <i class="fa-solid fa-file-csv text-emerald-400"></i>
+                                <span>CSV 다운로드</span>
+                            </button>
+                            <button type="button" @click="syncApacheLogs()" :disabled="isSyncingLogs" class="px-3 py-1.5 bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 rounded-lg transition flex items-center gap-1.5 disabled:opacity-50" title="Sync Server Logs">
+                                <i class="fa-solid fa-arrows-rotate" :class="{ 'fa-spin': isSyncingLogs }"></i>
+                                <span x-text="isSyncingLogs ? '동기화 중...' : '서버 로그 동기화'"></span>
+                            </button>
+                            <button type="button" @click="seedDemoAnalytics()" class="px-3 py-1.5 bg-amber-950/70 hover:bg-amber-900 border border-amber-800 text-amber-300 rounded-lg transition flex items-center gap-1.5" title="Generate Sample Visits for Testing">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                                <span>샘플 데이터 채우기</span>
+                            </button>
+                            <button type="button" @click="confirmClearLogs()" class="px-2.5 py-1.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 rounded-lg transition" title="Clear Logs">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. KPI Summary Cards (5 Key Metrics) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                    <!-- KPI 1: Total Pageviews -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 sm:p-5 rounded-2xl shadow-md relative overflow-hidden group hover:border-cyan-500/50 transition-colors">
+                        <div class="flex items-center justify-between text-brand-textMuted text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>총 페이지뷰 (PV)</span>
+                            <div class="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" x-text="analyticsKpi.total_pageviews.toLocaleString()">0</div>
+                        <div class="mt-2 text-[11px] text-cyan-400 flex items-center gap-1.5 font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                            <span>오늘 <span class="font-bold text-white" x-text="analyticsKpi.today_views"></span>회 조회</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Unique Visitors -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 sm:p-5 rounded-2xl shadow-md relative overflow-hidden group hover:border-teal-500/50 transition-colors">
+                        <div class="flex items-center justify-between text-brand-textMuted text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>순 방문자 수 (UV)</span>
+                            <div class="w-7 h-7 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-teal-300 tracking-tight" x-text="analyticsKpi.unique_visitors.toLocaleString()">0</div>
+                        <div class="mt-2 text-[11px] text-teal-400 flex items-center gap-1.5 font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+                            <span>오늘 <span class="font-bold text-white" x-text="analyticsKpi.today_visitors"></span>명 방문</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Unique IPs -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 sm:p-5 rounded-2xl shadow-md relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+                        <div class="flex items-center justify-between text-brand-textMuted text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>고유 IP 수</span>
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-300 tracking-tight" x-text="analyticsKpi.unique_ips.toLocaleString()">0</div>
+                        <div class="mt-2 text-[11px] text-slate-400">
+                            중복 없는 실제 접속 기기/망
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: New vs Returning -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 sm:p-5 rounded-2xl shadow-md relative overflow-hidden group hover:border-amber-500/50 transition-colors">
+                        <div class="flex items-center justify-between text-brand-textMuted text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>신규 vs 재방문</span>
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-2xl sm:text-3xl font-extrabold text-amber-300" x-text="analyticsKpi.new_visitors">0</span>
+                            <span class="text-xs text-slate-400">/ 재방문 <span class="text-amber-400 font-bold" x-text="analyticsKpi.returning_visitors">0</span></span>
+                        </div>
+                        <div class="mt-2 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden flex">
+                            <div class="bg-amber-400 h-full" :style="'width: ' + ((analyticsKpi.new_visitors / (analyticsKpi.unique_visitors || 1)) * 100) + '%'"></div>
+                            <div class="bg-teal-400 h-full" :style="'width: ' + ((analyticsKpi.returning_visitors / (analyticsKpi.unique_visitors || 1)) * 100) + '%'"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: Avg Duration & Bounce Rate -->
+                    <div class="bg-brand-cardBg border border-brand-border p-4 sm:p-5 rounded-2xl shadow-md relative overflow-hidden group hover:border-rose-500/50 transition-colors">
+                        <div class="flex items-center justify-between text-brand-textMuted text-xs font-bold uppercase tracking-wider mb-2">
+                            <span>평균 체류 시간</span>
+                            <div class="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                                <i class="fa-solid fa-stopwatch"></i>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" x-text="formatDuration(analyticsKpi.avg_duration_sec)">0초</div>
+                        <div class="mt-2 text-[11px] text-slate-400">
+                            이탈률: <span class="font-bold text-rose-300" x-text="analyticsKpi.bounce_rate + '%'">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Interactive Charts (Daily Trend & Hourly Breakdown) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Daily Trend Chart (2 Cols) -->
+                    <div class="lg:col-span-2 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-lg space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-bold text-white text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-area text-cyan-400"></i>
+                                    일별 방문자 &amp; 페이지뷰 추이
+                                </h3>
+                                <span class="text-xs text-brand-textMuted">선택한 기간 동안 매일의 방문자 수(UV)와 페이지 조회수(PV) 비교</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs font-semibold">
+                                <div class="flex items-center gap-1.5 text-cyan-400">
+                                    <span class="w-3 h-3 rounded bg-cyan-500 inline-block"></span> 페이지뷰 (PV)
+                                </div>
+                                <div class="flex items-center gap-1.5 text-emerald-400">
+                                    <span class="w-3 h-1 bg-emerald-400 inline-block"></span> 순방문자 (UV)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative h-64 sm:h-72 w-full pt-2">
+                            <canvas id="analyticsDailyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Hourly Traffic Distribution (1 Col) -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-lg space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-bold text-white text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-clock text-amber-400"></i>
+                                    시간대별 방문 패턴
+                                </h3>
+                                <span class="text-xs text-brand-textMuted">하루 중 가장 접속이 많은 시간대 (00시~23시)</span>
+                            </div>
+                        </div>
+                        <div class="relative h-64 sm:h-72 w-full pt-2">
+                            <canvas id="analyticsHourlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Device & Traffic Source Breakdown Charts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Device Breakdown Doughnut -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 shadow-md space-y-3">
+                        <h4 class="font-heading font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-mobile-screen text-indigo-400"></i> 접속 기기 비율
+                        </h4>
+                        <div class="relative h-44 w-full flex items-center justify-center">
+                            <canvas id="analyticsDeviceChart"></canvas>
+                        </div>
+                        <div class="space-y-1.5 pt-2 text-xs border-t border-brand-border/60">
+                            <template x-for="d in analyticsDevices" :key="d.device">
+                                <div class="flex items-center justify-between text-slate-300">
+                                    <span class="capitalize flex items-center gap-1.5">
+                                        <i :class="d.device === 'mobile' ? 'fa-solid fa-mobile-screen text-teal-400' : (d.device === 'tablet' ? 'fa-solid fa-tablet-screen-button text-purple-400' : 'fa-solid fa-laptop text-sky-400')"></i>
+                                        <span x-text="d.device"></span>
+                                    </span>
+                                    <span class="font-bold font-mono text-white" x-text="d.count + '건'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Traffic Referrers Doughnut/Bar -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 shadow-md space-y-3">
+                        <h4 class="font-heading font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-teal-400"></i> 유입 경로 (출처)
+                        </h4>
+                        <div class="relative h-44 w-full flex items-center justify-center">
+                            <canvas id="analyticsReferrerChart"></canvas>
+                        </div>
+                        <div class="space-y-1.5 pt-2 text-xs border-t border-brand-border/60">
+                            <template x-for="r in analyticsTopReferrers.slice(0, 4)" :key="r.source_name">
+                                <div class="flex items-center justify-between text-slate-300">
+                                    <span class="truncate max-w-[130px]" x-text="r.source_name"></span>
+                                    <span class="font-bold font-mono text-white" x-text="r.count + '회'"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Top Operating Systems & Browsers -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 shadow-md space-y-3">
+                        <h4 class="font-heading font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-window-restore text-amber-400"></i> 브라우저 &amp; OS
+                        </h4>
+                        <div class="space-y-2 pt-1 text-xs">
+                            <div class="font-bold text-slate-400 uppercase text-[10px]">인기 브라우저</div>
+                            <template x-for="b in analyticsBrowsers.slice(0, 4)" :key="b.browser">
+                                <div class="flex items-center justify-between text-slate-300 bg-brand-darkBg/50 p-1.5 rounded-lg">
+                                    <span class="truncate" x-text="b.browser"></span>
+                                    <span class="font-mono text-amber-300 font-bold" x-text="b.count"></span>
+                                </div>
+                            </template>
+                            <div class="font-bold text-slate-400 uppercase text-[10px] pt-1">운영체제 (OS)</div>
+                            <template x-for="o in analyticsOperatingSystems.slice(0, 3)" :key="o.os">
+                                <div class="flex items-center justify-between text-slate-300 bg-brand-darkBg/50 p-1.5 rounded-lg">
+                                    <span class="truncate" x-text="o.os"></span>
+                                    <span class="font-mono text-sky-300 font-bold" x-text="o.count"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Top Countries & Cities -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 shadow-md space-y-3">
+                        <h4 class="font-heading font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-earth-oceania text-cyan-400"></i> 방문 지역 / 국가
+                        </h4>
+                        <div class="space-y-2 pt-1 text-xs">
+                            <template x-for="loc in analyticsLocations.slice(0, 6)" :key="(loc.country + loc.city)">
+                                <div class="flex items-center justify-between text-slate-300 bg-brand-darkBg/50 p-1.5 rounded-lg">
+                                    <div class="flex items-center gap-1.5 truncate">
+                                        <span x-text="getCountryFlag(loc.country_code)"></span>
+                                        <span class="truncate font-medium text-white" x-text="(loc.city ? loc.city + ', ' : '') + loc.country"></span>
+                                    </div>
+                                    <span class="font-mono text-cyan-300 font-bold" x-text="loc.count + '회'"></span>
+                                </div>
+                            </template>
+                            <template x-if="analyticsLocations.length === 0">
+                                <div class="text-center text-slate-500 py-4 text-xs">방문 지역 데이터가 없습니다.</div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Top Visited Pages & Conversions Table -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Top Pages Ranking (2 Cols) -->
+                    <div class="lg:col-span-2 bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-lg space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-bold text-white text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-fire text-rose-400"></i>
+                                    가장 많이 방문한 페이지 순위
+                                </h3>
+                                <span class="text-xs text-brand-textMuted">고객들이 어떤 콘텐츠에 가장 큰 관심을 보였는지 확인하세요</span>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead>
+                                    <tr class="border-b border-brand-border text-brand-textMuted uppercase text-[10px] tracking-wider">
+                                        <th class="pb-2.5 px-3">순위</th>
+                                        <th class="pb-2.5 px-3">페이지 제목 &amp; URL</th>
+                                        <th class="pb-2.5 px-3 text-right">조회수 (PV)</th>
+                                        <th class="pb-2.5 px-3 text-right">순방문자 (UV)</th>
+                                        <th class="pb-2.5 px-3 text-right">평균 체류</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-brand-border/40">
+                                    <template x-for="(p, idx) in analyticsTopPages" :key="p.page_url">
+                                        <tr class="hover:bg-brand-inner/40 transition">
+                                            <td class="py-2.5 px-3 font-mono font-bold">
+                                                <span :class="idx === 0 ? 'text-amber-400 font-black' : (idx === 1 ? 'text-slate-300 font-black' : (idx === 2 ? 'text-amber-600 font-black' : 'text-slate-500'))" x-text="idx + 1"></span>
+                                            </td>
+                                            <td class="py-2.5 px-3">
+                                                <div class="font-bold text-white hover:text-cyan-400 transition cursor-pointer" x-text="p.page_title || p.page_url"></div>
+                                                <div class="text-[11px] font-mono text-cyan-400/80 truncate max-w-sm mt-0.5" x-text="p.page_url"></div>
+                                            </td>
+                                            <td class="py-2.5 px-3 text-right font-mono font-bold text-white" x-text="Number(p.views).toLocaleString()"></td>
+                                            <td class="py-2.5 px-3 text-right font-mono text-teal-300 font-semibold" x-text="Number(p.unique_visitors).toLocaleString()"></td>
+                                            <td class="py-2.5 px-3 text-right font-mono text-slate-400" x-text="formatDuration(p.avg_duration)"></td>
+                                        </tr>
+                                    </template>
+                                    <template x-if="analyticsTopPages.length === 0">
+                                        <tr>
+                                            <td colspan="5" class="py-8 text-center text-slate-500">조회된 페이지 데이터가 없습니다.</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Customer Conversion Actions & Events (1 Col) -->
+                    <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-5 shadow-lg space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-bold text-white text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-bullseye text-emerald-400"></i>
+                                    주요 고객 전환 행동
+                                </h3>
+                                <span class="text-xs text-brand-textMuted">전화, 상담, 견적 계산 등 행동 지표</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-1 text-xs">
+                            <template x-for="ev in analyticsEvents" :key="ev.event_type">
+                                <div class="bg-brand-darkBg/70 border border-brand-border p-3.5 rounded-xl flex items-center justify-between">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+                                            <i :class="ev.event_type === 'booking_click' ? 'fa-solid fa-calendar-check' : (ev.event_type === 'quote_calc' ? 'fa-solid fa-calculator' : (ev.event_type === 'whatsapp_click' ? 'fa-brands fa-whatsapp' : 'fa-solid fa-phone'))"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-white" x-text="formatEventName(ev.event_type)"></div>
+                                            <div class="text-[10px] text-brand-textMuted font-mono" x-text="ev.event_type"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-base font-extrabold font-mono text-emerald-300" x-text="ev.count + '회'"></span>
+                                </div>
+                            </template>
+                            <template x-if="analyticsEvents.length === 0">
+                                <div class="py-10 text-center text-slate-500 text-xs">
+                                    <i class="fa-regular fa-bell text-2xl mb-2 text-slate-600 block"></i>
+                                    아직 기록된 특정 전환 이벤트가 없습니다.<br>
+                                    (견적 계산, 상담 버튼 클릭 시 자동 집계됩니다)
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Real-time Detailed Visitor Log Table -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl shadow-lg p-5 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-brand-border">
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-cyan-400"></i>
+                                실시간 방문자 상세 접속 로그
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-normal" x-text="'총 ' + analyticsLogTotal.toLocaleString() + '건'"></span>
+                            </h3>
+                            <span class="text-xs text-brand-textMuted">접속 시각, IP, 방문 지역, 사용 기기, 방문 페이지 및 유입 경로 실시간 확인</span>
+                        </div>
+
+                        <!-- Table Search & Filter Controls -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" x-model="analyticsLogSearch" @input.debounce.300ms="loadAnalyticsLogs(1)" placeholder="IP, 페이지, 국가 검색..." class="bg-brand-darkBg border border-brand-border rounded-lg pl-8 pr-3 py-1.5 text-xs text-white outline-none focus:border-cyan-500 w-48 sm:w-56">
+                            </div>
+                            <select x-model="analyticsLogDeviceFilter" @change="loadAnalyticsLogs(1)" class="bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-slate-300 outline-none">
+                                <option value="all">모든 기기</option>
+                                <option value="mobile">모바일</option>
+                                <option value="desktop">데스크톱</option>
+                                <option value="tablet">태블릿</option>
+                            </select>
+                            <button type="button" @click="loadAnalyticsLogs(1)" class="p-2 bg-brand-inner hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition" title="Refresh Logs">
+                                <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Logs Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-brand-border text-brand-textMuted uppercase text-[10px] tracking-wider">
+                                    <th class="py-2 px-3">접속 일시</th>
+                                    <th class="py-2 px-3">방문자 / IP &amp; 지역</th>
+                                    <th class="py-2 px-3">기기 / 브라우저</th>
+                                    <th class="py-2 px-3">방문 페이지</th>
+                                    <th class="py-2 px-3">유입 경로 (Referrer)</th>
+                                    <th class="py-2 px-3 text-right">이벤트 / 체류</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/40">
+                                <template x-for="log in analyticsLogs" :key="log.id">
+                                    <tr class="hover:bg-brand-inner/30 transition">
+                                        <!-- Time -->
+                                        <td class="py-3 px-3 whitespace-nowrap">
+                                            <div class="text-white font-mono font-semibold" x-text="log.created_at.substring(5, 16)"></div>
+                                            <div class="text-[10px] text-slate-500" x-text="timeAgo(log.created_at)"></div>
+                                        </td>
+
+                                        <!-- IP & Location -->
+                                        <td class="py-3 px-3">
+                                            <div class="flex items-center gap-1.5 font-mono text-slate-200">
+                                                <span x-text="getCountryFlag(log.country_code)"></span>
+                                                <span class="font-semibold" x-text="maskIp(log.ip_address)"></span>
+                                            </div>
+                                            <div class="text-[11px] text-cyan-400/90 truncate max-w-[180px]" x-text="(log.city ? log.city + ', ' : '') + log.country"></div>
+                                        </td>
+
+                                        <!-- Device / Browser -->
+                                        <td class="py-3 px-3 whitespace-nowrap">
+                                            <div class="flex items-center gap-1.5 text-slate-200">
+                                                <i :class="log.device_type === 'mobile' ? 'fa-solid fa-mobile-screen text-teal-400' : (log.device_type === 'tablet' ? 'fa-solid fa-tablet-screen-button text-purple-400' : 'fa-solid fa-laptop text-sky-400')"></i>
+                                                <span class="font-medium" x-text="log.os || 'Unknown OS'"></span>
+                                            </div>
+                                            <div class="text-[11px] text-slate-400" x-text="log.browser || 'Browser'"></div>
+                                        </td>
+
+                                        <!-- Page -->
+                                        <td class="py-3 px-3 max-w-xs">
+                                            <div class="text-white font-medium truncate" x-text="log.page_title || log.page_url"></div>
+                                            <a :href="log.page_url" target="_blank" class="text-[11px] font-mono text-cyan-400 hover:underline flex items-center gap-1 truncate">
+                                                <span x-text="log.page_url"></span>
+                                                <i class="fa-solid fa-external-link text-[9px] shrink-0"></i>
+                                            </a>
+                                        </td>
+
+                                        <!-- Referrer -->
+                                        <td class="py-3 px-3 max-w-[200px]">
+                                            <template x-if="log.referrer && log.referrer !== '-'">
+                                                <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700 truncate inline-block max-w-full" x-text="log.referrer_domain || log.referrer" :title="log.referrer"></span>
+                                            </template>
+                                            <template x-if="!log.referrer || log.referrer === '-'">
+                                                <span class="text-slate-500 text-[11px]">Direct / 북마크</span>
+                                            </template>
+                                        </td>
+
+                                        <!-- Event & Duration -->
+                                        <td class="py-3 px-3 text-right whitespace-nowrap">
+                                            <span :class="log.event_type === 'pageview' ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'" class="px-2 py-0.5 rounded text-[10px] font-bold border uppercase inline-block" x-text="log.event_type"></span>
+                                            <div class="text-[10px] font-mono text-slate-400 mt-1" x-text="formatDuration(log.duration_sec)"></div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="analyticsLogs.length === 0">
+                                    <tr>
+                                        <td colspan="6" class="py-10 text-center text-slate-500">
+                                            <i class="fa-solid fa-inbox text-3xl mb-2 text-slate-600 block"></i>
+                                            표시할 방문자 로그가 없습니다.
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between pt-3 border-t border-brand-border/60 text-xs">
+                        <div class="text-slate-400">
+                            페이지 <span class="font-bold text-white" x-text="analyticsLogPage"></span> / <span x-text="analyticsLogTotalPages || 1"></span> (총 <span x-text="analyticsLogTotal"></span>건)
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="loadAnalyticsLogs(analyticsLogPage - 1)" :disabled="analyticsLogPage <= 1" class="px-3 py-1.5 rounded-lg bg-brand-darkBg border border-brand-border text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i class="fa-solid fa-chevron-left text-xs"></i> 이전
+                            </button>
+                            <button type="button" @click="loadAnalyticsLogs(analyticsLogPage + 1)" :disabled="analyticsLogPage >= analyticsLogTotalPages" class="px-3 py-1.5 rounded-lg bg-brand-darkBg border border-brand-border text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
+                                다음 <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </main>
     </div>
 
@@ -4524,10 +5062,52 @@
                 pricingActiveSubTab: 'base_sizes', // 'base_sizes', 'lengths_hair', 'textures_grey', 'salon_services', 'craft_custom'
                 pricingLastUpdated: '',
 
+                // Website Visitor Daily Analytics state
+                analyticsPeriod: '7days',
+                analyticsStartDate: '',
+                analyticsEndDate: '',
+                analyticsExcludeAdmin: true,
+                analyticsExcludeBots: true,
+                isLoadingAnalytics: false,
+                isSyncingLogs: false,
+                analyticsKpi: {
+                    total_pageviews: 0,
+                    unique_visitors: 0,
+                    unique_ips: 0,
+                    avg_duration_sec: 0,
+                    bounce_rate: 0,
+                    new_visitors: 0,
+                    returning_visitors: 0,
+                    today_views: 0,
+                    today_visitors: 0
+                },
+                analyticsDailyTrends: [],
+                analyticsHourlyTrends: [],
+                analyticsTopPages: [],
+                analyticsTopReferrers: [],
+                analyticsDevices: [],
+                analyticsBrowsers: [],
+                analyticsOperatingSystems: [],
+                analyticsLocations: [],
+                analyticsEvents: [],
+                analyticsLogs: [],
+                analyticsLogPage: 1,
+                analyticsLogTotalPages: 1,
+                analyticsLogTotal: 0,
+                analyticsLogSearch: '',
+                analyticsLogDeviceFilter: 'all',
+                analyticsLogEventFilter: 'all',
+                chartDailyInstance: null,
+                chartHourlyInstance: null,
+                chartDeviceInstance: null,
+                chartReferrerInstance: null,
+
                 async init() {
                     await this.checkAuth();
                     this.initWeek();
                     await this.loadClosureRules();
+                    try { localStorage.setItem('dh_admin_logged', '1'); } catch(e) {}
+                    this.fetchTodayBadge();
                 },
 
                 async loadPricingConfig() {
@@ -7049,6 +7629,356 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                         navigator.clipboard.writeText(text);
                         this.showToast('Receipt text copied to clipboard!');
                     }
+                },
+
+                // ==========================================
+                // WEBSITE VISITOR DAILY ANALYTICS METHODS
+                // ==========================================
+                async fetchTodayBadge() {
+                    try {
+                        const res = await fetch('api_analytics.php?action=summary&period=today', { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data && data.status === 'success' && data.kpis) {
+                            this.analyticsKpi.today_visitors = data.kpis.today_visitors || 0;
+                            this.analyticsKpi.today_views = data.kpis.today_views || 0;
+                        }
+                    } catch(e) {}
+                },
+
+                setAnalyticsPeriod(p) {
+                    this.analyticsPeriod = p;
+                    if (p !== 'custom') {
+                        this.loadAnalytics(p);
+                    }
+                },
+
+                async loadAnalytics(periodOverride) {
+                    const period = periodOverride || this.analyticsPeriod;
+                    this.isLoadingAnalytics = true;
+                    try {
+                        let url = `api_analytics.php?action=summary&period=${period}&exclude_admin=${this.analyticsExcludeAdmin ? 1 : 0}&exclude_bots=${this.analyticsExcludeBots ? 1 : 0}`;
+                        if (period === 'custom' && this.analyticsStartDate && this.analyticsEndDate) {
+                            url += `&start_date=${this.analyticsStartDate}&end_date=${this.analyticsEndDate}`;
+                        }
+                        const res = await fetch(url, { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.analyticsKpi = data.kpis || this.analyticsKpi;
+                            this.analyticsDailyTrends = data.daily_trends || [];
+                            this.analyticsHourlyTrends = data.hourly_trends || [];
+                            this.analyticsTopPages = data.top_pages || [];
+                            this.analyticsTopReferrers = data.top_referrers || [];
+                            this.analyticsDevices = data.devices || [];
+                            this.analyticsBrowsers = data.browsers || [];
+                            this.analyticsOperatingSystems = data.operating_systems || [];
+                            this.analyticsLocations = data.locations || [];
+                            this.analyticsEvents = data.events || [];
+
+                            this.$nextTick(() => {
+                                this.renderAnalyticsCharts();
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Analytics load error:', e);
+                    } finally {
+                        this.isLoadingAnalytics = false;
+                    }
+                    this.loadAnalyticsLogs(1);
+                },
+
+                renderAnalyticsCharts() {
+                    if (typeof Chart === 'undefined') return;
+
+                    // 1. Daily Trend Chart (Area + Line)
+                    const dailyCanvas = document.getElementById('analyticsDailyChart');
+                    if (dailyCanvas) {
+                        if (this.chartDailyInstance) this.chartDailyInstance.destroy();
+                        const ctx = dailyCanvas.getContext('2d');
+                        const labels = this.analyticsDailyTrends.map(d => d.display_date || d.date);
+                        const pvData = this.analyticsDailyTrends.map(d => d.pageviews);
+                        const uvData = this.analyticsDailyTrends.map(d => d.unique_visitors);
+
+                        this.chartDailyInstance = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        type: 'line',
+                                        label: '순방문자 (UV)',
+                                        data: uvData,
+                                        borderColor: '#10B981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                        borderWidth: 2.5,
+                                        pointRadius: 3,
+                                        pointBackgroundColor: '#10B981',
+                                        tension: 0.35,
+                                        fill: false,
+                                        yAxisID: 'y'
+                                    },
+                                    {
+                                        type: 'bar',
+                                        label: '페이지뷰 (PV)',
+                                        data: pvData,
+                                        backgroundColor: 'rgba(6, 182, 212, 0.65)',
+                                        borderColor: '#06B6D4',
+                                        borderWidth: 1,
+                                        borderRadius: 6,
+                                        yAxisID: 'y'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: { mode: 'index', intersect: false },
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: { color: 'rgba(255,255,255,0.05)' },
+                                        ticks: { color: '#94A3B8', font: { size: 10 } }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(255,255,255,0.05)' },
+                                        ticks: { color: '#94A3B8', font: { size: 10 }, precision: 0 }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // 2. Hourly Distribution Chart
+                    const hourlyCanvas = document.getElementById('analyticsHourlyChart');
+                    if (hourlyCanvas) {
+                        if (this.chartHourlyInstance) this.chartHourlyInstance.destroy();
+                        const ctx = hourlyCanvas.getContext('2d');
+                        const hLabels = this.analyticsHourlyTrends.map(h => h.hour);
+                        const hData = this.analyticsHourlyTrends.map(h => h.pageviews);
+
+                        this.chartHourlyInstance = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: hLabels,
+                                datasets: [{
+                                    label: '조회수',
+                                    data: hData,
+                                    backgroundColor: 'rgba(245, 158, 11, 0.75)',
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { color: '#94A3B8', font: { size: 9 }, maxTicksLimit: 12 }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(255,255,255,0.05)' },
+                                        ticks: { color: '#94A3B8', font: { size: 9 }, precision: 0 }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // 3. Device Doughnut
+                    const devCanvas = document.getElementById('analyticsDeviceChart');
+                    if (devCanvas) {
+                        if (this.chartDeviceInstance) this.chartDeviceInstance.destroy();
+                        const ctx = devCanvas.getContext('2d');
+                        const devLabels = this.analyticsDevices.map(d => d.device.toUpperCase());
+                        const devCounts = this.analyticsDevices.map(d => d.count);
+
+                        this.chartDeviceInstance = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: devLabels.length ? devLabels : ['NO DATA'],
+                                datasets: [{
+                                    data: devCounts.length ? devCounts : [1],
+                                    backgroundColor: ['#14B8A6', '#6366F1', '#EC4899', '#94A3B8'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { color: '#94A3B8', boxWidth: 10, font: { size: 10 } } }
+                                },
+                                cutout: '70%'
+                            }
+                        });
+                    }
+
+                    // 4. Referrer Doughnut
+                    const refCanvas = document.getElementById('analyticsReferrerChart');
+                    if (refCanvas) {
+                        if (this.chartReferrerInstance) this.chartReferrerInstance.destroy();
+                        const ctx = refCanvas.getContext('2d');
+                        const rLabels = this.analyticsTopReferrers.map(r => r.source_name);
+                        const rCounts = this.analyticsTopReferrers.map(r => r.count);
+
+                        this.chartReferrerInstance = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: rLabels.length ? rLabels : ['Direct'],
+                                datasets: [{
+                                    data: rCounts.length ? rCounts : [1],
+                                    backgroundColor: ['#06B6D4', '#10B981', '#F59E0B', '#F43F5E', '#8B5CF6'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { color: '#94A3B8', boxWidth: 10, font: { size: 10 } } }
+                                },
+                                cutout: '70%'
+                            }
+                        });
+                    }
+                },
+
+                async loadAnalyticsLogs(page) {
+                    this.analyticsLogPage = page || 1;
+                    try {
+                        let url = `api_analytics.php?action=logs&page=${this.analyticsLogPage}&limit=25&search=${encodeURIComponent(this.analyticsLogSearch)}&device=${this.analyticsLogDeviceFilter}&exclude_admin=${this.analyticsExcludeAdmin ? 1 : 0}&exclude_bots=${this.analyticsExcludeBots ? 1 : 0}`;
+                        const res = await fetch(url, { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.analyticsLogs = data.logs || [];
+                            this.analyticsLogTotal = data.total || 0;
+                            this.analyticsLogTotalPages = data.pages || 1;
+                        }
+                    } catch (e) {
+                        console.error('Logs load error:', e);
+                    }
+                },
+
+                async syncApacheLogs() {
+                    this.isSyncingLogs = true;
+                    try {
+                        const res = await fetch('api_analytics.php?action=sync_apache_logs', { method: 'POST' });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.showToast(data.message || `동기화 완료! ${data.imported}건의 방문 기록을 가져왔습니다.`);
+                            await this.loadAnalytics();
+                        } else {
+                            this.showToast('로그 동기화 실패: ' + (data.message || '서버 확인 필요'), 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('서버 로그 동기화 중 오류가 발생했습니다.', 'error');
+                    } finally {
+                        this.isSyncingLogs = false;
+                    }
+                },
+
+                async seedDemoAnalytics() {
+                    if (!confirm('최근 14일간의 사실적인 방문자 샘플 데이터를 생성하시겠습니까?')) return;
+                    try {
+                        const res = await fetch('api_analytics.php?action=seed_demo_logs', { method: 'POST' });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.showToast(data.message || '샘플 데이터가 생성되었습니다.');
+                            await this.loadAnalytics();
+                        }
+                    } catch (e) {
+                        this.showToast('샘플 생성 실패', 'error');
+                    }
+                },
+
+                async confirmClearLogs() {
+                    const choice = prompt('로그 정리 방식을 선택하세요:\n1: 30일 이전 로그 삭제\n2: 90일 이전 로그 삭제\n3: 검색엔진/봇 로그만 삭제\n4: 전체 로그 비우기\n(번호 입력)');
+                    if (!choice) return;
+                    let mode = '';
+                    if (choice === '1') mode = 'older_than_30_days';
+                    else if (choice === '2') mode = 'older_than_90_days';
+                    else if (choice === '3') mode = 'only_bots';
+                    else if (choice === '4') {
+                        if (!confirm('정말로 모든 방문자 로그를 삭제하시겠습니까?')) return;
+                        mode = 'all';
+                    } else return;
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('mode', mode);
+                        const res = await fetch('api_analytics.php?action=clear_logs', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data && data.status === 'success') {
+                            this.showToast(data.message || '로그가 정리되었습니다.');
+                            await this.loadAnalytics();
+                        }
+                    } catch (e) {
+                        this.showToast('오류 발생', 'error');
+                    }
+                },
+
+                exportAnalyticsCsv() {
+                    window.location.href = `api_analytics.php?action=export_csv&start_date=${this.analyticsStartDate || ''}&end_date=${this.analyticsEndDate || ''}&exclude_admin=${this.analyticsExcludeAdmin ? 1 : 0}&exclude_bots=${this.analyticsExcludeBots ? 1 : 0}`;
+                },
+
+                formatDuration(sec) {
+                    const s = parseInt(sec) || 0;
+                    if (s < 60) return s + '초';
+                    const m = Math.floor(s / 60);
+                    const rem = s % 60;
+                    return `${m}분 ${rem}초`;
+                },
+
+                formatEventName(ev) {
+                    const map = {
+                        'pageview': '페이지 조회',
+                        'booking_click': '상담 예약 버튼 클릭',
+                        'quote_calc': '견적 계산기 사용',
+                        'calculator_view': '계산기 열람',
+                        'whatsapp_click': '왓츠앱 상담 문의',
+                        'phone_call_click': '전화 상담 연결',
+                        'gallery_view': '비포/애프터 갤러리 탐색'
+                    };
+                    return map[ev] || ev;
+                },
+
+                getCountryFlag(code) {
+                    if (!code || code === 'Unknown') return '🌐';
+                    const c = code.toUpperCase();
+                    if (c === 'AU') return '🇦🇺';
+                    if (c === 'KR') return '🇰🇷';
+                    if (c === 'US') return '🇺🇸';
+                    if (c === 'NZ') return '🇳🇿';
+                    if (c === 'GB') return '🇬🇧';
+                    if (c === 'CN') return '🇨🇳';
+                    if (c === 'JP') return '🇯🇵';
+                    if (c === 'CA') return '🇨🇦';
+                    if (c === 'SG') return '🇸🇬';
+                    return '🌐';
+                },
+
+                maskIp(ip) {
+                    if (!ip) return '***';
+                    const parts = ip.split('.');
+                    if (parts.length === 4) {
+                        return `${parts[0]}.${parts[1]}.***.${parts[3]}`;
+                    }
+                    return ip;
+                },
+
+                timeAgo(dtStr) {
+                    if (!dtStr) return '';
+                    const now = new Date();
+                    const d = new Date(dtStr.replace(' ', 'T'));
+                    const diffSec = Math.floor((now - d) / 1000);
+                    if (diffSec < 60) return '방금 전';
+                    if (diffSec < 3600) return Math.floor(diffSec / 60) + '분 전';
+                    if (diffSec < 86400) return Math.floor(diffSec / 3600) + '시간 전';
+                    return Math.floor(diffSec / 86400) + '일 전';
                 }
             }
         }
