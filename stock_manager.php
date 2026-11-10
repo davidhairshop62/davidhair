@@ -4988,12 +4988,29 @@
                         <span class="text-[11px] text-slate-400">인보이스 <strong class="text-brand-tealLight font-mono" x-text="selectedInvoice ? '#' + selectedInvoice.invoice_number : ''"></strong> 출력이 끝난 후 목록으로 돌아가실 수 있습니다.</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- WhatsApp Button -->
+                    <button type="button" @click="sendWhatsAppInvoice(selectedInvoice)"
+                        class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>WhatsApp 전송</span>
+                    </button>
+
+                    <!-- Telegram Button -->
+                    <button type="button" @click="sendTelegramInvoice(selectedInvoice)" :disabled="isSendingTelegramInvoice"
+                        class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer disabled:opacity-50">
+                        <i class="fa-brands fa-telegram text-sm" :class="{ 'fa-spin': isSendingTelegramInvoice }"></i>
+                        <span>Telegram 전송</span>
+                    </button>
+
+                    <!-- Print Button -->
                     <button type="button" @click="printInvoice()"
                         class="px-4 py-2.5 bg-brand-teal hover:bg-teal-600 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
                         <i class="fa-solid fa-print"></i>
-                        <span>다시 인쇄 (Print Again)</span>
+                        <span>다시 인쇄 (Print)</span>
                     </button>
+
+                    <!-- Back to List Button -->
                     <button type="button" @click="isInvoicePrintModalOpen = false; activeTab = 'invoices';"
                         class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
                         <i class="fa-solid fa-arrow-left"></i>
