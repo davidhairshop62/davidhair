@@ -4956,7 +4956,7 @@
 
                             <div class="space-y-1">
                                 <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Systems include 1 complimentary fitting check &amp; styling touch-up within 14 days of appointment.</div>
-                                <div><strong>Direct Bank Deposit (if required):</strong> Bank: ANZ &bull; BSB: 013-006 &bull; Account: 1234-5678 &bull; Name: David Hair Systems</div>
+                                <div><strong>Direct Bank Deposit (if required):</strong> BSB: <strong>083-214</strong> &bull; ACC: <strong>19-869-4174</strong> &bull; Name: <strong>Pink Age Hair</strong></div>
                             </div>
 
                             <div class="text-center pt-4 text-slate-400 border-t border-slate-100">
