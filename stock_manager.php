@@ -1752,6 +1752,7 @@
                                             <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded mt-0.5 inline-block"
                                                 :class="{
                                                     'bg-amber-500/20 text-amber-300 border border-amber-500/30': inv.invoice_type === 'Tax Invoice',
+                                                    'bg-purple-500/20 text-purple-300 border border-purple-500/30': inv.invoice_type === 'Invoice',
                                                     'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30': inv.invoice_type === 'Receipt',
                                                     'bg-sky-500/20 text-sky-300 border border-sky-500/30': inv.invoice_type === 'Quote'
                                                 }" x-text="inv.invoice_type"></span>
@@ -1784,7 +1785,7 @@
                                             <div class="font-mono font-bold text-sm text-emerald-400">
                                                 $<span x-text="Number(inv.total_amount || 0).toFixed(2)"></span>
                                             </div>
-                                            <div x-show="Number(inv.tax_amount || 0) > 0" class="text-[10px] text-slate-400">
+                                            <div x-show="Number(inv.tax_amount || 0) > 0 && (inv.payment_method || '').trim().toLowerCase() !== 'cash'" class="text-[10px] text-slate-400">
                                                 Inc. GST $<span x-text="Number(inv.tax_amount || 0).toFixed(2)"></span>
                                             </div>
                                         </td>
@@ -4522,6 +4523,7 @@
                         <label class="block font-bold text-slate-300 mb-1">Document Type</label>
                         <select x-model="invoiceForm.invoice_type" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
                             <option value="Tax Invoice">Tax Invoice</option>
+                            <option value="Invoice">Invoice</option>
                             <option value="Receipt">Receipt (Payment Received)</option>
                             <option value="Quote">Quote / Estimate</option>
                         </select>
@@ -4577,7 +4579,9 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div>
                             <label class="block font-semibold text-slate-300 mb-1">Payment Method</label>
-                            <select x-model="invoiceForm.payment_method" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
+                            <select x-model="invoiceForm.payment_method" 
+                                @change="if (invoiceForm.payment_method === 'Cash' && invoiceForm.invoice_type === 'Tax Invoice') { invoiceForm.invoice_type = 'Invoice'; } else if (invoiceForm.payment_method !== 'Cash' && invoiceForm.invoice_type === 'Invoice') { invoiceForm.invoice_type = 'Tax Invoice'; }"
+                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-brand-teal">
                                 <option value="Card / EFTPOS">Card / EFTPOS</option>
                                 <option value="Cash">Cash</option>
                                 <option value="Bank Transfer">Bank Transfer (EFT)</option>
@@ -4721,12 +4725,18 @@
                         </div>
 
                         <!-- GST Toggle -->
-                        <div class="flex justify-between items-center text-slate-300 pt-1 border-t border-brand-border/40">
+                        <div x-show="invoiceForm.payment_method !== 'Cash'" class="flex justify-between items-center text-slate-300 pt-1 border-t border-brand-border/40">
                             <label class="flex items-center gap-1.5 cursor-pointer">
                                 <input type="checkbox" x-model="invoiceForm.tax_included" class="w-3.5 h-3.5 rounded text-brand-teal">
                                 <span class="text-[11px]">Include 10% GST (AU Standard)</span>
                             </label>
                             <span class="font-mono text-slate-400 text-xs">GST: $<span x-text="computedInvoiceTax.toFixed(2)"></span></span>
+                        </div>
+                        <div x-show="invoiceForm.payment_method === 'Cash'" class="flex justify-between items-center text-slate-400 pt-1 border-t border-brand-border/40 text-[11px]">
+                            <span class="text-amber-400 font-medium flex items-center gap-1">
+                                <i class="fa-solid fa-coins"></i> Cash Payment (No GST Applied)
+                            </span>
+                            <span class="font-mono text-slate-500 text-xs">GST: $0.00</span>
                         </div>
 
                         <!-- Grand Total -->
@@ -4736,7 +4746,7 @@
                                 <div class="font-mono font-black text-lg sm:text-xl text-emerald-400">
                                     AUD $<span x-text="computedInvoiceTotal.toFixed(2)"></span>
                                 </div>
-                                <span class="text-[10px] text-slate-400" x-text="invoiceForm.tax_included ? '(Inclusive of 10% GST)' : '(Plus 10% GST)'"></span>
+                                <span class="text-[10px] text-slate-400" x-text="invoiceForm.payment_method === 'Cash' ? '(No GST Applied)' : (invoiceForm.tax_included ? '(Inclusive of 10% GST)' : '(Plus 10% GST)')"></span>
                             </div>
                         </div>
                     </div>
@@ -4841,13 +4851,16 @@
                                 <div class="text-xs text-slate-600 space-y-0.5 pt-2">
                                     <div>Shop 62, 46-58 Buckingham Ave, Springvale VIC 3171</div>
                                     <div>Phone: <strong>+61 433 484 882</strong> &bull; Email: <strong>shc9607@gmail.com</strong></div>
-                                    <div>Web: <strong>www.davidhairshop.com</strong> &bull; ABN: <strong>82 612 948 231</strong></div>
+                                    <div>Web: <strong>www.davidhairshop.com</strong> &bull; ABN: <strong>85 541 218 317</strong></div>
                                 </div>
                             </div>
 
                             <!-- Document Title & Status Stamp -->
                             <div class="text-left sm:text-right space-y-2">
-                                <div class="font-heading font-black text-2xl uppercase tracking-wider text-slate-900" x-text="selectedInvoice.invoice_type || 'TAX INVOICE'"></div>
+                                <div class="font-heading font-black text-2xl uppercase tracking-wider text-slate-900" 
+                                    x-text="(selectedInvoice.payment_method || '').trim().toLowerCase() === 'cash' 
+                                        ? ((selectedInvoice.invoice_type || 'INVOICE').replace(/tax\s*/i, '').trim().toUpperCase() || 'INVOICE')
+                                        : (selectedInvoice.invoice_type || 'TAX INVOICE')"></div>
                                 <div class="inline-block px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider border-2"
                                     :class="{
                                         'border-emerald-600 text-emerald-700 bg-emerald-50': selectedInvoice.status === 'Paid',
@@ -4921,7 +4934,7 @@
                                         <span class="font-mono">-$<span x-text="Number(selectedInvoice.discount).toFixed(2)"></span></span>
                                     </div>
                                 </template>
-                                <template x-if="Number(selectedInvoice.tax_amount || 0) > 0">
+                                <template x-if="Number(selectedInvoice.tax_amount || 0) > 0 && (selectedInvoice.payment_method || '').trim().toLowerCase() !== 'cash'">
                                     <div class="flex justify-between text-slate-600">
                                         <span>Includes 10% GST:</span>
                                         <span class="font-mono">$<span x-text="Number(selectedInvoice.tax_amount).toFixed(2)"></span></span>
@@ -7002,6 +7015,9 @@
                 },
 
                 get computedInvoiceTax() {
+                    if ((this.invoiceForm.payment_method || '').trim().toLowerCase() === 'cash') {
+                        return 0;
+                    }
                     const net = Math.max(0, this.computedInvoiceSubtotal - (Number(this.invoiceForm.discount) || 0));
                     if (this.invoiceForm.tax_included) {
                         return net / 11;
@@ -7013,6 +7029,9 @@
 
                 get computedInvoiceTotal() {
                     const net = Math.max(0, this.computedInvoiceSubtotal - (Number(this.invoiceForm.discount) || 0));
+                    if ((this.invoiceForm.payment_method || '').trim().toLowerCase() === 'cash') {
+                        return net;
+                    }
                     if (this.invoiceForm.tax_included) {
                         return net;
                     } else {
@@ -7314,9 +7333,14 @@
                         });
                     }
 
+                    const isCash = (inv.payment_method || '').trim().toLowerCase() === 'cash';
+                    const docType = isCash 
+                        ? ((inv.invoice_type || 'Invoice').replace(/tax\s*/i, '').trim() || 'Invoice')
+                        : (inv.invoice_type || 'Tax Invoice');
+
                     const message = 
 `🧾 *DAVID HAIR SYSTEMS*
-*${inv.invoice_type || 'Tax Invoice'} / Receipt*
+*${docType} / Receipt*
 ━━━━━━━━━━━━━━━━━━━━
 🔖 *Invoice #:* ${invNum}
 📅 *Date:* ${date}
@@ -7609,8 +7633,13 @@ Thank you for choosing David Hair Systems!`;
                         });
                     }
 
+                    const isCash = (inv.payment_method || '').trim().toLowerCase() === 'cash';
+                    const docType = isCash 
+                        ? ((inv.invoice_type || 'Invoice').replace(/tax\s*/i, '').trim() || 'Invoice')
+                        : (inv.invoice_type || 'Tax Invoice');
+
                     const text = 
-`[David Hair Systems - ${inv.invoice_type || 'Tax Invoice'}]
+`[David Hair Systems - ${docType}]
 Invoice #: ${invNum}
 Date: ${date}
 Customer: ${name}

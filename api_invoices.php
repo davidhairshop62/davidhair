@@ -264,9 +264,16 @@ if ($action === 'create') {
     $taxIncluded = !empty($postData['tax_included']); // whether tax is inclusive or exclusive
     $discount = max(0, floatval($postData['discount'] ?? 0));
 
+    // If payment method is Cash, no GST is applied.
     // If inclusive, subtotal already includes GST. If exclusive, add GST.
     // Default in Australia retail: prices are GST inclusive or GST is 10% of subtotal.
-    if ($taxIncluded) {
+    if (strcasecmp($paymentMethod, 'Cash') === 0) {
+        $taxAmount = 0.00;
+        $totalAmount = round($subtotal - $discount, 2);
+        if (strcasecmp($invoiceType, 'Tax Invoice') === 0) {
+            $invoiceType = 'Invoice';
+        }
+    } else if ($taxIncluded) {
         // GST is 10/110 of subtotal
         $taxAmount = round(($subtotal - $discount) / 11, 2);
         $totalAmount = round($subtotal - $discount, 2);
@@ -417,7 +424,13 @@ if ($action === 'update') {
     $taxIncluded = !empty($postData['tax_included']);
     $discount = max(0, floatval($postData['discount'] ?? 0));
 
-    if ($taxIncluded) {
+    if (strcasecmp($paymentMethod, 'Cash') === 0) {
+        $taxAmount = 0.00;
+        $totalAmount = round($subtotal - $discount, 2);
+        if (strcasecmp($invoiceType, 'Tax Invoice') === 0) {
+            $invoiceType = 'Invoice';
+        }
+    } else if ($taxIncluded) {
         $taxAmount = round(($subtotal - $discount) / 11, 2);
         $totalAmount = round($subtotal - $discount, 2);
     } else {
