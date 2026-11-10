@@ -4844,12 +4844,13 @@
                                         DH
                                     </div>
                                     <div>
-                                        <h1 class="font-heading text-2xl font-black text-slate-900 tracking-tight leading-none">DAVID HAIR SYSTEMS</h1>
-                                        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mt-1">Premium Men's Hair Systems &amp; Salon</span>
+                                        <h1 class="font-heading text-2xl font-black text-slate-900 tracking-tight leading-none">DAVID HAIR SHOP</h1>
+                                        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider block mt-1">Premium Men &amp; Women's Hair Systems &amp; Salon</span>
                                     </div>
                                 </div>
                                 <div class="text-xs text-slate-600 space-y-0.5 pt-2">
-                                    <div>Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171</div>
+                                    <div>Shop F16 (Level 1 Springvale Shopping Centre Central),</div>
+                                    <div>46-58 Buckingham Ave, Springvale VIC 3171</div>
                                     <div>Phone: <strong>+61 433 484 882</strong> &bull; Email: <strong>shc9607@gmail.com</strong></div>
                                     <div>Web: <strong>www.davidhairshop.com</strong> &bull; ABN: <strong>85 541 218 317</strong></div>
                                 </div>
@@ -4955,12 +4956,12 @@
                             </div>
 
                             <div class="space-y-1">
-                                <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Systems include 1 complimentary fitting check &amp; styling touch-up within 14 days of appointment.</div>
+                                <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Shop include 1 complimentary fitting check &amp; styling touch-up within 14 days of appointment.</div>
                                 <div><strong>Direct Bank Deposit (if required):</strong> BSB: <strong>083-214</strong> &bull; ACC: <strong>19-869-4174</strong> &bull; Name: <strong>Pink Age Hair</strong></div>
                             </div>
 
                             <div class="text-center pt-4 text-slate-400 border-t border-slate-100">
-                                Thank you for choosing David Hair Systems Springvale &bull; www.davidhairshop.com
+                                Thank you for choosing David Hair Shop Springvale &bull; www.davidhairshop.com
                             </div>
                         </div>
                     </div>
@@ -6969,7 +6970,7 @@
                     tax_rate: 10,
                     tax_included: true,
                     discount: 0,
-                    notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                    notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
                     send_telegram_on_create: true,
                     items: [
                         { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
@@ -7081,7 +7082,7 @@
                         tax_rate: 10,
                         tax_included: true,
                         discount: 0,
-                        notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                        notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
                         send_telegram_on_create: true,
                         items: [
                             { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
@@ -7339,7 +7340,7 @@
                         : (inv.invoice_type || 'Tax Invoice');
 
                     const message = 
-`🧾 *DAVID HAIR SYSTEMS*
+`🧾 *DAVID HAIR SHOP*
 *${docType} / Receipt*
 ━━━━━━━━━━━━━━━━━━━━
 🔖 *Invoice #:* ${invNum}
@@ -7351,9 +7352,10 @@ ${itemsText}--------------------
 💰 *Total Amount:* AUD $${total} (${status.toUpperCase()})
 💳 *Payment:* ${payment}
 ━━━━━━━━━━━━━━━━━━━━
-📍 Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171
+📍 Shop F16 (Level 1 Springvale Shopping Centre Central),
+46-58 Buckingham Ave, Springvale VIC 3171
 📞 +61 433 484 882 | www.davidhairshop.com
-Thank you for choosing David Hair Systems!`;
+Thank you for choosing David Hair Shop!`;
 
                     let rawPhone = (inv.customer_phone || '').replace(/[^0-9]/g, '');
                     if (rawPhone.startsWith('0')) {
@@ -7639,7 +7641,7 @@ Thank you for choosing David Hair Systems!`;
                         : (inv.invoice_type || 'Tax Invoice');
 
                     const text = 
-`[David Hair Systems - ${docType}]
+`[David Hair Shop - ${docType}]
 Invoice #: ${invNum}
 Date: ${date}
 Customer: ${name}
@@ -7650,8 +7652,9 @@ Subtotal: $${Number(inv.subtotal || 0).toFixed(2)}
 Total AUD: $${total} (${status})
 Payment: ${payment}
 --------------------------------
-David Hair Systems Springvale
-Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171
+David Hair Shop Springvale
+Shop F16 (Level 1 Springvale Shopping Centre Central),
+46-58 Buckingham Ave, Springvale VIC 3171
 Tel: +61 433 484 882 | www.davidhairshop.com`;
 
                     if (navigator.clipboard) {
