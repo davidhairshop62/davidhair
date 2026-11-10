@@ -4776,6 +4776,14 @@
             <!-- Modal Action Bar (Hidden during print) -->
             <div class="no-print bg-brand-cardBg border border-brand-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
                 <div class="flex items-center gap-3">
+                    <!-- Quick Back to List Button -->
+                    <button type="button" @click="isInvoicePrintModalOpen = false; activeTab = 'invoices';"
+                        class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-bold border border-brand-border flex items-center gap-2 transition cursor-pointer shadow-sm"
+                        title="Back to Invoices List">
+                        <i class="fa-solid fa-arrow-left text-brand-tealLight"></i>
+                        <span>Back to List</span>
+                    </button>
+
                     <div class="w-10 h-10 rounded-xl teal-gradient flex items-center justify-center text-white text-lg shadow">
                         <i class="fa-solid fa-receipt"></i>
                     </div>
@@ -4791,43 +4799,44 @@
                 <div class="flex flex-wrap items-center gap-2">
                     <!-- Print Button -->
                     <button type="button" @click="printInvoice()"
-                        class="px-3.5 py-2 bg-brand-teal hover:bg-teal-600 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        class="px-4 py-2 bg-brand-teal hover:bg-teal-600 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
                         <i class="fa-solid fa-print"></i>
                         <span>Print</span>
                     </button>
 
                     <!-- PDF Download Button -->
                     <button type="button" @click="downloadInvoicePdf()"
-                        class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
                         <i class="fa-solid fa-file-pdf"></i>
                         <span>PDF</span>
                     </button>
 
                     <!-- WhatsApp Button -->
                     <button type="button" @click="sendWhatsAppInvoice(selectedInvoice)"
-                        class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                         <span>WhatsApp</span>
                     </button>
 
                     <!-- Telegram Button -->
                     <button type="button" @click="sendTelegramInvoice(selectedInvoice)" :disabled="isSendingTelegramInvoice"
-                        class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer disabled:opacity-50">
+                        class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer disabled:opacity-50">
                         <i class="fa-brands fa-telegram text-sm" :class="{ 'fa-spin': isSendingTelegramInvoice }"></i>
                         <span>Telegram</span>
                     </button>
 
                     <!-- Copy Text Button -->
                     <button type="button" @click="copyInvoiceText(selectedInvoice)"
-                        class="px-3 py-2 bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer" title="Copy receipt text to clipboard">
+                        class="px-3 py-2 bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer" title="Copy receipt text to clipboard">
                         <i class="fa-solid fa-copy"></i>
                         <span class="hidden sm:inline">Copy Text</span>
                     </button>
 
-                    <!-- Close Button -->
-                    <button type="button" @click="isInvoicePrintModalOpen = false"
-                        class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition-colors">
-                        ✕ Close
+                    <!-- Return to List Button -->
+                    <button type="button" @click="isInvoicePrintModalOpen = false; activeTab = 'invoices';"
+                        class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow cursor-pointer">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back to List</span>
                     </button>
                 </div>
             </div>
@@ -4966,6 +4975,31 @@
                         </div>
                     </div>
                 </template>
+            </div>
+
+            <!-- Bottom Action Bar (Hidden during print, easily accessible after scrolling or printing) -->
+            <div class="no-print bg-brand-cardBg border border-brand-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+                <div class="text-xs text-slate-300 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-white block">출력 / 검토 완료</span>
+                        <span class="text-[11px] text-slate-400">인보이스 <strong class="text-brand-tealLight font-mono" x-text="selectedInvoice ? '#' + selectedInvoice.invoice_number : ''"></strong> 출력이 끝난 후 목록으로 돌아가실 수 있습니다.</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="printInvoice()"
+                        class="px-4 py-2.5 bg-brand-teal hover:bg-teal-600 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer">
+                        <i class="fa-solid fa-print"></i>
+                        <span>다시 인쇄 (Print Again)</span>
+                    </button>
+                    <button type="button" @click="isInvoicePrintModalOpen = false; activeTab = 'invoices';"
+                        class="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>인보이스 리스트로 돌아가기 (Back to List)</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
