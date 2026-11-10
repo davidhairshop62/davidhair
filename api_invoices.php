@@ -62,6 +62,9 @@ try {
         INDEX idx_invoice_id (invoice_id),
         CONSTRAINT fk_invoice_items_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+    // Auto-migrate past invoices from 14 days to 7 days
+    $conn->exec("UPDATE invoices SET notes = REPLACE(notes, 'within 14 days', 'within 7 days') WHERE notes LIKE '%within 14 days%'");
 } catch (Exception $e) {
     sendJsonResponse(['status' => 'error', 'message' => 'DB init error: ' . $e->getMessage()], 500);
 }

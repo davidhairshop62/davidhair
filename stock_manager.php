@@ -4952,7 +4952,7 @@
                         <div class="border-t border-slate-200 pt-6 space-y-3 text-[11px] text-slate-500 leading-relaxed">
                             <div x-show="selectedInvoice.notes" class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700">
                                 <strong class="block text-slate-900 mb-1">Notes &amp; Instructions:</strong>
-                                <span x-text="selectedInvoice.notes"></span>
+                                <span x-text="(selectedInvoice.notes || '').replace(/within 14 days/gi, 'within 7 days')"></span>
                             </div>
 
                             <div class="space-y-1">
@@ -6970,7 +6970,7 @@
                     tax_rate: 10,
                     tax_included: true,
                     discount: 0,
-                    notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
+                    notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
                     send_telegram_on_create: true,
                     items: [
                         { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
@@ -7082,7 +7082,7 @@
                         tax_rate: 10,
                         tax_included: true,
                         discount: 0,
-                        notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
+                        notes: 'Thank you for choosing David Hair Systems. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
                         send_telegram_on_create: true,
                         items: [
                             { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
@@ -7211,7 +7211,7 @@
                                 tax_rate: Number(i.tax_rate) || 10,
                                 tax_included: true,
                                 discount: Number(i.discount) || 0,
-                                notes: i.notes || '',
+                                notes: (i.notes || '').replace(/within 14 days/gi, 'within 7 days'),
                                 send_telegram_on_create: false,
                                 items: (i.items && i.items.length) ? i.items.map(it => ({
                                     item_name: it.item_name,
