@@ -4849,7 +4849,7 @@
                                     </div>
                                 </div>
                                 <div class="text-xs text-slate-600 space-y-0.5 pt-2">
-                                    <div>Shop 62, 46-58 Buckingham Ave, Springvale VIC 3171</div>
+                                    <div>Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171</div>
                                     <div>Phone: <strong>+61 433 484 882</strong> &bull; Email: <strong>shc9607@gmail.com</strong></div>
                                     <div>Web: <strong>www.davidhairshop.com</strong> &bull; ABN: <strong>85 541 218 317</strong></div>
                                 </div>
@@ -7351,7 +7351,7 @@ ${itemsText}--------------------
 💰 *Total Amount:* AUD $${total} (${status.toUpperCase()})
 💳 *Payment:* ${payment}
 ━━━━━━━━━━━━━━━━━━━━
-📍 Shop 62, 46-58 Buckingham Ave, Springvale VIC
+📍 Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171
 📞 +61 433 484 882 | www.davidhairshop.com
 Thank you for choosing David Hair Systems!`;
 
@@ -7651,7 +7651,7 @@ Total AUD: $${total} (${status})
 Payment: ${payment}
 --------------------------------
 David Hair Systems Springvale
-Shop 62, 46-58 Buckingham Ave, Springvale VIC 3171
+Shop F16 (Level 1 Springvale Shopping Centre Central), 46-58 Buckingham Ave, Springvale VIC 3171
 Tel: +61 433 484 882 | www.davidhairshop.com`;
 
                     if (navigator.clipboard) {

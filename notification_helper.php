@@ -408,7 +408,7 @@ function send_telegram_invoice_alert($conn, $invoice, $customChatId = null) {
     if (!empty($notes)) {
         $msg .= "📝 <i>{$notes}</i>\n";
     }
-    $msg .= "📍 David Hair Systems (Springvale Shop 62)\n";
+    $msg .= "📍 David Hair Systems (Springvale Shop F16)\n";
     $msg .= "👉 <a href=\"https://www.davidhairshop.com/stock_manager.php\">재고/인보이스 관리 페이지 열기</a>";
 
     $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
