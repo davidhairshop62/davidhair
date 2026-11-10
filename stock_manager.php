@@ -4956,7 +4956,7 @@
                             </div>
 
                             <div class="space-y-1">
-                                <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Shop include 1 complimentary fitting check &amp; styling touch-up within 14 days of appointment.</div>
+                                <div><strong>Warranty &amp; Complimentary Service:</strong> All custom hair systems fitted at David Hair Shop include 1 complimentary fitting check &amp; styling touch-up within 7 days of appointment.</div>
                                 <div><strong>Direct Bank Deposit (if required):</strong> BSB: <strong>083-214</strong> &bull; ACC: <strong>19-869-4174</strong> &bull; Name: <strong>Pink Age Hair</strong></div>
                             </div>
 
@@ -6970,7 +6970,7 @@
                     tax_rate: 10,
                     tax_included: true,
                     discount: 0,
-                    notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                    notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
                     send_telegram_on_create: true,
                     items: [
                         { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
@@ -7082,7 +7082,7 @@
                         tax_rate: 10,
                         tax_included: true,
                         discount: 0,
-                        notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 14 days.',
+                        notes: 'Thank you for choosing David Hair Shop. All custom hair systems include 1 complimentary fitting check & styling touch-up within 7 days.',
                         send_telegram_on_create: true,
                         items: [
                             { item_name: 'Men Custom Toupee (Standard Skin)', description: 'Ultra-thin 0.06mm skin base European hair', quantity: 1, unit_price: 650.00, amount: 650.00 },
