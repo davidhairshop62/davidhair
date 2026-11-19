@@ -2218,8 +2218,16 @@
       document.getElementById('sizeW').value = String(defMen.w);
       document.getElementById('sizeL').value = String(defMen.l);
       document.getElementById('hairLength').value = '6';
-      document.getElementById('capType').value = '1.0';
-      document.getElementById('density').value = '1.0';
+      const capSelect = document.getElementById('capType');
+      if (capSelect) {
+        const defCapIdx = Array.from(capSelect.options).findIndex(o => o.dataset.default === '1' || parseFloat(o.value) === 1.0);
+        capSelect.selectedIndex = defCapIdx >= 0 ? defCapIdx : 0;
+      }
+      const denSelect = document.getElementById('density');
+      if (denSelect) {
+        const defDenIdx = Array.from(denSelect.options).findIndex(o => o.dataset.default === '1' || parseFloat(o.value) === 1.0);
+        denSelect.selectedIndex = defDenIdx >= 0 ? defDenIdx : 0;
+      }
       document.getElementById('hairType').value = 'standard';
       document.getElementById('optInstall').checked = false;
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
@@ -2238,8 +2246,16 @@
       document.getElementById('sizeW').value = String(defWomen.w);
       document.getElementById('sizeL').value = String(defWomen.l);
       document.getElementById('hairLength').value = '10';
-      document.getElementById('capType').value = '1.0';
-      document.getElementById('density').value = '1.0';
+      const capSelect = document.getElementById('capType');
+      if (capSelect) {
+        const defCapIdx = Array.from(capSelect.options).findIndex(o => o.dataset.default === '1' || parseFloat(o.value) === 1.0);
+        capSelect.selectedIndex = defCapIdx >= 0 ? defCapIdx : 0;
+      }
+      const denSelect = document.getElementById('density');
+      if (denSelect) {
+        const defDenIdx = Array.from(denSelect.options).findIndex(o => o.dataset.default === '1' || parseFloat(o.value) === 1.0);
+        denSelect.selectedIndex = defDenIdx >= 0 ? defDenIdx : 0;
+      }
       document.getElementById('hairType').value = 'standard';
       document.getElementById('optInstall').checked = false;
       document.querySelectorAll('input[name="bondingService"]').forEach(cb => {
@@ -2989,6 +3005,50 @@
 
       const bDaily = document.getElementById('optBondingDailyClip');
       if (bDaily && s.bonding_daily_clip !== undefined) bDaily.value = s.bonding_daily_clip;
+    }
+
+    // 5. Update Cap Construction (Factor) options dynamically
+    if (Array.isArray(cfg.cap_constructions) && cfg.cap_constructions.length > 0) {
+      const capEl = document.getElementById('capType');
+      if (capEl) {
+        const prevIdx = capEl.selectedIndex;
+        let defIdx = cfg.cap_constructions.findIndex(c => c.is_default);
+        if (defIdx < 0) defIdx = 0;
+        capEl.innerHTML = cfg.cap_constructions.map((c, idx) => {
+          const factorNum = parseFloat(c.factor) || 1.0;
+          const labelStr = String(c.label || '').trim();
+          const hasFactorInLabel = labelStr.includes(String(factorNum)) || labelStr.includes(factorNum.toFixed(1));
+          const displayLabel = hasFactorInLabel ? labelStr : `${labelStr} (${factorNum}x)`;
+          return `<option value="${factorNum}" data-default="${c.is_default ? '1' : '0'}" ${idx === defIdx ? 'selected' : ''}>${escapeCalcHtml(displayLabel)}</option>`;
+        }).join('');
+        if (prevIdx >= 0 && prevIdx < capEl.options.length && prevIdx !== 0) {
+          capEl.selectedIndex = prevIdx;
+        } else {
+          capEl.selectedIndex = defIdx;
+        }
+      }
+    }
+
+    // 6. Update Hair Density options dynamically
+    if (Array.isArray(cfg.hair_densities) && cfg.hair_densities.length > 0) {
+      const denEl = document.getElementById('density');
+      if (denEl) {
+        const prevIdx = denEl.selectedIndex;
+        let defIdx = cfg.hair_densities.findIndex(d => d.is_default);
+        if (defIdx < 0) defIdx = 0;
+        denEl.innerHTML = cfg.hair_densities.map((d, idx) => {
+          const factorNum = parseFloat(d.factor) || 1.0;
+          const labelStr = String(d.label || '').trim();
+          const hasFactorInLabel = labelStr.includes(`${factorNum}x`) || labelStr.includes(`${factorNum.toFixed(1)}x`);
+          const displayLabel = hasFactorInLabel ? labelStr : `${labelStr} (${factorNum}x)`;
+          return `<option value="${factorNum}" data-default="${d.is_default ? '1' : '0'}" ${idx === defIdx ? 'selected' : ''}>${escapeCalcHtml(displayLabel)}</option>`;
+        }).join('');
+        if (prevIdx >= 0 && prevIdx < denEl.options.length && prevIdx !== 0) {
+          denEl.selectedIndex = prevIdx;
+        } else {
+          denEl.selectedIndex = defIdx;
+        }
+      }
     }
 
     refreshChips();

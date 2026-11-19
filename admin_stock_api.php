@@ -151,6 +151,32 @@ function normalizeBaseSizePrices($rawSizes) {
     return $normalized;
 }
 
+// Normalize indexed option lists (Cap Construction & Hair Density factors)
+function normalizeFactorOptions($rawList, $defaultList) {
+    if (!is_array($rawList) || count($rawList) === 0) {
+        return $defaultList;
+    }
+    $clean = [];
+    foreach ($rawList as $idx => $item) {
+        if (!is_array($item)) continue;
+        $label = trim((string)($item['label'] ?? ''));
+        if ($label === '') continue;
+        $factor = isset($item['factor']) && is_numeric($item['factor']) ? round((float)$item['factor'], 2) : 1.0;
+        if ($factor <= 0) $factor = 1.0;
+        $id = trim((string)($item['id'] ?? ''));
+        if ($id === '') {
+            $id = 'opt_' . ($idx + 1) . '_' . substr(md5($label), 0, 6);
+        }
+        $clean[] = [
+            'id' => $id,
+            'label' => $label,
+            'factor' => $factor,
+            'is_default' => !empty($item['is_default'])
+        ];
+    }
+    return count($clean) > 0 ? $clean : $defaultList;
+}
+
 // Auto-create calculator_pricing table & seed default pricing
 function getDefaultCalculatorPricing() {
     return [
@@ -168,6 +194,26 @@ function getDefaultCalculatorPricing() {
             '7x9'   => ['men' => 700, 'women' => 650, 'show_men' => true,  'show_women' => false, 'promo_price' => 680, 'badge' => 'Limited Special', 'special_note' => "Men's Standard Special Promo", 'men_strike' => 700],
             '8x10'  => ['men' => 700, 'women' => 700, 'show_men' => true,  'show_women' => false, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
             '10x12' => ['men' => 800, 'women' => 1000, 'show_men' => true, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => '']
+        ],
+        'cap_constructions' => [
+            ['id' => 'pu_swiss_net',        'label' => 'PU+Swiss Net (Standard)',            'factor' => 1.0, 'is_default' => true],
+            ['id' => 'mpu_pu_swiss',        'label' => 'MPU+PU+Swiss Net',                   'factor' => 1.1, 'is_default' => false],
+            ['id' => 'mpu_pu_part_swiss',   'label' => 'MPU+PU+Part+Swiss Net',              'factor' => 1.3, 'is_default' => false],
+            ['id' => 'mpu_pu_bpt_swiss',    'label' => 'MPU+PU+BPT Part + Swiss Net',        'factor' => 1.5, 'is_default' => false],
+            ['id' => 'lacefront_pu_swiss',  'label' => 'LaceFront+PU+Swiss Net',             'factor' => 1.2, 'is_default' => false],
+            ['id' => 'lacefront_pu_part',   'label' => 'LaceFront+PU+Part+Swiss Net',        'factor' => 1.4, 'is_default' => false],
+            ['id' => 'lacefront_pu_bpt',    'label' => 'LaceFront+PU+BPT Part + Swiss Net',  'factor' => 1.6, 'is_default' => false],
+            ['id' => 'full_hd_lace',        'label' => 'Full HD Lace Net',                   'factor' => 1.3, 'is_default' => false],
+            ['id' => 'full_injection_skin', 'label' => 'Full Injection Skin',                'factor' => 2.0, 'is_default' => false],
+            ['id' => 'full_bpt_top',        'label' => 'Full BPT Top',                       'factor' => 2.0, 'is_default' => false]
+        ],
+        'hair_densities' => [
+            ['id' => 'density_80',  'label' => '80% Light Natural (Standard)', 'factor' => 1.0, 'is_default' => true],
+            ['id' => 'density_90',  'label' => '90% Medium-Light',             'factor' => 1.1, 'is_default' => false],
+            ['id' => 'density_100', 'label' => '100% Medium',                  'factor' => 1.2, 'is_default' => false],
+            ['id' => 'density_110', 'label' => '110% Medium-Heavy',            'factor' => 1.3, 'is_default' => false],
+            ['id' => 'density_120', 'label' => '120% Heavy Full',              'factor' => 1.4, 'is_default' => false],
+            ['id' => 'density_130', 'label' => '130% Extra Heavy',             'factor' => 1.5, 'is_default' => false]
         ],
         'length_weights' => [
             '6' => 1.0,
@@ -321,9 +367,12 @@ try {
         if ($row && !empty($row['config_json'])) {
             $data = json_decode($row['config_json'], true);
             if ($data) {
+                $defaults = getDefaultCalculatorPricing();
                 if (isset($data['base_size_prices']) && is_array($data['base_size_prices'])) {
                     $data['base_size_prices'] = normalizeBaseSizePrices($data['base_size_prices']);
                 }
+                $data['cap_constructions'] = normalizeFactorOptions($data['cap_constructions'] ?? null, $defaults['cap_constructions']);
+                $data['hair_densities'] = normalizeFactorOptions($data['hair_densities'] ?? null, $defaults['hair_densities']);
                 sendJsonResponse([
                     'status' => 'success',
                     'pricing' => $data,
@@ -667,10 +716,16 @@ try {
             sendJsonResponse(['status' => 'error', 'message' => 'Invalid pricing payload provided.']);
         }
 
-        // Merge with defaults for other config keys, but preserve exact base_size_prices (supports add/edit/delete)
+        // Merge with defaults for other config keys, but preserve exact base_size_prices, cap_constructions, and hair_densities
         $defaults = getDefaultCalculatorPricing();
         $incomingBaseSizes = (isset($pricingData['base_size_prices']) && is_array($pricingData['base_size_prices']))
             ? normalizeBaseSizePrices($pricingData['base_size_prices'])
+            : null;
+        $incomingCaps = (isset($pricingData['cap_constructions']) && is_array($pricingData['cap_constructions']))
+            ? normalizeFactorOptions($pricingData['cap_constructions'], $defaults['cap_constructions'])
+            : null;
+        $incomingDensities = (isset($pricingData['hair_densities']) && is_array($pricingData['hair_densities']))
+            ? normalizeFactorOptions($pricingData['hair_densities'], $defaults['hair_densities'])
             : null;
 
         $mergedPricing = array_replace_recursive($defaults, $pricingData);
@@ -679,6 +734,8 @@ try {
         } else {
             $mergedPricing['base_size_prices'] = normalizeBaseSizePrices($mergedPricing['base_size_prices']);
         }
+        $mergedPricing['cap_constructions'] = $incomingCaps !== null ? $incomingCaps : $defaults['cap_constructions'];
+        $mergedPricing['hair_densities'] = $incomingDensities !== null ? $incomingDensities : $defaults['hair_densities'];
 
         $jsonStr = json_encode($mergedPricing, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $user = $_SESSION['admin_user'] ?? 'admin';

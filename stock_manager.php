@@ -1918,6 +1918,11 @@
                                 class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
                             <i class="fa-solid fa-hand-holding-dollar"></i> 5. Craftsmanship &amp; Custom Order
                         </button>
+                        <button type="button" @click="pricingActiveSubTab = 'cap_density'"
+                                :class="pricingActiveSubTab === 'cap_density' ? 'text-brand-tealLight border-b-2 border-brand-teal pb-2 -mb-3 font-extrabold' : 'text-slate-400 hover:text-slate-200'"
+                                class="px-3 py-1 flex items-center gap-1.5 whitespace-nowrap transition-colors">
+                            <i class="fa-solid fa-layer-group"></i> 6. Cap Construction &amp; Density
+                        </button>
                     </div>
 
                     <!-- SUB-TAB 1: BASE SIZES -->
@@ -2468,6 +2473,161 @@
                                         <span class="text-slate-400 text-xs">AUD</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-TAB 6: CAP CONSTRUCTION (FACTOR) & HAIR DENSITY -->
+                    <div x-show="pricingActiveSubTab === 'cap_density'" class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                        <!-- Cap Construction (Factor) -->
+                        <div class="xl:col-span-7 bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                            <div class="p-4 sm:p-5 border-b border-brand-border bg-brand-inner/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-layer-group text-brand-tealLight"></i>
+                                        <span>Cap Construction (Factor)</span>
+                                        <span class="text-[10px] text-brand-tealLight bg-teal-950 border border-teal-500/30 px-2 py-0.5 rounded-full font-mono"
+                                              x-text="(pricingConfig.cap_constructions || []).length + ' Options'"></span>
+                                    </h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">베이스 캡 구조별 기본가 배율(Factor)입니다. (계산식: Base Price × Factor)</p>
+                                </div>
+                                <button type="button" @click="addCapConstruction()"
+                                    class="teal-gradient hover:opacity-95 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 cursor-pointer shrink-0">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Add Cap</span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
+                                        <tr>
+                                            <th class="py-2.5 px-3 text-center whitespace-nowrap">Default</th>
+                                            <th class="py-2.5 px-3">Cap Construction Label</th>
+                                            <th class="py-2.5 px-3 whitespace-nowrap">Factor (x)</th>
+                                            <th class="py-2.5 px-3 whitespace-nowrap">Impact</th>
+                                            <th class="py-2.5 px-3 text-right">Del</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-brand-border/60">
+                                        <template x-for="(cap, idx) in (pricingConfig.cap_constructions || [])" :key="cap.id || idx">
+                                            <tr class="hover:bg-brand-inner/30 transition-colors">
+                                                <td class="py-2.5 px-3 text-center">
+                                                    <input type="radio" name="default_cap_radio"
+                                                           :checked="cap.is_default"
+                                                           @change="setDefaultCap(idx)"
+                                                           class="w-3.5 h-3.5 accent-teal-500 cursor-pointer"
+                                                           title="Set as Default Cap Construction">
+                                                </td>
+                                                <td class="py-2.5 px-3">
+                                                    <input type="text"
+                                                           x-model="cap.label"
+                                                           placeholder="e.g. PU+Swiss Net (Standard)"
+                                                           class="w-full min-w-[200px] bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs focus:border-brand-teal outline-none">
+                                                </td>
+                                                <td class="py-2.5 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <input type="number"
+                                                               x-model.number="cap.factor"
+                                                               min="0.5" max="10" step="0.05"
+                                                               class="w-20 bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-brand-tealLight font-mono font-bold text-xs focus:border-brand-teal outline-none text-center">
+                                                        <span class="text-slate-400 font-mono text-[11px]">x</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-2.5 px-3 whitespace-nowrap font-mono text-[11px]">
+                                                    <span x-show="Number(cap.factor) === 1" class="text-slate-400">Standard</span>
+                                                    <span x-show="Number(cap.factor) > 1" class="text-amber-300 font-bold"
+                                                          x-text="'+' + Math.round((Number(cap.factor) - 1) * 100) + '% Base'"></span>
+                                                    <span x-show="Number(cap.factor) < 1 && Number(cap.factor) > 0" class="text-emerald-300 font-bold"
+                                                          x-text="Math.round((Number(cap.factor) - 1) * 100) + '% Base'"></span>
+                                                </td>
+                                                <td class="py-2.5 px-3 text-right">
+                                                    <button type="button" @click="removeCapConstruction(idx)"
+                                                        class="px-2 py-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-900/70 border border-rose-800/60 text-rose-300 text-[11px] cursor-pointer"
+                                                        title="Delete Cap Option">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Hair Density -->
+                        <div class="xl:col-span-5 bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                            <div class="p-4 sm:p-5 border-b border-brand-border bg-brand-inner/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-chart-simple text-amber-400"></i>
+                                        <span>Hair Density</span>
+                                        <span class="text-[10px] text-amber-300 bg-amber-950 border border-amber-500/30 px-2 py-0.5 rounded-full font-mono"
+                                              x-text="(pricingConfig.hair_densities || []).length + ' Levels'"></span>
+                                    </h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">모발 밀도별 가중치 배율입니다. (계산식: Subtotal × (Factor − 1))</p>
+                                </div>
+                                <button type="button" @click="addHairDensity()"
+                                    class="bronze-gradient hover:opacity-95 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 cursor-pointer shrink-0">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Add Density</span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
+                                        <tr>
+                                            <th class="py-2.5 px-3 text-center whitespace-nowrap">Default</th>
+                                            <th class="py-2.5 px-3">Density Label</th>
+                                            <th class="py-2.5 px-3 whitespace-nowrap">Factor (x)</th>
+                                            <th class="py-2.5 px-3 whitespace-nowrap">Impact</th>
+                                            <th class="py-2.5 px-3 text-right">Del</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-brand-border/60">
+                                        <template x-for="(den, idx) in (pricingConfig.hair_densities || [])" :key="den.id || idx">
+                                            <tr class="hover:bg-brand-inner/30 transition-colors">
+                                                <td class="py-2.5 px-3 text-center">
+                                                    <input type="radio" name="default_density_radio"
+                                                           :checked="den.is_default"
+                                                           @change="setDefaultDensity(idx)"
+                                                           class="w-3.5 h-3.5 accent-amber-500 cursor-pointer"
+                                                           title="Set as Default Hair Density">
+                                                </td>
+                                                <td class="py-2.5 px-3">
+                                                    <input type="text"
+                                                           x-model="den.label"
+                                                           placeholder="e.g. 100% Medium"
+                                                           class="w-full min-w-[155px] bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs focus:border-amber-400 outline-none">
+                                                </td>
+                                                <td class="py-2.5 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <input type="number"
+                                                               x-model.number="den.factor"
+                                                               min="0.5" max="5" step="0.05"
+                                                               class="w-20 bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-amber-300 font-mono font-bold text-xs focus:border-amber-400 outline-none text-center">
+                                                        <span class="text-slate-400 font-mono text-[11px]">x</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-2.5 px-3 whitespace-nowrap font-mono text-[11px]">
+                                                    <span x-show="Number(den.factor) === 1" class="text-slate-400">Standard</span>
+                                                    <span x-show="Number(den.factor) > 1" class="text-amber-300 font-bold"
+                                                          x-text="'+' + Math.round((Number(den.factor) - 1) * 100) + '%'"></span>
+                                                    <span x-show="Number(den.factor) < 1 && Number(den.factor) > 0" class="text-emerald-300 font-bold"
+                                                          x-text="Math.round((Number(den.factor) - 1) * 100) + '%'"></span>
+                                                </td>
+                                                <td class="py-2.5 px-3 text-right">
+                                                    <button type="button" @click="removeHairDensity(idx)"
+                                                        class="px-2 py-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-900/70 border border-rose-800/60 text-rose-300 text-[11px] cursor-pointer"
+                                                        title="Delete Density Option">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -5552,6 +5712,66 @@
                         this.isBaseSizeModalOpen = false;
                     }
                     await this.savePricingConfig();
+                },
+
+                addCapConstruction() {
+                    if (!this.pricingConfig) return;
+                    if (!Array.isArray(this.pricingConfig.cap_constructions)) this.pricingConfig.cap_constructions = [];
+                    this.pricingConfig.cap_constructions.push({
+                        id: 'cap_' + Date.now(),
+                        label: 'New Cap Construction',
+                        factor: 1.2,
+                        is_default: this.pricingConfig.cap_constructions.length === 0
+                    });
+                },
+
+                removeCapConstruction(idx) {
+                    if (!this.pricingConfig || !Array.isArray(this.pricingConfig.cap_constructions)) return;
+                    if (this.pricingConfig.cap_constructions.length <= 1) {
+                        this.showToast('At least one Cap Construction option is required.', 'error');
+                        return;
+                    }
+                    const item = this.pricingConfig.cap_constructions[idx];
+                    if (!confirm(`Delete "${item ? item.label : 'this cap option'}"?`)) return;
+                    this.pricingConfig.cap_constructions.splice(idx, 1);
+                    if (!this.pricingConfig.cap_constructions.some(c => c.is_default)) {
+                        this.pricingConfig.cap_constructions[0].is_default = true;
+                    }
+                },
+
+                setDefaultCap(idx) {
+                    if (!this.pricingConfig || !Array.isArray(this.pricingConfig.cap_constructions)) return;
+                    this.pricingConfig.cap_constructions.forEach((c, i) => { c.is_default = (i === idx); });
+                },
+
+                addHairDensity() {
+                    if (!this.pricingConfig) return;
+                    if (!Array.isArray(this.pricingConfig.hair_densities)) this.pricingConfig.hair_densities = [];
+                    this.pricingConfig.hair_densities.push({
+                        id: 'den_' + Date.now(),
+                        label: '140% Ultra Full',
+                        factor: 1.6,
+                        is_default: this.pricingConfig.hair_densities.length === 0
+                    });
+                },
+
+                removeHairDensity(idx) {
+                    if (!this.pricingConfig || !Array.isArray(this.pricingConfig.hair_densities)) return;
+                    if (this.pricingConfig.hair_densities.length <= 1) {
+                        this.showToast('At least one Hair Density option is required.', 'error');
+                        return;
+                    }
+                    const item = this.pricingConfig.hair_densities[idx];
+                    if (!confirm(`Delete "${item ? item.label : 'this density option'}"?`)) return;
+                    this.pricingConfig.hair_densities.splice(idx, 1);
+                    if (!this.pricingConfig.hair_densities.some(d => d.is_default)) {
+                        this.pricingConfig.hair_densities[0].is_default = true;
+                    }
+                },
+
+                setDefaultDensity(idx) {
+                    if (!this.pricingConfig || !Array.isArray(this.pricingConfig.hair_densities)) return;
+                    this.pricingConfig.hair_densities.forEach((d, i) => { d.is_default = (i === idx); });
                 },
 
                 async loadPricingConfig() {
