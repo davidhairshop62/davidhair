@@ -71,23 +71,83 @@ try {
     // Columns already exist or error ignored
 }
 
+// Normalize base_size_prices entries (supports special_note, promo_price, badge & legacy men_strike migration)
+function normalizeBaseSizePrices($rawSizes) {
+    if (!is_array($rawSizes)) {
+        return [];
+    }
+    $normalized = [];
+    foreach ($rawSizes as $key => $entry) {
+        $cleanKey = strtolower(trim((string)$key));
+        if (!preg_match('/^\d+(\.\d+)?x\d+(\.\d+)?$/', $cleanKey) || !is_array($entry)) {
+            continue;
+        }
+        $men = isset($entry['men']) && $entry['men'] !== '' ? (float)$entry['men'] : 0;
+        $women = isset($entry['women']) && $entry['women'] !== '' ? (float)$entry['women'] : 0;
+
+        $hasPromoField = array_key_exists('promo_price', $entry);
+        $promoPrice = ($hasPromoField && $entry['promo_price'] !== '' && $entry['promo_price'] !== null && (float)$entry['promo_price'] > 0)
+            ? (float)$entry['promo_price']
+            : null;
+        $badge = isset($entry['badge']) ? trim((string)$entry['badge']) : '';
+        $specialNote = isset($entry['special_note']) ? trim((string)$entry['special_note']) : '';
+
+        // One-time graceful migration from legacy 7x9 { men: 680, men_strike: 700 }
+        if (!$hasPromoField && !empty($entry['men_strike']) && (float)$entry['men_strike'] > $men && $men > 0) {
+            $promoPrice = $men;
+            $men = (float)$entry['men_strike'];
+            if ($badge === '') {
+                $badge = 'Limited Special';
+            }
+            if ($specialNote === '' && $cleanKey === '7x9') {
+                $specialNote = "Men's Standard Special Promo";
+            }
+        }
+
+        $item = [
+            'men' => $men,
+            'women' => $women,
+            'promo_price' => $promoPrice,
+            'badge' => $badge,
+            'special_note' => $specialNote,
+        ];
+        // Keep legacy men_strike field synced when promo_price is lower than regular men's price
+        if ($promoPrice !== null && $promoPrice > 0 && $men > $promoPrice) {
+            $item['men_strike'] = $men;
+        }
+        $normalized[$cleanKey] = $item;
+    }
+
+    // Sort cleanly by combined size sum (W+L), then W
+    uksort($normalized, function ($a, $b) {
+        $pa = array_map('floatval', explode('x', $a));
+        $pb = array_map('floatval', explode('x', $b));
+        $sumA = ($pa[0] ?? 0) + ($pa[1] ?? 0);
+        $sumB = ($pb[0] ?? 0) + ($pb[1] ?? 0);
+        if ($sumA != $sumB) return $sumA <=> $sumB;
+        return ($pa[0] ?? 0) <=> ($pb[0] ?? 0);
+    });
+
+    return $normalized;
+}
+
 // Auto-create calculator_pricing table & seed default pricing
 function getDefaultCalculatorPricing() {
     return [
         'retail_multiplier' => 3.0,
         'custom_fee_aud' => 200,
         'base_size_prices' => [
-            '2x3' => ['men' => 250, 'women' => 250],
-            '2x4' => ['men' => 280, 'women' => 300],
-            '3x4' => ['men' => 350, 'women' => 350],
-            '4x4' => ['men' => 400, 'women' => 500],
-            '5x5' => ['men' => 450, 'women' => 550],
-            '6x6' => ['men' => 500, 'women' => 600],
-            '6x7' => ['men' => 600, 'women' => 600],
-            '6x8' => ['men' => 600, 'women' => 600],
-            '7x9' => ['men' => 680, 'women' => 650, 'men_strike' => 700],
-            '8x10' => ['men' => 700, 'women' => 700],
-            '10x12' => ['men' => 800, 'women' => 1000]
+            '2x3'   => ['men' => 250, 'women' => 250, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '2x4'   => ['men' => 280, 'women' => 300, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '3x4'   => ['men' => 350, 'women' => 350, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '4x4'   => ['men' => 400, 'women' => 500, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '5x5'   => ['men' => 450, 'women' => 550, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x6'   => ['men' => 500, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x7'   => ['men' => 600, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x8'   => ['men' => 600, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '7x9'   => ['men' => 700, 'women' => 650, 'promo_price' => 680, 'badge' => 'Limited Special', 'special_note' => "Men's Standard Special Promo", 'men_strike' => 700],
+            '8x10'  => ['men' => 700, 'women' => 700, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '10x12' => ['men' => 800, 'women' => 1000, 'promo_price' => null, 'badge' => '', 'special_note' => '']
         ],
         'length_weights' => [
             '6' => 1.0,
@@ -241,6 +301,9 @@ try {
         if ($row && !empty($row['config_json'])) {
             $data = json_decode($row['config_json'], true);
             if ($data) {
+                if (isset($data['base_size_prices']) && is_array($data['base_size_prices'])) {
+                    $data['base_size_prices'] = normalizeBaseSizePrices($data['base_size_prices']);
+                }
                 sendJsonResponse([
                     'status' => 'success',
                     'pricing' => $data,
@@ -584,9 +647,18 @@ try {
             sendJsonResponse(['status' => 'error', 'message' => 'Invalid pricing payload provided.']);
         }
 
-        // Merge with defaults to ensure all required keys exist
+        // Merge with defaults for other config keys, but preserve exact base_size_prices (supports add/edit/delete)
         $defaults = getDefaultCalculatorPricing();
+        $incomingBaseSizes = (isset($pricingData['base_size_prices']) && is_array($pricingData['base_size_prices']))
+            ? normalizeBaseSizePrices($pricingData['base_size_prices'])
+            : null;
+
         $mergedPricing = array_replace_recursive($defaults, $pricingData);
+        if ($incomingBaseSizes !== null) {
+            $mergedPricing['base_size_prices'] = $incomingBaseSizes;
+        } else {
+            $mergedPricing['base_size_prices'] = normalizeBaseSizePrices($mergedPricing['base_size_prices']);
+        }
 
         $jsonStr = json_encode($mergedPricing, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $user = $_SESSION['admin_user'] ?? 'admin';

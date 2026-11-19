@@ -1927,13 +1927,17 @@
                                 <div>
                                     <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
                                         <span>Base Size Standard Price Table (AUD)</span>
-                                        <span class="text-[10px] text-brand-tealLight bg-teal-950 border border-teal-500/30 px-2 py-0.5 rounded-full font-mono">11 Presets</span>
+                                        <span class="text-[10px] text-brand-tealLight bg-teal-950 border border-teal-500/30 px-2 py-0.5 rounded-full font-mono"
+                                              x-text="Object.keys(pricingConfig.base_size_prices || {}).length + ' Presets'">11 Presets</span>
                                     </h3>
-                                    <p class="text-xs text-slate-400 mt-0.5">계산기 칩 프리셋 및 가로x세로 기본가에 적용되는 가격표입니다. (단위: AUD $)</p>
+                                    <p class="text-xs text-slate-400 mt-0.5">계산기 칩 프리셋 및 가로×세로 기본가, 프로모션 가격, 배지, 특이사항(Special Note)을 추가·수정·삭제할 수 있습니다. (단위: AUD $)</p>
                                 </div>
-                                <div class="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                    <i class="fa-solid fa-fire text-amber-400"></i>
-                                    <span>7" × 9" Men's Std는 특별 프로모션 적용 항목입니다.</span>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button type="button" @click="openBaseSizeModal()"
+                                        class="teal-gradient hover:opacity-95 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <span>Add Size (사이즈 추가)</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -1941,53 +1945,103 @@
                                 <table class="w-full text-xs text-left">
                                     <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
                                         <tr>
-                                            <th class="py-3 px-4">Size (W" × L")</th>
-                                            <th class="py-3 px-4">Size Sum (W+L)</th>
-                                            <th class="py-3 px-4">Men's Base Price ($ AUD)</th>
-                                            <th class="py-3 px-4">Women's Base Price ($ AUD)</th>
-                                            <th class="py-3 px-4">Special Notes / Promo Price</th>
+                                            <th class="py-3 px-3 sm:px-4 whitespace-nowrap">Size (W" × L")</th>
+                                            <th class="py-3 px-3 whitespace-nowrap">Men's Base ($ AUD)</th>
+                                            <th class="py-3 px-3 whitespace-nowrap">Women's Base ($ AUD)</th>
+                                            <th class="py-3 px-3 whitespace-nowrap">Promo Price ($ AUD)</th>
+                                            <th class="py-3 px-3 whitespace-nowrap">Badge</th>
+                                            <th class="py-3 px-3 min-w-[180px]">Special Note</th>
+                                            <th class="py-3 px-3 sm:px-4 text-right whitespace-nowrap">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-brand-border/60">
                                         <template x-for="(szKey) in Object.keys(pricingConfig.base_size_prices || {})" :key="szKey">
                                             <tr class="hover:bg-brand-inner/30 transition-colors">
-                                                <td class="py-3 px-4 font-mono font-bold text-white text-sm" x-text="szKey"></td>
-                                                <td class="py-3 px-4 text-slate-400 font-mono text-xs" x-text="szKey.split('x').reduce((a,b)=>parseInt(a)+parseInt(b), 0) + ' inches'"></td>
-                                                <td class="py-3 px-4">
-                                                    <div class="flex items-center gap-1.5">
+                                                <!-- Size + Sum -->
+                                                <td class="py-3 px-3 sm:px-4 whitespace-nowrap">
+                                                    <div class="font-mono font-bold text-white text-sm" x-text="szKey"></div>
+                                                    <div class="text-[10px] text-slate-400 font-mono"
+                                                         x-text="szKey.split('x').reduce((a,b)=>parseFloat(a)+parseFloat(b), 0) + ' in sum'"></div>
+                                                </td>
+                                                <!-- Men's Base Price -->
+                                                <td class="py-3 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center gap-1">
                                                         <span class="text-slate-400 font-mono">$</span>
-                                                        <input type="number" 
-                                                               x-model.number="pricingConfig.base_size_prices[szKey].men" 
+                                                        <input type="number"
+                                                               x-model.number="pricingConfig.base_size_prices[szKey].men"
                                                                min="0" step="10"
-                                                               class="w-28 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
                                                     </div>
                                                 </td>
-                                                <td class="py-3 px-4">
-                                                    <div class="flex items-center gap-1.5">
+                                                <!-- Women's Base Price -->
+                                                <td class="py-3 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center gap-1">
                                                         <span class="text-slate-400 font-mono">$</span>
-                                                        <input type="number" 
-                                                               x-model.number="pricingConfig.base_size_prices[szKey].women" 
+                                                        <input type="number"
+                                                               x-model.number="pricingConfig.base_size_prices[szKey].women"
                                                                min="0" step="10"
-                                                               class="w-28 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
+                                                               class="w-24 bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white font-mono font-bold text-xs focus:border-brand-teal outline-none">
                                                     </div>
                                                 </td>
-                                                <td class="py-3 px-4">
-                                                    <template x-if="szKey === '7x9'">
-                                                        <div class="flex items-center gap-2">
-                                                            <span class="text-[10px] text-slate-400">Regular (Strike): $</span>
-                                                            <input type="number" 
-                                                                   x-model.number="pricingConfig.base_size_prices['7x9'].men_strike" 
-                                                                   min="0" step="10"
-                                                                   class="w-24 bg-brand-darkBg border border-amber-500/40 rounded-lg px-2 py-1 text-amber-300 font-mono font-bold text-xs focus:border-amber-400 outline-none">
-                                                            <span class="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded font-bold">Promo Badge</span>
-                                                        </div>
-                                                    </template>
-                                                    <template x-if="szKey !== '7x9'">
-                                                        <span class="text-slate-500 text-[11px]">- Standard Rate -</span>
-                                                    </template>
+                                                <!-- Promo Price -->
+                                                <td class="py-3 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="text-amber-400 font-mono">$</span>
+                                                        <input type="number"
+                                                               x-model="pricingConfig.base_size_prices[szKey].promo_price"
+                                                               min="0" step="10"
+                                                               placeholder="None"
+                                                               class="w-24 bg-brand-darkBg border rounded-lg px-2 py-1.5 font-mono font-bold text-xs outline-none"
+                                                               :class="Number(pricingConfig.base_size_prices[szKey].promo_price) > 0 ? 'border-amber-500/60 text-amber-300 focus:border-amber-400' : 'border-brand-border text-slate-400 focus:border-brand-teal'">
+                                                    </div>
+                                                </td>
+                                                <!-- Badge -->
+                                                <td class="py-3 px-3 whitespace-nowrap">
+                                                    <div class="space-y-1">
+                                                        <input type="text"
+                                                               x-model="pricingConfig.base_size_prices[szKey].badge"
+                                                               placeholder="e.g. Limited Special"
+                                                               maxlength="40"
+                                                               class="w-36 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-rose-200 text-xs font-semibold focus:border-rose-400 outline-none placeholder-slate-600">
+                                                        <template x-if="pricingConfig.base_size_prices[szKey].badge">
+                                                            <div>
+                                                                <span class="inline-block text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full font-bold"
+                                                                      x-text="pricingConfig.base_size_prices[szKey].badge"></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </td>
+                                                <!-- Special Note -->
+                                                <td class="py-3 px-3">
+                                                    <input type="text"
+                                                           x-model="pricingConfig.base_size_prices[szKey].special_note"
+                                                           placeholder="Add special note..."
+                                                           maxlength="160"
+                                                           class="w-full min-w-[160px] bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:border-brand-teal outline-none placeholder-slate-600">
+                                                </td>
+                                                <!-- Edit & Delete Actions -->
+                                                <td class="py-3 px-3 sm:px-4 text-right whitespace-nowrap">
+                                                    <div class="inline-flex items-center gap-1.5">
+                                                        <button type="button" @click="openBaseSizeModal(szKey)"
+                                                            class="px-2.5 py-1.5 rounded-lg bg-brand-inner hover:bg-teal-900/50 border border-brand-border hover:border-teal-500/50 text-teal-300 text-[11px] font-bold transition-colors cursor-pointer flex items-center gap-1"
+                                                            title="Edit Size Details">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                            <span>Edit</span>
+                                                        </button>
+                                                        <button type="button" @click="deleteBaseSize(szKey)"
+                                                            class="px-2 py-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-900/70 border border-rose-800/60 text-rose-300 text-[11px] font-bold transition-colors cursor-pointer"
+                                                            title="Delete Size">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </template>
+                                        <tr x-show="Object.keys(pricingConfig.base_size_prices || {}).length === 0">
+                                            <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
+                                                등록된 Base Size가 없습니다. 우측 상단의 <strong>Add Size</strong> 버튼을 눌러 추가하세요.
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -5021,6 +5075,153 @@
         </div>
     </div>
 
+    <!-- BASE SIZE ADD / EDIT / DELETE MODAL -->
+    <div x-show="isBaseSizeModalOpen" x-cloak
+         @keydown.escape.window="closeBaseSizeModal()"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+        <div @click.away="closeBaseSizeModal()"
+             class="bg-brand-cardBg border border-brand-border rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden my-auto">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-brand-inner/80 border-b border-brand-border flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl teal-gradient flex items-center justify-center text-white shadow">
+                        <i class="fa-solid fa-ruler-combined"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-base text-white"
+                            x-text="baseSizeModalMode === 'edit' ? ('Edit Base Size: ' + editingBaseSizeOriginalKey) : 'Add New Base Size (AUD)'"></h3>
+                        <p class="text-[11px] text-slate-400">사이즈별 기본가, 프로모션 가격, 배지, 특이사항(Special Note)을 관리합니다.</p>
+                    </div>
+                </div>
+                <button type="button" @click="closeBaseSizeModal()"
+                    class="w-8 h-8 rounded-lg bg-brand-darkBg hover:bg-slate-800 border border-brand-border text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form @submit.prevent="saveBaseSizeModal()" class="p-5 space-y-4 text-xs">
+                <!-- Dimensions (Width x Length) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 items-end">
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Width (W inch) <span class="text-rose-400">*</span></label>
+                        <input type="number" x-model="baseSizeForm.width" min="1" max="30" step="0.5" required placeholder="e.g. 7"
+                               class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold focus:border-brand-teal outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Length (L inch) <span class="text-rose-400">*</span></label>
+                        <input type="number" x-model="baseSizeForm.length" min="1" max="30" step="0.5" required placeholder="e.g. 9"
+                               class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold focus:border-brand-teal outline-none">
+                    </div>
+                    <div class="col-span-2 sm:col-span-1 bg-brand-inner/70 border border-brand-border rounded-lg px-3 py-2 text-center">
+                        <div class="text-[10px] text-slate-400 uppercase">Size Key / Sum</div>
+                        <div class="font-mono font-bold text-brand-tealLight text-sm"
+                             x-text="(baseSizeForm.width && baseSizeForm.length) ? (baseSizeForm.width + 'x' + baseSizeForm.length + ' (' + (parseFloat(baseSizeForm.width) + parseFloat(baseSizeForm.length)) + ' in)') : '—'"></div>
+                    </div>
+                </div>
+
+                <!-- Base Prices (Men / Women) & Promo Price -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Men's Base Price ($ AUD) <span class="text-rose-400">*</span></label>
+                        <input type="number" x-model.number="baseSizeForm.men" min="0" step="10" required
+                               class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold focus:border-brand-teal outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-bold mb-1">Women's Base Price ($ AUD) <span class="text-rose-400">*</span></label>
+                        <input type="number" x-model.number="baseSizeForm.women" min="0" step="10" required
+                               class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-mono font-bold focus:border-brand-teal outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-amber-300 font-bold mb-1">Promo Price ($ AUD) <span class="text-slate-500 font-normal">(Optional)</span></label>
+                        <div class="relative">
+                            <input type="number" x-model="baseSizeForm.promo_price" min="0" step="10" placeholder="Leave empty if none"
+                                   class="w-full bg-brand-darkBg border border-amber-500/40 rounded-lg px-3 py-2 text-amber-300 font-mono font-bold focus:border-amber-400 outline-none placeholder-slate-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badge Input + Quick Preset Chips -->
+                <div class="space-y-2">
+                    <label class="block text-rose-300 font-bold">Badge <span class="text-slate-500 font-normal">(Optional — shown on calculator chip &amp; quote)</span></label>
+                    <input type="text" x-model="baseSizeForm.badge" maxlength="40" placeholder="e.g. Limited Special, Best Seller, Popular, Hot Deal"
+                           class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-white font-semibold focus:border-rose-400 outline-none placeholder-slate-600">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-[10px] text-slate-400 mr-1">Quick Pick:</span>
+                        <template x-for="presetBadge in ['Limited Special', 'Best Seller', 'Popular', 'Hot Deal', 'New']" :key="presetBadge">
+                            <button type="button" @click="baseSizeForm.badge = presetBadge"
+                                class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/30 text-rose-200 font-bold cursor-pointer transition-colors"
+                                x-text="presetBadge"></button>
+                        </template>
+                        <button type="button" @click="baseSizeForm.badge = ''"
+                            class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 cursor-pointer">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Special Note -->
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">Special Note <span class="text-slate-500 font-normal">(Optional — displayed in price table &amp; calculator)</span></label>
+                    <textarea x-model="baseSizeForm.special_note" rows="2" maxlength="160"
+                              placeholder="e.g. Men's Standard Special Promo, Includes free front contour trim..."
+                              class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-3 py-2 text-slate-100 focus:border-brand-teal outline-none placeholder-slate-600 resize-none"></textarea>
+                </div>
+
+                <!-- Live Calculator Preview -->
+                <div class="p-3 rounded-xl bg-brand-darkBg/90 border border-brand-border/80 space-y-1.5">
+                    <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Live Calculator Chip Preview</div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-cardBg border border-teal-500/40 text-white font-semibold">
+                            <span x-text="(baseSizeForm.width || '?') + '\&quot; × ' + (baseSizeForm.length || '?') + '\&quot;'"></span>
+                            <span class="text-slate-400">&bull;</span>
+                            <template x-if="Number(baseSizeForm.promo_price) > 0 && Number(baseSizeForm.men) > Number(baseSizeForm.promo_price)">
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="line-through text-slate-500 font-mono" x-text="'$' + baseSizeForm.men"></span>
+                                    <span class="text-amber-300 font-mono font-extrabold" x-text="'$' + baseSizeForm.promo_price"></span>
+                                </span>
+                            </template>
+                            <template x-if="!(Number(baseSizeForm.promo_price) > 0 && Number(baseSizeForm.men) > Number(baseSizeForm.promo_price))">
+                                <span class="text-teal-300 font-mono font-bold"
+                                      x-text="'$' + (Number(baseSizeForm.promo_price) > 0 ? baseSizeForm.promo_price : (baseSizeForm.men || 0))"></span>
+                            </template>
+                            <template x-if="baseSizeForm.badge && baseSizeForm.badge.trim() !== ''">
+                                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-bold" x-text="baseSizeForm.badge"></span>
+                            </template>
+                        </span>
+                    </div>
+                    <div x-show="baseSizeForm.special_note && baseSizeForm.special_note.trim() !== ''"
+                         class="text-[11px] text-amber-300/90 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-[10px]"></i>
+                        <span x-text="baseSizeForm.special_note"></span>
+                    </div>
+                </div>
+
+                <!-- Modal Footer Buttons -->
+                <div class="pt-3 border-t border-brand-border flex items-center justify-between gap-2">
+                    <div>
+                        <button type="button" x-show="baseSizeModalMode === 'edit'" @click="deleteBaseSize(editingBaseSizeOriginalKey)"
+                            class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-700/70 text-rose-200 font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-colors">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Delete Size</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="closeBaseSizeModal()"
+                            class="px-4 py-2 rounded-xl bg-brand-inner hover:bg-slate-800 border border-brand-border text-slate-300 font-semibold text-xs cursor-pointer">
+                            Cancel
+                        </button>
+                        <button type="submit" :disabled="isSavingPricing"
+                            class="px-5 py-2 rounded-xl teal-gradient hover:opacity-95 text-white font-bold text-xs shadow-lg flex items-center gap-1.5 cursor-pointer disabled:opacity-50">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span x-text="baseSizeModalMode === 'edit' ? 'Update & Save' : 'Add & Save'"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ALPINE LOGIC -->
     <script>
         function stockManagerApp() {
@@ -5127,6 +5328,20 @@
                 pricingActiveSubTab: 'base_sizes', // 'base_sizes', 'lengths_hair', 'textures_grey', 'salon_services', 'craft_custom'
                 pricingLastUpdated: '',
 
+                // Base Size CRUD Modal state
+                isBaseSizeModalOpen: false,
+                baseSizeModalMode: 'add', // 'add' | 'edit'
+                editingBaseSizeOriginalKey: '',
+                baseSizeForm: {
+                    width: '',
+                    length: '',
+                    men: 0,
+                    women: 0,
+                    promo_price: '',
+                    badge: '',
+                    special_note: ''
+                },
+
                 // Website Visitor Daily Analytics state
                 analyticsPeriod: '7days',
                 analyticsStartDate: '',
@@ -5175,13 +5390,115 @@
                     this.fetchTodayBadge();
                 },
 
+                normalizeLocalBaseSizes(cfg) {
+                    if (!cfg || !cfg.base_size_prices) return cfg;
+                    Object.keys(cfg.base_size_prices).forEach(k => {
+                        const row = cfg.base_size_prices[k] || {};
+                        if (row.promo_price === undefined || row.promo_price === null) row.promo_price = '';
+                        if (row.badge === undefined || row.badge === null) row.badge = '';
+                        if (row.special_note === undefined || row.special_note === null) row.special_note = '';
+                        cfg.base_size_prices[k] = row;
+                    });
+                    return cfg;
+                },
+
+                openBaseSizeModal(szKey = null) {
+                    if (szKey && this.pricingConfig && this.pricingConfig.base_size_prices && this.pricingConfig.base_size_prices[szKey]) {
+                        const row = this.pricingConfig.base_size_prices[szKey];
+                        const parts = String(szKey).split('x');
+                        this.baseSizeModalMode = 'edit';
+                        this.editingBaseSizeOriginalKey = szKey;
+                        this.baseSizeForm = {
+                            width: parts[0] || '',
+                            length: parts[1] || '',
+                            men: Number(row.men) || 0,
+                            women: Number(row.women) || 0,
+                            promo_price: (row.promo_price !== null && row.promo_price !== undefined && row.promo_price !== '' && Number(row.promo_price) > 0) ? Number(row.promo_price) : '',
+                            badge: row.badge || '',
+                            special_note: row.special_note || ''
+                        };
+                    } else {
+                        this.baseSizeModalMode = 'add';
+                        this.editingBaseSizeOriginalKey = '';
+                        this.baseSizeForm = {
+                            width: '',
+                            length: '',
+                            men: 500,
+                            women: 550,
+                            promo_price: '',
+                            badge: '',
+                            special_note: ''
+                        };
+                    }
+                    this.isBaseSizeModalOpen = true;
+                },
+
+                closeBaseSizeModal() {
+                    this.isBaseSizeModalOpen = false;
+                },
+
+                async saveBaseSizeModal() {
+                    if (!this.pricingConfig) return;
+                    if (!this.pricingConfig.base_size_prices) this.pricingConfig.base_size_prices = {};
+                    const w = parseFloat(this.baseSizeForm.width);
+                    const l = parseFloat(this.baseSizeForm.length);
+                    if (!w || !l || w <= 0 || l <= 0) {
+                        this.showToast('Please enter valid Width and Length values.', 'error');
+                        return;
+                    }
+                    const minD = Math.min(w, l);
+                    const maxD = Math.max(w, l);
+                    const fmtNum = (n) => Number.isInteger(n) ? String(n) : String(n);
+                    const newKey = `${fmtNum(minD)}x${fmtNum(maxD)}`;
+
+                    if (this.baseSizeModalMode === 'add' && this.pricingConfig.base_size_prices[newKey]) {
+                        this.showToast(`Size "${newKey}" already exists. Use Edit to modify it.`, 'error');
+                        return;
+                    }
+                    if (this.baseSizeModalMode === 'edit' && newKey !== this.editingBaseSizeOriginalKey && this.pricingConfig.base_size_prices[newKey]) {
+                        this.showToast(`Cannot rename: size "${newKey}" already exists.`, 'error');
+                        return;
+                    }
+
+                    const promoNum = (this.baseSizeForm.promo_price !== '' && this.baseSizeForm.promo_price !== null && Number(this.baseSizeForm.promo_price) > 0)
+                        ? Number(this.baseSizeForm.promo_price)
+                        : null;
+
+                    const entry = {
+                        men: Number(this.baseSizeForm.men) || 0,
+                        women: Number(this.baseSizeForm.women) || 0,
+                        promo_price: promoNum,
+                        badge: String(this.baseSizeForm.badge || '').trim(),
+                        special_note: String(this.baseSizeForm.special_note || '').trim()
+                    };
+
+                    if (this.baseSizeModalMode === 'edit' && this.editingBaseSizeOriginalKey && this.editingBaseSizeOriginalKey !== newKey) {
+                        delete this.pricingConfig.base_size_prices[this.editingBaseSizeOriginalKey];
+                    }
+                    this.pricingConfig.base_size_prices[newKey] = entry;
+                    this.isBaseSizeModalOpen = false;
+                    await this.savePricingConfig();
+                },
+
+                async deleteBaseSize(szKey) {
+                    if (!szKey || !this.pricingConfig || !this.pricingConfig.base_size_prices) return;
+                    if (!confirm(`Delete base size "${szKey}" from the price table?`)) {
+                        return;
+                    }
+                    delete this.pricingConfig.base_size_prices[szKey];
+                    if (this.isBaseSizeModalOpen && this.editingBaseSizeOriginalKey === szKey) {
+                        this.isBaseSizeModalOpen = false;
+                    }
+                    await this.savePricingConfig();
+                },
+
                 async loadPricingConfig() {
                     this.isLoadingPricing = true;
                     try {
                         const res = await fetch('admin_stock_api.php?action=get_calculator_pricing', { cache: 'no-store' });
                         const data = await res.json();
                         if (data && data.status === 'success' && data.pricing) {
-                            this.pricingConfig = data.pricing;
+                            this.pricingConfig = this.normalizeLocalBaseSizes(data.pricing);
                             this.pricingLastUpdated = data.updated_at || '';
                         } else {
                             this.showToast('Failed to load calculator pricing.', 'error');
@@ -5204,7 +5521,7 @@
                         });
                         const data = await res.json();
                         if (data && data.status === 'success') {
-                            this.pricingConfig = data.pricing;
+                            this.pricingConfig = this.normalizeLocalBaseSizes(data.pricing);
                             this.pricingLastUpdated = data.updated_at || '';
                             this.showToast('✅ Calculator pricing saved successfully!');
                         } else {
@@ -5228,7 +5545,7 @@
                         });
                         const data = await res.json();
                         if (data && data.status === 'success') {
-                            this.pricingConfig = data.pricing;
+                            this.pricingConfig = this.normalizeLocalBaseSizes(data.pricing);
                             this.pricingLastUpdated = data.updated_at || '';
                             this.showToast('🔄 Calculator pricing reset to factory defaults.');
                         } else {

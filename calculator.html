@@ -2029,17 +2029,17 @@
   }
 
   const BASE_SIZE_PRICES = {
-    '2x3': { men: 250, women: 250 },
-    '2x4': { men: 280, women: 300 },
-    '3x4': { men: 350, women: 350 },
-    '4x4': { men: 400, women: 500 },
-    '5x5': { men: 450, women: 550 },
-    '6x6': { men: 500, women: 600 },
-    '6x7': { men: 600, women: 600 },
-    '6x8': { men: 600, women: 600 },
-    '7x9': { men: 680, women: 650 },
-    '8x10': { men: 700, women: 700 },
-    '10x12': { men: 800, women: 1000 }
+    '2x3': { men: 250, women: 250, promo_price: null, badge: '', special_note: '' },
+    '2x4': { men: 280, women: 300, promo_price: null, badge: '', special_note: '' },
+    '3x4': { men: 350, women: 350, promo_price: null, badge: '', special_note: '' },
+    '4x4': { men: 400, women: 500, promo_price: null, badge: '', special_note: '' },
+    '5x5': { men: 450, women: 550, promo_price: null, badge: '', special_note: '' },
+    '6x6': { men: 500, women: 600, promo_price: null, badge: '', special_note: '' },
+    '6x7': { men: 600, women: 600, promo_price: null, badge: '', special_note: '' },
+    '6x8': { men: 600, women: 600, promo_price: null, badge: '', special_note: '' },
+    '7x9': { men: 700, women: 650, promo_price: 680, badge: 'Limited Special', special_note: "Men's Standard Special Promo", men_strike: 700 },
+    '8x10': { men: 700, women: 700, promo_price: null, badge: '', special_note: '' },
+    '10x12': { men: 800, women: 1000, promo_price: null, badge: '', special_note: '' }
   };
 
   const PRESET_CHIP_DATA = [
@@ -2056,17 +2056,16 @@
     { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: false, forWomen: true }
   ];
 
-  function getBaseSizePrice(w, l, category) {
-    const minDim = Math.min(w, l);
-    const maxDim = Math.max(w, l);
-    const key = `${minDim}x${maxDim}`;
+  function escapeCalcHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function getBaseSizePriceFallback(w, l, category) {
     const isMen = (category === 'men');
-
-    if (BASE_SIZE_PRICES[key]) {
-      return isMen ? BASE_SIZE_PRICES[key].men : BASE_SIZE_PRICES[key].women;
-    }
-
-    // Smooth fallback for custom user-entered dimensions based on combined size sum (w + l)
     const sum = w + l;
     if (isMen) {
       if (sum <= 5) return 250;
@@ -2095,30 +2094,69 @@
     }
   }
 
+  function getBaseSizePricingInfo(w, l, category) {
+    const minDim = Math.min(w, l);
+    const maxDim = Math.max(w, l);
+    const key = `${minDim}x${maxDim}`;
+    const entry = BASE_SIZE_PRICES[key] || null;
+    const isMen = (category === 'men');
+    const regularPrice = entry ? (isMen ? Number(entry.men) : Number(entry.women)) : getBaseSizePriceFallback(w, l, category);
+    const promoRaw = (entry && entry.promo_price !== null && entry.promo_price !== undefined && entry.promo_price !== '') ? Number(entry.promo_price) : 0;
+    const hasPromo = (promoRaw > 0 && promoRaw < regularPrice);
+    const effectivePrice = hasPromo ? promoRaw : regularPrice;
+    const strikePrice = hasPromo ? regularPrice : 0;
+    const badge = (entry && entry.badge) ? String(entry.badge).trim() : '';
+    const specialNote = (entry && entry.special_note) ? String(entry.special_note).trim() : '';
+    return { key, entry, regularPrice, effectivePrice, hasPromo, strikePrice, badge, specialNote };
+  }
+
+  function getBaseSizePrice(w, l, category) {
+    return getBaseSizePricingInfo(w, l, category).effectivePrice;
+  }
+
   function refreshChips() {
     const container = document.getElementById('presetChipsContainer');
     if (!container) return;
     const curW = parseFloat(document.getElementById('sizeW').value) || 0;
     const curL = parseFloat(document.getElementById('sizeL').value) || 0;
 
+    // Build preset list: standard presets that still exist in BASE_SIZE_PRICES + any custom admin-added sizes
+    const seenKeys = new Set();
     const visibleItems = PRESET_CHIP_DATA.filter(item => {
-      return currentCategory === 'men' ? item.forMen : item.forWomen;
+      const k = `${Math.min(item.w, item.l)}x${Math.max(item.w, item.l)}`;
+      if (!BASE_SIZE_PRICES[k]) return false;
+      const show = currentCategory === 'men' ? item.forMen : item.forWomen;
+      if (show) seenKeys.add(k);
+      return show;
+    });
+
+    // Also include custom sizes added via Admin Base Size Table that aren't in default preset list
+    const defaultKeys = new Set(PRESET_CHIP_DATA.map(it => `${Math.min(it.w, it.l)}x${Math.max(it.w, it.l)}`));
+    Object.keys(BASE_SIZE_PRICES).forEach(k => {
+      if (!defaultKeys.has(k) && !seenKeys.has(k)) {
+        const parts = k.split('x').map(Number);
+        if (parts.length === 2 && parts[0] > 0 && parts[1] > 0) {
+          visibleItems.push({ w: parts[0], l: parts[1], labelMen: 'Custom Size', labelWomen: 'Custom Size', forMen: true, forWomen: true });
+          seenKeys.add(k);
+        }
+      }
     });
 
     container.innerHTML = visibleItems.map(item => {
-      const price = getBaseSizePrice(item.w, item.l, currentCategory);
+      const info = getBaseSizePricingInfo(item.w, item.l, currentCategory);
       const desc = currentCategory === 'men' ? item.labelMen : item.labelWomen;
       const isActive = ((curW === item.w && curL === item.l) || (curW === item.l && curL === item.w));
+      const badgeHtml = info.badge ? ` <span class="badge-special">${escapeCalcHtml(info.badge)}</span>` : '';
+      const titleAttr = info.specialNote ? ` title="${escapeCalcHtml(info.specialNote)}"` : '';
 
       let contentHtml;
-      if (currentCategory === 'men' && item.w === 7 && item.l === 9) {
-        const strikePrice = (PRICING_CONFIG && PRICING_CONFIG.base_size_prices && PRICING_CONFIG.base_size_prices['7x9'] && PRICING_CONFIG.base_size_prices['7x9'].men_strike) ? PRICING_CONFIG.base_size_prices['7x9'].men_strike : 700;
-        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$${strikePrice}</span><span class="chip-promo-price">$${price}</span>) <span class="badge-special">Limited Special</span>`;
+      if (info.hasPromo) {
+        contentHtml = `${item.w}" × ${item.l}" (${desc} · <span class="chip-strike">$${info.strikePrice}</span><span class="chip-promo-price">$${info.effectivePrice}</span>)${badgeHtml}`;
       } else {
-        contentHtml = `${item.w}" × ${item.l}" (${desc} · $${price})`;
+        contentHtml = `${item.w}" × ${item.l}" (${desc} · $${info.effectivePrice})${badgeHtml}`;
       }
 
-      return `<span class="chip ${isActive ? 'active' : ''}" data-w="${item.w}" data-l="${item.l}" onclick="setSize(${item.w}, ${item.l})">${contentHtml}</span>`;
+      return `<span class="chip ${isActive ? 'active' : ''}" data-w="${item.w}" data-l="${item.l}"${titleAttr} onclick="setSize(${item.w}, ${item.l})">${contentHtml}</span>`;
     }).join('');
   }
 
@@ -2323,14 +2361,15 @@
     const w = parseFloat(document.getElementById('sizeW').value) || 0;
     const l = parseFloat(document.getElementById('sizeL').value) || 0;
     const sizeSum = w + l; // Wig industry standard: Combined size (W + L in inches, e.g. 5+5=10, 8+10=18)
-    const rawBaseAud = getBaseSizePrice(w, l, currentCategory);
-    const isSpecial7x9 = (currentCategory === 'men' && ((w === 7 && l === 9) || (w === 9 && l === 7)));
+    const sizeInfo = getBaseSizePricingInfo(w, l, currentCategory);
+    const rawBaseAud = sizeInfo.effectivePrice;
+    const badgeTag = sizeInfo.badge ? ` <span class="badge-special" style="vertical-align:middle; margin-left:4px;">${escapeCalcHtml(sizeInfo.badge)}</span>` : '';
+    const noteHtml = sizeInfo.specialNote ? `<div style="margin-top:4px; font-size:0.78rem; color:#d97706; font-weight:600;">★ ${escapeCalcHtml(sizeInfo.specialNote)}</div>` : '';
 
-    if (isSpecial7x9) {
-      const strikePrice = (PRICING_CONFIG && PRICING_CONFIG.base_size_prices && PRICING_CONFIG.base_size_prices['7x9'] && PRICING_CONFIG.base_size_prices['7x9'].men_strike) ? PRICING_CONFIG.base_size_prices['7x9'].men_strike : 700;
-      document.getElementById('areaDisplay').innerHTML = `Size: ${sizeSum}" (${w}" + ${l}") · Base: <span style="text-decoration:line-through; opacity:0.6; margin-right:4px;">$${strikePrice}</span><strong style="color:var(--accent);">$${rawBaseAud} AUD</strong> <span class="badge-special" style="vertical-align:middle; margin-left:4px;">Limited Special</span>`;
+    if (sizeInfo.hasPromo) {
+      document.getElementById('areaDisplay').innerHTML = `Size: ${sizeSum}" (${w}" + ${l}") · Base: <span style="text-decoration:line-through; opacity:0.6; margin-right:4px;">$${sizeInfo.strikePrice}</span><strong style="color:var(--accent);">$${rawBaseAud} AUD</strong>${badgeTag}${noteHtml}`;
     } else {
-      document.getElementById('areaDisplay').textContent = `Size: ${sizeSum}" (${w}" + ${l}") · Base: $${rawBaseAud} AUD`;
+      document.getElementById('areaDisplay').innerHTML = `Size: ${sizeSum}" (${w}" + ${l}") · Base: $${rawBaseAud} AUD${badgeTag}${noteHtml}`;
     }
     updateChips(w, l);
 
@@ -2674,9 +2713,8 @@
     const valTextureAud = document.getElementById('valTextureAud');
     if (valTextureAud) valTextureAud.textContent = `+$${textureAddAud.toLocaleString()} AUD`;
 
-    if (isSpecial7x9 && wCap === 1.0) {
-      const strikePrice = (PRICING_CONFIG && PRICING_CONFIG.base_size_prices && PRICING_CONFIG.base_size_prices['7x9'] && PRICING_CONFIG.base_size_prices['7x9'].men_strike) ? PRICING_CONFIG.base_size_prices['7x9'].men_strike : 700;
-      document.getElementById('valBaseAud').innerHTML = `<span style="text-decoration:line-through; font-weight:normal; opacity:0.6; font-size:0.85em; margin-right:4px;">$${strikePrice}</span>$${baseCapAud.toLocaleString()} AUD`;
+    if (sizeInfo.hasPromo && wCap === 1.0) {
+      document.getElementById('valBaseAud').innerHTML = `<span style="text-decoration:line-through; font-weight:normal; opacity:0.6; font-size:0.85em; margin-right:4px;">$${sizeInfo.strikePrice}</span>$${baseCapAud.toLocaleString()} AUD`;
     } else {
       document.getElementById('valBaseAud').textContent = `$${baseCapAud.toLocaleString()} AUD`;
     }
@@ -2914,10 +2952,11 @@
     if (!cfg) return;
     PRICING_CONFIG = cfg;
 
-    // 1. Update Base Size Prices
+    // 1. Update Base Size Prices (replace keys cleanly so additions/edits/deletions all reflect)
     if (cfg.base_size_prices) {
+      Object.keys(BASE_SIZE_PRICES).forEach(k => delete BASE_SIZE_PRICES[k]);
       Object.keys(cfg.base_size_prices).forEach(k => {
-        BASE_SIZE_PRICES[k] = Object.assign({}, BASE_SIZE_PRICES[k] || {}, cfg.base_size_prices[k]);
+        BASE_SIZE_PRICES[k] = Object.assign({ promo_price: null, badge: '', special_note: '' }, cfg.base_size_prices[k]);
       });
     }
 
