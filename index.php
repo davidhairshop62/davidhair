@@ -4,6 +4,7 @@ $pageDescription = "Factory-direct 100% human hair men's toupees, women's silk t
 $pageKeywords    = "men's toupee melbourne, women's hair topper melbourne, men's hair system melbourne, medical wigs springvale, FFA hairpiece melbourne, toupee fitting springvale, human hair toupee australia";
 $canonicalPath   = '/';
 $activePage      = 'home';
+$extraHeadScripts = ['/assets/js/ai-tryon.js'];
 
 require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
@@ -153,7 +154,10 @@ $accentStyles = [
         </div>
     </section>
 
-    <!-- 2. SECTION DIRECTORY HUB (Fast Tap-to-Open Dedicated Pages) -->
+    <!-- 2. AI VIRTUAL HAIRSTYLE TRY-ON SIMULATOR -->
+    <?php require __DIR__ . '/includes/ai_simulator_section.php'; ?>
+
+    <!-- 3. SECTION DIRECTORY HUB (Fast Tap-to-Open Dedicated Pages) -->
     <section id="sections-hub" class="py-8 sm:py-14 bg-[#080F24] border-t border-brand-border/70">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
