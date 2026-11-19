@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Stock Inventory Manager | David Hair Admin</title>
     
     <!-- Fonts & Icons -->
@@ -50,8 +50,28 @@
 
     <style>
         [x-cloak] { display: none !important; }
+        html, body { max-width: 100%; overflow-x: hidden; }
         .teal-gradient { background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%); }
         .bronze-gradient { background: linear-gradient(135deg, #D97706 0%, #B45309 100%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        button, a, input, select, textarea { touch-action: manipulation; }
+
+        /* Mobile Optimization for Galaxy S24 Ultra (6.8", 19.5:9, ~384-412px CSS viewport) & phones */
+        @media (max-width: 767px) {
+            .overflow-x-auto {
+                -webkit-overflow-scrolling: touch;
+                max-width: 100%;
+            }
+            /* Prevent modal horizontal clipping on narrow mobile viewports */
+            .fixed.inset-0 > div {
+                max-width: calc(100vw - 1rem) !important;
+                max-height: 92dvh;
+            }
+            .mobile-safe-bottom {
+                padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+            }
+        }
 
         /* PRINT STYLES FOR INVOICE / RECEIPT */
         @media print {
@@ -87,7 +107,7 @@
         }
     </style>
 </head>
-<body class="bg-brand-darkBg text-brand-textMain font-sans antialiased min-h-screen" x-data="stockManagerApp()">
+<body class="bg-brand-darkBg text-brand-textMain font-sans antialiased min-h-screen overflow-x-hidden" x-data="stockManagerApp()">
 
     <!-- 1. ADMIN LOGIN MODAL SCREEN (Shown if not authenticated) -->
     <div x-show="!isAuthenticated" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-darkBg/98 backdrop-blur-md">
@@ -140,116 +160,136 @@
 
     <!-- 2. MAIN DASHBOARD CONTENT (Shown if authenticated) -->
     <div x-show="isAuthenticated" x-cloak>
-        <!-- Header / Navbar -->
-        <header class="bg-brand-cardBg border-b border-brand-border sticky top-0 z-30 shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-xl shadow-md">
+        <!-- Header / Navbar (Responsive for Galaxy S24 Ultra Mobile & Desktop) -->
+        <header class="bg-brand-cardBg/95 backdrop-blur-md border-b border-brand-border sticky top-0 z-30 shadow-lg">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-20 flex items-center justify-between gap-2">
+                <!-- Left: Logo & Brand -->
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl teal-gradient flex items-center justify-center font-heading font-extrabold text-white text-sm sm:text-xl shadow-md shrink-0">
                         DH
                     </div>
-                    <div>
-                        <h1 class="font-heading text-lg sm:text-xl font-bold text-white tracking-tight leading-tight">Stock & AI Manager</h1>
-                        <span class="text-[11px] text-brand-tealLight font-bold uppercase tracking-wider block">David Hair MySQL Admin Console</span>
+                    <div class="min-w-0">
+                        <h1 class="font-heading text-sm sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
+                            <span class="hidden sm:inline">Stock &amp; AI Manager</span>
+                            <span class="sm:hidden">DH Admin</span>
+                        </h1>
+                        <span class="hidden sm:block text-[11px] text-brand-tealLight font-bold uppercase tracking-wider">David Hair MySQL Admin Console</span>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <!-- Language Switcher Buttons (Flag icons only) -->
-                    <div class="flex items-center gap-1 bg-brand-inner border border-brand-border rounded-lg p-1 text-sm font-bold">
-                        <button type="button" @click="setLang('en')" :class="lang === 'en' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="English (Australia)">🇦🇺</button>
-                        <button type="button" @click="setLang('ko')" :class="lang === 'ko' ? 'bg-brand-teal text-white shadow scale-105' : 'text-slate-400 hover:text-white opacity-70 hover:opacity-100'" class="px-2 py-1 rounded transition-all" title="한국어 (Korean)">🇰🇷</button>
+                <!-- Right: Compact Mobile / Full Desktop Action Controls -->
+                <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                    <!-- Language Switcher (Flag icons) -->
+                    <div class="flex items-center gap-0.5 sm:gap-1 bg-brand-inner border border-brand-border rounded-lg p-0.5 sm:p-1 text-xs sm:text-sm font-bold">
+                        <button type="button" @click="setLang('en')" :class="lang === 'en' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 opacity-70'" class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transition-all" title="English">🇦🇺</button>
+                        <button type="button" @click="setLang('ko')" :class="lang === 'ko' ? 'bg-brand-teal text-white shadow' : 'text-slate-400 opacity-70'" class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transition-all" title="한국어">🇰🇷</button>
                     </div>
 
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-inner border border-brand-border text-xs text-slate-300 font-mono">
+                    <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-inner border border-brand-border text-xs text-slate-300 font-mono">
                         <i class="fa-solid fa-user-shield text-brand-tealLight"></i>
                         <span x-text="currentUser"></span>
                     </div>
 
-                    <a href="/" target="_blank" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-globe"></i> View Site
+                    <a href="/" target="_blank" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="View Site">
+                        <i class="fa-solid fa-globe text-brand-tealLight"></i>
+                        <span class="hidden md:inline">View Site</span>
                     </a>
 
                     <template x-if="activeTab === 'stock'">
-                        <button @click="openModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add New Stock
+                        <button @click="openModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-plus"></i>
+                            <span class="sm:hidden">Stock</span>
+                            <span class="hidden sm:inline">Add New Stock</span>
                         </button>
                     </template>
                     <template x-if="activeTab === 'ai_styles'">
-                        <button @click="openAiModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add AI Hairstyle
+                        <button @click="openAiModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-plus"></i>
+                            <span class="sm:hidden">AI Style</span>
+                            <span class="hidden sm:inline">Add AI Hairstyle</span>
                         </button>
                     </template>
                     <template x-if="activeTab === 'bookings'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openNewBookingModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-plus"></i> + New Booking
+                        <div class="flex items-center gap-1.5">
+                            <button @click="openNewBookingModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                <span class="sm:hidden">Book</span>
+                                <span class="hidden sm:inline">+ New Booking</span>
                             </button>
-                            <button @click="loadBookings()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Bookings">
+                            <button @click="loadBookings()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Refresh Bookings">
                                 <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingBookings }"></i>
                             </button>
                         </div>
                     </template>
                     <template x-if="activeTab === 'members'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openMemberModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-user-plus"></i> + Add Member
+                        <div class="flex items-center gap-1.5">
+                            <button @click="openMemberModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span class="sm:hidden">Member</span>
+                                <span class="hidden sm:inline">+ Add Member</span>
                             </button>
-                            <button @click="loadMembers()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Members">
+                            <button @click="loadMembers()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Refresh Members">
                                 <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingMembers }"></i>
                             </button>
                         </div>
                     </template>
                     <template x-if="activeTab === 'invoices'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openNewInvoiceModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-plus"></i> + Create Invoice
+                        <div class="flex items-center gap-1.5">
+                            <button @click="openNewInvoiceModal()" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i>
+                                <span class="sm:hidden">Invoice</span>
+                                <span class="hidden sm:inline">+ Create Invoice</span>
                             </button>
-                            <button @click="loadInvoices()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Invoices">
+                            <button @click="loadInvoices()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Refresh Invoices">
                                 <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingInvoices }"></i>
                             </button>
                         </div>
                     </template>
                     <template x-if="activeTab === 'gallery'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openGalleryCaseModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-3.5 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-plus"></i> Add B/A Case
+                        <div class="flex items-center gap-1.5">
+                            <button @click="openGalleryCaseModal('add')" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i>
+                                <span class="sm:hidden">B/A</span>
+                                <span class="hidden sm:inline">Add B/A Case</span>
                             </button>
-                            <a href="gallery.html" target="_blank" class="px-3 py-2.5 bg-brand-inner hover:bg-slate-700 border border-brand-border rounded-lg text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                            <a href="gallery.html" target="_blank" class="hidden sm:flex px-3 py-2.5 bg-brand-inner hover:bg-slate-700 border border-brand-border rounded-lg text-slate-300 hover:text-white text-xs font-semibold items-center gap-1.5 transition-colors">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-brand-tealLight"></i>
-                                <span class="hidden sm:inline">Preview Gallery</span>
+                                <span>Preview Gallery</span>
                             </a>
                         </div>
                     </template>
                     <template x-if="activeTab === 'pricing'">
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="savePricingConfig()" :disabled="isSavingPricing" class="teal-gradient hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2 disabled:opacity-50">
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="savePricingConfig()" :disabled="isSavingPricing" class="teal-gradient hover:opacity-95 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50 whitespace-nowrap">
                                 <i class="fa-solid fa-spinner fa-spin" x-show="isSavingPricing"></i>
                                 <i class="fa-solid fa-floppy-disk" x-show="!isSavingPricing"></i>
-                                <span x-text="isSavingPricing ? 'Saving...' : 'Save Pricing'"></span>
+                                <span class="sm:hidden" x-text="isSavingPricing ? '...' : 'Save'"></span>
+                                <span class="hidden sm:inline" x-text="isSavingPricing ? 'Saving...' : 'Save Pricing'"></span>
                             </button>
-                            <button @click="loadPricingConfig()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Reload Pricing">
+                            <button @click="loadPricingConfig()" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Reload Pricing">
                                 <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingPricing }"></i>
                             </button>
                         </div>
                     </template>
                     <template x-if="activeTab === 'analytics'">
-                        <div class="flex items-center gap-2">
-                            <button type="button" @click="exportAnalyticsCsv()" class="bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Export CSV Report">
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="exportAnalyticsCsv()" class="hidden sm:flex bg-brand-inner hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors items-center gap-1.5" title="Export CSV Report">
                                 <i class="fa-solid fa-file-csv text-emerald-400"></i>
-                                <span class="hidden sm:inline">CSV 내보내기</span>
+                                <span class="hidden md:inline">CSV 내보내기</span>
                             </button>
-                            <button type="button" @click="syncApacheLogs()" :disabled="isSyncingLogs" class="bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700 text-cyan-200 text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50" title="Sync Apache Web Server Access Logs">
+                            <button type="button" @click="syncApacheLogs()" :disabled="isSyncingLogs" class="bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700 text-cyan-200 text-xs font-semibold px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50" title="Sync Apache Logs">
                                 <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isSyncingLogs }"></i>
-                                <span class="hidden sm:inline">서버 로그 동기화</span>
+                                <span class="hidden md:inline">서버 로그 동기화</span>
                             </button>
-                            <button type="button" @click="loadAnalytics()" :disabled="isLoadingAnalytics" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Refresh Analytics">
+                            <button type="button" @click="loadAnalytics()" :disabled="isLoadingAnalytics" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Refresh Analytics">
                                 <i class="fa-solid fa-arrows-rotate" :class="{ 'fa-spin': isLoadingAnalytics }"></i>
                             </button>
                         </div>
                     </template>
 
-                    <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-3 py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
-                        <i class="fa-solid fa-power-off"></i> Logout
+                    <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span class="hidden md:inline">Logout</span>
                     </button>
                 </div>
             </div>
@@ -264,16 +304,16 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 transform -translate-y-4 scale-95"
-             class="fixed top-6 right-6 z-50 bg-emerald-950/95 border-2 border-emerald-500 text-emerald-200 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-xs backdrop-blur-md">
-            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
-            <span x-text="toastMessage"></span>
+             class="fixed top-16 left-3 right-3 sm:left-auto sm:top-6 sm:right-6 z-50 bg-emerald-950/95 border-2 border-emerald-500 text-emerald-200 px-4 sm:px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-xs backdrop-blur-md">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg shrink-0"></i>
+            <span x-text="toastMessage" class="break-words"></span>
         </div>
 
         <!-- Main Content Container -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-24 md:pb-8 space-y-4 sm:space-y-6">
 
-            <!-- Top Navigation Tab Switcher -->
-            <div class="flex items-center gap-2 sm:gap-2.5 border-b border-brand-border pb-3 overflow-x-auto">
+            <!-- Top Navigation Tab Switcher (Smooth pill scroll on mobile, full bar on desktop) -->
+            <div class="flex items-center gap-1.5 sm:gap-2.5 border-b border-brand-border pb-2.5 sm:pb-3 overflow-x-auto no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
                 <button @click="activeTab = 'stock'" 
                         :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
                         class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
@@ -439,8 +479,73 @@
                     </div>
                 </div>
 
-                <!-- Stock Items Table -->
-                <div class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                <!-- Stock Items: Mobile Card View (Galaxy S24 Ultra / Phone Friendly - Zero Horizontal Clipping) -->
+                <div class="md:hidden space-y-3">
+                    <template x-if="filteredItems.length === 0">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-8 text-center text-slate-400 text-xs">
+                            No stock items match your current filter.
+                        </div>
+                    </template>
+                    <template x-for="item in filteredItems" :key="'mob-stock-' + item.id">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-3.5 shadow-lg space-y-3"
+                             :class="{ 'opacity-65 border-slate-700': !(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') }">
+                            <div class="flex items-start gap-3">
+                                <!-- Tap Photo to Quick Upload -->
+                                <div class="relative w-20 h-20 rounded-xl overflow-hidden border border-brand-border bg-brand-inner shrink-0">
+                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
+                                    <label class="absolute bottom-0 inset-x-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center cursor-pointer">
+                                        <i class="fa-solid fa-camera text-brand-tealLight mr-0.5"></i>변경
+                                        <input type="file" accept="image/*" @change="quickUploadImage(item, $event)" class="hidden">
+                                    </label>
+                                </div>
+                                <div class="flex-1 min-w-0 space-y-1">
+                                    <div class="flex items-center justify-between gap-1.5">
+                                        <span class="font-mono text-[11px] font-bold text-brand-tealLight truncate" x-text="item.sku"></span>
+                                        <span class="font-mono font-extrabold text-sm text-emerald-400 shrink-0" x-text="'$' + item.price"></span>
+                                    </div>
+                                    <div class="font-bold text-white text-xs leading-snug line-clamp-2" x-text="item.name"></div>
+                                    <div class="flex flex-wrap items-center gap-1 text-[10px] text-slate-300">
+                                        <span class="px-1.5 py-0.5 rounded bg-brand-inner border border-brand-border" x-text="item.category"></span>
+                                        <span class="px-1.5 py-0.5 rounded bg-brand-inner border border-brand-border font-mono" x-text="item.size"></span>
+                                        <template x-if="item.badge">
+                                            <span class="px-1.5 py-0.5 rounded font-bold uppercase border text-[9px]" :class="getBadgeClass(item.badge)" x-text="item.badge"></span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Controls: Qty Stepper + Quick Actions -->
+                            <div class="pt-2.5 border-t border-brand-border/60 flex items-center justify-between gap-2 flex-wrap">
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" @click="quickUpdateStockQty(item, -1)" class="w-8 h-8 rounded-lg bg-brand-inner border border-brand-border text-white font-bold text-sm flex items-center justify-center active:scale-95">-</button>
+                                    <span :class="item.stockQty > 5 ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'bg-rose-950 text-rose-400 border-rose-800'"
+                                          class="px-2.5 py-1 rounded-lg text-xs font-bold border min-w-[54px] text-center" x-text="item.stockQty + ' pcs'"></span>
+                                    <button type="button" @click="quickUpdateStockQty(item, 1)" class="w-8 h-8 rounded-lg bg-brand-inner border border-brand-border text-white font-bold text-sm flex items-center justify-center active:scale-95">+</button>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" @click="toggleItemVisibility(item)" :disabled="togglingItemIds.includes(item.id)"
+                                            :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'bg-emerald-950/80 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
+                                            class="h-8 px-2.5 rounded-lg border text-[11px] font-bold flex items-center gap-1">
+                                        <i class="fa-solid text-[11px]" :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                        <span x-text="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '노출' : '숨김'"></span>
+                                    </button>
+                                    <button type="button" @click="openModal('edit', item)" class="h-8 px-3 rounded-lg bg-teal-950 border border-teal-600 text-teal-200 text-[11px] font-bold flex items-center gap-1">
+                                        <i class="fa-solid fa-pen"></i> 수정
+                                    </button>
+                                    <button type="button" @click="copyItemFromTable(item)" class="w-8 h-8 rounded-lg bg-indigo-950/80 border border-indigo-700 text-indigo-300 flex items-center justify-center" title="Copy">
+                                        <i class="fa-solid fa-copy text-xs"></i>
+                                    </button>
+                                    <button type="button" @click="deleteItem(item)" class="w-8 h-8 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 flex items-center justify-center" title="Delete">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Stock Items Table (Desktop md+) -->
+                <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[11px] border-b border-brand-border select-none">
@@ -1079,8 +1184,77 @@
                     </div>
                 </div>
 
-                <!-- VIEW 2: LIST TABLE VIEW -->
-                <div x-show="bookingViewMode === 'list'" class="bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                <!-- VIEW 2: LIST VIEW (Mobile Cards + Desktop Table) -->
+                <div x-show="bookingViewMode === 'list'" class="space-y-3">
+                    <!-- Mobile Bookings Cards (md:hidden) -->
+                    <div class="md:hidden space-y-3">
+                        <template x-if="filteredBookings.length === 0">
+                            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-8 text-center text-slate-400 text-xs">
+                                No fitting bookings found matching your search or filters.
+                            </div>
+                        </template>
+                        <template x-for="b in filteredBookings" :key="'mob-bk-' + b.id">
+                            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-3.5 shadow-lg space-y-2.5 text-xs">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="font-mono font-bold text-brand-tealLight" x-text="'#FIT-' + b.id"></span>
+                                            <template x-if="isDateToday(b.booking_date)">
+                                                <span class="text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-700 px-1.5 py-0.5 rounded font-extrabold uppercase">Today</span>
+                                            </template>
+                                        </div>
+                                        <div class="font-bold text-white text-sm mt-0.5" x-text="b.customer_name"></div>
+                                    </div>
+                                    <select :value="b.status" @change="updateBookingStatus(b.id, $event.target.value)"
+                                            class="text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none border"
+                                            :class="{
+                                                'bg-amber-950/90 text-amber-300 border-amber-700': b.status === 'Pending',
+                                                'bg-emerald-950/90 text-emerald-300 border-emerald-700': b.status === 'Confirmed',
+                                                'bg-sky-950/90 text-sky-300 border-sky-700': b.status === 'Completed',
+                                                'bg-rose-950/90 text-rose-300 border-rose-700': b.status === 'Cancelled'
+                                            }">
+                                        <option value="Pending">🟡 Pending</option>
+                                        <option value="Confirmed">🟢 Confirmed</option>
+                                        <option value="Completed">🔵 Completed</option>
+                                        <option value="Cancelled">🔴 Cancelled</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-brand-inner/70 border border-brand-border/60 text-[11px]">
+                                    <div>
+                                        <span class="text-slate-400 block text-[10px]">Date &amp; Time</span>
+                                        <span class="font-mono font-bold text-white" x-text="b.booking_date + ' ' + b.booking_time"></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 block text-[10px]">Phone / WhatsApp</span>
+                                        <a :href="'https://wa.me/' + formatWhatsAppPhone(b.phone)" target="_blank" class="font-mono font-bold text-emerald-400 underline" x-text="b.phone"></a>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <span class="text-slate-400 block text-[10px]">Service</span>
+                                        <span class="text-slate-200 font-semibold" x-text="b.service_type"></span>
+                                    </div>
+                                    <template x-if="b.notes">
+                                        <div class="col-span-2 text-amber-200/90 text-[11px]" x-text="'Memo: ' + b.notes"></div>
+                                    </template>
+                                </div>
+                                <div class="flex items-center gap-1.5 pt-1">
+                                    <button type="button" @click="confirmAndWhatsApp(b)" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] py-2 px-2.5 rounded-lg flex items-center justify-center gap-1.5">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                        <span x-text="b.status === 'Confirmed' ? 'WhatsApp' : 'Confirm + WA'"></span>
+                                    </button>
+                                    <button type="button" @click="addToGoogleCalendar(b)" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] py-2 px-2.5 rounded-lg flex items-center justify-center gap-1.5">
+                                        <i class="fa-regular fa-calendar-plus"></i>
+                                        <span>Google Cal</span>
+                                    </button>
+                                    <button type="button" @click="deleteBooking(b)" class="w-9 h-9 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Desktop Bookings Table (md+) -->
+                    <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs whitespace-nowrap">
                             <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[11px] border-b border-brand-border">
@@ -1206,6 +1380,7 @@
                                 </template>
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -1713,8 +1888,53 @@
                     </div>
                 </div>
 
-                <!-- Invoices List Table -->
-                <div class="bg-brand-cardBg border border-brand-border rounded-xl overflow-hidden shadow-sm">
+                <!-- Invoices Mobile Card View (md:hidden) -->
+                <div class="md:hidden space-y-3">
+                    <template x-if="filteredInvoices.length === 0">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-8 text-center text-slate-400 text-xs space-y-2">
+                            <p class="font-bold text-slate-200">No invoices or receipts found</p>
+                            <button type="button" @click="openNewInvoiceModal()" class="teal-gradient text-white text-xs font-bold px-4 py-2 rounded-lg shadow">+ Create Invoice</button>
+                        </div>
+                    </template>
+                    <template x-for="inv in filteredInvoices" :key="'mob-inv-' + inv.id">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-3.5 shadow-lg space-y-2.5 text-xs">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="font-mono font-bold text-white" x-text="inv.invoice_number"></span>
+                                        <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30" x-text="inv.invoice_type"></span>
+                                    </div>
+                                    <div class="font-bold text-slate-100 text-sm mt-1 truncate" x-text="inv.customer_name"></div>
+                                    <div class="text-[11px] text-slate-400 font-mono" x-text="inv.invoice_date + (inv.customer_phone ? ' • ' + inv.customer_phone : '')"></div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <div class="font-mono font-extrabold text-base text-emerald-400" x-text="'$' + Number(inv.total_amount || 0).toFixed(2)"></div>
+                                    <button type="button" @click="quickToggleInvoiceStatus(inv)"
+                                            class="mt-1 text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border"
+                                            :class="inv.status === 'Paid' ? 'bg-emerald-950/80 text-emerald-300 border-emerald-600' : (inv.status === 'Quote' ? 'bg-sky-950/80 text-sky-300 border-sky-600' : 'bg-rose-950/80 text-rose-300 border-rose-600')"
+                                            x-text="inv.status"></button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-5 gap-1.5 pt-2 border-t border-brand-border/60">
+                                <button type="button" @click="openInvoicePreview(inv)" class="py-2 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-200 font-bold text-[11px] flex items-center justify-center gap-1 col-span-2">
+                                    <i class="fa-solid fa-print"></i> Preview
+                                </button>
+                                <button type="button" @click="sendWhatsAppInvoice(inv)" class="py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center" title="WhatsApp">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button type="button" @click="editInvoice(inv)" class="py-2 rounded-lg bg-brand-inner border border-brand-border text-slate-200 flex items-center justify-center" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" @click="deleteInvoice(inv)" class="py-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 flex items-center justify-center" title="Delete">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Invoices List Table (Desktop md+) -->
+                <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-xl overflow-hidden shadow-sm">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-brand-inner text-brand-textMuted uppercase tracking-wider text-[11px] border-b border-brand-border">
@@ -1946,7 +2166,62 @@
                                 </div>
                             </div>
 
-                            <div class="overflow-x-auto">
+                            <!-- Mobile Base Size Card List (md:hidden — Zero Clipping on Galaxy S24 Ultra) -->
+                            <div class="md:hidden divide-y divide-brand-border/60">
+                                <template x-for="(szKey) in Object.keys(pricingConfig.base_size_prices || {})" :key="'mob-sz-' + szKey">
+                                    <div class="p-3.5 space-y-2.5 text-xs">
+                                        <!-- Top Row: Size + M/W Visibility + Edit/Del -->
+                                        <div class="flex items-center justify-between gap-2">
+                                            <div>
+                                                <span class="font-mono font-extrabold text-white text-sm" x-text="szKey"></span>
+                                                <span class="text-[10px] text-slate-400 font-mono ml-1.5" x-text="'(' + szKey.split('x').reduce((a,b)=>parseFloat(a)+parseFloat(b), 0) + ' in)'"></span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <label class="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-bold"
+                                                       :class="pricingConfig.base_size_prices[szKey].show_men ? 'bg-sky-500/15 border-sky-400/50 text-sky-300' : 'bg-brand-darkBg border-brand-border text-slate-500'">
+                                                    <input type="checkbox" x-model="pricingConfig.base_size_prices[szKey].show_men" class="w-3.5 h-3.5 accent-sky-500">
+                                                    <span>M</span>
+                                                </label>
+                                                <label class="inline-flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-bold"
+                                                       :class="pricingConfig.base_size_prices[szKey].show_women ? 'bg-rose-500/15 border-rose-400/50 text-rose-300' : 'bg-brand-darkBg border-brand-border text-slate-500'">
+                                                    <input type="checkbox" x-model="pricingConfig.base_size_prices[szKey].show_women" class="w-3.5 h-3.5 accent-rose-500">
+                                                    <span>W</span>
+                                                </label>
+                                                <button type="button" @click="openBaseSizeModal(szKey)" class="w-7 h-7 rounded-lg bg-brand-inner border border-teal-500/40 text-teal-300 flex items-center justify-center"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                                <button type="button" @click="deleteBaseSize(szKey)" class="w-7 h-7 rounded-lg bg-rose-950/60 border border-rose-800/60 text-rose-300 flex items-center justify-center"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                            </div>
+                                        </div>
+                                        <!-- Price Row: Men / Women / Promo -->
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <div :class="!pricingConfig.base_size_prices[szKey].show_men ? 'opacity-45' : ''">
+                                                <label class="block text-[10px] text-slate-400 mb-0.5">Men ($)</label>
+                                                <input type="number" x-model.number="pricingConfig.base_size_prices[szKey].men" min="0" step="10"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white font-mono font-bold text-xs outline-none focus:border-brand-teal">
+                                            </div>
+                                            <div :class="!pricingConfig.base_size_prices[szKey].show_women ? 'opacity-45' : ''">
+                                                <label class="block text-[10px] text-slate-400 mb-0.5">Women ($)</label>
+                                                <input type="number" x-model.number="pricingConfig.base_size_prices[szKey].women" min="0" step="10"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white font-mono font-bold text-xs outline-none focus:border-brand-teal">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] text-amber-300 mb-0.5">Promo ($)</label>
+                                                <input type="number" x-model="pricingConfig.base_size_prices[szKey].promo_price" min="0" step="10" placeholder="None"
+                                                       class="w-full bg-brand-darkBg border border-amber-500/40 rounded-lg px-2 py-1.5 text-amber-300 font-mono font-bold text-xs outline-none">
+                                            </div>
+                                        </div>
+                                        <!-- Badge & Note Row -->
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <input type="text" x-model="pricingConfig.base_size_prices[szKey].badge" placeholder="Badge (e.g. Best Seller)" maxlength="40"
+                                                   class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-rose-200 text-xs font-semibold outline-none placeholder-slate-600">
+                                            <input type="text" x-model="pricingConfig.base_size_prices[szKey].special_note" placeholder="Special Note..." maxlength="160"
+                                                   class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-slate-200 text-xs outline-none placeholder-slate-600">
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Desktop Base Size Table (md+) -->
+                            <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
                                         <tr>
@@ -2498,7 +2773,36 @@
                                 </button>
                             </div>
 
-                            <div class="overflow-x-auto">
+                            <!-- Mobile Cap Construction Card List (md:hidden) -->
+                            <div class="md:hidden divide-y divide-brand-border/60">
+                                <template x-for="(cap, idx) in (pricingConfig.cap_constructions || [])" :key="'mob-cap-' + (cap.id || idx)">
+                                    <div class="p-3.5 space-y-2 text-xs">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <label class="inline-flex items-center gap-1.5 text-[11px] font-bold text-teal-300">
+                                                <input type="radio" name="default_cap_radio_mob" :checked="cap.is_default" @change="setDefaultCap(idx)" class="w-3.5 h-3.5 accent-teal-500">
+                                                <span>Default</span>
+                                            </label>
+                                            <div class="flex items-center gap-2">
+                                                <span x-show="Number(cap.factor) === 1" class="text-[10px] font-mono text-slate-400">Standard</span>
+                                                <span x-show="Number(cap.factor) > 1" class="text-[10px] font-mono text-amber-300 font-bold" x-text="'+' + Math.round((Number(cap.factor) - 1) * 100) + '% Base'"></span>
+                                                <button type="button" @click="removeCapConstruction(idx)" class="w-7 h-7 rounded-lg bg-rose-950/60 border border-rose-800/60 text-rose-300 flex items-center justify-center"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2">
+                                            <input type="text" x-model="cap.label" placeholder="Cap Label"
+                                                   class="col-span-8 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs outline-none focus:border-brand-teal">
+                                            <div class="col-span-4 flex items-center gap-1">
+                                                <input type="number" x-model.number="cap.factor" min="0.5" max="10" step="0.05"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-brand-tealLight font-mono font-bold text-xs text-center outline-none focus:border-brand-teal">
+                                                <span class="text-slate-400 font-mono text-[11px]">x</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Desktop Cap Construction Table (md+) -->
+                            <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
                                         <tr>
@@ -2523,7 +2827,7 @@
                                                     <input type="text"
                                                            x-model="cap.label"
                                                            placeholder="e.g. PU+Swiss Net (Standard)"
-                                                           class="w-full min-w-[200px] bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs focus:border-brand-teal outline-none">
+                                                           class="w-full min-w-[130px] sm:min-w-[200px] bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs focus:border-brand-teal outline-none">
                                                 </td>
                                                 <td class="py-2.5 px-3 whitespace-nowrap">
                                                     <div class="flex items-center gap-1">
@@ -2574,7 +2878,36 @@
                                 </button>
                             </div>
 
-                            <div class="overflow-x-auto">
+                            <!-- Mobile Hair Density Card List (md:hidden) -->
+                            <div class="md:hidden divide-y divide-brand-border/60">
+                                <template x-for="(den, idx) in (pricingConfig.hair_densities || [])" :key="'mob-den-' + (den.id || idx)">
+                                    <div class="p-3.5 space-y-2 text-xs">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <label class="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-300">
+                                                <input type="radio" name="default_density_radio_mob" :checked="den.is_default" @change="setDefaultDensity(idx)" class="w-3.5 h-3.5 accent-amber-500">
+                                                <span>Default</span>
+                                            </label>
+                                            <div class="flex items-center gap-2">
+                                                <span x-show="Number(den.factor) === 1" class="text-[10px] font-mono text-slate-400">Standard</span>
+                                                <span x-show="Number(den.factor) > 1" class="text-[10px] font-mono text-amber-300 font-bold" x-text="'+' + Math.round((Number(den.factor) - 1) * 100) + '%'"></span>
+                                                <button type="button" @click="removeHairDensity(idx)" class="w-7 h-7 rounded-lg bg-rose-950/60 border border-rose-800/60 text-rose-300 flex items-center justify-center"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2">
+                                            <input type="text" x-model="den.label" placeholder="Density Label"
+                                                   class="col-span-8 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-semibold text-xs outline-none focus:border-amber-400">
+                                            <div class="col-span-4 flex items-center gap-1">
+                                                <input type="number" x-model.number="den.factor" min="0.5" max="5" step="0.05"
+                                                       class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-amber-300 font-mono font-bold text-xs text-center outline-none focus:border-amber-400">
+                                                <span class="text-slate-400 font-mono text-[11px]">x</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Desktop Hair Density Table (md+) -->
+                            <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
                                         <tr>
@@ -2877,7 +3210,7 @@
                         </div>
 
                         <!-- Action Toolbar -->
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button type="button" @click="exportAnalyticsCsv()" class="px-3 py-1.5 bg-brand-darkBg hover:bg-slate-800 border border-brand-border rounded-lg text-slate-300 hover:text-white transition flex items-center gap-1.5" title="Export CSV">
                                 <i class="fa-solid fa-file-csv text-emerald-400"></i>
                                 <span>CSV 다운로드</span>
@@ -3320,6 +3653,103 @@
             </div>
 
         </main>
+
+        <!-- MOBILE STICKY BOTTOM APP BAR (Thumb-Friendly for Galaxy S24 Ultra 6.8" 19.5:9) -->
+        <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-brand-cardBg/95 backdrop-blur-lg border-t border-brand-border shadow-[0_-8px_30px_rgba(0,0,0,0.6)] mobile-safe-bottom">
+            <div class="grid grid-cols-5 h-14 text-[10px] font-bold">
+                <button type="button" @click="activeTab = 'stock'; mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'stock' ? 'text-brand-tealLight' : 'text-slate-400'"
+                        class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
+                    <i class="fa-solid fa-boxes-stacked text-base"></i>
+                    <span>Stock</span>
+                </button>
+                <button type="button" @click="activeTab = 'bookings'; loadBookings(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'bookings' ? 'text-emerald-400' : 'text-slate-400'"
+                        class="flex flex-col items-center justify-center gap-0.5 relative active:scale-95 transition-transform">
+                    <i class="fa-solid fa-calendar-check text-base"></i>
+                    <span>Bookings</span>
+                    <template x-if="pendingBookingsCount > 0">
+                        <span class="absolute top-1.5 right-3 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
+                    </template>
+                </button>
+                <button type="button" @click="activeTab = 'invoices'; loadInvoices(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'invoices' ? 'text-amber-300' : 'text-slate-400'"
+                        class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
+                    <i class="fa-solid fa-file-invoice-dollar text-base"></i>
+                    <span>Invoices</span>
+                </button>
+                <button type="button" @click="activeTab = 'pricing'; loadPricingConfig(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'pricing' ? 'text-brand-tealLight' : 'text-slate-400'"
+                        class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
+                    <i class="fa-solid fa-calculator text-base"></i>
+                    <span>Pricing</span>
+                </button>
+                <button type="button" @click="mobileMoreMenuOpen = !mobileMoreMenuOpen"
+                        :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
+                        class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
+                    <i class="fa-solid" :class="mobileMoreMenuOpen ? 'fa-xmark text-base' : 'fa-grip text-base'"></i>
+                    <span>All Tabs</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MOBILE ALL-TABS SLIDE-UP SHEET -->
+        <div x-show="mobileMoreMenuOpen" x-cloak @click="mobileMoreMenuOpen = false"
+             class="md:hidden fixed inset-0 z-30 bg-black/70 backdrop-blur-sm flex items-end pb-16">
+            <div @click.stop class="w-full bg-brand-cardBg border-t-2 border-brand-teal/60 rounded-t-3xl p-4 space-y-3 shadow-2xl">
+                <div class="flex items-center justify-between pb-2 border-b border-brand-border/70">
+                    <span class="font-heading font-bold text-sm text-white">All Admin Menus (9)</span>
+                    <button type="button" @click="mobileMoreMenuOpen = false" class="text-slate-400 hover:text-white px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+                    <button type="button" @click="activeTab = 'stock'; mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'stock' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-boxes-stacked text-base"></i><span>Stock</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'bookings'; loadBookings(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'bookings' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-check text-emerald-400 text-base"></i><span>Bookings</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'invoices'; loadInvoices(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'invoices' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-file-invoice-dollar text-amber-300 text-base"></i><span>Invoices</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'pricing'; loadPricingConfig(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'pricing' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-calculator text-brand-tealLight text-base"></i><span>Pricing</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'analytics'; loadAnalytics(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'analytics' ? 'bg-cyan-600 text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-cyan-400 text-base"></i><span>방문자 분석</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'members'; loadMembers(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'members' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-users-gear text-purple-400 text-base"></i><span>Members</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'gallery'; loadGalleryCases(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'gallery' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-arrows-split-up-and-left text-amber-400 text-base"></i><span>B/A Gallery</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'ai_styles'; loadAiStyles(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-scissors text-amber-400 text-base"></i><span>AI Styles</span>
+                    </button>
+                    <button type="button" @click="activeTab = 'sections'; loadSections(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'sections' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-sky-400 text-base"></i><span>Sections</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- BEFORE & AFTER GALLERY CASE REGISTER/EDIT MODAL -->
@@ -5430,6 +5860,7 @@
         function stockManagerApp() {
             return {
                 activeTab: 'stock',
+                mobileMoreMenuOpen: false,
                 isAuthenticated: false,
                 isLoggingIn: false,
                 loginError: '',
@@ -5480,7 +5911,7 @@
 
                 // Fitting Bookings state
                 bookings: [],
-                bookingViewMode: 'week', // 'week' or 'list'
+                bookingViewMode: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'list' : 'week', // 'week' or 'list'
                 weekStartDate: '', // Starting date for 7-day display
                 draggedBooking: null,
                 dragOverCell: '',
