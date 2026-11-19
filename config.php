@@ -18,7 +18,7 @@ try {
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
         ]
     );
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     // 연결 실패 시 에러 메시지를 출력하고 스크립트 실행 중단
     die("Connection failed: " . $e->getMessage());
 }

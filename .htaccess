@@ -3,8 +3,25 @@
 # David Hair - Security Protection, High-Speed Caching & HTTP/2 Acceleration
 # ==============================================================================
 
-# 0. Core Security Protections
-Options -Indexes
+# 0. Core Security Protections & Clean URL Routing
+Options -Indexes -MultiViews
+DirectoryIndex index.php index.html
+
+# Block direct access to PHP layout includes
+RedirectMatch 403 ^/includes/
+
+# Clean URL Routing for Multi-Page Hub Architecture
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect legacy /index.html to /
+    RewriteRule ^index\.html$ / [R=301,L]
+
+    # Map clean section URLs to their dedicated PHP pages
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(medical-wigs|ffa|solutions|diagnosis|stock|salon|transformations|ai-tryon|factory-b2b|faq)/?$ $1.php [L,QSA]
+</IfModule>
 
 # Block sensitive directories and files using mod_alias
 RedirectMatch 403 /\.git
