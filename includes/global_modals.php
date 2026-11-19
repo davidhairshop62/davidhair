@@ -108,9 +108,15 @@
                     </div>
                     <div class="bg-brand-cardBg/60 border border-brand-border/60 rounded-xl p-3 flex items-start gap-2.5">
                         <i class="fa-solid fa-train text-teal-400 mt-0.5 text-sm shrink-0"></i>
-                        <div>
-                            <span class="font-bold text-white block mb-0.5">Train &amp; Bus</span>
-                            <span class="text-slate-400 text-[11px] leading-tight block">3 min walk from Springvale Railway Station (Pakenham line).</span>
+                        <div class="space-y-1.5 min-w-0">
+                            <span class="font-bold text-white block">Train &amp; Bus</span>
+                            <span class="text-slate-400 text-[11px] leading-tight block">3 min walk from Springvale Railway Station (Pakenham / Cranbourne lines).</span>
+                            <div class="pt-1 border-t border-brand-border/50 space-y-1 text-[11px] leading-snug text-slate-300">
+                                <div class="font-semibold text-teal-300 text-[10px] uppercase tracking-wider">Bus Routes</div>
+                                <div><span class="font-bold text-white">814</span> <span class="text-teal-300/90">(Closest &ndash; via Windsor Ave stop)</span></div>
+                                <div><span class="font-bold text-white">902</span> <span class="text-slate-400">(SmartBus)</span> &bull; <span class="font-bold text-white">811</span> &bull; <span class="font-bold text-white">813</span> &bull; <span class="font-bold text-white">885</span></div>
+                                <div><span class="font-bold text-white">705</span> <span class="text-amber-300/90">(Peak hours only)</span></div>
+                            </div>
                         </div>
                     </div>
                     <div class="bg-brand-cardBg/60 border border-brand-border/60 rounded-xl p-3 flex items-start gap-2.5">
