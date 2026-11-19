@@ -218,44 +218,11 @@ function davidHairApp() {
         },
 
         applySectionsOrder(sections) {
-            // On the multi-page hub (index.php), #hero stays fixed at top and #sections-hub below it.
-            // Cards inside #sections-hub already apply CSS grid `order` via getSectionOrder().
-            if (document.getElementById('sections-hub')) return;
-            const main = document.getElementById('main-content');
-            if (!main) return;
-            let list = (Array.isArray(sections) && sections.length > 0) ? sections : this.sectionsList;
-            if (!list || list.length === 0) {
-                if (this.sectionsOrderMap && Object.keys(this.sectionsOrderMap).length > 0) {
-                    list = Object.keys(this.sectionsOrderMap).map(k => ({
-                        section_key: k,
-                        sort_order: Number(this.sectionsOrderMap[k]) || 50
-                    }));
-                }
-            }
-            if (!list || list.length === 0) return;
-
-            const sorted = [...list].sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
-            sorted.forEach(sec => {
-                const key = sec.section_key;
-                if (!key) return;
-                const el = document.getElementById(key);
-                if (el && el.parentElement === main) {
-                    main.appendChild(el);
-                    el.style.order = String(Number(sec.sort_order) || 50);
-                    if (key === 'factory') {
-                        const perks = document.getElementById('factory-perks');
-                        if (perks && perks.parentElement === main) {
-                            main.appendChild(perks);
-                            perks.style.order = String(Number(sec.sort_order) || 50);
-                        }
-                    }
-                }
-            });
-
-            const builder = document.getElementById('builder');
-            if (builder && builder.parentElement === main) main.appendChild(builder);
-            const faq = document.getElementById('faq');
-            if (faq && faq.parentElement === main) main.appendChild(faq);
+            // Multi-page hub architecture:
+            // - On index.php, #hero stays on top and #sections-hub cards order via CSS grid `order`.
+            // - On dedicated subpages, DOM order is fixed: top bar -> main section -> bottom CTA/explore section.
+            // Never call main.appendChild() here, otherwise the main section would jump below the bottom CTA section.
+            return;
         },
 
         getProductsMenuOrder() {
