@@ -80,10 +80,9 @@ $accentStyles = [
                     </div>
                 </div>
 
-                <!-- Hero Visual Card (Zero background video download on mobile until user taps Play!) -->
+                <!-- Hero Video Card (Auto-plays immediately with WebP poster for instant paint) -->
                 <div class="lg:col-span-5 order-2 lg:order-1"
                     x-data="{
-                        videoActive: false,
                         videos: [
                             '/videos/Runing.mp4',
                             '/videos/Frontal-sum.mp4',
@@ -93,12 +92,12 @@ $accentStyles = [
                         ],
                         labels: ['Active Running', 'FFA Frontal Fringe', 'Daily Shampoo', 'Pool & Ocean Swim', 'Strong Wind Hold'],
                         currentIdx: 0,
-                        startVideo() {
-                            this.videoActive = true;
+                        init() {
                             this.$nextTick(() => {
                                 const v = this.$refs.heroVideo;
-                                if (v) { v.load(); v.play().catch(() => {}); }
+                                if (v) { v.play().catch(() => {}); }
                             });
+                            setInterval(() => { this.playNext(); }, 6500);
                         },
                         playNext() {
                             this.currentIdx = (this.currentIdx + 1) % this.videos.length;
@@ -109,42 +108,27 @@ $accentStyles = [
                         }
                     }">
                     <div class="relative mx-auto max-w-md rounded-2xl overflow-hidden border border-brand-border shadow-2xl bg-brand-cardBg">
-                        <!-- Fast WebP Poster (Initial Load) -->
-                        <div x-show="!videoActive" class="relative">
-                            <img src="/images/TransMan.webp"
-                                alt="David Hair Melbourne Men's &amp; Women's Hair System Transformation"
-                                width="640" height="440" fetchpriority="high" decoding="async"
-                                class="w-full h-56 sm:h-80 lg:h-[400px] object-cover object-top">
-                            <div class="absolute inset-0 bg-gradient-to-t from-brand-darkBg via-brand-darkBg/25 to-transparent"></div>
-                            <!-- Tap to Play Lifestyle Video Button -->
-                            <button type="button" @click="startVideo()"
-                                class="absolute inset-0 flex flex-col items-center justify-center gap-2 group cursor-pointer focus:outline-none"
-                                aria-label="Play 15-second lifestyle performance video">
-                                <span class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-brand-darkBg/80 group-hover:bg-teal-600/90 border-2 border-teal-400 text-white flex items-center justify-center shadow-2xl backdrop-blur-md transition-all group-hover:scale-110">
-                                    <i class="fa-solid fa-play text-lg sm:text-xl ml-1"></i>
-                                </span>
-                                <span class="px-3 py-1 rounded-full bg-brand-darkBg/85 border border-brand-border text-[11px] font-bold text-teal-300 backdrop-blur-md shadow">
-                                    Watch Real Lifestyle Video
-                                </span>
-                            </button>
-                        </div>
-
-                        <!-- On-Demand Video Player (Loaded ONLY after tap) -->
-                        <template x-if="videoActive">
-                            <div class="relative">
-                                <video x-ref="heroVideo" :src="videos[currentIdx]" autoplay muted playsinline controls @ended="playNext()"
-                                    class="w-full h-56 sm:h-80 lg:h-[400px] object-cover bg-black">
-                                </video>
-                                <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                                    <span class="px-2.5 py-1 rounded-full bg-black/70 border border-teal-400/40 text-[10px] font-mono font-bold text-teal-300 backdrop-blur"
-                                        x-text="(currentIdx + 1) + '/' + videos.length + ' • ' + labels[currentIdx]"></span>
-                                    <button type="button" @click="playNext()"
-                                        class="pointer-events-auto px-2.5 py-1 rounded-full bg-black/75 hover:bg-teal-600 border border-white/20 text-[10px] font-bold text-white cursor-pointer">
-                                        Next Clip <i class="fa-solid fa-forward-step ml-1"></i>
-                                    </button>
-                                </div>
+                        <!-- Immediate Auto-Playing Lifestyle Video with Instant WebP Poster -->
+                        <div class="relative">
+                            <video x-ref="heroVideo"
+                                :src="videos[currentIdx]"
+                                src="/videos/Runing.mp4"
+                                poster="/images/TransMan.webp"
+                                preload="metadata"
+                                autoplay muted playsinline
+                                @ended="playNext()"
+                                class="w-full h-64 sm:h-80 lg:h-[400px] object-cover bg-brand-darkBg">
+                            </video>
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-darkBg/80 via-transparent to-black/20"></div>
+                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                                <span class="px-2.5 py-1 rounded-full bg-black/65 border border-teal-400/40 text-[10px] font-mono font-bold text-teal-300 backdrop-blur"
+                                    x-text="(currentIdx + 1) + '/' + videos.length + ' • ' + labels[currentIdx]">1/5 &bull; Active Running</span>
+                                <button type="button" @click="playNext()"
+                                    class="pointer-events-auto px-2.5 py-1 rounded-full bg-black/70 hover:bg-teal-600 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors">
+                                    Next <i class="fa-solid fa-forward-step ml-1"></i>
+                                </button>
                             </div>
-                        </template>
+                        </div>
 
                         <!-- Bottom Studio Caption -->
                         <div class="px-4 py-3 bg-brand-cardBg border-t border-brand-border/80 flex items-center justify-between gap-3">

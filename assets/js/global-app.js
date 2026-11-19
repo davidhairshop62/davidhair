@@ -218,6 +218,9 @@ function davidHairApp() {
         },
 
         applySectionsOrder(sections) {
+            // On the multi-page hub (index.php), #hero stays fixed at top and #sections-hub below it.
+            // Cards inside #sections-hub already apply CSS grid `order` via getSectionOrder().
+            if (document.getElementById('sections-hub')) return;
             const main = document.getElementById('main-content');
             if (!main) return;
             let list = (Array.isArray(sections) && sections.length > 0) ? sections : this.sectionsList;
@@ -310,7 +313,7 @@ function davidHairApp() {
 
         async fetchSectionSettings() {
             try {
-                const res = await fetch('api_sections.php?action=get_public_sections&t=' + Date.now());
+                const res = await fetch('/api_sections.php?action=get_public_sections&t=' + Date.now());
                 const data = await res.json();
                 if (data.status === 'success') {
                     this.sectionsMap = data.visibility || {};

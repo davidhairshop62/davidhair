@@ -17,7 +17,7 @@ $extraHeadScripts = $extraHeadScripts ?? [];
 $extraJsonLd     = $extraJsonLd     ?? null;
 $activePage      = $activePage      ?? 'home';
 $hasStaticCss    = file_exists(__DIR__ . '/../assets/css/tailwind.min.css');
-$assetVer        = '20261119';
+$assetVer        = '20261119b';
 ?>
 <!DOCTYPE html>
 <html lang="en-AU" class="scroll-smooth">
