@@ -71,11 +71,25 @@ try {
     // Columns already exist or error ignored
 }
 
-// Normalize base_size_prices entries (supports special_note, promo_price, badge & legacy men_strike migration)
+// Normalize base_size_prices entries (supports show_men, show_women, special_note, promo_price, badge & legacy men_strike migration)
 function normalizeBaseSizePrices($rawSizes) {
     if (!is_array($rawSizes)) {
         return [];
     }
+    $defaultVisibility = [
+        '2x3'   => ['show_men' => false, 'show_women' => true],
+        '2x4'   => ['show_men' => false, 'show_women' => true],
+        '3x4'   => ['show_men' => false, 'show_women' => true],
+        '4x4'   => ['show_men' => false, 'show_women' => true],
+        '5x5'   => ['show_men' => false, 'show_women' => true],
+        '6x6'   => ['show_men' => false, 'show_women' => true],
+        '6x7'   => ['show_men' => true,  'show_women' => false],
+        '6x8'   => ['show_men' => true,  'show_women' => false],
+        '7x9'   => ['show_men' => true,  'show_women' => false],
+        '8x10'  => ['show_men' => true,  'show_women' => false],
+        '10x12' => ['show_men' => true,  'show_women' => true],
+    ];
+
     $normalized = [];
     foreach ($rawSizes as $key => $entry) {
         $cleanKey = strtolower(trim((string)$key));
@@ -84,6 +98,10 @@ function normalizeBaseSizePrices($rawSizes) {
         }
         $men = isset($entry['men']) && $entry['men'] !== '' ? (float)$entry['men'] : 0;
         $women = isset($entry['women']) && $entry['women'] !== '' ? (float)$entry['women'] : 0;
+
+        $defVis = $defaultVisibility[$cleanKey] ?? ['show_men' => true, 'show_women' => true];
+        $showMen = array_key_exists('show_men', $entry) ? filter_var($entry['show_men'], FILTER_VALIDATE_BOOLEAN) : $defVis['show_men'];
+        $showWomen = array_key_exists('show_women', $entry) ? filter_var($entry['show_women'], FILTER_VALIDATE_BOOLEAN) : $defVis['show_women'];
 
         $hasPromoField = array_key_exists('promo_price', $entry);
         $promoPrice = ($hasPromoField && $entry['promo_price'] !== '' && $entry['promo_price'] !== null && (float)$entry['promo_price'] > 0)
@@ -107,6 +125,8 @@ function normalizeBaseSizePrices($rawSizes) {
         $item = [
             'men' => $men,
             'women' => $women,
+            'show_men' => (bool)$showMen,
+            'show_women' => (bool)$showWomen,
             'promo_price' => $promoPrice,
             'badge' => $badge,
             'special_note' => $specialNote,
@@ -137,17 +157,17 @@ function getDefaultCalculatorPricing() {
         'retail_multiplier' => 3.0,
         'custom_fee_aud' => 200,
         'base_size_prices' => [
-            '2x3'   => ['men' => 250, 'women' => 250, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '2x4'   => ['men' => 280, 'women' => 300, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '3x4'   => ['men' => 350, 'women' => 350, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '4x4'   => ['men' => 400, 'women' => 500, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '5x5'   => ['men' => 450, 'women' => 550, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '6x6'   => ['men' => 500, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '6x7'   => ['men' => 600, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '6x8'   => ['men' => 600, 'women' => 600, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '7x9'   => ['men' => 700, 'women' => 650, 'promo_price' => 680, 'badge' => 'Limited Special', 'special_note' => "Men's Standard Special Promo", 'men_strike' => 700],
-            '8x10'  => ['men' => 700, 'women' => 700, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
-            '10x12' => ['men' => 800, 'women' => 1000, 'promo_price' => null, 'badge' => '', 'special_note' => '']
+            '2x3'   => ['men' => 250, 'women' => 250, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '2x4'   => ['men' => 280, 'women' => 300, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '3x4'   => ['men' => 350, 'women' => 350, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '4x4'   => ['men' => 400, 'women' => 500, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '5x5'   => ['men' => 450, 'women' => 550, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x6'   => ['men' => 500, 'women' => 600, 'show_men' => false, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x7'   => ['men' => 600, 'women' => 600, 'show_men' => true,  'show_women' => false, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '6x8'   => ['men' => 600, 'women' => 600, 'show_men' => true,  'show_women' => false, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '7x9'   => ['men' => 700, 'women' => 650, 'show_men' => true,  'show_women' => false, 'promo_price' => 680, 'badge' => 'Limited Special', 'special_note' => "Men's Standard Special Promo", 'men_strike' => 700],
+            '8x10'  => ['men' => 700, 'women' => 700, 'show_men' => true,  'show_women' => false, 'promo_price' => null, 'badge' => '', 'special_note' => ''],
+            '10x12' => ['men' => 800, 'women' => 1000, 'show_men' => true, 'show_women' => true,  'promo_price' => null, 'badge' => '', 'special_note' => '']
         ],
         'length_weights' => [
             '6' => 1.0,

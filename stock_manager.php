@@ -1946,6 +1946,7 @@
                                     <thead class="bg-brand-inner text-slate-300 font-bold border-b border-brand-border uppercase text-[10px] tracking-wider">
                                         <tr>
                                             <th class="py-3 px-3 sm:px-4 whitespace-nowrap">Size (W" × L")</th>
+                                            <th class="py-3 px-3 whitespace-nowrap text-center">Show (M / W)</th>
                                             <th class="py-3 px-3 whitespace-nowrap">Men's Base ($ AUD)</th>
                                             <th class="py-3 px-3 whitespace-nowrap">Women's Base ($ AUD)</th>
                                             <th class="py-3 px-3 whitespace-nowrap">Promo Price ($ AUD)</th>
@@ -1963,8 +1964,27 @@
                                                     <div class="text-[10px] text-slate-400 font-mono"
                                                          x-text="szKey.split('x').reduce((a,b)=>parseFloat(a)+parseFloat(b), 0) + ' in sum'"></div>
                                                 </td>
-                                                <!-- Men's Base Price -->
+                                                <!-- Show in Men's / Women's Checkboxes -->
                                                 <td class="py-3 px-3 whitespace-nowrap">
+                                                    <div class="flex items-center justify-center gap-2.5">
+                                                        <label class="inline-flex items-center gap-1 cursor-pointer select-none px-2 py-1 rounded-lg border transition-colors"
+                                                               :class="pricingConfig.base_size_prices[szKey].show_men ? 'bg-sky-500/15 border-sky-400/40 text-sky-300' : 'bg-brand-darkBg/60 border-brand-border text-slate-500'">
+                                                            <input type="checkbox"
+                                                                   x-model="pricingConfig.base_size_prices[szKey].show_men"
+                                                                   class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
+                                                            <span class="text-[10px] font-bold">Men</span>
+                                                        </label>
+                                                        <label class="inline-flex items-center gap-1 cursor-pointer select-none px-2 py-1 rounded-lg border transition-colors"
+                                                               :class="pricingConfig.base_size_prices[szKey].show_women ? 'bg-rose-500/15 border-rose-400/40 text-rose-300' : 'bg-brand-darkBg/60 border-brand-border text-slate-500'">
+                                                            <input type="checkbox"
+                                                                   x-model="pricingConfig.base_size_prices[szKey].show_women"
+                                                                   class="w-3.5 h-3.5 rounded accent-rose-500 cursor-pointer">
+                                                            <span class="text-[10px] font-bold">Women</span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <!-- Men's Base Price -->
+                                                <td class="py-3 px-3 whitespace-nowrap" :class="!pricingConfig.base_size_prices[szKey].show_men ? 'opacity-45' : ''">
                                                     <div class="flex items-center gap-1">
                                                         <span class="text-slate-400 font-mono">$</span>
                                                         <input type="number"
@@ -1974,7 +1994,7 @@
                                                     </div>
                                                 </td>
                                                 <!-- Women's Base Price -->
-                                                <td class="py-3 px-3 whitespace-nowrap">
+                                                <td class="py-3 px-3 whitespace-nowrap" :class="!pricingConfig.base_size_prices[szKey].show_women ? 'opacity-45' : ''">
                                                     <div class="flex items-center gap-1">
                                                         <span class="text-slate-400 font-mono">$</span>
                                                         <input type="number"
@@ -2038,7 +2058,7 @@
                                             </tr>
                                         </template>
                                         <tr x-show="Object.keys(pricingConfig.base_size_prices || {}).length === 0">
-                                            <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
+                                            <td colspan="8" class="py-8 text-center text-slate-400 text-xs">
                                                 등록된 Base Size가 없습니다. 우측 상단의 <strong>Add Size</strong> 버튼을 눌러 추가하세요.
                                             </td>
                                         </tr>
@@ -5120,6 +5140,29 @@
                     </div>
                 </div>
 
+                <!-- Display Target Checkboxes (Men / Women Calculator Visibility) -->
+                <div class="p-3 rounded-xl bg-brand-inner/70 border border-brand-border space-y-2">
+                    <label class="block text-slate-300 font-bold text-xs">Calculator Display Visibility (계산기 Base Size 표시 선택)</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-colors"
+                               :class="baseSizeForm.show_men ? 'bg-sky-500/15 border-sky-400/50 text-sky-200' : 'bg-brand-darkBg border-brand-border text-slate-400'">
+                            <input type="checkbox" x-model="baseSizeForm.show_men" class="w-4 h-4 rounded accent-sky-500 cursor-pointer">
+                            <div>
+                                <div class="font-bold text-xs">Men's Base Size</div>
+                                <div class="text-[10px] opacity-80">남성용 계산기에 표시</div>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-colors"
+                               :class="baseSizeForm.show_women ? 'bg-rose-500/15 border-rose-400/50 text-rose-200' : 'bg-brand-darkBg border-brand-border text-slate-400'">
+                            <input type="checkbox" x-model="baseSizeForm.show_women" class="w-4 h-4 rounded accent-rose-500 cursor-pointer">
+                            <div>
+                                <div class="font-bold text-xs">Women's Base Size</div>
+                                <div class="text-[10px] opacity-80">여성용 계산기에 표시</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Base Prices (Men / Women) & Promo Price -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
@@ -5337,6 +5380,8 @@
                     length: '',
                     men: 0,
                     women: 0,
+                    show_men: true,
+                    show_women: true,
                     promo_price: '',
                     badge: '',
                     special_note: ''
@@ -5392,8 +5437,19 @@
 
                 normalizeLocalBaseSizes(cfg) {
                     if (!cfg || !cfg.base_size_prices) return cfg;
+                    const defaultVis = {
+                        '2x3': [false, true], '2x4': [false, true], '3x4': [false, true],
+                        '4x4': [false, true], '5x5': [false, true], '6x6': [false, true],
+                        '6x7': [true, false], '6x8': [true, false], '7x9': [true, false],
+                        '8x10': [true, false], '10x12': [true, true]
+                    };
                     Object.keys(cfg.base_size_prices).forEach(k => {
                         const row = cfg.base_size_prices[k] || {};
+                        const dv = defaultVis[k] || [true, true];
+                        if (row.show_men === undefined || row.show_men === null) row.show_men = dv[0];
+                        else row.show_men = Boolean(row.show_men);
+                        if (row.show_women === undefined || row.show_women === null) row.show_women = dv[1];
+                        else row.show_women = Boolean(row.show_women);
                         if (row.promo_price === undefined || row.promo_price === null) row.promo_price = '';
                         if (row.badge === undefined || row.badge === null) row.badge = '';
                         if (row.special_note === undefined || row.special_note === null) row.special_note = '';
@@ -5413,6 +5469,8 @@
                             length: parts[1] || '',
                             men: Number(row.men) || 0,
                             women: Number(row.women) || 0,
+                            show_men: Boolean(row.show_men),
+                            show_women: Boolean(row.show_women),
                             promo_price: (row.promo_price !== null && row.promo_price !== undefined && row.promo_price !== '' && Number(row.promo_price) > 0) ? Number(row.promo_price) : '',
                             badge: row.badge || '',
                             special_note: row.special_note || ''
@@ -5425,6 +5483,8 @@
                             length: '',
                             men: 500,
                             women: 550,
+                            show_men: true,
+                            show_women: true,
                             promo_price: '',
                             badge: '',
                             special_note: ''
@@ -5467,6 +5527,8 @@
                     const entry = {
                         men: Number(this.baseSizeForm.men) || 0,
                         women: Number(this.baseSizeForm.women) || 0,
+                        show_men: Boolean(this.baseSizeForm.show_men),
+                        show_women: Boolean(this.baseSizeForm.show_women),
                         promo_price: promoNum,
                         badge: String(this.baseSizeForm.badge || '').trim(),
                         special_note: String(this.baseSizeForm.special_note || '').trim()

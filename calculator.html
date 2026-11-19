@@ -2029,32 +2029,48 @@
   }
 
   const BASE_SIZE_PRICES = {
-    '2x3': { men: 250, women: 250, promo_price: null, badge: '', special_note: '' },
-    '2x4': { men: 280, women: 300, promo_price: null, badge: '', special_note: '' },
-    '3x4': { men: 350, women: 350, promo_price: null, badge: '', special_note: '' },
-    '4x4': { men: 400, women: 500, promo_price: null, badge: '', special_note: '' },
-    '5x5': { men: 450, women: 550, promo_price: null, badge: '', special_note: '' },
-    '6x6': { men: 500, women: 600, promo_price: null, badge: '', special_note: '' },
-    '6x7': { men: 600, women: 600, promo_price: null, badge: '', special_note: '' },
-    '6x8': { men: 600, women: 600, promo_price: null, badge: '', special_note: '' },
-    '7x9': { men: 700, women: 650, promo_price: 680, badge: 'Limited Special', special_note: "Men's Standard Special Promo", men_strike: 700 },
-    '8x10': { men: 700, women: 700, promo_price: null, badge: '', special_note: '' },
-    '10x12': { men: 800, women: 1000, promo_price: null, badge: '', special_note: '' }
+    '2x3':   { men: 250, women: 250, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '2x4':   { men: 280, women: 300, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '3x4':   { men: 350, women: 350, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '4x4':   { men: 400, women: 500, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '5x5':   { men: 450, women: 550, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '6x6':   { men: 500, women: 600, show_men: false, show_women: true,  promo_price: null, badge: '', special_note: '' },
+    '6x7':   { men: 600, women: 600, show_men: true,  show_women: false, promo_price: null, badge: '', special_note: '' },
+    '6x8':   { men: 600, women: 600, show_men: true,  show_women: false, promo_price: null, badge: '', special_note: '' },
+    '7x9':   { men: 700, women: 650, show_men: true,  show_women: false, promo_price: 680,  badge: 'Limited Special', special_note: "Men's Standard Special Promo", men_strike: 700 },
+    '8x10':  { men: 700, women: 700, show_men: true,  show_women: false, promo_price: null, badge: '', special_note: '' },
+    '10x12': { men: 800, women: 1000, show_men: true, show_women: true,  promo_price: null, badge: '', special_note: '' }
   };
 
-  const PRESET_CHIP_DATA = [
-    { w: 2, l: 3, labelMen: 'Filler', labelWomen: 'Filler', forMen: false, forWomen: true },
-    { w: 2, l: 4, labelMen: 'Filler', labelWomen: 'Filler', forMen: false, forWomen: true },
-    { w: 3, l: 4, labelMen: 'Mini Part', labelWomen: 'Mini Part', forMen: false, forWomen: true },
-    { w: 4, l: 4, labelMen: 'Mini Top', labelWomen: "Women's Std", forMen: false, forWomen: true },
-    { w: 5, l: 5, labelMen: 'Crown/Part', labelWomen: 'Crown/Part', forMen: false, forWomen: true },
-    { w: 6, l: 6, labelMen: 'Medium', labelWomen: "Women's Med", forMen: false, forWomen: true },
-    { w: 6, l: 7, labelMen: "Men's Small", labelWomen: 'Large Top', forMen: true, forWomen: false },
-    { w: 7, l: 9, labelMen: "Men's Std", labelWomen: 'XL Topper', forMen: true, forWomen: false, isSpecial: true },
-    { w: 8, l: 10, labelMen: "Men's Large", labelWomen: 'Full Topper', forMen: true, forWomen: false },
-    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: true, forWomen: false },
-    { w: 10, l: 12, labelMen: 'Full Cap', labelWomen: 'Full Cap', forMen: false, forWomen: true }
-  ];
+  const PRESET_LABELS_MAP = {
+    '2x3':   { men: 'Filler',      women: 'Filler' },
+    '2x4':   { men: 'Filler',      women: 'Filler' },
+    '3x4':   { men: 'Mini Part',   women: 'Mini Part' },
+    '4x4':   { men: 'Mini Top',    women: "Women's Std" },
+    '5x5':   { men: 'Crown/Part',  women: 'Crown/Part' },
+    '6x6':   { men: 'Medium',      women: "Women's Med" },
+    '6x7':   { men: "Men's Small", women: 'Large Top' },
+    '6x8':   { men: "Men's Med",   women: 'Large Top' },
+    '7x9':   { men: "Men's Std",   women: 'XL Topper' },
+    '8x10':  { men: "Men's Large", women: 'Full Topper' },
+    '10x12': { men: 'Full Cap',    women: 'Full Cap' }
+  };
+
+  function getSortedVisibleBaseSizes(category) {
+    const isMen = (category === 'men');
+    return Object.keys(BASE_SIZE_PRICES)
+      .map(k => {
+        const parts = k.split('x').map(Number);
+        if (parts.length !== 2 || !(parts[0] > 0) || !(parts[1] > 0)) return null;
+        const entry = BASE_SIZE_PRICES[k] || {};
+        const visible = isMen ? Boolean(entry.show_men) : Boolean(entry.show_women);
+        if (!visible) return null;
+        const lbl = PRESET_LABELS_MAP[k] || { men: 'Standard', women: 'Standard' };
+        return { key: k, w: parts[0], l: parts[1], labelMen: lbl.men, labelWomen: lbl.women };
+      })
+      .filter(Boolean)
+      .sort((a, b) => ((a.w + a.l) - (b.w + b.l)) || (a.w - b.w));
+  }
 
   function escapeCalcHtml(str) {
     return String(str || '')
@@ -2120,27 +2136,8 @@
     const curW = parseFloat(document.getElementById('sizeW').value) || 0;
     const curL = parseFloat(document.getElementById('sizeL').value) || 0;
 
-    // Build preset list: standard presets that still exist in BASE_SIZE_PRICES + any custom admin-added sizes
-    const seenKeys = new Set();
-    const visibleItems = PRESET_CHIP_DATA.filter(item => {
-      const k = `${Math.min(item.w, item.l)}x${Math.max(item.w, item.l)}`;
-      if (!BASE_SIZE_PRICES[k]) return false;
-      const show = currentCategory === 'men' ? item.forMen : item.forWomen;
-      if (show) seenKeys.add(k);
-      return show;
-    });
-
-    // Also include custom sizes added via Admin Base Size Table that aren't in default preset list
-    const defaultKeys = new Set(PRESET_CHIP_DATA.map(it => `${Math.min(it.w, it.l)}x${Math.max(it.w, it.l)}`));
-    Object.keys(BASE_SIZE_PRICES).forEach(k => {
-      if (!defaultKeys.has(k) && !seenKeys.has(k)) {
-        const parts = k.split('x').map(Number);
-        if (parts.length === 2 && parts[0] > 0 && parts[1] > 0) {
-          visibleItems.push({ w: parts[0], l: parts[1], labelMen: 'Custom Size', labelWomen: 'Custom Size', forMen: true, forWomen: true });
-          seenKeys.add(k);
-        }
-      }
-    });
+    // Strictly driven by show_men / show_women checkboxes from Admin Base Size Price Table
+    const visibleItems = getSortedVisibleBaseSizes(currentCategory);
 
     container.innerHTML = visibleItems.map(item => {
       const info = getBaseSizePricingInfo(item.w, item.l, currentCategory);
@@ -2215,9 +2212,11 @@
     document.getElementById('btnWomen').classList.toggle('active', cat === 'women');
 
     if (cat === 'men') {
-      // Men's default: 7x9 (16" Standard), 6", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services unchecked
-      document.getElementById('sizeW').value = '7';
-      document.getElementById('sizeL').value = '9';
+      // Men's default: prefer 7x9 if visible in men's list, otherwise pick first visible men's preset
+      const menVis = getSortedVisibleBaseSizes('men');
+      const defMen = menVis.find(s => s.key === '7x9') || menVis[0] || { w: 7, l: 9 };
+      document.getElementById('sizeW').value = String(defMen.w);
+      document.getElementById('sizeL').value = String(defMen.l);
       document.getElementById('hairLength').value = '6';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
@@ -2233,9 +2232,11 @@
       if (document.getElementById('optColour')) document.getElementById('optColour').checked = false;
       if (document.getElementById('optPerm')) document.getElementById('optPerm').checked = false;
     } else {
-      // Women's default: 4x4 (8" Standard), 10", PU+Swiss Net (1.0 Standard), 80% (1.0), Standard hair, salon services excluded
-      document.getElementById('sizeW').value = '4';
-      document.getElementById('sizeL').value = '4';
+      // Women's default: prefer 4x4 if visible in women's list, otherwise pick first visible women's preset
+      const womenVis = getSortedVisibleBaseSizes('women');
+      const defWomen = womenVis.find(s => s.key === '4x4') || womenVis[0] || { w: 4, l: 4 };
+      document.getElementById('sizeW').value = String(defWomen.w);
+      document.getElementById('sizeL').value = String(defWomen.l);
       document.getElementById('hairLength').value = '10';
       document.getElementById('capType').value = '1.0';
       document.getElementById('density').value = '1.0';
@@ -2952,11 +2953,11 @@
     if (!cfg) return;
     PRICING_CONFIG = cfg;
 
-    // 1. Update Base Size Prices (replace keys cleanly so additions/edits/deletions all reflect)
+    // 1. Update Base Size Prices (replace keys cleanly so additions/edits/deletions/visibility all reflect)
     if (cfg.base_size_prices) {
       Object.keys(BASE_SIZE_PRICES).forEach(k => delete BASE_SIZE_PRICES[k]);
       Object.keys(cfg.base_size_prices).forEach(k => {
-        BASE_SIZE_PRICES[k] = Object.assign({ promo_price: null, badge: '', special_note: '' }, cfg.base_size_prices[k]);
+        BASE_SIZE_PRICES[k] = Object.assign({ show_men: true, show_women: true, promo_price: null, badge: '', special_note: '' }, cfg.base_size_prices[k]);
       });
     }
 
