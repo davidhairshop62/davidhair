@@ -96,29 +96,29 @@ function davidHairApp() {
         isWelcomeModalOpen: false,
         welcomeDontShowToday: false,
         isCalculatorModalOpen: false,
-        calculatorUrl: 'calculator.html?t=' + Date.now(),
+        calculatorUrl: '/calculator.html?t=' + Date.now(),
         isDiagModalOpen: false,
-        diagUrl: 'diag.html?t=' + Date.now(),
+        diagUrl: '/diag.html?t=' + Date.now(),
         openDiagModal() {
-            this.diagUrl = 'diag.html?t=' + Date.now();
+            this.diagUrl = '/diag.html?t=' + Date.now();
             this.isDiagModalOpen = true;
         },
         isFfaModalOpen: false,
-        ffaModalUrl: 'ffa_interactive_questionnaire.html?t=' + Date.now(),
+        ffaModalUrl: '/ffa_interactive_questionnaire.html?t=' + Date.now(),
         openFfaModal() {
-            this.ffaModalUrl = 'ffa_interactive_questionnaire.html?t=' + Date.now();
+            this.ffaModalUrl = '/ffa_interactive_questionnaire.html?t=' + Date.now();
             this.isFfaModalOpen = true;
         },
         isComparisonModalOpen: false,
-        comparisonUrl: 'comparison.html?t=' + Date.now(),
+        comparisonUrl: '/comparison.html?t=' + Date.now(),
         openComparisonModal() {
-            this.comparisonUrl = 'comparison.html?t=' + Date.now();
+            this.comparisonUrl = '/comparison.html?t=' + Date.now();
             this.isComparisonModalOpen = true;
         },
         isGalleryModalOpen: false,
-        galleryUrl: 'gallery.html?t=' + Date.now(),
+        galleryUrl: '/gallery.html?t=' + Date.now(),
         openGalleryModal() {
-            this.galleryUrl = 'gallery.html?t=' + Date.now();
+            this.galleryUrl = '/gallery.html?t=' + Date.now();
             this.isGalleryModalOpen = true;
         },
         isFaqModalOpen: false,
@@ -544,21 +544,21 @@ function davidHairApp() {
             // Always ensure fresh calculator.html on modal open
             this.$watch('isCalculatorModalOpen', (isOpen) => {
                 if (isOpen) {
-                    this.calculatorUrl = 'calculator.html?t=' + Date.now();
+                    this.calculatorUrl = '/calculator.html?t=' + Date.now();
                 }
             });
 
             // Always ensure fresh diag.html on modal open
             this.$watch('isDiagModalOpen', (isOpen) => {
                 if (isOpen) {
-                    this.diagUrl = 'diag.html?t=' + Date.now();
+                    this.diagUrl = '/diag.html?t=' + Date.now();
                 }
             });
 
             // Always ensure fresh ffa_interactive_questionnaire.html on modal open
             this.$watch('isFfaModalOpen', (isOpen) => {
                 if (isOpen) {
-                    this.ffaModalUrl = 'ffa_interactive_questionnaire.html?t=' + Date.now();
+                    this.ffaModalUrl = '/ffa_interactive_questionnaire.html?t=' + Date.now();
                 }
             });
 
@@ -569,7 +569,7 @@ function davidHairApp() {
             // Always ensure fresh comparison.html on modal open
             this.$watch('isComparisonModalOpen', (isOpen) => {
                 if (isOpen) {
-                    this.comparisonUrl = 'comparison.html?t=' + Date.now();
+                    this.comparisonUrl = '/comparison.html?t=' + Date.now();
                 }
             });
 

@@ -1852,6 +1852,16 @@
     20: 10.0
   };
 
+  // Hair texture surcharge table in AUD (global mutable for DB sync)
+  const texturePrices = {
+    'straight': 0,
+    'natural_wave': 10,
+    'body_wave': 30,
+    'deep_wave': 50,
+    'curl': 50,
+    'tight_curl': 100
+  };
+
   // Hair weight scaling factor by length (6 inch = 1.0 baseline)
   const lengthGramFactor = {
     6: 1.0,
@@ -2425,23 +2435,15 @@
       colorAddAud = (hasHighColor ? 50 : 0) + (colorCount * 20);
     }
 
-    // Grey Hair Mix calculation (0% ~ 100%, step 10%, +$10 AUD per 10%)
+    // Grey Hair Mix calculation (0% ~ 100%, step 10%, dynamic step rate from DB)
     const greyHairInput = document.getElementById('greyHairMix');
     const greyPercent = greyHairInput ? (parseInt(greyHairInput.value, 10) || 0) : 0;
-    const greyAddAud = Math.round((greyPercent / 10) * 10);
+    const greyStepAud = (PRICING_CONFIG && PRICING_CONFIG.grey_hair_step_aud !== undefined) ? Number(PRICING_CONFIG.grey_hair_step_aud) : 10;
+    const greyAddAud = Math.round((greyPercent / 10) * greyStepAud);
     const greyAddUsd = greyAddAud > 0 ? (greyAddAud / 3.0) : 0;
     updateGreyChips(greyPercent);
 
-    // Hair Texture calculation (Single select)
-    // Straight $0, Natural Wave $10, Body Wave $30, Deep Wave $50, Curl $50, Tight Curl $100
-    const texturePrices = {
-      'straight': 0,
-      'natural_wave': 10,
-      'body_wave': 30,
-      'deep_wave': 50,
-      'curl': 50,
-      'tight_curl': 100
-    };
+    // Hair Texture calculation (Single select — uses global DB-synced texturePrices)
     const textureNames = {
       'straight': 'Straight',
       'natural_wave': 'Natural Wave',
@@ -2849,7 +2851,6 @@
     else if (colorCount >= 2) colorAddAud = (hasHighColor ? 50 : 0) + (colorCount * 20);
     const colorText = colorCount > 0 ? `${checkedColors.join(', ')} (+$${colorAddAud} AUD)` : 'Standard (#1B)';
 
-    const texturePrices = { 'straight': 0, 'natural_wave': 10, 'body_wave': 30, 'deep_wave': 50, 'curl': 50, 'tight_curl': 100 };
     const textureNames = { 'straight': 'Straight', 'natural_wave': 'Natural Wave', 'body_wave': 'Body Wave', 'deep_wave': 'Deep Wave', 'curl': 'Curl', 'tight_curl': 'Tight Curl' };
     const checkedTextureInput = document.querySelector('input[name="hairTexture"]:checked');
     const textureVal = checkedTextureInput ? checkedTextureInput.value : 'straight';
@@ -2859,7 +2860,8 @@
 
     const greyHairInput = document.getElementById('greyHairMix');
     const greyPercent = greyHairInput ? (parseInt(greyHairInput.value, 10) || 0) : 0;
-    const greyAddAud = Math.round((greyPercent / 10) * 10);
+    const greyStepAud = (PRICING_CONFIG && PRICING_CONFIG.grey_hair_step_aud !== undefined) ? Number(PRICING_CONFIG.grey_hair_step_aud) : 10;
+    const greyAddAud = Math.round((greyPercent / 10) * greyStepAud);
     const greyText = greyPercent > 0 ? `${greyPercent}% (+$${greyAddAud} AUD)` : '0% (None)';
 
     const price = document.getElementById('finalAudPrice').textContent;
@@ -2894,8 +2896,10 @@
     if (document.getElementById('optPerm') && document.getElementById('optPerm').checked) copyMaintList.push('Perm From ($50)');
     const maintText = copyMaintList.length > 0 ? copyMaintList.join(', ') : 'Excluded';
 
-    const isSpecial7x9 = (currentCategory === 'men' && ((parseFloat(w) === 7 && parseFloat(l) === 9) || (parseFloat(w) === 9 && parseFloat(l) === 7)));
-    const sizePromoNote = isSpecial7x9 ? ' (Limited Special: $680)' : '';
+    const copySizeInfo = getBaseSizePricingInfo(parseFloat(w) || 0, parseFloat(l) || 0, currentCategory);
+    const sizePromoNote = copySizeInfo.hasPromo
+      ? ` (${copySizeInfo.badge || 'Promo'}: $${copySizeInfo.effectivePrice})`
+      : (copySizeInfo.badge ? ` (${copySizeInfo.badge})` : '');
 
     let summary = `[David Hair Melbourne - Quotation Summary]\n` +
       `• Category: ${catName}\n` +
@@ -2955,13 +2959,13 @@
 
   async function loadPricingFromApi() {
     try {
-      const res = await fetch('admin_stock_api.php?action=get_calculator_pricing', { cache: 'no-store' });
+      const res = await fetch('/admin_stock_api.php?action=get_calculator_pricing&t=' + Date.now(), { cache: 'no-store' });
       const data = await res.json();
       if (data && data.status === 'success' && data.pricing) {
         applyPricingConfig(data.pricing);
       }
     } catch (e) {
-      console.log('Using local default calculator pricing fallback:', e);
+      console.error('Calculator pricing API load/apply error:', e);
     }
   }
 
