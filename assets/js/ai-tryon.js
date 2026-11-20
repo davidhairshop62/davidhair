@@ -1,6 +1,7 @@
 function aiTryOnSimulator() {
     return {
         userFacePhoto: 'images/manhairstyle/manO.jpeg',
+        hasOwnPhoto: false,
         photoAspect: '1 / 1',
         selectedStyle: 'Crew cut',
         selectedColor: '#1B Off Black',
@@ -712,6 +713,7 @@ function aiTryOnSimulator() {
             // Draw centered square crop from video to 1024x1024 canvas
             ctx.drawImage(video, sx, sy, size, size, 0, 0, canvas.width, canvas.height);
             this.userFacePhoto = canvas.toDataURL('image/jpeg', 0.90);
+            this.hasOwnPhoto = true;
             this.photoAspect = '1 / 1';
             this.stopCamera();
             this.resetAllFit();
@@ -738,14 +740,16 @@ function aiTryOnSimulator() {
 
         selectCategory(cat) {
             this.selectedCategory = cat;
-            if (cat === 'Man') {
-                this.userFacePhoto = 'images/manhairstyle/manO.jpeg';
-            } else if (cat === 'Woman') {
-                this.userFacePhoto = 'images/womanhairstyle/womanO.jpeg';
-            } else if (cat === 'All') {
-                this.userFacePhoto = 'images/manhairstyle/manO.jpeg';
+            if (!this.hasOwnPhoto) {
+                if (cat === 'Man') {
+                    this.userFacePhoto = 'images/manhairstyle/manO.jpeg';
+                } else if (cat === 'Woman') {
+                    this.userFacePhoto = 'images/womanhairstyle/womanO.jpeg';
+                } else if (cat === 'All') {
+                    this.userFacePhoto = 'images/manhairstyle/manO.jpeg';
+                }
+                this.photoAspect = '1 / 1';
             }
-            this.photoAspect = '1 / 1';
             const available = this.filteredStyles;
             if (available.length > 0 && !available.some(s => s.name === this.selectedStyle)) {
                 this.selectedStyle = available[0].name;
@@ -755,6 +759,7 @@ function aiTryOnSimulator() {
 
         setSampleFace(url) {
             this.userFacePhoto = url;
+            this.hasOwnPhoto = false;
             this.photoAspect = '1 / 1';
             this.resetAllFit();
         },
@@ -785,6 +790,7 @@ function aiTryOnSimulator() {
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
                     this.userFacePhoto = canvas.toDataURL('image/jpeg', 0.88);
+                    this.hasOwnPhoto = true;
                     this.photoAspect = `${w} / ${h}`;
                     this.resetAllFit();
                 };

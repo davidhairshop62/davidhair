@@ -17,7 +17,7 @@ $extraHeadScripts = $extraHeadScripts ?? [];
 $extraJsonLd     = $extraJsonLd     ?? null;
 $activePage      = $activePage      ?? 'home';
 $hasStaticCss    = file_exists(__DIR__ . '/../assets/css/tailwind.min.css');
-$assetVer        = '20261120a';
+$assetVer        = '20261120b';
 ?>
 <!DOCTYPE html>
 <html lang="en-AU" class="scroll-smooth">
@@ -161,6 +161,24 @@ $assetVer        = '20261120a';
         .bronze-gradient { background: linear-gradient(135deg, #D97706 0%, #B45309 100%); }
         .eye-shadow { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4); }
         button, a, input, select { touch-action: manipulation; }
+
+        @keyframes aiTakePhotoPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.9), 0 0 16px rgba(20, 184, 166, 0.7);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0 0 8px rgba(251, 191, 36, 0), 0 0 28px rgba(251, 191, 36, 0.95);
+                filter: brightness(1.16);
+            }
+        }
+        .ai-take-photo-pulse {
+            animation: aiTakePhotoPulse 1.4s ease-in-out infinite;
+            background: linear-gradient(135deg, #F59E0B 0%, #0D9488 100%);
+            border: 2px solid #FDE68A;
+        }
     </style>
 
     <!-- David Hair Visitor Analytics Tracker -->
