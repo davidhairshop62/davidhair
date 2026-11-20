@@ -281,8 +281,31 @@ try {
 $action = $_REQUEST['action'] ?? 'list';
 
 try {
-    // 1. LOGIN ACTION
+    // 1. LOGIN ACTION (with IP brute-force rate limiting: max 5 failed attempts / 15 mins)
     if ($action === 'login') {
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        try {
+            $conn->exec("CREATE TABLE IF NOT EXISTS admin_login_attempts (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                ip_address VARCHAR(45) NOT NULL,
+                attempted_email VARCHAR(190) DEFAULT '',
+                attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_ip_time (ip_address, attempted_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+            // Prune attempts older than 24h
+            $conn->exec("DELETE FROM admin_login_attempts WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+            // Check failed count in last 15 minutes
+            $chkRate = $conn->prepare("SELECT COUNT(*) FROM admin_login_attempts WHERE ip_address = :ip AND attempted_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)");
+            $chkRate->execute([':ip' => $clientIp]);
+            if ((int)$chkRate->fetchColumn() >= 5) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Too many failed login attempts. Please wait 15 minutes before trying again.'], 429);
+            }
+        } catch (Exception $rateEx) {
+            // Never block login if rate-limit table init fails
+        }
+
         $email = trim($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
 
@@ -295,6 +318,11 @@ try {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
+            try {
+                $clr = $conn->prepare("DELETE FROM admin_login_attempts WHERE ip_address = :ip");
+                $clr->execute([':ip' => $clientIp]);
+            } catch (Exception $e) {}
+            session_regenerate_id(true);
             $_SESSION['admin_user'] = $user['email'];
             $_SESSION['admin_role'] = $user['role'];
             sendJsonResponse([
@@ -303,6 +331,10 @@ try {
                 'user' => $user['email']
             ]);
         } else {
+            try {
+                $insFail = $conn->prepare("INSERT INTO admin_login_attempts (ip_address, attempted_email) VALUES (:ip, :email)");
+                $insFail->execute([':ip' => $clientIp, ':email' => substr($email, 0, 190)]);
+            } catch (Exception $e) {}
             sendJsonResponse(['status' => 'error', 'message' => 'Invalid Admin ID or Password.']);
         }
     }

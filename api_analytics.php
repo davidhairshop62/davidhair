@@ -763,10 +763,14 @@ if ($action === 'sync_apache_logs') {
             $userAgent = $matches[8];
 
             if ($method !== 'GET') continue;
-            if ($statusCode >= 400 && $statusCode != 404) continue;
+            // Only import genuine successful page loads (ignore 301 redirects & 403/404 scanner probes)
+            if ($statusCode !== 200) continue;
 
             // Skip static media files
             if (preg_match($extPattern, $url)) continue;
+
+            // Skip known automated vulnerability/webshell scanner probe URLs
+            if (preg_match('#/(wp-admin|wp-content|wp-includes|wp-login|xmlrpc|boaform|\.well-known|\.env|\.git|wso|zwso|alfa|shell|c99|r57|admin\.php|bless\.php|lock360\.php)#i', $url)) continue;
 
             // Skip stock_manager / admin / backend API internal hits from sync
             if (strpos($url, 'admin_stock_api.php') !== false || strpos($url, 'api_') !== false) continue;

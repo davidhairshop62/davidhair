@@ -10,6 +10,19 @@ DirectoryIndex index.php index.html
 # Block direct access to PHP layout includes
 RedirectMatch 403 ^/includes/
 
+# Block known automated webshell/WordPress scanner subnet
+<IfModule mod_authz_core.c>
+    <RequireAll>
+        Require all granted
+        Require not ip 185.198.240.0/24
+    </RequireAll>
+</IfModule>
+
+# Immediately block WordPress, webshell & router exploit probes (403 Forbidden)
+RedirectMatch 403 (?i)^/(wp-admin|wp-content|wp-includes|wp-login\.php|xmlrpc\.php|boaform|cgi-bin|\.wp)
+RedirectMatch 403 (?i)^/\.well-known/.*\.php$
+RedirectMatch 403 (?i)/(wso|zwso|alfa|bless|lock360|chosen|mah|gecko|shell|c99|r57|file5|O-Simple|inputs|ahax|amax)\.php$
+
 # Clean URL Routing for Multi-Page Hub Architecture
 <IfModule mod_rewrite.c>
     RewriteEngine On
