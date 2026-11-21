@@ -55,6 +55,27 @@
         .bronze-gradient { background: linear-gradient(135deg, #D97706 0%, #B45309 100%); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Always-visible sleek scrollbar for Stock & Admin tables */
+        .dh-visible-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #14B8A6 #151E38;
+        }
+        .dh-visible-scroll::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+        }
+        .dh-visible-scroll::-webkit-scrollbar-track {
+            background: #0F172A;
+            border-radius: 999px;
+        }
+        .dh-visible-scroll::-webkit-scrollbar-thumb {
+            background: #0D9488;
+            border-radius: 999px;
+            border: 2px solid #0F172A;
+        }
+        .dh-visible-scroll::-webkit-scrollbar-thumb:hover {
+            background: #14B8A6;
+        }
         button, a, input, select, textarea { touch-action: manipulation; }
 
         /* Mobile Optimization for Galaxy S24 Ultra (6.8", 19.5:9, ~384-412px CSS viewport) & phones */
@@ -544,63 +565,63 @@
                     </template>
                 </div>
 
-                <!-- Stock Items Table (Desktop md+) -->
+                <!-- Stock Items Table (Desktop md+ — Compact columns + Always-visible vertical & horizontal scrollbars) -->
                 <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[11px] border-b border-brand-border select-none">
+                    <div class="dh-visible-scroll overflow-auto max-h-[72vh]">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[10px] border-b border-brand-border select-none sticky top-0 z-20 shadow-sm">
                                 <tr>
-                                    <th class="py-3.5 px-4 w-36">Product Image</th>
+                                    <th class="py-2.5 px-2.5 w-24">Image</th>
                                     
                                     <!-- 1. Sort by Item Name -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group" @click="sortBy('name')" title="클릭하여 제품명 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>SKU & Item Name</span>
+                                    <th class="py-2.5 px-2.5 cursor-pointer hover:text-white transition-colors group" @click="sortBy('name')" title="클릭하여 제품명 정렬">
+                                        <div class="flex items-center gap-1">
+                                            <span>SKU &amp; Item</span>
                                             <i class="fa-solid" :class="getSortIcon('name')"></i>
                                         </div>
                                     </th>
 
                                     <!-- 2. Sort by Category -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group" @click="sortBy('category')" title="클릭하여 카테고리 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>Category / Base</span>
+                                    <th class="py-2.5 px-2.5 cursor-pointer hover:text-white transition-colors group" @click="sortBy('category')" title="클릭하여 카테고리 정렬">
+                                        <div class="flex items-center gap-1">
+                                            <span>Category</span>
                                             <i class="fa-solid" :class="getSortIcon('category')"></i>
                                         </div>
                                     </th>
 
                                     <!-- 3. Sort by Size -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group" @click="sortBy('size')" title="클릭하여 사이즈 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>Specs (Size/Density/Color)</span>
+                                    <th class="py-2.5 px-2.5 cursor-pointer hover:text-white transition-colors group" @click="sortBy('size')" title="클릭하여 사이즈 정렬">
+                                        <div class="flex items-center gap-1">
+                                            <span>Specs</span>
                                             <i class="fa-solid" :class="getSortIcon('size')"></i>
                                         </div>
                                     </th>
 
                                     <!-- 4. Sort by Price -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('price')" title="클릭하여 가격 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>Price (AUD)</span>
+                                    <th class="py-2.5 px-2.5 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('price')" title="클릭하여 가격 정렬">
+                                        <div class="flex items-center gap-1">
+                                            <span>Price</span>
                                             <i class="fa-solid" :class="getSortIcon('price')"></i>
                                         </div>
                                     </th>
 
                                     <!-- 5. Sort by Stock Qty -->
-                                    <th class="py-3.5 px-4 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('stockQty')" title="클릭하여 재고수량 정렬">
-                                        <div class="flex items-center gap-1.5">
-                                            <span>Stock Qty</span>
+                                    <th class="py-2.5 px-2.5 cursor-pointer hover:text-white transition-colors group whitespace-nowrap" @click="sortBy('stockQty')" title="클릭하여 재고수량 정렬">
+                                        <div class="flex items-center gap-1">
+                                            <span>Qty</span>
                                             <i class="fa-solid" :class="getSortIcon('stockQty')"></i>
                                         </div>
                                     </th>
 
-                                    <!-- 6. Actions & Display (노출/숨김 & 관리 한 컬럼으로 통합) -->
-                                    <th class="py-3.5 px-4 text-right whitespace-nowrap">
-                                        <div class="flex items-center justify-end gap-2.5">
-                                            <button type="button" @click="sortBy('is_visible')" class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors text-brand-textMuted font-bold text-[11px] uppercase group" title="클릭하여 노출/숨김 정렬">
-                                                <span>노출(Display)</span>
-                                                <i class="fa-solid text-[10px]" :class="getSortIcon('is_visible')"></i>
+                                    <!-- 6. Actions & Display -->
+                                    <th class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            <button type="button" @click="sortBy('is_visible')" class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors text-brand-textMuted font-bold text-[10px] uppercase group" title="클릭하여 노출/숨김 정렬">
+                                                <span>노출</span>
+                                                <i class="fa-solid text-[9px]" :class="getSortIcon('is_visible')"></i>
                                             </button>
                                             <span class="text-brand-border select-none">|</span>
-                                            <span>Actions (관리)</span>
+                                            <span>관리</span>
                                         </div>
                                     </th>
                                 </tr>
@@ -610,72 +631,72 @@
                                     <tbody class="contents">
                                         <!-- 1. VIEW MODE ROW -->
                                         <tr x-show="editingRowId !== item.id" class="hover:bg-brand-inner/50 transition-colors group" :class="{ 'opacity-70': !(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') }">
-                                            <td class="py-3 px-4 align-top">
-                                                <!-- 큼직한 사진 박스 (112px ~ 128px) -->
-                                                <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border-2 border-brand-border bg-brand-inner flex-shrink-0 group/img shadow-md">
+                                            <td class="py-2.5 px-2.5 align-top">
+                                                <!-- 컴팩트 사진 박스 (80px ~ 96px) -->
+                                                <div class="relative w-20 h-20 xl:w-24 xl:h-24 rounded-xl overflow-hidden border border-brand-border bg-brand-inner flex-shrink-0 group/img shadow-md">
                                                     <img :src="item.image" :alt="item.name" class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300">
                                                     
                                                     <!-- 마우스 호버 시 즉시 사진 변경 레이블/버튼 -->
-                                                    <label class="absolute inset-0 bg-black/75 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white p-2 text-center" title="이 제품의 사진을 즉시 변경">
-                                                        <i class="fa-solid fa-camera text-xl mb-1 text-brand-tealLight"></i>
-                                                        <span class="text-[11px] font-bold">사진 변경</span>
+                                                    <label class="absolute inset-0 bg-black/75 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white p-1.5 text-center" title="이 제품의 사진을 즉시 변경">
+                                                        <i class="fa-solid fa-camera text-base mb-0.5 text-brand-tealLight"></i>
+                                                        <span class="text-[10px] font-bold">사진 변경</span>
                                                         <input type="file" accept="image/*" @change="quickUploadImage(item, $event)" class="hidden">
                                                     </label>
                                                     
                                                     <!-- 다중 사진 등록 뱃지 -->
                                                     <template x-if="item.gallery_images && item.gallery_images.length > 1">
-                                                        <div class="absolute top-1 left-1 bg-brand-darkBg/90 border border-brand-teal/50 text-brand-tealLight text-[10px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1 z-10" title="다중 사진 등록됨">
-                                                            <i class="fa-solid fa-images text-[9px]"></i>
+                                                        <div class="absolute top-1 left-1 bg-brand-darkBg/90 border border-brand-teal/50 text-brand-tealLight text-[9px] font-bold px-1 py-0.5 rounded shadow flex items-center gap-0.5 z-10" title="다중 사진 등록됨">
+                                                            <i class="fa-solid fa-images text-[8px]"></i>
                                                             <span x-text="item.gallery_images.length"></span>
                                                         </div>
                                                     </template>
 
                                                     <!-- 사진 원본 보기 링크 (새 탭) -->
-                                                    <a :href="item.image" target="_blank" @click.stop class="absolute bottom-1 right-1 w-6 h-6 rounded-md bg-black/60 hover:bg-black text-slate-300 hover:text-white flex items-center justify-center text-[10px] opacity-0 group-hover/img:opacity-100 transition-opacity shadow" title="사진 원본 보기">
+                                                    <a :href="item.image" target="_blank" @click.stop class="absolute bottom-1 right-1 w-5 h-5 rounded bg-black/60 hover:bg-black text-slate-300 hover:text-white flex items-center justify-center text-[9px] opacity-0 group-hover/img:opacity-100 transition-opacity shadow" title="사진 원본 보기">
                                                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                                     </a>
                                                 </div>
                                             </td>
-                                            <td class="py-3 px-4 align-top">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-mono text-brand-tealLight font-bold" x-text="item.sku"></span>
+                                            <td class="py-2.5 px-2.5 align-top max-w-[210px] xl:max-w-[270px]">
+                                                <div class="flex items-center flex-wrap gap-1.5">
+                                                    <span class="font-mono text-[11px] text-brand-tealLight font-bold" x-text="item.sku"></span>
                                                     <template x-if="item.badge">
-                                                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border shadow-sm flex items-center gap-1"
+                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border shadow-sm flex items-center gap-0.5"
                                                               :class="getBadgeClass(item.badge)">
                                                             <i :class="getBadgeIcon(item.badge)"></i>
                                                             <span x-text="item.badge"></span>
                                                         </span>
                                                     </template>
                                                     <template x-if="!(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1')">
-                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-amber-950/80 border-amber-700 text-amber-300 flex items-center gap-1">
-                                                            <i class="fa-solid fa-eye-slash text-[9px]"></i> Hidden
+                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-amber-950/80 border-amber-700 text-amber-300 flex items-center gap-0.5">
+                                                            <i class="fa-solid fa-eye-slash text-[8px]"></i> Hidden
                                                         </span>
                                                     </template>
                                                 </div>
-                                                <div class="font-bold text-white text-sm mt-0.5" x-text="item.name"></div>
-                                                <div x-show="item.description" class="text-[11px] text-brand-textMuted line-clamp-2 mt-1 bg-brand-inner/40 p-1.5 rounded border border-brand-border/40" x-text="item.description"></div>
+                                                <div class="font-bold text-white text-xs mt-0.5 leading-snug break-words" x-text="item.name"></div>
+                                                <div x-show="item.description" class="text-[10px] text-brand-textMuted line-clamp-2 mt-1 bg-brand-inner/40 px-1.5 py-1 rounded border border-brand-border/40" x-text="item.description"></div>
                                             </td>
-                                            <td class="py-3 px-4 space-y-1 align-top">
-                                                <span class="inline-block bg-brand-inner px-2 py-0.5 rounded border border-brand-border font-semibold text-slate-300" x-text="item.category"></span>
-                                                <div class="text-[11px] text-brand-textMuted" x-text="item.base"></div>
+                                            <td class="py-2.5 px-2.5 space-y-1 align-top max-w-[130px]">
+                                                <span class="inline-block bg-brand-inner px-1.5 py-0.5 rounded border border-brand-border font-semibold text-[11px] text-slate-300" x-text="item.category"></span>
+                                                <div class="text-[10px] text-brand-textMuted leading-tight break-words" x-text="item.base"></div>
                                             </td>
-                                            <td class="py-3 px-4 text-slate-300 align-top">
-                                                <div><span class="text-brand-textMuted">Size:</span> <span class="font-semibold" x-text="item.size"></span></div>
-                                                <div><span class="text-brand-textMuted">Density:</span> <span class="font-semibold" x-text="item.density"></span></div>
-                                                <div><span class="text-brand-textMuted">Color:</span> <span class="font-semibold" x-text="item.color"></span></div>
+                                            <td class="py-2.5 px-2.5 text-slate-300 align-top text-[11px] leading-snug max-w-[155px]">
+                                                <div class="truncate" :title="item.size"><span class="text-brand-textMuted">Sz:</span> <span class="font-semibold" x-text="item.size"></span></div>
+                                                <div class="truncate" :title="item.density"><span class="text-brand-textMuted">Den:</span> <span class="font-semibold" x-text="item.density"></span></div>
+                                                <div class="truncate" :title="item.color"><span class="text-brand-textMuted">Col:</span> <span class="font-semibold" x-text="item.color"></span></div>
                                             </td>
-                                            <td class="py-3 px-4 font-mono font-bold text-white text-sm whitespace-nowrap align-top">
-                                                $<span x-text="Number(item.price).toFixed(2)"></span>
+                                            <td class="py-2.5 px-2.5 font-mono font-bold text-white text-xs whitespace-nowrap align-top">
+                                                $<span x-text="Number(item.price).toFixed(0)"></span>
                                             </td>
-                                            <td class="py-3 px-4 whitespace-nowrap align-top">
-                                                <div class="flex items-center gap-1.5">
-                                                    <button type="button" @click="quickUpdateStockQty(item, -1)" class="w-6 h-6 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-xs border border-brand-border transition-colors shadow-sm" title="재고 1개 감소">-</button>
-                                                    <span :class="item.stockQty > 5 ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'bg-rose-950 text-rose-400 border-rose-800'" class="px-2.5 py-1 rounded-full text-xs font-bold border inline-block text-center min-w-[58px]" x-text="item.stockQty + ' pcs'"></span>
-                                                    <button type="button" @click="quickUpdateStockQty(item, 1)" class="w-6 h-6 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-xs border border-brand-border transition-colors shadow-sm" title="재고 1개 증가">+</button>
+                                            <td class="py-2.5 px-2.5 whitespace-nowrap align-top">
+                                                <div class="flex items-center gap-1">
+                                                    <button type="button" @click="quickUpdateStockQty(item, -1)" class="w-5 h-5 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-[11px] border border-brand-border transition-colors" title="재고 1개 감소">-</button>
+                                                    <span :class="item.stockQty > 5 ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : 'bg-rose-950 text-rose-400 border-rose-800'" class="px-1.5 py-0.5 rounded-full text-[11px] font-bold border inline-block text-center min-w-[44px]" x-text="item.stockQty"></span>
+                                                    <button type="button" @click="quickUpdateStockQty(item, 1)" class="w-5 h-5 rounded bg-brand-inner hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-[11px] border border-brand-border transition-colors" title="재고 1개 증가">+</button>
                                                 </div>
                                             </td>
-                                            <!-- 노출/숨김, 라인수정, 상세, 복사, 삭제 버튼 (아이콘 전용으로 가로폭 최소화) -->
-                                            <td class="py-3 px-3 text-right whitespace-nowrap align-top">
+                                            <!-- 노출/숨김, 라인수정, 상세, 복사, 삭제 버튼 (컴팩트 28px 아이콘) -->
+                                            <td class="py-2.5 px-2.5 text-right whitespace-nowrap align-top">
                                                 <div class="inline-flex items-center justify-end gap-1">
                                                     <!-- 1. 노출 / 숨김 토글 버튼 -->
                                                     <button type="button" 
@@ -684,28 +705,28 @@
                                                             :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') 
                                                                 ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' 
                                                                 : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
-                                                            class="w-8 h-8 rounded-lg border text-xs font-bold inline-flex items-center justify-center transition-all shadow-sm cursor-pointer select-none active:scale-95 shrink-0"
+                                                            class="w-7 h-7 rounded-lg border text-[11px] font-bold inline-flex items-center justify-center transition-all shadow-sm cursor-pointer select-none active:scale-95 shrink-0"
                                                             :title="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? '현재 메인페이지 노출 중 (클릭 시 숨김)' : '현재 메인페이지 숨김 상태 (클릭 시 노출)'">
-                                                        <i class="fa-solid text-xs" 
+                                                        <i class="fa-solid text-[11px]" 
                                                            :class="(item.is_visible === undefined || item.is_visible == 1 || item.is_visible === true || item.is_visible === '1') ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
-                                                        <i x-show="togglingItemIds.includes(item.id)" class="fa-solid fa-spinner fa-spin text-[10px] text-brand-tealLight"></i>
+                                                        <i x-show="togglingItemIds.includes(item.id)" class="fa-solid fa-spinner fa-spin text-[9px] text-brand-tealLight"></i>
                                                     </button>
 
                                                     <!-- 2. 라인수정 버튼 -->
-                                                    <button type="button" @click="startInlineEdit(item)" class="w-8 h-8 rounded-lg bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700 text-xs transition-colors font-bold shadow-sm inline-flex items-center justify-center shrink-0" title="라인 상에서 바로 수정">
-                                                        <i class="fa-solid fa-pen text-xs"></i>
+                                                    <button type="button" @click="startInlineEdit(item)" class="w-7 h-7 rounded-lg bg-teal-950 hover:bg-teal-900 text-teal-300 border border-teal-700 text-[11px] transition-colors font-bold shadow-sm inline-flex items-center justify-center shrink-0" title="라인 상에서 바로 수정">
+                                                        <i class="fa-solid fa-pen text-[11px]"></i>
                                                     </button>
 
                                                     <!-- 3. 상세 버튼 (상세 정보 모달 열기) -->
-                                                    <button type="button" @click="openModal('edit', item)" class="w-8 h-8 rounded-lg bg-brand-inner hover:bg-slate-700 text-slate-200 border border-brand-border text-xs transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="상세 모달 열기">
-                                                        <i class="fa-solid fa-circle-info text-xs"></i>
+                                                    <button type="button" @click="openModal('edit', item)" class="w-7 h-7 rounded-lg bg-brand-inner hover:bg-slate-700 text-slate-200 border border-brand-border text-[11px] transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="상세 모달 열기">
+                                                        <i class="fa-solid fa-circle-info text-[11px]"></i>
                                                     </button>
 
                                                     <!-- 4. 복사 버튼 -->
-                                                    <button type="button" @click="copyItemFromTable(item)" class="w-8 h-8 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-xs transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="Copy to New Product"><i class="fa-solid fa-copy text-xs"></i></button>
+                                                    <button type="button" @click="copyItemFromTable(item)" class="w-7 h-7 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-800 text-[11px] transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="Copy to New Product"><i class="fa-solid fa-copy text-[11px]"></i></button>
 
                                                     <!-- 5. 삭제 버튼 -->
-                                                    <button type="button" @click="deleteItem(item)" class="w-8 h-8 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="Delete Product"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                                    <button type="button" @click="deleteItem(item)" class="w-7 h-7 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-[11px] transition-colors font-semibold shadow-sm inline-flex items-center justify-center shrink-0" title="Delete Product"><i class="fa-solid fa-trash-can text-[11px]"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
