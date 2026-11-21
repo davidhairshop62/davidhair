@@ -22,6 +22,7 @@
                             darkBg: '#0B132B',
                             cardBg: '#1C2541',
                             cardInner: '#151E38',
+                            inner: '#151E38',
                             border: '#2E3A59',
                             textMain: '#F1F5F9',
                             textMuted: '#94A3B8',
@@ -4119,18 +4120,18 @@
                 <!-- Category, Sort Order & Visibility -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Category *</label>
-                        <select x-model="capGuideForm.category" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
-                            <option value="men">Men's Toupees</option>
-                            <option value="women">Women's Hair Toppers</option>
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Category *</label>
+                        <select x-model="capGuideForm.category" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                            <option value="men" class="bg-slate-900 text-white">Men's Toupees</option>
+                            <option value="women" class="bg-slate-900 text-white">Women's Hair Toppers</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Sort Order</label>
-                        <input type="number" min="0" x-model.number="capGuideForm.sort_order" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Sort Order</label>
+                        <input type="number" min="0" x-model.number="capGuideForm.sort_order" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
                     </div>
                     <div class="flex items-end pb-1">
-                        <label class="flex items-center gap-2 cursor-pointer bg-brand-inner border border-brand-border rounded-xl px-3 py-2 w-full">
+                        <label class="flex items-center gap-2 cursor-pointer bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 w-full">
                             <input type="checkbox" x-model="capGuideForm.is_visible" class="w-4 h-4 accent-emerald-500 rounded">
                             <span class="font-bold text-emerald-300">Visible on Guide</span>
                         </label>
@@ -4140,17 +4141,17 @@
                 <!-- Title & Subtitle -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Cap Design Title *</label>
-                        <input type="text" required x-model="capGuideForm.title" placeholder="e.g. Ultra-Thin Skin / Silk Top" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Cap Design Title *</label>
+                        <input type="text" required x-model="capGuideForm.title" placeholder="e.g. Ultra-Thin Skin / Silk Top" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Material / Spec Subtitle</label>
-                        <input type="text" x-model="capGuideForm.subtitle" placeholder="e.g. 0.02mm - 0.04mm PU / 3-Layer Hidden Knot" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Material / Spec Subtitle</label>
+                        <input type="text" x-model="capGuideForm.subtitle" placeholder="e.g. 0.02mm - 0.04mm PU / 3-Layer Hidden Knot" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                 </div>
 
                 <!-- Photo Upload & URL -->
-                <div class="bg-brand-inner/60 border border-brand-border rounded-2xl p-3.5 flex flex-col sm:flex-row gap-3.5 items-start">
+                <div class="bg-brand-cardInner border border-brand-border rounded-2xl p-3.5 flex flex-col sm:flex-row gap-3.5 items-start">
                     <div class="w-24 h-24 rounded-xl overflow-hidden border border-brand-border bg-brand-darkBg shrink-0 flex items-center justify-center">
                         <template x-if="capGuideImagePreview || capGuideForm.image_url">
                             <img :src="capGuideImagePreview || capGuideForm.image_url" class="w-full h-full object-cover">
@@ -4168,60 +4169,60 @@
                             </label>
                             <span class="text-[10px] text-slate-400" x-text="capGuideImageFile ? capGuideImageFile.name : 'JPG, PNG, WEBP'"></span>
                         </div>
-                        <input type="text" x-model="capGuideForm.image_url" placeholder="Or image path / URL (e.g. images/caps/men_hybrid_cap.jpg)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                        <input type="text" x-model="capGuideForm.image_url" placeholder="Or image path / URL (e.g. images/caps/men_hybrid_cap.jpg)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                 </div>
 
                 <!-- Ratings (1-5 Stars) -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Part Realism (1~5)' : 'Realism (1~5)'"></label>
-                        <select x-model.number="capGuideForm.realism" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-amber-400 font-bold outline-none focus:border-indigo-400">
-                            <option value="5">★★★★★ (5 / 5)</option>
-                            <option value="4">★★★★☆ (4 / 5)</option>
-                            <option value="3">★★★☆☆ (3 / 5)</option>
-                            <option value="2">★★☆☆☆ (2 / 5)</option>
-                            <option value="1">★☆☆☆☆ (1 / 5)</option>
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Part Realism (1~5)' : 'Realism (1~5)'"></label>
+                        <select x-model.number="capGuideForm.realism" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-amber-400 font-bold outline-none focus:border-indigo-400">
+                            <option value="5" class="bg-slate-900 text-amber-300">★★★★★ (5 / 5)</option>
+                            <option value="4" class="bg-slate-900 text-amber-300">★★★★☆ (4 / 5)</option>
+                            <option value="3" class="bg-slate-900 text-amber-300">★★★☆☆ (3 / 5)</option>
+                            <option value="2" class="bg-slate-900 text-amber-300">★★☆☆☆ (2 / 5)</option>
+                            <option value="1" class="bg-slate-900 text-amber-300">★☆☆☆☆ (1 / 5)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Comfort & Weight (1~5)' : 'Breathability (1~5)'"></label>
-                        <select x-model.number="capGuideForm.breathability" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-emerald-400 font-bold outline-none focus:border-indigo-400">
-                            <option value="5">★★★★★ (5 / 5)</option>
-                            <option value="4">★★★★☆ (4 / 5)</option>
-                            <option value="3">★★★☆☆ (3 / 5)</option>
-                            <option value="2">★★☆☆☆ (2 / 5)</option>
-                            <option value="1">★☆☆☆☆ (1 / 5)</option>
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Comfort & Weight (1~5)' : 'Breathability (1~5)'"></label>
+                        <select x-model.number="capGuideForm.breathability" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-emerald-400 font-bold outline-none focus:border-indigo-400">
+                            <option value="5" class="bg-slate-900 text-emerald-300">★★★★★ (5 / 5)</option>
+                            <option value="4" class="bg-slate-900 text-emerald-300">★★★★☆ (4 / 5)</option>
+                            <option value="3" class="bg-slate-900 text-emerald-300">★★★☆☆ (3 / 5)</option>
+                            <option value="2" class="bg-slate-900 text-emerald-300">★★☆☆☆ (2 / 5)</option>
+                            <option value="1" class="bg-slate-900 text-emerald-300">★☆☆☆☆ (1 / 5)</option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Lifespan & Annual Cost -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="space-y-2 bg-brand-inner/40 p-3 rounded-xl border border-brand-border/70">
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase">Lifespan</label>
+                    <div class="space-y-2 bg-brand-cardInner p-3 rounded-xl border border-brand-border/70">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase">Lifespan</label>
                         <div class="grid grid-cols-3 gap-2">
-                            <input type="text" x-model="capGuideForm.lifespan" placeholder="e.g. 4 - 8 Mos." class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-indigo-400">
+                            <input type="text" x-model="capGuideForm.lifespan" placeholder="e.g. 4 - 8 Mos." class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                             <select x-model="capGuideForm.lifespan_tone" class="bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white outline-none">
-                                <option value="emerald">Green</option>
-                                <option value="amber">Amber</option>
-                                <option value="rose">Red</option>
-                                <option value="slate">Neutral</option>
+                                <option value="emerald" class="bg-slate-900 text-white">Green</option>
+                                <option value="amber" class="bg-slate-900 text-white">Amber</option>
+                                <option value="rose" class="bg-slate-900 text-white">Red</option>
+                                <option value="slate" class="bg-slate-900 text-white">Neutral</option>
                             </select>
                         </div>
                     </div>
-                    <div class="space-y-2 bg-brand-inner/40 p-3 rounded-xl border border-brand-border/70">
-                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase" x-text="capGuideForm.category === 'women' ? 'Upkeep & Cost' : 'Annual Cost'"></label>
+                    <div class="space-y-2 bg-brand-cardInner p-3 rounded-xl border border-brand-border/70">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase" x-text="capGuideForm.category === 'women' ? 'Upkeep & Cost' : 'Annual Cost'"></label>
                         <div class="grid grid-cols-3 gap-2">
-                            <input type="text" x-model="capGuideForm.annual_cost" placeholder="e.g. Moderate" class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-indigo-400">
+                            <input type="text" x-model="capGuideForm.annual_cost" placeholder="e.g. Moderate" class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                             <select x-model="capGuideForm.annual_cost_tone" class="bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white outline-none">
-                                <option value="emerald">Green</option>
-                                <option value="amber">Amber</option>
-                                <option value="rose">Red</option>
-                                <option value="slate">Neutral</option>
+                                <option value="emerald" class="bg-slate-900 text-white">Green</option>
+                                <option value="amber" class="bg-slate-900 text-white">Amber</option>
+                                <option value="rose" class="bg-slate-900 text-white">Red</option>
+                                <option value="slate" class="bg-slate-900 text-white">Neutral</option>
                             </select>
                         </div>
-                        <input type="text" x-model="capGuideForm.annual_cost_sub" placeholder="Sub-note e.g. (2–4 units/yr) or (Low maintenance)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-slate-300 outline-none focus:border-indigo-400">
+                        <input type="text" x-model="capGuideForm.annual_cost_sub" placeholder="Sub-note e.g. (2–4 units/yr) or (Low maintenance)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                 </div>
 
@@ -4229,33 +4230,33 @@
                 <div class="space-y-3">
                     <div>
                         <label class="block text-[11px] font-bold text-emerald-400 uppercase mb-1">Advantages (장점)</label>
-                        <textarea rows="2" x-model="capGuideForm.advantages" placeholder="Key strengths..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                        <textarea rows="2" x-model="capGuideForm.advantages" placeholder="Key strengths..." class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-indigo-400"></textarea>
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-rose-400 uppercase mb-1">Drawbacks (단점 / 주의점)</label>
-                        <textarea rows="2" x-model="capGuideForm.drawbacks" placeholder="Limitations or maintenance notes..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                        <textarea rows="2" x-model="capGuideForm.drawbacks" placeholder="Limitations or maintenance notes..." class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-indigo-400"></textarea>
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-indigo-300 uppercase mb-1">Best Suited For (추천 대상)</label>
-                        <textarea rows="2" x-model="capGuideForm.best_suited" placeholder="Ideal client profile..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                        <textarea rows="2" x-model="capGuideForm.best_suited" placeholder="Ideal client profile..." class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-indigo-400"></textarea>
                     </div>
                 </div>
 
                 <!-- Lightbox Modal Captions (Optional) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-brand-border/60">
                     <div>
-                        <label class="block text-[10px] font-bold text-brand-textMuted uppercase mb-1">Photo Popup Subtitle (Optional)</label>
-                        <input type="text" x-model="capGuideForm.modal_subtitle" placeholder="Auto-filled if left blank" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Photo Popup Subtitle (Optional)</label>
+                        <input type="text" x-model="capGuideForm.modal_subtitle" placeholder="Auto-filled if left blank" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-brand-textMuted uppercase mb-1">Photo Popup Caption (Optional)</label>
-                        <input type="text" x-model="capGuideForm.modal_desc" placeholder="Auto-filled from Advantages if blank" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                        <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Photo Popup Caption (Optional)</label>
+                        <input type="text" x-model="capGuideForm.modal_desc" placeholder="Auto-filled from Advantages if blank" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-indigo-400">
                     </div>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex items-center justify-end gap-2 pt-3 border-t border-brand-border shrink-0">
-                    <button type="button" @click="capGuideModalOpen = false" class="px-4 py-2 rounded-xl bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border font-bold cursor-pointer">
+                    <button type="button" @click="capGuideModalOpen = false" class="px-4 py-2 rounded-xl bg-brand-darkBg hover:bg-slate-800 text-slate-200 border border-brand-border font-bold cursor-pointer">
                         Cancel
                     </button>
                     <button type="submit" :disabled="isSavingCapGuide" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg flex items-center gap-2 disabled:opacity-50 cursor-pointer">
