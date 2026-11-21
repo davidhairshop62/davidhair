@@ -52,6 +52,259 @@ try {
     // Table exists or error ignored
 }
 
+// Auto-create cap_guide_items table (Buyer's & Stylist's Guide: Men's Toupees & Women's Toppers)
+try {
+    $conn->exec("CREATE TABLE IF NOT EXISTS cap_guide_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        category VARCHAR(20) NOT NULL DEFAULT 'men',
+        title VARCHAR(150) NOT NULL,
+        subtitle VARCHAR(150) DEFAULT '',
+        image_url VARCHAR(500) DEFAULT '',
+        modal_subtitle VARCHAR(200) DEFAULT '',
+        modal_desc TEXT NULL,
+        realism TINYINT NOT NULL DEFAULT 4,
+        breathability TINYINT NOT NULL DEFAULT 4,
+        lifespan VARCHAR(100) DEFAULT '',
+        lifespan_tone VARCHAR(20) DEFAULT 'slate',
+        annual_cost VARCHAR(120) DEFAULT '',
+        annual_cost_sub VARCHAR(120) DEFAULT '',
+        annual_cost_tone VARCHAR(20) DEFAULT 'slate',
+        advantages TEXT NULL,
+        drawbacks TEXT NULL,
+        best_suited TEXT NULL,
+        sort_order INT NOT NULL DEFAULT 0,
+        is_visible TINYINT(1) NOT NULL DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    $cgCount = $conn->query("SELECT COUNT(*) FROM cap_guide_items")->fetchColumn();
+    if ($cgCount == 0) {
+        $initialCapGuides = [
+            // Men's Toupees (6)
+            [
+                'category' => 'men',
+                'title' => 'Ultra-Thin Skin',
+                'subtitle' => '0.02mm - 0.04mm PU',
+                'image_url' => 'images/caps/men_ultra_thin_skin.jpg',
+                'modal_subtitle' => "Men's Toupee Base • Micro-Polyurethane Membrane",
+                'modal_desc' => 'Seamless flush hairline with undetectable skin surface, ideal for swept-back hairlines.',
+                'realism' => 5,
+                'breathability' => 1,
+                'lifespan' => '1 - 2 Mos.',
+                'lifespan_tone' => 'rose',
+                'annual_cost' => 'Very High',
+                'annual_cost_sub' => '(6–10 units/yr)',
+                'annual_cost_tone' => 'rose',
+                'advantages' => 'Flawless flush hairline; brush-back styles; easy wipe-clean adhesive removal.',
+                'drawbacks' => 'Traps heat/perspiration; highly prone to tearing during wash routines.',
+                'best_suited' => 'Events, exposed slicked-back hairlines, and high maintenance budgets.',
+                'sort_order' => 1,
+            ],
+            [
+                'category' => 'men',
+                'title' => 'Standard Thin Skin',
+                'subtitle' => '0.06mm - 0.12mm PU',
+                'image_url' => 'images/caps/men_standard_thin_skin.jpg',
+                'modal_subtitle' => "Men's Toupee Base • Durable Polyurethane Edge",
+                'modal_desc' => 'Durable polyurethane skin perimeter offering tear resistance and easy tape cleanup.',
+                'realism' => 3,
+                'breathability' => 2,
+                'lifespan' => '3 - 6 Mos.',
+                'lifespan_tone' => 'slate',
+                'annual_cost' => 'Moderate',
+                'annual_cost_sub' => '(2–4 units/yr)',
+                'annual_cost_tone' => 'slate',
+                'advantages' => 'Significantly stronger than ultra-thin; simple tape application and cleanup.',
+                'drawbacks' => 'Perimeter line can show under inspection; slight shine under bright spotlighting.',
+                'best_suited' => 'Beginners wanting manageable home application without tear anxiety.',
+                'sort_order' => 2,
+            ],
+            [
+                'category' => 'men',
+                'title' => 'Full Swiss Lace',
+                'subtitle' => 'Ultra-Fine Soft Mesh',
+                'image_url' => 'images/caps/men_swiss_lace.jpg',
+                'modal_subtitle' => "Men's Toupee Base • 100% Breathable Swiss Mesh",
+                'modal_desc' => 'Ultra-fine soft mesh with maximum ventilation, providing supreme scalp breathability.',
+                'realism' => 5,
+                'breathability' => 5,
+                'lifespan' => '1 - 3 Mos.',
+                'lifespan_tone' => 'amber',
+                'annual_cost' => 'High',
+                'annual_cost_sub' => '(4–6 units/yr)',
+                'annual_cost_tone' => 'rose',
+                'advantages' => 'Maximum ventilation; softest edge; realistic undetectable front transition.',
+                'drawbacks' => 'Adhesive seeps through holes; laborious clean-up; delicate mesh strands.',
+                'best_suited' => 'Athletes, hot climates, and users demanding maximum cooling.',
+                'sort_order' => 3,
+            ],
+            [
+                'category' => 'men',
+                'title' => 'Full French Lace',
+                'subtitle' => 'Durable Lace Mesh',
+                'image_url' => 'images/caps/men_french_lace.jpg',
+                'modal_subtitle' => "Men's Toupee Base • Reinforced Honeycomb Mesh",
+                'modal_desc' => 'Resilient honeycomb mesh weave with hand-tied knots for long-wearing durability.',
+                'realism' => 4,
+                'breathability' => 5,
+                'lifespan' => '3 - 4 Mos.',
+                'lifespan_tone' => 'slate',
+                'annual_cost' => 'Moderate–High',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'amber',
+                'advantages' => 'Sturdier than Swiss lace; excellent breathability; long-wearing integrity.',
+                'drawbacks' => 'Under close scrutiny, the mesh lattice is slightly more detectable than Swiss lace.',
+                'best_suited' => 'Wearers seeking high breathability without replacing units every 6 weeks.',
+                'sort_order' => 4,
+            ],
+            [
+                'category' => 'men',
+                'title' => 'Fine Monofilament',
+                'subtitle' => 'Woven Mono Base',
+                'image_url' => 'images/caps/men_fine_monofilament.jpg',
+                'modal_subtitle' => "Men's Toupee Base • High-Density Woven Mono",
+                'modal_desc' => 'Fine woven monofilament center base with PU perimeter for heavy density support.',
+                'realism' => 2,
+                'breathability' => 3,
+                'lifespan' => '6 - 12+ Mos.',
+                'lifespan_tone' => 'emerald',
+                'annual_cost' => 'Lowest',
+                'annual_cost_sub' => '(1–2 units/yr)',
+                'annual_cost_tone' => 'emerald',
+                'advantages' => 'Exceptional durability; handles heavy hair density without tearing.',
+                'drawbacks' => 'Thick border; cannot expose the front hairline cleanly; stiffer feel.',
+                'best_suited' => 'Fringe/bangs forward hairstyles where cost-per-day is the top metric.',
+                'sort_order' => 5,
+            ],
+            [
+                'category' => 'men',
+                'title' => 'Hybrid Cap',
+                'subtitle' => 'Lace Front + Mono + PU Edge',
+                'image_url' => 'images/caps/men_hybrid_cap.jpg',
+                'modal_subtitle' => "Men's Toupee Base • Multi-Zone Precision Construction",
+                'modal_desc' => 'Undetectable front lace transition combined with sturdy mono crown and clean PU border.',
+                'realism' => 4,
+                'breathability' => 4,
+                'lifespan' => '4 - 8 Mos.',
+                'lifespan_tone' => 'emerald',
+                'annual_cost' => 'Balanced',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'slate',
+                'advantages' => 'Natural front, easy tape cleaning around the perimeter, sturdy center crown.',
+                'drawbacks' => 'Front lace wears out earlier than the rear mono; requires care along joints.',
+                'best_suited' => 'The most versatile choice. Ideal balance of realism, lifespan, and daily maintenance.',
+                'sort_order' => 6,
+            ],
+            // Women's Hair Toppers (5)
+            [
+                'category' => 'women',
+                'title' => 'Silk Top',
+                'subtitle' => '3-Layer Hidden Knot',
+                'image_url' => 'images/caps/women_silk_top.jpg',
+                'modal_subtitle' => "Women's Topper Base • Zero Knot Scalp Simulation",
+                'modal_desc' => 'Three-layer construction with hidden knots, indistinguishable from a biological human scalp.',
+                'realism' => 5,
+                'breathability' => 2,
+                'lifespan' => '1 - 2+ Years',
+                'lifespan_tone' => 'emerald',
+                'annual_cost' => 'High Upfront',
+                'annual_cost_sub' => '(Low maintenance)',
+                'annual_cost_tone' => 'slate',
+                'advantages' => 'Zero visible black knots; indistinguishable from a biological human scalp.',
+                'drawbacks' => 'Heavier 3-layer build; can sit slightly elevated on the crown before break-in.',
+                'best_suited' => 'Frequent top-down visibility, defined part lines, and maximum scalp realism.',
+                'sort_order' => 1,
+            ],
+            [
+                'category' => 'women',
+                'title' => 'Monofilament (Mono Top)',
+                'subtitle' => 'Single Mesh Layer',
+                'image_url' => 'images/caps/women_mono_top.jpg',
+                'modal_subtitle' => "Women's Topper Base • Free Parting Transparent Mesh",
+                'modal_desc' => 'Soft contouring single mesh base with perimeter clips, allowing multi-directional parting.',
+                'realism' => 4,
+                'breathability' => 4,
+                'lifespan' => '1 - 1.5 Years',
+                'lifespan_tone' => 'emerald',
+                'annual_cost' => 'Moderate Upfront',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'slate',
+                'advantages' => 'Hugs the head contour smoothly; allows multi-directional part relocation.',
+                'drawbacks' => 'Knots are subtly visible upon micro-inspection unless pre-bleached.',
+                'best_suited' => 'Sensitive scalps, daily all-day wearers who prioritize flat, discreet volume.',
+                'sort_order' => 2,
+            ],
+            [
+                'category' => 'women',
+                'title' => 'Lace Front / Lace Top',
+                'subtitle' => 'Sheer Extended Lace',
+                'image_url' => 'images/caps/women_lace_front.jpg',
+                'modal_subtitle' => "Women's Topper Base • Undetectable Front Hairline",
+                'modal_desc' => 'Sheer extended French lace edge for hairline recession, featuring micro clips.',
+                'realism' => 5,
+                'breathability' => 5,
+                'lifespan' => '6 - 12 Mos.',
+                'lifespan_tone' => 'amber',
+                'annual_cost' => 'Moderate–High',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'amber',
+                'advantages' => 'Flattest transition available; creates a new hairline if biological front is receded.',
+                'drawbacks' => 'Delicate edge requires careful brushing; front lace may require daily tape down.',
+                'best_suited' => "Frontal fibrosing alopecia, receded widow's peaks, and hot humid environments.",
+                'sort_order' => 3,
+            ],
+            [
+                'category' => 'women',
+                'title' => 'Injected Poly / Skin',
+                'subtitle' => 'Polyurethane Crown',
+                'image_url' => 'images/caps/women_injected_skin.jpg',
+                'modal_subtitle' => "Women's Topper Base • Direct Root Injection",
+                'modal_desc' => 'Hair strands individually injected into polyurethane membrane with zero visible knots.',
+                'realism' => 4,
+                'breathability' => 1,
+                'lifespan' => '6 - 12 Mos.',
+                'lifespan_tone' => 'slate',
+                'annual_cost' => 'Moderate',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'slate',
+                'advantages' => 'No knots visible; hair looks like it grows straight from the scalp membrane.',
+                'drawbacks' => 'Zero breathability; potential for base yellowing over time; heat buildup.',
+                'best_suited' => 'Winter/cool weather wear, short daily outings, or adhesive-attached toppers.',
+                'sort_order' => 4,
+            ],
+            [
+                'category' => 'women',
+                'title' => 'Wefted / Honeycomb Base',
+                'subtitle' => 'Pull-Through Integration',
+                'image_url' => 'images/caps/women_honeycomb_base.jpg',
+                'modal_subtitle' => "Women's Topper Base • Pull-Through Fishnet Grid",
+                'modal_desc' => 'Open honeycomb grid allowing biological hair pull-through for maximum crown volume.',
+                'realism' => 2,
+                'breathability' => 5,
+                'lifespan' => '1 - 2+ Years',
+                'lifespan_tone' => 'emerald',
+                'annual_cost' => 'Lowest',
+                'annual_cost_sub' => '',
+                'annual_cost_tone' => 'emerald',
+                'advantages' => 'Maximum crown volume; biological hair blends directly through the open slots.',
+                'drawbacks' => 'Cannot conceal completely bald spots without a mono/silk crown insert.',
+                'best_suited' => 'Diffuse thinning where substantial hair remains and overall volume is the goal.',
+                'sort_order' => 5,
+            ],
+        ];
+
+        $insCg = $conn->prepare("INSERT INTO cap_guide_items
+            (category, title, subtitle, image_url, modal_subtitle, modal_desc, realism, breathability, lifespan, lifespan_tone, annual_cost, annual_cost_sub, annual_cost_tone, advantages, drawbacks, best_suited, sort_order, is_visible)
+            VALUES (:category, :title, :subtitle, :image_url, :modal_subtitle, :modal_desc, :realism, :breathability, :lifespan, :lifespan_tone, :annual_cost, :annual_cost_sub, :annual_cost_tone, :advantages, :drawbacks, :best_suited, :sort_order, 1)");
+        foreach ($initialCapGuides as $cg) {
+            $insCg->execute($cg);
+        }
+    }
+} catch (Exception $e) {
+    // Table exists or error ignored
+}
+
 // Auto-check stock_items table columns for description, badge, is_visible, and gallery_images
 try {
     $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
@@ -419,6 +672,43 @@ try {
             'status' => 'success',
             'pricing' => $defaults,
             'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    // 6B. PUBLIC LIST CAP GUIDE ITEMS (Buyer's & Stylist's Guide: Men's Toupees & Women's Toppers)
+    if ($action === 'list_cap_guide') {
+        $includeHidden = !empty($_REQUEST['include_hidden']) && !empty($_SESSION['admin_user']);
+        $sql = "SELECT * FROM cap_guide_items";
+        if (!$includeHidden) {
+            $sql .= " WHERE is_visible = 1";
+        }
+        $sql .= " ORDER BY FIELD(category, 'men', 'women'), sort_order ASC, id ASC";
+        $stmt = $conn->query($sql);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $men = [];
+        $women = [];
+        foreach ($rows as &$r) {
+            $r['id'] = (int)$r['id'];
+            $r['realism'] = max(1, min(5, (int)$r['realism']));
+            $r['breathability'] = max(1, min(5, (int)$r['breathability']));
+            $r['sort_order'] = (int)$r['sort_order'];
+            $r['is_visible'] = (int)$r['is_visible'];
+            if (strtolower($r['category']) === 'women') {
+                $r['category'] = 'women';
+                $women[] = $r;
+            } else {
+                $r['category'] = 'men';
+                $men[] = $r;
+            }
+        }
+        unset($r);
+
+        sendJsonResponse([
+            'status' => 'success',
+            'data' => $rows,
+            'men' => $men,
+            'women' => $women
         ]);
     }
 
@@ -806,6 +1096,170 @@ try {
             'pricing' => $defaults,
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    // 13. SAVE CAP GUIDE ITEM (Add or Update — Admin only)
+    if ($action === 'save_cap_guide') {
+        $id = !empty($_POST['id']) ? intval($_POST['id']) : 0;
+        $category = strtolower(trim($_POST['category'] ?? 'men')) === 'women' ? 'women' : 'men';
+        $title = trim($_POST['title'] ?? '');
+        $subtitle = trim($_POST['subtitle'] ?? '');
+        $imageUrl = trim($_POST['image_url'] ?? '');
+        $modalSubtitle = trim($_POST['modal_subtitle'] ?? '');
+        $modalDesc = trim($_POST['modal_desc'] ?? '');
+        $realism = max(1, min(5, intval($_POST['realism'] ?? 4)));
+        $breathability = max(1, min(5, intval($_POST['breathability'] ?? 4)));
+        $lifespan = trim($_POST['lifespan'] ?? '');
+        $lifespanTone = in_array($_POST['lifespan_tone'] ?? '', ['rose', 'amber', 'emerald', 'slate']) ? $_POST['lifespan_tone'] : 'slate';
+        $annualCost = trim($_POST['annual_cost'] ?? '');
+        $annualCostSub = trim($_POST['annual_cost_sub'] ?? '');
+        $annualCostTone = in_array($_POST['annual_cost_tone'] ?? '', ['rose', 'amber', 'emerald', 'slate']) ? $_POST['annual_cost_tone'] : 'slate';
+        $advantages = trim($_POST['advantages'] ?? '');
+        $drawbacks = trim($_POST['drawbacks'] ?? '');
+        $bestSuited = trim($_POST['best_suited'] ?? '');
+        $sortOrder = isset($_POST['sort_order']) && $_POST['sort_order'] !== '' ? intval($_POST['sort_order']) : 0;
+        $isVisible = isset($_POST['is_visible']) ? (filter_var($_POST['is_visible'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : 1;
+
+        if (empty($title)) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Cap Design Title is required.'], 400);
+        }
+
+        // Optional Photo Upload
+        if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['image_file']['error'] !== UPLOAD_ERR_OK) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Image upload error (code ' . $_FILES['image_file']['error'] . ').'], 400);
+            }
+            $fileTmp = $_FILES['image_file']['tmp_name'];
+            $fileName = $_FILES['image_file']['name'];
+            $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            if (!in_array($fileExt, $allowedExts)) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Invalid file format. Allowed: JPG, PNG, WEBP.'], 400);
+            }
+            $newFileName = 'capguide_' . time() . '_' . rand(1000, 9999) . '.' . $fileExt;
+            $targetPath = $uploadDir . $newFileName;
+            if (move_uploaded_file($fileTmp, $targetPath)) {
+                $imageUrl = '/uploads/' . $newFileName;
+            } else {
+                sendJsonResponse(['status' => 'error', 'message' => 'Failed to save uploaded image to /uploads/.'], 500);
+            }
+        }
+
+        if (empty($modalSubtitle)) {
+            $modalSubtitle = ($category === 'women' ? "Women's Topper Base" : "Men's Toupee Base") . (!empty($subtitle) ? " • " . $subtitle : '');
+        }
+        if (empty($modalDesc) && !empty($advantages)) {
+            $modalDesc = $advantages;
+        }
+
+        if ($id > 0) {
+            // Keep existing image_url if none provided on update
+            if (empty($imageUrl)) {
+                $oldStmt = $conn->prepare("SELECT image_url FROM cap_guide_items WHERE id = :id");
+                $oldStmt->execute([':id' => $id]);
+                $imageUrl = (string)$oldStmt->fetchColumn();
+            }
+            $stmt = $conn->prepare("UPDATE cap_guide_items SET
+                category = :category,
+                title = :title,
+                subtitle = :subtitle,
+                image_url = :image_url,
+                modal_subtitle = :modal_subtitle,
+                modal_desc = :modal_desc,
+                realism = :realism,
+                breathability = :breathability,
+                lifespan = :lifespan,
+                lifespan_tone = :lifespan_tone,
+                annual_cost = :annual_cost,
+                annual_cost_sub = :annual_cost_sub,
+                annual_cost_tone = :annual_cost_tone,
+                advantages = :advantages,
+                drawbacks = :drawbacks,
+                best_suited = :best_suited,
+                sort_order = :sort_order,
+                is_visible = :is_visible
+                WHERE id = :id");
+            $stmt->execute([
+                ':category' => $category,
+                ':title' => $title,
+                ':subtitle' => $subtitle,
+                ':image_url' => $imageUrl,
+                ':modal_subtitle' => $modalSubtitle,
+                ':modal_desc' => $modalDesc,
+                ':realism' => $realism,
+                ':breathability' => $breathability,
+                ':lifespan' => $lifespan,
+                ':lifespan_tone' => $lifespanTone,
+                ':annual_cost' => $annualCost,
+                ':annual_cost_sub' => $annualCostSub,
+                ':annual_cost_tone' => $annualCostTone,
+                ':advantages' => $advantages,
+                ':drawbacks' => $drawbacks,
+                ':best_suited' => $bestSuited,
+                ':sort_order' => $sortOrder,
+                ':is_visible' => $isVisible,
+                ':id' => $id,
+            ]);
+            sendJsonResponse(['status' => 'success', 'message' => 'Cap Guide item updated successfully.', 'id' => $id, 'image_url' => $imageUrl]);
+        } else {
+            if ($sortOrder === 0) {
+                $maxOrder = (int)$conn->query("SELECT COALESCE(MAX(sort_order), 0) FROM cap_guide_items WHERE category = " . $conn->quote($category))->fetchColumn();
+                $sortOrder = $maxOrder + 1;
+            }
+            $stmt = $conn->prepare("INSERT INTO cap_guide_items
+                (category, title, subtitle, image_url, modal_subtitle, modal_desc, realism, breathability, lifespan, lifespan_tone, annual_cost, annual_cost_sub, annual_cost_tone, advantages, drawbacks, best_suited, sort_order, is_visible)
+                VALUES (:category, :title, :subtitle, :image_url, :modal_subtitle, :modal_desc, :realism, :breathability, :lifespan, :lifespan_tone, :annual_cost, :annual_cost_sub, :annual_cost_tone, :advantages, :drawbacks, :best_suited, :sort_order, :is_visible)");
+            $stmt->execute([
+                ':category' => $category,
+                ':title' => $title,
+                ':subtitle' => $subtitle,
+                ':image_url' => $imageUrl,
+                ':modal_subtitle' => $modalSubtitle,
+                ':modal_desc' => $modalDesc,
+                ':realism' => $realism,
+                ':breathability' => $breathability,
+                ':lifespan' => $lifespan,
+                ':lifespan_tone' => $lifespanTone,
+                ':annual_cost' => $annualCost,
+                ':annual_cost_sub' => $annualCostSub,
+                ':annual_cost_tone' => $annualCostTone,
+                ':advantages' => $advantages,
+                ':drawbacks' => $drawbacks,
+                ':best_suited' => $bestSuited,
+                ':sort_order' => $sortOrder,
+                ':is_visible' => $isVisible,
+            ]);
+            sendJsonResponse(['status' => 'success', 'message' => 'New Cap Guide item added successfully.', 'id' => (int)$conn->lastInsertId(), 'image_url' => $imageUrl]);
+        }
+    }
+
+    // 14. TOGGLE CAP GUIDE VISIBILITY (Admin only)
+    if ($action === 'toggle_cap_guide_visibility') {
+        $id = !empty($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+        if ($id <= 0) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid ID.'], 400);
+        }
+        $stmt = $conn->prepare("UPDATE cap_guide_items SET is_visible = IF(is_visible = 1, 0, 1) WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $visStmt = $conn->prepare("SELECT is_visible FROM cap_guide_items WHERE id = :id");
+        $visStmt->execute([':id' => $id]);
+        $newVis = (int)$visStmt->fetchColumn();
+        sendJsonResponse([
+            'status' => 'success',
+            'is_visible' => $newVis,
+            'message' => $newVis ? 'Guide item is now visible.' : 'Guide item is now hidden.'
+        ]);
+    }
+
+    // 15. DELETE CAP GUIDE ITEM (Admin only)
+    if ($action === 'delete_cap_guide') {
+        $id = !empty($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+        if ($id <= 0) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid ID.'], 400);
+        }
+        $stmt = $conn->prepare("DELETE FROM cap_guide_items WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        sendJsonResponse(['status' => 'success', 'message' => 'Cap Guide item deleted successfully.']);
     }
 
 } catch (PDOException $e) {

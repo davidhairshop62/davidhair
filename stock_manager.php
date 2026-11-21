@@ -307,6 +307,22 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'cap_guide'">
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="openCapGuideModal('add')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i>
+                                <span class="sm:hidden">New</span>
+                                <span class="hidden sm:inline">Add Guide</span>
+                            </button>
+                            <a href="/comparison.html" target="_blank" class="hidden sm:flex bg-brand-inner hover:bg-slate-800 text-indigo-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors items-center gap-1.5" title="Open Live Buyer's & Stylist's Guide">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                <span class="hidden md:inline">View Guide</span>
+                            </a>
+                            <button type="button" @click="loadCapGuide()" :disabled="isLoadingCapGuide" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Reload Cap Guide">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingCapGuide }"></i>
+                            </button>
+                        </div>
+                    </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
                         <i class="fa-solid fa-power-off"></i>
@@ -393,6 +409,14 @@
                     <i class="fa-solid fa-chart-line text-cyan-400 text-[11px]"></i> 방문자 분석
                     <template x-if="analyticsKpi.today_visitors > 0">
                         <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-cyan-500/30 text-cyan-300 border border-cyan-500/40" x-text="analyticsKpi.today_visitors"></span>
+                    </template>
+                </button>
+                <button @click="activeTab = 'cap_guide'; loadCapGuide()" 
+                        :class="activeTab === 'cap_guide' ? 'bg-indigo-600 text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-book-open text-indigo-400 text-[11px]"></i> Cap Guide
+                    <template x-if="capGuideItems.length > 0">
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/40" x-text="capGuideItems.length"></span>
                     </template>
                 </button>
             </div>
@@ -3677,9 +3701,233 @@
 
             </div>
 
+            <!-- TAB 10: BUYER'S & STYLIST'S GUIDE (Men's Toupees & Women's Toppers) -->
+            <div x-show="activeTab === 'cap_guide'" x-cloak class="space-y-4">
+                <!-- Header & Summary Bar -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-lg">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">Buyer's &amp; Stylist's Guide</span>
+                            <a href="/comparison.html" target="_blank" class="text-[11px] text-brand-tealLight hover:underline flex items-center gap-1 font-semibold">
+                                <span>/comparison.html 미리보기</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                            </a>
+                        </div>
+                        <h2 class="font-heading text-lg sm:text-xl font-extrabold text-white">Men's Toupees &amp; Women's Toppers Guide Manager</h2>
+                        <p class="text-xs text-brand-textMuted">캡 디자인별 사진, 별점(Realism / Breathability), 수명, 연간 비용, 장단점, 추천 대상을 MySQL에서 실시간으로 추가/수정/숨김/삭제합니다.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <div class="px-3 py-2 rounded-xl bg-brand-inner border border-brand-border text-center min-w-[76px]">
+                            <div class="text-[10px] text-brand-textMuted font-bold uppercase">Men's</div>
+                            <div class="text-base font-extrabold text-sky-400" x-text="capGuideItems.filter(i => i.category === 'men').length"></div>
+                        </div>
+                        <div class="px-3 py-2 rounded-xl bg-brand-inner border border-brand-border text-center min-w-[76px]">
+                            <div class="text-[10px] text-brand-textMuted font-bold uppercase">Women's</div>
+                            <div class="text-base font-extrabold text-pink-400" x-text="capGuideItems.filter(i => i.category === 'women').length"></div>
+                        </div>
+                        <div class="px-3 py-2 rounded-xl bg-brand-inner border border-brand-border text-center min-w-[76px]">
+                            <div class="text-[10px] text-brand-textMuted font-bold uppercase">Visible</div>
+                            <div class="text-base font-extrabold text-emerald-400" x-text="capGuideItems.filter(i => i.is_visible == 1).length"></div>
+                        </div>
+                        <button type="button" @click="openCapGuideModal('add')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Cap Design</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter & Search Bar -->
+                <div class="w-full max-w-full overflow-hidden bg-brand-cardBg border border-brand-border p-3 rounded-xl grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+                    <div class="md:col-span-5 flex items-center gap-1.5 bg-brand-inner p-1 rounded-xl border border-brand-border text-xs font-bold">
+                        <button type="button" @click="capGuideCategoryFilter = 'all'"
+                                :class="capGuideCategoryFilter === 'all' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'"
+                                class="flex-1 py-1.5 px-2 rounded-lg transition-all cursor-pointer">
+                            All (<span x-text="capGuideItems.length"></span>)
+                        </button>
+                        <button type="button" @click="capGuideCategoryFilter = 'men'"
+                                :class="capGuideCategoryFilter === 'men' ? 'bg-sky-600 text-white shadow' : 'text-slate-400 hover:text-white'"
+                                class="flex-1 py-1.5 px-2 rounded-lg transition-all cursor-pointer">
+                            Men's (<span x-text="capGuideItems.filter(i => i.category === 'men').length"></span>)
+                        </button>
+                        <button type="button" @click="capGuideCategoryFilter = 'women'"
+                                :class="capGuideCategoryFilter === 'women' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'"
+                                class="flex-1 py-1.5 px-2 rounded-lg transition-all cursor-pointer">
+                            Women's (<span x-text="capGuideItems.filter(i => i.category === 'women').length"></span>)
+                        </button>
+                    </div>
+                    <div class="md:col-span-7 relative min-w-0">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" x-model="capGuideSearch" placeholder="Search cap name, material, advantages, lifespan..." class="w-full min-w-0 bg-brand-inner border border-brand-border rounded-lg pl-8 pr-3 py-2 text-xs text-white outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Mobile Card View (< md: Galaxy S24 Ultra friendly) -->
+                <div class="md:hidden space-y-3">
+                    <template x-if="filteredCapGuideItems.length === 0">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-8 text-center text-slate-400 text-xs">
+                            No cap guide items match your filter.
+                        </div>
+                    </template>
+                    <template x-for="cg in filteredCapGuideItems" :key="'mob-cg-' + cg.id">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-3.5 shadow-lg space-y-3"
+                             :class="{ 'opacity-60 border-slate-700': cg.is_visible != 1 }">
+                            <div class="flex items-start gap-3">
+                                <div class="w-20 h-20 rounded-xl overflow-hidden border border-brand-border bg-brand-inner shrink-0 cursor-pointer"
+                                     @click="if(cg.image_url){ lightboxSrc = cg.image_url; lightboxTitle = cg.title; lightboxOpen = true; }">
+                                    <template x-if="cg.image_url">
+                                        <img :src="cg.image_url" :alt="cg.title" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!cg.image_url">
+                                        <div class="w-full h-full flex items-center justify-center text-slate-500 text-lg"><i class="fa-solid fa-image"></i></div>
+                                    </template>
+                                </div>
+                                <div class="flex-1 min-w-0 space-y-1">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
+                                              :class="cg.category === 'women' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40' : 'bg-sky-500/20 text-sky-300 border border-sky-500/40'"
+                                              x-text="cg.category === 'women' ? 'Women' : 'Men'"></span>
+                                        <span class="text-[10px] font-mono text-slate-400">#<span x-text="cg.sort_order"></span></span>
+                                        <template x-if="cg.is_visible != 1">
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/80 border border-amber-700 text-amber-300">Hidden</span>
+                                        </template>
+                                    </div>
+                                    <div class="font-bold text-white text-sm leading-snug" x-text="cg.title"></div>
+                                    <div class="text-[11px] text-brand-textMuted" x-text="cg.subtitle"></div>
+                                    <div class="flex flex-wrap gap-2 text-[10px] pt-0.5">
+                                        <span class="text-amber-400 font-semibold" x-text="'Realism ' + '★'.repeat(cg.realism) + '☆'.repeat(5 - cg.realism)"></span>
+                                        <span class="text-emerald-400 font-semibold" x-text="'Air ' + '★'.repeat(cg.breathability) + '☆'.repeat(5 - cg.breathability)"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-[11px] bg-brand-inner/60 p-2 rounded-xl border border-brand-border/60">
+                                <div><span class="text-brand-textMuted block text-[10px]">Lifespan</span><span class="font-bold text-white" x-text="cg.lifespan || '-'"></span></div>
+                                <div><span class="text-brand-textMuted block text-[10px]">Annual Cost</span><span class="font-bold text-white" x-text="cg.annual_cost + (cg.annual_cost_sub ? ' ' + cg.annual_cost_sub : '')"></span></div>
+                            </div>
+                            <div class="pt-2 border-t border-brand-border/60 flex items-center justify-end gap-1.5">
+                                <button type="button" @click="toggleCapGuideVisibility(cg)"
+                                        :class="cg.is_visible == 1 ? 'bg-emerald-950/80 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
+                                        class="h-8 px-2.5 rounded-lg border text-[11px] font-bold flex items-center gap-1">
+                                    <i class="fa-solid" :class="cg.is_visible == 1 ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                    <span x-text="cg.is_visible == 1 ? '노출' : '숨김'"></span>
+                                </button>
+                                <button type="button" @click="openCapGuideModal('edit', cg)" class="h-8 px-3 rounded-lg bg-indigo-950 border border-indigo-600 text-indigo-200 text-[11px] font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-pen"></i> 수정
+                                </button>
+                                <button type="button" @click="copyCapGuideItem(cg)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 flex items-center justify-center" title="Copy">
+                                    <i class="fa-solid fa-copy text-xs"></i>
+                                </button>
+                                <button type="button" @click="deleteCapGuideItem(cg)" class="w-8 h-8 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 flex items-center justify-center" title="Delete">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Desktop Compact Table (md+) -->
+                <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                    <div class="dh-visible-scroll overflow-auto max-h-[70vh]">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[10px] border-b border-brand-border sticky top-0 z-20 shadow-sm">
+                                <tr>
+                                    <th class="py-2.5 px-2.5 w-12 text-center">Order</th>
+                                    <th class="py-2.5 px-2.5 w-20">Photo</th>
+                                    <th class="py-2.5 px-2.5">Cap Design &amp; Category</th>
+                                    <th class="py-2.5 px-2.5 whitespace-nowrap">Ratings</th>
+                                    <th class="py-2.5 px-2.5 whitespace-nowrap">Lifespan / Cost</th>
+                                    <th class="py-2.5 px-2.5">Summary (Pros / Cons / Best For)</th>
+                                    <th class="py-2.5 px-2.5 text-right whitespace-nowrap">노출 | 관리</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60">
+                                <template x-if="filteredCapGuideItems.length === 0">
+                                    <tr>
+                                        <td colspan="7" class="py-10 text-center text-slate-400 text-xs">No cap guide items found. Click "Add Cap Design" to create one.</td>
+                                    </tr>
+                                </template>
+                                <template x-for="cg in filteredCapGuideItems" :key="'cg-row-' + cg.id">
+                                    <tr class="hover:bg-brand-inner/50 transition-colors" :class="{ 'opacity-60': cg.is_visible != 1 }">
+                                        <td class="py-2.5 px-2.5 text-center font-mono font-bold text-slate-400 align-top" x-text="cg.sort_order"></td>
+                                        <td class="py-2.5 px-2.5 align-top">
+                                            <div class="w-16 h-16 rounded-xl overflow-hidden border border-brand-border bg-brand-inner cursor-pointer hover:border-indigo-400 transition-colors"
+                                                 @click="if(cg.image_url){ lightboxSrc = cg.image_url; lightboxTitle = cg.title; lightboxOpen = true; }">
+                                                <template x-if="cg.image_url">
+                                                    <img :src="cg.image_url" :alt="cg.title" class="w-full h-full object-cover">
+                                                </template>
+                                                <template x-if="!cg.image_url">
+                                                    <div class="w-full h-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-image"></i></div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top max-w-[200px]">
+                                            <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border"
+                                                      :class="cg.category === 'women' ? 'bg-pink-500/20 text-pink-300 border-pink-500/40' : 'bg-sky-500/20 text-sky-300 border-sky-500/40'"
+                                                      x-text="cg.category === 'women' ? 'Women Topper' : 'Men Toupee'"></span>
+                                                <template x-if="cg.is_visible != 1">
+                                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/80 border border-amber-700 text-amber-300">Hidden</span>
+                                                </template>
+                                            </div>
+                                            <div class="font-bold text-white text-xs leading-snug" x-text="cg.title"></div>
+                                            <div class="text-[10px] text-brand-textMuted mt-0.5" x-text="cg.subtitle"></div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top whitespace-nowrap text-[11px] space-y-1">
+                                            <div>
+                                                <span class="text-[10px] text-brand-textMuted mr-1" x-text="cg.category === 'women' ? 'Part:' : 'Real:'"></span>
+                                                <span class="text-amber-400 font-bold" x-text="'★'.repeat(cg.realism) + '☆'.repeat(5 - cg.realism)"></span>
+                                            </div>
+                                            <div>
+                                                <span class="text-[10px] text-brand-textMuted mr-1" x-text="cg.category === 'women' ? 'Comf:' : 'Air:'"></span>
+                                                <span class="text-emerald-400 font-bold" x-text="'★'.repeat(cg.breathability) + '☆'.repeat(5 - cg.breathability)"></span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top whitespace-nowrap text-[11px] space-y-1">
+                                            <div class="font-bold"
+                                                 :class="cg.lifespan_tone === 'rose' ? 'text-rose-400' : (cg.lifespan_tone === 'amber' ? 'text-amber-400' : (cg.lifespan_tone === 'emerald' ? 'text-emerald-400' : 'text-slate-200'))"
+                                                 x-text="cg.lifespan || '-'"></div>
+                                            <div class="text-[10px] text-slate-300">
+                                                <span class="font-semibold" x-text="cg.annual_cost || '-'"></span>
+                                                <span class="block text-brand-textMuted" x-show="cg.annual_cost_sub" x-text="cg.annual_cost_sub"></span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top max-w-[300px] space-y-1 text-[11px]">
+                                            <div class="line-clamp-1 text-emerald-300/90" :title="cg.advantages"><strong class="text-emerald-400">+</strong> <span x-text="cg.advantages"></span></div>
+                                            <div class="line-clamp-1 text-rose-300/80" :title="cg.drawbacks"><strong class="text-rose-400">−</strong> <span x-text="cg.drawbacks"></span></div>
+                                            <div class="line-clamp-1 text-slate-300" :title="cg.best_suited"><strong class="text-indigo-400">★</strong> <span x-text="cg.best_suited"></span></div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 text-right whitespace-nowrap align-top">
+                                            <div class="inline-flex items-center justify-end gap-1">
+                                                <button type="button" @click="toggleCapGuideVisibility(cg)"
+                                                        :class="cg.is_visible == 1 ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
+                                                        class="w-7 h-7 rounded-lg border text-[11px] inline-flex items-center justify-center transition-all cursor-pointer"
+                                                        :title="cg.is_visible == 1 ? '노출 중 (클릭 시 숨김)' : '숨김 상태 (클릭 시 노출)'">
+                                                    <i class="fa-solid text-[11px]" :class="cg.is_visible == 1 ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                </button>
+                                                <button type="button" @click="openCapGuideModal('edit', cg)"
+                                                        class="w-7 h-7 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700 text-[11px] inline-flex items-center justify-center cursor-pointer" title="수정">
+                                                    <i class="fa-solid fa-pen text-[11px]"></i>
+                                                </button>
+                                                <button type="button" @click="copyCapGuideItem(cg)"
+                                                        class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-[11px] inline-flex items-center justify-center cursor-pointer" title="복사">
+                                                    <i class="fa-solid fa-copy text-[11px]"></i>
+                                                </button>
+                                                <button type="button" @click="deleteCapGuideItem(cg)"
+                                                        class="w-7 h-7 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-[11px] inline-flex items-center justify-center cursor-pointer" title="삭제">
+                                                    <i class="fa-solid fa-trash-can text-[11px]"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <!-- STICKY BOTTOM APP BAR (Mobile 5-Tab Dock + Desktop Compact All-9-Tab Dock) -->
+        <!-- STICKY BOTTOM APP BAR (Mobile 5-Tab Dock + Desktop Compact All-10-Tab Dock) -->
         <nav class="no-print fixed bottom-0 inset-x-0 z-40 bg-brand-cardBg/95 backdrop-blur-lg border-t border-brand-border shadow-[0_-8px_30px_rgba(0,0,0,0.6)] mobile-safe-bottom">
             <!-- Mobile Dock (< md): 5 Thumb Buttons + All Tabs Sheet -->
             <div class="grid md:hidden grid-cols-5 h-12 text-[10px] font-bold">
@@ -3711,15 +3959,15 @@
                     <span>Pricing</span>
                 </button>
                 <button type="button" @click="mobileMoreMenuOpen = !mobileMoreMenuOpen"
-                        :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
+                        :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics','cap_guide'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
                     <i class="fa-solid text-sm" :class="mobileMoreMenuOpen ? 'fa-xmark' : 'fa-grip'"></i>
                     <span>All Tabs</span>
                 </button>
             </div>
 
-            <!-- Desktop / Tablet Dock (md+): Compact 9-Tab Bottom Navigation Bar -->
-            <div class="hidden md:grid grid-cols-9 max-w-6xl mx-auto h-12 py-1 px-3 gap-1 text-[10px] font-bold">
+            <!-- Desktop / Tablet Dock (md+): Compact 10-Tab Bottom Navigation Bar -->
+            <div class="hidden md:grid grid-cols-10 max-w-7xl mx-auto h-12 py-1 px-3 gap-1 text-[10px] font-bold">
                 <button type="button" @click="activeTab = 'stock'; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'stock' ? 'bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
                         class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
@@ -3780,6 +4028,12 @@
                         <span class="absolute top-0.5 right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-cyan-500 text-slate-950 text-[9px] font-black flex items-center justify-center" x-text="analyticsKpi.today_visitors"></span>
                     </template>
                 </button>
+                <button type="button" @click="activeTab = 'cap_guide'; loadCapGuide(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'cap_guide' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-book-open text-xs text-indigo-400"></i>
+                    <span>Cap Guide</span>
+                </button>
             </div>
         </nav>
 
@@ -3788,7 +4042,7 @@
              class="md:hidden fixed inset-0 z-30 bg-black/70 backdrop-blur-sm flex items-end pb-16">
             <div @click.stop class="w-full bg-brand-cardBg border-t-2 border-brand-teal/60 rounded-t-3xl p-4 space-y-3 shadow-2xl">
                 <div class="flex items-center justify-between pb-2 border-b border-brand-border/70">
-                    <span class="font-heading font-bold text-sm text-white">All Admin Menus (9)</span>
+                    <span class="font-heading font-bold text-sm text-white">All Admin Menus (10)</span>
                     <button type="button" @click="mobileMoreMenuOpen = false" class="text-slate-400 hover:text-white px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-xs font-bold">
@@ -3817,6 +4071,11 @@
                             class="p-3 rounded-xl flex flex-col items-center gap-1.5">
                         <i class="fa-solid fa-chart-line text-cyan-400 text-base"></i><span>방문자 분석</span>
                     </button>
+                    <button type="button" @click="activeTab = 'cap_guide'; loadCapGuide(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'cap_guide' ? 'bg-indigo-600 text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-book-open text-indigo-400 text-base"></i><span>Cap Guide</span>
+                    </button>
                     <button type="button" @click="activeTab = 'members'; loadMembers(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                             :class="activeTab === 'members' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
                             class="p-3 rounded-xl flex flex-col items-center gap-1.5">
@@ -3839,6 +4098,173 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- CAP GUIDE ADD / EDIT MODAL (Buyer's & Stylist's Guide) -->
+    <div x-show="capGuideModalOpen" x-cloak @keydown.escape.window="capGuideModalOpen = false"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-brand-darkBg/90 backdrop-blur-md overflow-y-auto">
+        <div class="bg-brand-cardBg border border-indigo-500/40 rounded-3xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-6 max-h-[92vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3 shrink-0">
+                <h3 class="font-heading font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-indigo-400"></i>
+                    <span x-text="capGuideForm.id ? 'Edit Cap Guide Design' : 'Add New Cap Guide Design'"></span>
+                </h3>
+                <button type="button" @click="capGuideModalOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveCapGuideItem()" class="space-y-4 overflow-y-auto pr-1 flex-1 text-xs">
+                <!-- Category, Sort Order & Visibility -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Category *</label>
+                        <select x-model="capGuideForm.category" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                            <option value="men">Men's Toupees</option>
+                            <option value="women">Women's Hair Toppers</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Sort Order</label>
+                        <input type="number" min="0" x-model.number="capGuideForm.sort_order" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                    </div>
+                    <div class="flex items-end pb-1">
+                        <label class="flex items-center gap-2 cursor-pointer bg-brand-inner border border-brand-border rounded-xl px-3 py-2 w-full">
+                            <input type="checkbox" x-model="capGuideForm.is_visible" class="w-4 h-4 accent-emerald-500 rounded">
+                            <span class="font-bold text-emerald-300">Visible on Guide</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Title & Subtitle -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Cap Design Title *</label>
+                        <input type="text" required x-model="capGuideForm.title" placeholder="e.g. Ultra-Thin Skin / Silk Top" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1">Material / Spec Subtitle</label>
+                        <input type="text" x-model="capGuideForm.subtitle" placeholder="e.g. 0.02mm - 0.04mm PU / 3-Layer Hidden Knot" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Photo Upload & URL -->
+                <div class="bg-brand-inner/60 border border-brand-border rounded-2xl p-3.5 flex flex-col sm:flex-row gap-3.5 items-start">
+                    <div class="w-24 h-24 rounded-xl overflow-hidden border border-brand-border bg-brand-darkBg shrink-0 flex items-center justify-center">
+                        <template x-if="capGuideImagePreview || capGuideForm.image_url">
+                            <img :src="capGuideImagePreview || capGuideForm.image_url" class="w-full h-full object-cover">
+                        </template>
+                        <template x-if="!capGuideImagePreview && !capGuideForm.image_url">
+                            <i class="fa-solid fa-image text-2xl text-slate-600"></i>
+                        </template>
+                    </div>
+                    <div class="flex-1 w-full space-y-2">
+                        <label class="block text-[11px] font-bold text-indigo-300 uppercase">Cap Construction Photo (150×150 Thumb + Lightbox)</label>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> 사진 파일 업로드
+                                <input type="file" accept="image/*" @change="handleCapGuideFileChange($event)" class="hidden">
+                            </label>
+                            <span class="text-[10px] text-slate-400" x-text="capGuideImageFile ? capGuideImageFile.name : 'JPG, PNG, WEBP'"></span>
+                        </div>
+                        <input type="text" x-model="capGuideForm.image_url" placeholder="Or image path / URL (e.g. images/caps/men_hybrid_cap.jpg)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Ratings (1-5 Stars) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Part Realism (1~5)' : 'Realism (1~5)'"></label>
+                        <select x-model.number="capGuideForm.realism" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-amber-400 font-bold outline-none focus:border-indigo-400">
+                            <option value="5">★★★★★ (5 / 5)</option>
+                            <option value="4">★★★★☆ (4 / 5)</option>
+                            <option value="3">★★★☆☆ (3 / 5)</option>
+                            <option value="2">★★☆☆☆ (2 / 5)</option>
+                            <option value="1">★☆☆☆☆ (1 / 5)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase mb-1" x-text="capGuideForm.category === 'women' ? 'Comfort & Weight (1~5)' : 'Breathability (1~5)'"></label>
+                        <select x-model.number="capGuideForm.breathability" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-emerald-400 font-bold outline-none focus:border-indigo-400">
+                            <option value="5">★★★★★ (5 / 5)</option>
+                            <option value="4">★★★★☆ (4 / 5)</option>
+                            <option value="3">★★★☆☆ (3 / 5)</option>
+                            <option value="2">★★☆☆☆ (2 / 5)</option>
+                            <option value="1">★☆☆☆☆ (1 / 5)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lifespan & Annual Cost -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-2 bg-brand-inner/40 p-3 rounded-xl border border-brand-border/70">
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase">Lifespan</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" x-model="capGuideForm.lifespan" placeholder="e.g. 4 - 8 Mos." class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-indigo-400">
+                            <select x-model="capGuideForm.lifespan_tone" class="bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white outline-none">
+                                <option value="emerald">Green</option>
+                                <option value="amber">Amber</option>
+                                <option value="rose">Red</option>
+                                <option value="slate">Neutral</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-2 bg-brand-inner/40 p-3 rounded-xl border border-brand-border/70">
+                        <label class="block text-[11px] font-bold text-brand-textMuted uppercase" x-text="capGuideForm.category === 'women' ? 'Upkeep & Cost' : 'Annual Cost'"></label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" x-model="capGuideForm.annual_cost" placeholder="e.g. Moderate" class="col-span-2 bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white outline-none focus:border-indigo-400">
+                            <select x-model="capGuideForm.annual_cost_tone" class="bg-brand-darkBg border border-brand-border rounded-lg px-2 py-1.5 text-white outline-none">
+                                <option value="emerald">Green</option>
+                                <option value="amber">Amber</option>
+                                <option value="rose">Red</option>
+                                <option value="slate">Neutral</option>
+                            </select>
+                        </div>
+                        <input type="text" x-model="capGuideForm.annual_cost_sub" placeholder="Sub-note e.g. (2–4 units/yr) or (Low maintenance)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-slate-300 outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Advantages, Drawbacks, Best Suited For -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-emerald-400 uppercase mb-1">Advantages (장점)</label>
+                        <textarea rows="2" x-model="capGuideForm.advantages" placeholder="Key strengths..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-rose-400 uppercase mb-1">Drawbacks (단점 / 주의점)</label>
+                        <textarea rows="2" x-model="capGuideForm.drawbacks" placeholder="Limitations or maintenance notes..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-indigo-300 uppercase mb-1">Best Suited For (추천 대상)</label>
+                        <textarea rows="2" x-model="capGuideForm.best_suited" placeholder="Ideal client profile..." class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400"></textarea>
+                    </div>
+                </div>
+
+                <!-- Lightbox Modal Captions (Optional) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-brand-border/60">
+                    <div>
+                        <label class="block text-[10px] font-bold text-brand-textMuted uppercase mb-1">Photo Popup Subtitle (Optional)</label>
+                        <input type="text" x-model="capGuideForm.modal_subtitle" placeholder="Auto-filled if left blank" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-brand-textMuted uppercase mb-1">Photo Popup Caption (Optional)</label>
+                        <input type="text" x-model="capGuideForm.modal_desc" placeholder="Auto-filled from Advantages if blank" class="w-full bg-brand-inner border border-brand-border rounded-xl px-3 py-1.5 text-[11px] text-slate-200 outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-brand-border shrink-0">
+                    <button type="button" @click="capGuideModalOpen = false" class="px-4 py-2 rounded-xl bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border font-bold cursor-pointer">
+                        Cancel
+                    </button>
+                    <button type="submit" :disabled="isSavingCapGuide" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg flex items-center gap-2 disabled:opacity-50 cursor-pointer">
+                        <i class="fa-solid fa-spinner fa-spin" x-show="isSavingCapGuide"></i>
+                        <i class="fa-solid fa-floppy-disk" x-show="!isSavingCapGuide"></i>
+                        <span x-text="isSavingCapGuide ? 'Saving...' : (capGuideForm.id ? 'Update Guide Item' : 'Add Guide Item')"></span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -6108,12 +6534,44 @@
                 chartDeviceInstance: null,
                 chartReferrerInstance: null,
 
+                // Cap Guide Manager (Buyer's & Stylist's Guide: Men's Toupees & Women's Toppers)
+                capGuideItems: [],
+                isLoadingCapGuide: false,
+                isSavingCapGuide: false,
+                capGuideCategoryFilter: 'all',
+                capGuideSearch: '',
+                capGuideModalOpen: false,
+                capGuideImageFile: null,
+                capGuideImagePreview: '',
+                capGuideForm: {
+                    id: null,
+                    category: 'men',
+                    title: '',
+                    subtitle: '',
+                    image_url: '',
+                    modal_subtitle: '',
+                    modal_desc: '',
+                    realism: 4,
+                    breathability: 4,
+                    lifespan: '',
+                    lifespan_tone: 'slate',
+                    annual_cost: '',
+                    annual_cost_sub: '',
+                    annual_cost_tone: 'slate',
+                    advantages: '',
+                    drawbacks: '',
+                    best_suited: '',
+                    sort_order: 0,
+                    is_visible: true
+                },
+
                 async init() {
                     await this.checkAuth();
                     this.initWeek();
                     await this.loadClosureRules();
                     try { localStorage.setItem('dh_admin_logged', '1'); } catch(e) {}
                     this.fetchTodayBadge();
+                    this.loadCapGuide();
                 },
 
                 normalizeLocalBaseSizes(cfg) {
@@ -9182,6 +9640,204 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                     if (diffSec < 3600) return Math.floor(diffSec / 60) + '분 전';
                     if (diffSec < 86400) return Math.floor(diffSec / 3600) + '시간 전';
                     return Math.floor(diffSec / 86400) + '일 전';
+                },
+
+                // ==========================================================
+                // CAP GUIDE MANAGER (Buyer's & Stylist's Guide CRUD)
+                // ==========================================================
+                get filteredCapGuideItems() {
+                    const q = (this.capGuideSearch || '').trim().toLowerCase();
+                    return (this.capGuideItems || []).filter(item => {
+                        if (this.capGuideCategoryFilter !== 'all' && item.category !== this.capGuideCategoryFilter) {
+                            return false;
+                        }
+                        if (!q) return true;
+                        const haystack = [
+                            item.title, item.subtitle, item.lifespan, item.annual_cost,
+                            item.annual_cost_sub, item.advantages, item.drawbacks, item.best_suited
+                        ].join(' ').toLowerCase();
+                        return haystack.includes(q);
+                    });
+                },
+
+                async loadCapGuide() {
+                    this.isLoadingCapGuide = true;
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=list_cap_guide&include_hidden=1&t=' + Date.now(), { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data.status === 'success' && Array.isArray(data.data)) {
+                            this.capGuideItems = data.data;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load Cap Guide items:', e);
+                    } finally {
+                        this.isLoadingCapGuide = false;
+                    }
+                },
+
+                openCapGuideModal(mode = 'add', item = null) {
+                    this.capGuideImageFile = null;
+                    this.capGuideImagePreview = '';
+                    if (mode === 'edit' && item) {
+                        this.capGuideForm = {
+                            id: item.id,
+                            category: item.category === 'women' ? 'women' : 'men',
+                            title: item.title || '',
+                            subtitle: item.subtitle || '',
+                            image_url: item.image_url || '',
+                            modal_subtitle: item.modal_subtitle || '',
+                            modal_desc: item.modal_desc || '',
+                            realism: Number(item.realism) || 4,
+                            breathability: Number(item.breathability) || 4,
+                            lifespan: item.lifespan || '',
+                            lifespan_tone: item.lifespan_tone || 'slate',
+                            annual_cost: item.annual_cost || '',
+                            annual_cost_sub: item.annual_cost_sub || '',
+                            annual_cost_tone: item.annual_cost_tone || 'slate',
+                            advantages: item.advantages || '',
+                            drawbacks: item.drawbacks || '',
+                            best_suited: item.best_suited || '',
+                            sort_order: Number(item.sort_order) || 0,
+                            is_visible: item.is_visible == 1
+                        };
+                    } else {
+                        const defaultCat = this.capGuideCategoryFilter === 'women' ? 'women' : 'men';
+                        const sameCat = (this.capGuideItems || []).filter(i => i.category === defaultCat);
+                        const nextOrder = sameCat.reduce((m, i) => Math.max(m, Number(i.sort_order) || 0), 0) + 1;
+                        this.capGuideForm = {
+                            id: null,
+                            category: defaultCat,
+                            title: '',
+                            subtitle: '',
+                            image_url: '',
+                            modal_subtitle: '',
+                            modal_desc: '',
+                            realism: 4,
+                            breathability: 4,
+                            lifespan: '',
+                            lifespan_tone: 'emerald',
+                            annual_cost: '',
+                            annual_cost_sub: '',
+                            annual_cost_tone: 'slate',
+                            advantages: '',
+                            drawbacks: '',
+                            best_suited: '',
+                            sort_order: nextOrder,
+                            is_visible: true
+                        };
+                    }
+                    this.capGuideModalOpen = true;
+                },
+
+                copyCapGuideItem(item) {
+                    this.openCapGuideModal('edit', item);
+                    this.capGuideForm.id = null;
+                    this.capGuideForm.title = (item.title || '') + ' (Copy)';
+                    const sameCat = (this.capGuideItems || []).filter(i => i.category === this.capGuideForm.category);
+                    this.capGuideForm.sort_order = sameCat.reduce((m, i) => Math.max(m, Number(i.sort_order) || 0), 0) + 1;
+                },
+
+                handleCapGuideFileChange(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+                    this.capGuideImageFile = file;
+                    const reader = new FileReader();
+                    reader.onload = (e) => { this.capGuideImagePreview = e.target.result; };
+                    reader.readAsDataURL(file);
+                },
+
+                async saveCapGuideItem() {
+                    if (!this.capGuideForm.title || !this.capGuideForm.title.trim()) {
+                        this.showToast('Cap Design Title is required.', 'error');
+                        return;
+                    }
+                    this.isSavingCapGuide = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'save_cap_guide');
+                        if (this.capGuideForm.id) fd.append('id', this.capGuideForm.id);
+                        fd.append('category', this.capGuideForm.category);
+                        fd.append('title', this.capGuideForm.title.trim());
+                        fd.append('subtitle', this.capGuideForm.subtitle || '');
+                        fd.append('image_url', this.capGuideForm.image_url || '');
+                        fd.append('modal_subtitle', this.capGuideForm.modal_subtitle || '');
+                        fd.append('modal_desc', this.capGuideForm.modal_desc || '');
+                        fd.append('realism', this.capGuideForm.realism);
+                        fd.append('breathability', this.capGuideForm.breathability);
+                        fd.append('lifespan', this.capGuideForm.lifespan || '');
+                        fd.append('lifespan_tone', this.capGuideForm.lifespan_tone || 'slate');
+                        fd.append('annual_cost', this.capGuideForm.annual_cost || '');
+                        fd.append('annual_cost_sub', this.capGuideForm.annual_cost_sub || '');
+                        fd.append('annual_cost_tone', this.capGuideForm.annual_cost_tone || 'slate');
+                        fd.append('advantages', this.capGuideForm.advantages || '');
+                        fd.append('drawbacks', this.capGuideForm.drawbacks || '');
+                        fd.append('best_suited', this.capGuideForm.best_suited || '');
+                        fd.append('sort_order', this.capGuideForm.sort_order || 0);
+                        fd.append('is_visible', this.capGuideForm.is_visible ? '1' : '0');
+                        if (this.capGuideImageFile) {
+                            fd.append('image_file', this.capGuideImageFile);
+                        }
+
+                        const res = await fetch('/admin_stock_api.php?action=save_cap_guide', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(data.message || 'Cap Guide saved successfully!');
+                            this.capGuideModalOpen = false;
+                            await this.loadCapGuide();
+                        } else {
+                            this.showToast(data.message || 'Failed to save Cap Guide item.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error while saving Cap Guide item.', 'error');
+                    } finally {
+                        this.isSavingCapGuide = false;
+                    }
+                },
+
+                async toggleCapGuideVisibility(item) {
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'toggle_cap_guide_visibility');
+                        fd.append('id', item.id);
+                        const res = await fetch('/admin_stock_api.php?action=toggle_cap_guide_visibility', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            item.is_visible = data.is_visible;
+                            this.showToast(data.message || 'Visibility updated.');
+                        } else {
+                            this.showToast(data.message || 'Failed to update visibility.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Error toggling visibility.', 'error');
+                    }
+                },
+
+                async deleteCapGuideItem(item) {
+                    if (!confirm(`Delete "${item.title}" from the Buyer's & Stylist's Guide?`)) return;
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'delete_cap_guide');
+                        fd.append('id', item.id);
+                        const res = await fetch('/admin_stock_api.php?action=delete_cap_guide', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(data.message || 'Deleted successfully.');
+                            await this.loadCapGuide();
+                        } else {
+                            this.showToast(data.message || 'Delete failed.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Error deleting Cap Guide item.', 'error');
+                    }
                 }
             }
         }

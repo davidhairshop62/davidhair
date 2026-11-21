@@ -51,10 +51,10 @@
     <div class="flex justify-center mb-8">
       <nav class="inline-flex p-1 bg-slate-200 rounded-xl space-x-1" role="tablist">
         <button id="tab-men" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-indigo-900 shadow-sm" onclick="switchTab('men')">
-          Men's Toupees (Hair Systems)
+          Men's Toupees (Hair Systems) <span id="tab-men-count" class="ml-1 text-xs font-bold opacity-75"></span>
         </button>
         <button id="tab-women" class="px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900" onclick="switchTab('women')">
-          Women's Hair Toppers
+          Women's Hair Toppers <span id="tab-women-count" class="ml-1 text-xs font-bold opacity-75"></span>
         </button>
       </nav>
     </div>
@@ -86,7 +86,7 @@
                 <th class="py-4 px-5 min-w-[220px]">Best Suited For</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200">
+            <tbody id="tbody-men" class="divide-y divide-slate-200">
               <tr class="hover:bg-slate-50/60 transition-colors">
                 <td class="py-4 px-5 font-semibold text-slate-900 min-w-[210px]">
                   <div class="flex flex-col gap-2.5">
@@ -294,7 +294,7 @@
                 <th class="py-4 px-5 min-w-[220px]">Best Suited For</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200">
+            <tbody id="tbody-women" class="divide-y divide-slate-200">
               <tr class="hover:bg-slate-50/60 transition-colors">
                 <td class="py-4 px-5 font-semibold text-slate-900 min-w-[210px]">
                   <div class="flex flex-col gap-2.5">
@@ -593,6 +593,123 @@
       const bar = document.getElementById('iframe-bar');
       if (bar) bar.classList.remove('hidden');
     }
+
+    // Dynamic DB Loader from Stock Manager (cap_guide_items)
+    window.__capGuideStore = [];
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderStars(count) {
+      const n = Math.max(1, Math.min(5, parseInt(count, 10) || 1));
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
+
+    function toneClass(tone, fallback) {
+      switch (tone) {
+        case 'rose': return 'text-rose-600';
+        case 'amber': return 'text-amber-600';
+        case 'emerald': return 'text-emerald-600';
+        case 'slate': return 'text-slate-800';
+        default: return fallback || 'text-slate-800';
+      }
+    }
+
+    function openGuidePhotoByIdx(idx) {
+      const item = window.__capGuideStore[idx];
+      if (!item || !item.image_url) return;
+      const fullTitle = item.subtitle ? `${item.title} (${item.subtitle})` : item.title;
+      openPhotoModal(
+        item.image_url,
+        escapeHtml(fullTitle),
+        escapeHtml(item.modal_subtitle || (item.category === 'women' ? "Women's Topper Base" : "Men's Toupee Base")),
+        escapeHtml(item.modal_desc || item.advantages || '')
+      );
+    }
+
+    function renderCapGuideRows(tbodyId, items) {
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody || !Array.isArray(items)) return;
+
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="py-10 px-5 text-center text-slate-400 text-sm">No cap designs registered in this category yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => {
+        const idx = window.__capGuideStore.push(item) - 1;
+        const realismColor = item.realism >= 3 ? 'text-amber-500' : 'text-slate-400';
+        const breathColor = item.breathability >= 4 ? 'text-emerald-600' : (item.breathability === 3 ? 'text-slate-500' : 'text-slate-400');
+        const imgBlock = item.image_url
+          ? `<div class="relative group cursor-pointer w-[150px] h-[150px] rounded-xl overflow-hidden border border-slate-200/90 shadow-sm bg-slate-100 hover:shadow-md hover:border-indigo-400 transition-all shrink-0"
+                  onclick="openGuidePhotoByIdx(${idx})"
+                  title="Click to Enlarge Actual Cap Construction Photo">
+               <img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" class="w-[150px] h-[150px] object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+               <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 pointer-events-none">
+                 <span class="w-8 h-8 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center text-white text-sm">
+                   <i class="fa-solid fa-magnifying-glass-plus"></i>
+                 </span>
+                 <span class="text-[11px] font-bold tracking-tight">Click to Enlarge</span>
+               </div>
+               <span class="absolute bottom-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-[10px] text-white px-1.5 py-0.5 rounded font-mono font-medium">150×150</span>
+             </div>`
+          : `<div class="w-[150px] h-[150px] rounded-xl border border-dashed border-slate-300 bg-slate-100 flex flex-col items-center justify-center text-slate-400 text-xs shrink-0">
+               <i class="fa-solid fa-image text-2xl mb-1 opacity-50"></i>
+               <span>No Photo</span>
+             </div>`;
+
+        return `
+          <tr class="hover:bg-slate-50/60 transition-colors">
+            <td class="py-4 px-5 font-semibold text-slate-900 min-w-[210px]">
+              <div class="flex flex-col gap-2.5">
+                ${imgBlock}
+                <div>
+                  <span class="text-base font-bold text-slate-900 block leading-tight">${escapeHtml(item.title)}</span>
+                  ${item.subtitle ? `<span class="block text-xs font-normal text-slate-500 mt-1">${escapeHtml(item.subtitle)}</span>` : ''}
+                </div>
+              </div>
+            </td>
+            <td class="py-4 px-4 text-center ${realismColor} font-medium">${renderStars(item.realism)}</td>
+            <td class="py-4 px-4 text-center ${breathColor} font-medium">${renderStars(item.breathability)}</td>
+            <td class="py-4 px-4 font-medium ${toneClass(item.lifespan_tone, 'text-slate-800')}">${escapeHtml(item.lifespan)}</td>
+            <td class="py-4 px-5 font-semibold ${toneClass(item.annual_cost_tone, 'text-slate-800')}">
+              ${escapeHtml(item.annual_cost)}
+              ${item.annual_cost_sub ? `<span class="text-xs font-normal text-slate-500 block">${escapeHtml(item.annual_cost_sub)}</span>` : ''}
+            </td>
+            <td class="py-4 px-5 text-slate-700">${escapeHtml(item.advantages)}</td>
+            <td class="py-4 px-5 text-slate-500">${escapeHtml(item.drawbacks)}</td>
+            <td class="py-4 px-5 text-slate-700">${escapeHtml(item.best_suited)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadCapGuideFromDB() {
+      try {
+        const res = await fetch('/admin_stock_api.php?action=list_cap_guide&t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json && json.status === 'success' && Array.isArray(json.men) && Array.isArray(json.women)) {
+          window.__capGuideStore = [];
+          renderCapGuideRows('tbody-men', json.men);
+          renderCapGuideRows('tbody-women', json.women);
+          const menBadge = document.getElementById('tab-men-count');
+          const womenBadge = document.getElementById('tab-women-count');
+          if (menBadge) menBadge.textContent = `(${json.men.length})`;
+          if (womenBadge) womenBadge.textContent = `(${json.women.length})`;
+        }
+      } catch (err) {
+        console.warn('Cap guide DB load fallback to static content:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCapGuideFromDB);
   </script>
 </body>
 </html>
