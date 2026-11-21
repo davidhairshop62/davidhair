@@ -372,8 +372,8 @@
                                 </button>
                             </div>
 
-                            <!-- Style Cards List (150*150 Hairstyle Photos on White Background) -->
-                            <div class="flex flex-wrap items-center gap-3 max-h-[340px] overflow-y-auto pr-1 justify-center sm:justify-start">
+                            <!-- Style Cards List (Expanded Responsive Grid — Bigger Photos & More Visible Rows) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[500px] sm:max-h-[540px] overflow-y-auto p-1">
                                 <template x-for="st in filteredStyles" :key="st.name">
                                     <button type="button" @click="selectedStyle = st.name"
                                         :title="st.name + (st.tag ? ' - ' + st.tag : '')"
@@ -386,25 +386,18 @@
                                                     ? 'border-brand-teal ring-4 ring-teal-400/50 shadow-lg shadow-teal-500/25 scale-[1.02]'
                                                     : 'border-brand-border hover:border-slate-400 hover:scale-[1.01]')
                                         ]"
-                                        class="w-[150px] h-[150px] min-w-[150px] min-h-[150px] max-w-[150px] max-h-[150px] bg-white border-2 rounded-2xl p-1.5 flex items-center justify-center transition-all cursor-pointer relative overflow-hidden group shadow-sm">
+                                        class="w-full aspect-square bg-white border-2 rounded-2xl p-2 flex items-center justify-center transition-all cursor-pointer relative overflow-hidden group shadow-sm">
                                         <img :src="st.overlay" :alt="st.name"
                                             class="w-full h-full object-contain rounded-xl transition-transform duration-200 group-hover:scale-105 pointer-events-none"
                                             loading="lazy">
                                     </button>
                                 </template>
-                                <div x-show="filteredStyles.length === 0" class="w-full py-8 text-center text-slate-400 text-xs bg-brand-inner/40 rounded-xl border border-dashed border-brand-border">
+                                <div x-show="filteredStyles.length === 0" class="col-span-2 sm:col-span-3 w-full py-8 text-center text-slate-400 text-xs bg-brand-inner/40 rounded-xl border border-dashed border-brand-border">
                                     <i class="fa-solid fa-sparkles text-brand-tealLight text-sm mb-1.5 block"></i>
                                     <span class="font-medium">No styles registered in this category</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Apply & Save Specifications Button -->
-                        <button @click="runTransformation()" :disabled="isProcessing"
-                            class="w-full teal-gradient text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all min-h-[48px] flex items-center justify-center gap-2 disabled:opacity-50">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span x-text="isProcessing ? 'AI Mapping Scalp & Fitting...' : 'Save Hairstyle Specs'"></span>
-                        </button>
                     </div>
                 </div>
             </div>
