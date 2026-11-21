@@ -324,6 +324,22 @@
                             </button>
                         </div>
                     </template>
+                    <template x-if="activeTab === 'hero_videos'">
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="openHeroVideoModal('add')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg shadow-md transition-all flex items-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i>
+                                <span class="sm:hidden">New</span>
+                                <span class="hidden sm:inline">Add Video</span>
+                            </button>
+                            <a href="/" target="_blank" class="hidden sm:flex bg-brand-inner hover:bg-slate-800 text-rose-300 border border-brand-border text-xs font-semibold px-3 py-2.5 rounded-lg transition-colors items-center gap-1.5" title="Open Live Home Hero">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                <span class="hidden md:inline">View Hero</span>
+                            </a>
+                            <button type="button" @click="loadHeroVideos()" :disabled="isLoadingHeroVideos" class="bg-brand-inner hover:bg-slate-800 text-slate-300 border border-brand-border text-xs font-semibold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center" title="Reload Hero Videos">
+                                <i class="fa-solid fa-rotate" :class="{ 'fa-spin': isLoadingHeroVideos }"></i>
+                            </button>
+                        </div>
+                    </template>
 
                     <button @click="logout()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-bold px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-colors flex items-center gap-1.5" title="Sign Out">
                         <i class="fa-solid fa-power-off"></i>
@@ -418,6 +434,14 @@
                     <i class="fa-solid fa-book-open text-indigo-400 text-[11px]"></i> Cap Guide
                     <template x-if="capGuideItems.length > 0">
                         <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/40" x-text="capGuideItems.length"></span>
+                    </template>
+                </button>
+                <button @click="activeTab = 'hero_videos'; loadHeroVideos()" 
+                        :class="activeTab === 'hero_videos' ? 'bg-rose-600 text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-film text-rose-400 text-[11px]"></i> Hero Videos
+                    <template x-if="heroVideos.length > 0">
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-rose-500/30 text-rose-200 border border-rose-400/40" x-text="heroVideos.length"></span>
                     </template>
                 </button>
             </div>
@@ -3960,9 +3984,159 @@
                 </div>
             </div>
 
+            <!-- TAB 11: HERO VIDEO CAROUSEL MANAGER (Main Page Hero Videos & Descriptions) -->
+            <div x-show="activeTab === 'hero_videos'" x-cloak class="space-y-4">
+                <!-- Header & Summary Bar -->
+                <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-lg">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40">Hero Carousel</span>
+                            <a href="/" target="_blank" class="text-[11px] text-brand-tealLight hover:underline flex items-center gap-1 font-semibold">
+                                <span>메인 페이지 Hero 미리보기</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                            </a>
+                        </div>
+                        <h2 class="font-heading text-lg sm:text-xl font-extrabold text-white">Hero Video Carousel &amp; Captions Manager</h2>
+                        <p class="text-xs text-brand-textMuted">메인 페이지 Hero 동영상 캐러셀의 영상 파일/URL, 상단 라벨, 하단 제목·설명, 재생 순서를 MySQL에서 관리합니다. (최대 32MB MP4/WEBM/MOV 직접 업로드 지원)</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <div class="px-3 py-2 rounded-xl bg-brand-inner border border-brand-border text-center min-w-[76px]">
+                            <div class="text-[10px] text-brand-textMuted font-bold uppercase">Total</div>
+                            <div class="text-base font-extrabold text-white" x-text="heroVideos.length"></div>
+                        </div>
+                        <div class="px-3 py-2 rounded-xl bg-brand-inner border border-brand-border text-center min-w-[76px]">
+                            <div class="text-[10px] text-brand-textMuted font-bold uppercase">Visible</div>
+                            <div class="text-base font-extrabold text-emerald-400" x-text="heroVideos.filter(v => v.is_visible == 1).length"></div>
+                        </div>
+                        <button type="button" @click="openHeroVideoModal('add')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Hero Video</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Card View (< md) -->
+                <div class="md:hidden space-y-3">
+                    <template x-if="heroVideos.length === 0">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-8 text-center text-slate-400 text-xs">
+                            등록된 Hero 동영상이 없습니다.
+                        </div>
+                    </template>
+                    <template x-for="hv in heroVideos" :key="'mob-hv-' + hv.id">
+                        <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-3.5 shadow-lg space-y-3"
+                             :class="{ 'opacity-60 border-slate-700': hv.is_visible != 1 }">
+                            <div class="flex items-start gap-3">
+                                <div class="w-24 h-24 rounded-xl overflow-hidden border border-brand-border bg-black shrink-0 relative">
+                                    <video :src="hv.video_url" :poster="hv.poster_url || '/images/TransMan.webp'" muted playsinline preload="metadata" class="w-full h-full object-cover"></video>
+                                    <span class="absolute top-1 left-1 bg-black/75 text-white text-[9px] font-mono px-1.5 py-0.5 rounded">#<span x-text="hv.sort_order"></span></span>
+                                </div>
+                                <div class="flex-1 min-w-0 space-y-1">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/40" x-text="hv.title"></span>
+                                        <template x-if="hv.is_visible != 1">
+                                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/80 border border-amber-700 text-amber-300">Hidden</span>
+                                        </template>
+                                    </div>
+                                    <div class="font-bold text-white text-xs leading-snug" x-text="hv.caption_title || hv.title"></div>
+                                    <div class="text-[11px] text-slate-300 line-clamp-2" x-text="hv.caption_desc || '-'"></div>
+                                    <div class="text-[10px] font-mono text-slate-500 truncate" x-text="hv.video_url"></div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t border-brand-border/60 flex items-center justify-end gap-1.5">
+                                <button type="button" @click="toggleHeroVideoVisibility(hv)"
+                                        :class="hv.is_visible == 1 ? 'bg-emerald-950/80 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
+                                        class="h-8 px-2.5 rounded-lg border text-[11px] font-bold flex items-center gap-1">
+                                    <i class="fa-solid" :class="hv.is_visible == 1 ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                    <span x-text="hv.is_visible == 1 ? '노출' : '숨김'"></span>
+                                </button>
+                                <button type="button" @click="openHeroVideoModal('edit', hv)" class="h-8 px-3 rounded-lg bg-rose-950 border border-rose-600 text-rose-200 text-[11px] font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-pen"></i> 수정
+                                </button>
+                                <button type="button" @click="copyHeroVideoItem(hv)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 flex items-center justify-center" title="Copy">
+                                    <i class="fa-solid fa-copy text-xs"></i>
+                                </button>
+                                <button type="button" @click="deleteHeroVideoItem(hv)" class="w-8 h-8 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 flex items-center justify-center" title="Delete">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Desktop Table (md+) -->
+                <div class="hidden md:block bg-brand-cardBg border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                    <div class="dh-visible-scroll overflow-auto max-h-[70vh]">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-brand-inner text-brand-textMuted uppercase font-bold text-[10px] border-b border-brand-border sticky top-0 z-20 shadow-sm">
+                                <tr>
+                                    <th class="py-2.5 px-2.5 w-14 text-center">Order</th>
+                                    <th class="py-2.5 px-2.5 w-44">Video Preview</th>
+                                    <th class="py-2.5 px-2.5">Top Badge &amp; Video Path</th>
+                                    <th class="py-2.5 px-2.5">Bottom Caption &amp; Description</th>
+                                    <th class="py-2.5 px-2.5 text-right whitespace-nowrap">노출 | 관리</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-brand-border/60">
+                                <template x-if="heroVideos.length === 0">
+                                    <tr>
+                                        <td colspan="5" class="py-10 text-center text-slate-400 text-xs">등록된 Hero 동영상이 없습니다. "Add Hero Video" 버튼을 눌러 추가하세요.</td>
+                                    </tr>
+                                </template>
+                                <template x-for="hv in heroVideos" :key="'hv-row-' + hv.id">
+                                    <tr class="hover:bg-brand-inner/50 transition-colors" :class="{ 'opacity-60': hv.is_visible != 1 }">
+                                        <td class="py-2.5 px-2.5 text-center font-mono font-bold text-slate-400 align-top" x-text="hv.sort_order"></td>
+                                        <td class="py-2.5 px-2.5 align-top">
+                                            <div class="w-36 h-24 rounded-xl overflow-hidden border border-brand-border bg-black">
+                                                <video :src="hv.video_url" :poster="hv.poster_url || '/images/TransMan.webp'" muted playsinline controls preload="metadata" class="w-full h-full object-cover"></video>
+                                            </div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top max-w-[230px] space-y-1">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/40" x-text="hv.title"></span>
+                                                <template x-if="hv.is_visible != 1">
+                                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950/80 border border-amber-700 text-amber-300">Hidden</span>
+                                                </template>
+                                            </div>
+                                            <div class="text-[10px] font-mono text-slate-400 break-all" x-text="hv.video_url"></div>
+                                            <div class="text-[10px] text-slate-500 truncate" x-show="hv.poster_url">Poster: <span x-text="hv.poster_url"></span></div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 align-top max-w-[340px] space-y-1">
+                                            <div class="font-bold text-white text-xs" x-text="hv.caption_title || hv.title"></div>
+                                            <div class="text-[11px] text-slate-300 leading-relaxed" x-text="hv.caption_desc || '(설명 없음)'"></div>
+                                        </td>
+                                        <td class="py-2.5 px-2.5 text-right whitespace-nowrap align-top">
+                                            <div class="inline-flex items-center justify-end gap-1">
+                                                <button type="button" @click="toggleHeroVideoVisibility(hv)"
+                                                        :class="hv.is_visible == 1 ? 'bg-emerald-950/80 hover:bg-emerald-900 border-emerald-500/70 text-emerald-300' : 'bg-slate-800/90 hover:bg-slate-700 border-slate-600 text-slate-400'"
+                                                        class="w-7 h-7 rounded-lg border text-[11px] inline-flex items-center justify-center transition-all cursor-pointer"
+                                                        :title="hv.is_visible == 1 ? '노출 중 (클릭 시 숨김)' : '숨김 상태 (클릭 시 노출)'">
+                                                    <i class="fa-solid text-[11px]" :class="hv.is_visible == 1 ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400'"></i>
+                                                </button>
+                                                <button type="button" @click="openHeroVideoModal('edit', hv)"
+                                                        class="w-7 h-7 rounded-lg bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-700 text-[11px] inline-flex items-center justify-center cursor-pointer" title="수정">
+                                                    <i class="fa-solid fa-pen text-[11px]"></i>
+                                                </button>
+                                                <button type="button" @click="copyHeroVideoItem(hv)"
+                                                        class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-[11px] inline-flex items-center justify-center cursor-pointer" title="복사">
+                                                    <i class="fa-solid fa-copy text-[11px]"></i>
+                                                </button>
+                                                <button type="button" @click="deleteHeroVideoItem(hv)"
+                                                        class="w-7 h-7 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 text-[11px] inline-flex items-center justify-center cursor-pointer" title="삭제">
+                                                    <i class="fa-solid fa-trash-can text-[11px]"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <!-- STICKY BOTTOM APP BAR (Mobile 5-Tab Dock + Desktop Compact All-10-Tab Dock) -->
+        <!-- STICKY BOTTOM APP BAR (Mobile 5-Tab Dock + Desktop Compact All-11-Tab Dock) -->
         <nav class="no-print fixed bottom-0 inset-x-0 z-40 bg-brand-cardBg/95 backdrop-blur-lg border-t border-brand-border shadow-[0_-8px_30px_rgba(0,0,0,0.6)] mobile-safe-bottom">
             <!-- Mobile Dock (< md): 5 Thumb Buttons + All Tabs Sheet -->
             <div class="grid md:hidden grid-cols-5 h-12 text-[10px] font-bold">
@@ -3994,15 +4168,15 @@
                     <span>Pricing</span>
                 </button>
                 <button type="button" @click="mobileMoreMenuOpen = !mobileMoreMenuOpen"
-                        :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics','cap_guide'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
+                        :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics','cap_guide','hero_videos'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
                     <i class="fa-solid text-sm" :class="mobileMoreMenuOpen ? 'fa-xmark' : 'fa-grip'"></i>
                     <span>All Tabs</span>
                 </button>
             </div>
 
-            <!-- Desktop / Tablet Dock (md+): Compact 10-Tab Bottom Navigation Bar -->
-            <div class="hidden md:grid grid-cols-10 max-w-7xl mx-auto h-12 py-1 px-3 gap-1 text-[10px] font-bold">
+            <!-- Desktop / Tablet Dock (md+): Compact 11-Tab Bottom Navigation Bar -->
+            <div class="hidden md:grid grid-cols-11 max-w-7xl mx-auto h-12 py-1 px-2 gap-1 text-[10px] font-bold">
                 <button type="button" @click="activeTab = 'stock'; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'stock' ? 'bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
                         class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
@@ -4021,7 +4195,7 @@
                     <i class="fa-solid fa-calendar-check text-xs text-emerald-400"></i>
                     <span>Bookings</span>
                     <template x-if="pendingBookingsCount > 0">
-                        <span class="absolute top-0.5 right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
+                        <span class="absolute top-0.5 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
                     </template>
                 </button>
                 <button type="button" @click="activeTab = 'members'; loadMembers(); window.scrollTo({top:0, behavior:'smooth'})"
@@ -4058,9 +4232,9 @@
                         :class="activeTab === 'analytics' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
                         class="rounded-lg flex flex-col items-center justify-center gap-0.5 relative transition-all cursor-pointer">
                     <i class="fa-solid fa-chart-line text-xs text-cyan-400"></i>
-                    <span>방문자 분석</span>
+                    <span>방문자</span>
                     <template x-if="analyticsKpi.today_visitors > 0">
-                        <span class="absolute top-0.5 right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-cyan-500 text-slate-950 text-[9px] font-black flex items-center justify-center" x-text="analyticsKpi.today_visitors"></span>
+                        <span class="absolute top-0.5 right-1.5 min-w-[15px] h-3.5 px-1 rounded-full bg-cyan-500 text-slate-950 text-[9px] font-black flex items-center justify-center" x-text="analyticsKpi.today_visitors"></span>
                     </template>
                 </button>
                 <button type="button" @click="activeTab = 'cap_guide'; loadCapGuide(); window.scrollTo({top:0, behavior:'smooth'})"
@@ -4068,6 +4242,12 @@
                         class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
                     <i class="fa-solid fa-book-open text-xs text-indigo-400"></i>
                     <span>Cap Guide</span>
+                </button>
+                <button type="button" @click="activeTab = 'hero_videos'; loadHeroVideos(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'hero_videos' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-film text-xs text-rose-400"></i>
+                    <span>Hero Video</span>
                 </button>
             </div>
         </nav>
@@ -4077,7 +4257,7 @@
              class="md:hidden fixed inset-0 z-30 bg-black/70 backdrop-blur-sm flex items-end pb-16">
             <div @click.stop class="w-full bg-brand-cardBg border-t-2 border-brand-teal/60 rounded-t-3xl p-4 space-y-3 shadow-2xl">
                 <div class="flex items-center justify-between pb-2 border-b border-brand-border/70">
-                    <span class="font-heading font-bold text-sm text-white">All Admin Menus (10)</span>
+                    <span class="font-heading font-bold text-sm text-white">All Admin Menus (11)</span>
                     <button type="button" @click="mobileMoreMenuOpen = false" class="text-slate-400 hover:text-white px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-xs font-bold">
@@ -4111,6 +4291,11 @@
                             class="p-3 rounded-xl flex flex-col items-center gap-1.5">
                         <i class="fa-solid fa-book-open text-indigo-400 text-base"></i><span>Cap Guide</span>
                     </button>
+                    <button type="button" @click="activeTab = 'hero_videos'; loadHeroVideos(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
+                            :class="activeTab === 'hero_videos' ? 'bg-rose-600 text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
+                            class="p-3 rounded-xl flex flex-col items-center gap-1.5">
+                        <i class="fa-solid fa-film text-rose-400 text-base"></i><span>Hero Videos</span>
+                    </button>
                     <button type="button" @click="activeTab = 'members'; loadMembers(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                             :class="activeTab === 'members' ? 'bg-brand-teal text-white' : 'bg-brand-inner text-slate-200 border border-brand-border'"
                             class="p-3 rounded-xl flex flex-col items-center gap-1.5">
@@ -4133,6 +4318,112 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- HERO VIDEO CAROUSEL ADD / EDIT MODAL -->
+    <div x-show="heroVideoModalOpen" x-cloak @keydown.escape.window="heroVideoModalOpen = false"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-brand-darkBg/90 backdrop-blur-md overflow-y-auto">
+        <div class="bg-brand-cardBg border border-rose-500/40 rounded-3xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-6 max-h-[92vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3 shrink-0">
+                <h3 class="font-heading font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-film text-rose-400"></i>
+                    <span x-text="heroVideoForm.id ? 'Edit Hero Carousel Video' : 'Add New Hero Carousel Video'"></span>
+                </h3>
+                <button type="button" @click="heroVideoModalOpen = false" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveHeroVideoItem()" class="space-y-4 overflow-y-auto pr-1 flex-1 text-xs">
+                <!-- Badge Title, Sort Order, Visibility -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div class="sm:col-span-6">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Top Badge Title * (상단 라벨)</label>
+                        <input type="text" required x-model="heroVideoForm.title" placeholder="e.g. Active Running / Daily Shampoo" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-rose-400">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Sort Order</label>
+                        <input type="number" min="0" x-model.number="heroVideoForm.sort_order" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white outline-none focus:border-rose-400">
+                    </div>
+                    <div class="sm:col-span-3 flex items-end pb-0.5">
+                        <label class="flex items-center gap-2 cursor-pointer bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 w-full">
+                            <input type="checkbox" x-model="heroVideoForm.is_visible" class="w-4 h-4 accent-emerald-500 rounded">
+                            <span class="font-bold text-emerald-300">Visible</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Video Upload & Live Preview -->
+                <div class="bg-brand-cardInner border border-rose-500/40 rounded-2xl p-3.5 space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-3.5 items-start">
+                        <div class="w-full sm:w-44 h-28 rounded-xl overflow-hidden border border-brand-border bg-black shrink-0 flex items-center justify-center">
+                            <template x-if="heroVideoPreviewUrl || heroVideoForm.video_url">
+                                <video :src="heroVideoPreviewUrl || heroVideoForm.video_url" :poster="heroPosterPreviewUrl || heroVideoForm.poster_url || '/images/TransMan.webp'" muted playsinline controls class="w-full h-full object-cover"></video>
+                            </template>
+                            <template x-if="!heroVideoPreviewUrl && !heroVideoForm.video_url">
+                                <div class="text-slate-600 text-center">
+                                    <i class="fa-solid fa-film text-2xl block mb-1"></i>
+                                    <span class="text-[10px]">No Video</span>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="flex-1 w-full space-y-2">
+                            <label class="block text-[11px] font-bold text-rose-300 uppercase">Video File Upload (MP4 / WEBM / MOV • Max 32MB)</label>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <label class="cursor-pointer bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> 동영상 파일 업로드
+                                    <input type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v" @change="handleHeroVideoFileChange($event)" class="hidden">
+                                </label>
+                                <span class="text-[10px] text-slate-400 truncate max-w-[200px]" x-text="heroVideoFile ? (heroVideoFile.name + ' (' + (heroVideoFile.size / 1048576).toFixed(1) + ' MB)') : '또는 아래 경로 입력'"></span>
+                            </div>
+                            <input type="text" x-model="heroVideoForm.video_url" placeholder="Or video path / URL (e.g. /videos/Runing.mp4)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-rose-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optional Poster Image -->
+                <div class="bg-brand-cardInner border border-brand-border rounded-2xl p-3 flex flex-col sm:flex-row gap-3 items-start">
+                    <div class="w-16 h-16 rounded-xl overflow-hidden border border-brand-border bg-brand-darkBg shrink-0 flex items-center justify-center">
+                        <img :src="heroPosterPreviewUrl || heroVideoForm.poster_url || '/images/TransMan.webp'" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 w-full space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase">Poster Thumbnail Image (Optional • 로딩 전 썸네일)</label>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="cursor-pointer bg-slate-700 hover:bg-slate-600 text-white font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1 text-[11px]">
+                                <i class="fa-solid fa-image"></i> 썸네일 업로드
+                                <input type="file" accept="image/*" @change="handleHeroPosterFileChange($event)" class="hidden">
+                            </label>
+                            <span class="text-[10px] text-slate-400" x-text="heroPosterFile ? heroPosterFile.name : '기본값: /images/TransMan.webp'"></span>
+                        </div>
+                        <input type="text" x-model="heroVideoForm.poster_url" placeholder="/images/TransMan.webp" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1 text-[11px] text-white placeholder-slate-500 outline-none focus:border-rose-400">
+                    </div>
+                </div>
+
+                <!-- Bottom Caption Title & Description -->
+                <div class="space-y-3 pt-1">
+                    <div>
+                        <label class="block text-[11px] font-bold text-teal-300 uppercase mb-1">Bottom Caption Title (동영상 하단 제목)</label>
+                        <input type="text" x-model="heroVideoForm.caption_title" placeholder="e.g. Melbourne Master Cut-in" class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-teal-400">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-teal-300 uppercase mb-1">Bottom Description (동영상 하단 설명)</label>
+                        <textarea rows="3" x-model="heroVideoForm.caption_desc" placeholder="동영상 아래에 표시될 상세 설명을 입력하세요..." class="w-full bg-brand-darkBg border border-brand-border rounded-xl px-3 py-2 text-white placeholder-slate-500 outline-none focus:border-teal-400"></textarea>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-brand-border shrink-0">
+                    <button type="button" @click="heroVideoModalOpen = false" class="px-4 py-2 rounded-xl bg-brand-darkBg hover:bg-slate-800 text-slate-200 border border-brand-border font-bold cursor-pointer">
+                        Cancel
+                    </button>
+                    <button type="submit" :disabled="isSavingHeroVideo" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold shadow-lg flex items-center gap-2 disabled:opacity-50 cursor-pointer">
+                        <i class="fa-solid fa-spinner fa-spin" x-show="isSavingHeroVideo"></i>
+                        <i class="fa-solid fa-floppy-disk" x-show="!isSavingHeroVideo"></i>
+                        <span x-text="isSavingHeroVideo ? 'Uploading / Saving...' : (heroVideoForm.id ? 'Update Hero Video' : 'Add Hero Video')"></span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -5902,131 +6193,6 @@
 
                         <!-- Quick Presets -->
                         <div class="flex flex-wrap items-center gap-2">
-                            <select @change="onSelectServicePreset($event.target.value); $event.target.value='';" class="bg-brand-darkBg border border-teal-500/50 text-teal-300 rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer">
-                                <option value="">+ Add Salon Service...</option>
-                                <template x-for="(s, idx) in salonServicePresets" :key="idx">
-                                    <option :value="idx" x-text="s.name + ' ($' + s.price.toFixed(2) + ')'"></option>
-                                </template>
-                            </select>
-
-                            <select @change="onSelectStockPreset($event.target.value); $event.target.value='';" class="bg-brand-darkBg border border-amber-500/50 text-amber-300 rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer">
-                                <option value="">+ Add From Stock Inventory...</option>
-                                <template x-for="item in items" :key="item.id">
-                                    <option :value="item.id" x-text="item.name + ' ($' + Number(item.price).toFixed(2) + ')'"></option>
-                                </template>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Items Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="text-slate-400 uppercase text-[10px] border-b border-brand-border">
-                                <tr>
-                                    <th class="py-2 px-2 w-7/12 font-semibold">Description / Product Name</th>
-                                    <th class="py-2 px-2 w-2/12 font-semibold">Qty</th>
-                                    <th class="py-2 px-2 w-2/12 font-semibold">Unit Price ($)</th>
-                                    <th class="py-2 px-2 w-2/12 text-right font-semibold">Amount ($)</th>
-                                    <th class="py-2 px-1 w-1/12 text-center"></th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-brand-border/50">
-                                <template x-for="(it, idx) in invoiceForm.items" :key="idx">
-                                    <tr class="align-top">
-                                        <!-- Item Description -->
-                                        <td class="py-2 px-2">
-                                            <input type="text" x-model="it.item_name" required placeholder="e.g. Men Custom Toupee / Hair Fitting"
-                                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white text-xs outline-none focus:border-brand-teal font-medium">
-                                            <input type="text" x-model="it.description" placeholder="Optional notes / specifications"
-                                                class="w-full bg-transparent border-0 text-[11px] text-slate-400 px-2 py-0.5 mt-0.5 outline-none placeholder-slate-600 focus:text-white">
-                                        </td>
-                                        <!-- Quantity -->
-                                        <td class="py-2 px-2">
-                                            <input type="number" step="any" min="0.1" x-model.number="it.quantity" required
-                                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-brand-teal text-center">
-                                        </td>
-                                        <!-- Unit Price -->
-                                        <td class="py-2 px-2">
-                                            <div class="relative">
-                                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">$</span>
-                                                <input type="number" step="0.01" min="0" x-model.number="it.unit_price" required
-                                                    class="w-full bg-brand-darkBg border border-brand-border rounded-lg pl-6 pr-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-brand-teal">
-                                            </div>
-                                        </td>
-                                        <!-- Line Total Amount -->
-                                        <td class="py-2 px-2 text-right font-mono font-bold text-white text-xs pt-3">
-                                            $<span x-text="((Number(it.quantity) || 0) * (Number(it.unit_price) || 0)).toFixed(2)"></span>
-                                        </td>
-                                        <!-- Delete row -->
-                                        <td class="py-2 px-1 text-center pt-2.5">
-                                            <button type="button" @click="removeInvoiceItem(idx)" :disabled="invoiceForm.items.length <= 1"
-                                                class="text-slate-500 hover:text-rose-400 disabled:opacity-30 disabled:hover:text-slate-500 p-1 transition-colors">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Add Row Button -->
-                    <button type="button" @click="addInvoiceItem()"
-                        class="px-3 py-1.5 bg-brand-darkBg hover:bg-slate-800 border border-brand-border rounded-lg text-brand-tealLight hover:text-white font-bold text-xs flex items-center gap-1.5 transition-all">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                        <span>Add Line Item</span>
-                    </button>
-                </div>
-
-                <!-- Row 4: Calculation Summary & Notes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-brand-inner/70 p-4 rounded-xl border border-brand-border/80">
-                    <!-- Left: Notes & Telegram Notification Checkbox -->
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Invoice Notes / Bank Details / Warranty Terms</label>
-                            <textarea x-model="invoiceForm.notes" rows="3" placeholder="Notes printed at the bottom of the receipt..."
-                                class="w-full bg-brand-darkBg border border-brand-border rounded-lg p-2.5 text-white text-xs outline-none focus:border-brand-teal leading-relaxed"></textarea>
-                        </div>
-                        <div class="flex items-center gap-2 pt-1">
-                            <input type="checkbox" id="send_tg_check" x-model="invoiceForm.send_telegram_on_create"
-                                class="w-4 h-4 rounded border-brand-border text-brand-teal focus:ring-0 cursor-pointer">
-                            <label for="send_tg_check" class="text-slate-300 text-xs font-medium cursor-pointer flex items-center gap-1.5">
-                                <i class="fa-brands fa-telegram text-sky-400"></i>
-                                <span>Send instant Telegram push notification to my phone on save</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Right: Live Calculations -->
-                    <div class="space-y-2 bg-brand-darkBg/60 p-3.5 rounded-xl border border-brand-border/60">
-                        <div class="flex justify-between items-center text-slate-300">
-                            <span>Subtotal:</span>
-                            <span class="font-mono font-bold">$<span x-text="computedInvoiceSubtotal.toFixed(2)"></span></span>
-                        </div>
-
-                        <!-- Discount -->
-                        <div class="flex justify-between items-center text-slate-300">
-                            <span>Discount AUD ($):</span>
-                            <input type="number" step="0.01" min="0" x-model.number="invoiceForm.discount"
-                                class="w-24 bg-brand-darkBg border border-brand-border rounded px-2 py-1 text-right text-white font-mono text-xs outline-none focus:border-brand-teal">
-                        </div>
-
-                        <!-- GST Toggle -->
-                        <div x-show="invoiceForm.payment_method !== 'Cash'" class="flex justify-between items-center text-slate-300 pt-1 border-t border-brand-border/40">
-                            <label class="flex items-center gap-1.5 cursor-pointer">
-                                <input type="checkbox" x-model="invoiceForm.tax_included" class="w-3.5 h-3.5 rounded text-brand-teal">
-                                <span class="text-[11px]">Include 10% GST (AU Standard)</span>
-                            </label>
-                            <span class="font-mono text-slate-400 text-xs">GST: $<span x-text="computedInvoiceTax.toFixed(2)"></span></span>
-                        </div>
-                        <div x-show="invoiceForm.payment_method === 'Cash'" class="flex justify-between items-center text-slate-400 pt-1 border-t border-brand-border/40 text-[11px]">
-                            <span class="text-amber-400 font-medium flex items-center gap-1">
-                                <i class="fa-solid fa-coins"></i> Cash Payment (No GST Applied)
-                            </span>
-                            <span class="font-mono text-slate-500 text-xs">GST: $0.00</span>
-                        </div>
-
-                        <!-- Grand Total -->
                         <div class="flex justify-between items-center pt-2 border-t border-brand-border text-white">
                             <span class="font-heading font-bold text-sm sm:text-base">Grand Total:</span>
                             <div class="text-right">
@@ -6676,6 +6842,26 @@
                     is_visible: true
                 },
 
+                // Hero Video Carousel Manager (Main Page Hero Videos & Captions)
+                heroVideos: [],
+                isLoadingHeroVideos: false,
+                isSavingHeroVideo: false,
+                heroVideoModalOpen: false,
+                heroVideoFile: null,
+                heroVideoPreviewUrl: '',
+                heroPosterFile: null,
+                heroPosterPreviewUrl: '',
+                heroVideoForm: {
+                    id: null,
+                    title: '',
+                    video_url: '',
+                    poster_url: '/images/TransMan.webp',
+                    caption_title: '',
+                    caption_desc: '',
+                    sort_order: 0,
+                    is_visible: true
+                },
+
                 async init() {
                     await this.checkAuth();
                     this.initWeek();
@@ -6683,6 +6869,7 @@
                     try { localStorage.setItem('dh_admin_logged', '1'); } catch(e) {}
                     this.fetchTodayBadge();
                     this.loadCapGuide();
+                    this.loadHeroVideos();
                 },
 
                 normalizeLocalBaseSizes(cfg) {
@@ -10004,6 +10191,181 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                         }
                     } catch (e) {
                         this.showToast('Error deleting Cap Guide item.', 'error');
+                    }
+                },
+
+                // ==========================================================
+                // HERO VIDEO CAROUSEL MANAGER CRUD
+                // ==========================================================
+                async loadHeroVideos() {
+                    this.isLoadingHeroVideos = true;
+                    try {
+                        const res = await fetch('/admin_stock_api.php?action=list_hero_videos&include_hidden=1&t=' + Date.now(), { cache: 'no-store' });
+                        const data = await res.json();
+                        if (data.status === 'success' && Array.isArray(data.data)) {
+                            this.heroVideos = data.data;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load Hero Videos:', e);
+                    } finally {
+                        this.isLoadingHeroVideos = false;
+                    }
+                },
+
+                openHeroVideoModal(mode = 'add', item = null) {
+                    if (this.heroVideoPreviewUrl && this.heroVideoPreviewUrl.startsWith('blob:')) {
+                        try { URL.revokeObjectURL(this.heroVideoPreviewUrl); } catch (e) {}
+                    }
+                    this.heroVideoFile = null;
+                    this.heroVideoPreviewUrl = '';
+                    this.heroPosterFile = null;
+                    this.heroPosterPreviewUrl = '';
+
+                    if (mode === 'edit' && item) {
+                        this.heroVideoForm = {
+                            id: item.id,
+                            title: item.title || '',
+                            video_url: item.video_url || '',
+                            poster_url: item.poster_url || '/images/TransMan.webp',
+                            caption_title: item.caption_title || '',
+                            caption_desc: item.caption_desc || '',
+                            sort_order: Number(item.sort_order) || 0,
+                            is_visible: item.is_visible == 1
+                        };
+                    } else {
+                        const nextOrder = (this.heroVideos || []).reduce((m, v) => Math.max(m, Number(v.sort_order) || 0), 0) + 1;
+                        this.heroVideoForm = {
+                            id: null,
+                            title: '',
+                            video_url: '',
+                            poster_url: '/images/TransMan.webp',
+                            caption_title: '',
+                            caption_desc: '',
+                            sort_order: nextOrder,
+                            is_visible: true
+                        };
+                    }
+                    this.heroVideoModalOpen = true;
+                },
+
+                copyHeroVideoItem(item) {
+                    this.openHeroVideoModal('edit', item);
+                    this.heroVideoForm.id = null;
+                    this.heroVideoForm.title = (item.title || '') + ' (Copy)';
+                    this.heroVideoForm.sort_order = (this.heroVideos || []).reduce((m, v) => Math.max(m, Number(v.sort_order) || 0), 0) + 1;
+                },
+
+                handleHeroVideoFileChange(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+                    if (file.size > 32 * 1024 * 1024) {
+                        this.showToast('Video file is larger than 32MB. Please compress it first.', 'error');
+                        event.target.value = '';
+                        return;
+                    }
+                    if (this.heroVideoPreviewUrl && this.heroVideoPreviewUrl.startsWith('blob:')) {
+                        try { URL.revokeObjectURL(this.heroVideoPreviewUrl); } catch (e) {}
+                    }
+                    this.heroVideoFile = file;
+                    this.heroVideoPreviewUrl = URL.createObjectURL(file);
+                },
+
+                handleHeroPosterFileChange(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+                    this.heroPosterFile = file;
+                    const reader = new FileReader();
+                    reader.onload = (e) => { this.heroPosterPreviewUrl = e.target.result; };
+                    reader.readAsDataURL(file);
+                },
+
+                async saveHeroVideoItem() {
+                    if (!this.heroVideoForm.title || !this.heroVideoForm.title.trim()) {
+                        this.showToast('Top Badge Title is required.', 'error');
+                        return;
+                    }
+                    if (!this.heroVideoForm.id && !this.heroVideoFile && !(this.heroVideoForm.video_url || '').trim()) {
+                        this.showToast('Please upload a video file or enter a video URL.', 'error');
+                        return;
+                    }
+                    this.isSavingHeroVideo = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'save_hero_video');
+                        if (this.heroVideoForm.id) fd.append('id', this.heroVideoForm.id);
+                        fd.append('title', this.heroVideoForm.title.trim());
+                        fd.append('video_url', (this.heroVideoForm.video_url || '').trim());
+                        fd.append('poster_url', (this.heroVideoForm.poster_url || '').trim());
+                        fd.append('caption_title', (this.heroVideoForm.caption_title || '').trim());
+                        fd.append('caption_desc', (this.heroVideoForm.caption_desc || '').trim());
+                        fd.append('sort_order', this.heroVideoForm.sort_order || 0);
+                        fd.append('is_visible', this.heroVideoForm.is_visible ? '1' : '0');
+                        if (this.heroVideoFile) {
+                            fd.append('video_file', this.heroVideoFile);
+                        }
+                        if (this.heroPosterFile) {
+                            fd.append('poster_file', this.heroPosterFile);
+                        }
+
+                        const res = await fetch('/admin_stock_api.php?action=save_hero_video', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(data.message || 'Hero video saved successfully!');
+                            this.heroVideoModalOpen = false;
+                            await this.loadHeroVideos();
+                        } else {
+                            this.showToast(data.message || 'Failed to save Hero video.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Network error while uploading/saving Hero video.', 'error');
+                    } finally {
+                        this.isSavingHeroVideo = false;
+                    }
+                },
+
+                async toggleHeroVideoVisibility(item) {
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'toggle_hero_video_visibility');
+                        fd.append('id', item.id);
+                        const res = await fetch('/admin_stock_api.php?action=toggle_hero_video_visibility', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            item.is_visible = data.is_visible;
+                            this.showToast(data.message || 'Visibility updated.');
+                        } else {
+                            this.showToast(data.message || 'Failed to update visibility.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Error toggling visibility.', 'error');
+                    }
+                },
+
+                async deleteHeroVideoItem(item) {
+                    if (!confirm(`Delete "${item.title}" from the Hero Video Carousel?`)) return;
+                    try {
+                        const fd = new FormData();
+                        fd.append('action', 'delete_hero_video');
+                        fd.append('id', item.id);
+                        const res = await fetch('/admin_stock_api.php?action=delete_hero_video', {
+                            method: 'POST',
+                            body: fd
+                        });
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            this.showToast(data.message || 'Hero video deleted.');
+                            await this.loadHeroVideos();
+                        } else {
+                            this.showToast(data.message || 'Delete failed.', 'error');
+                        }
+                    } catch (e) {
+                        this.showToast('Error deleting Hero video.', 'error');
                     }
                 }
             }

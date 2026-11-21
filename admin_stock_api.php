@@ -312,6 +312,74 @@ try {
     // Table exists or error ignored
 }
 
+// Auto-create hero_videos table (Hero Carousel Videos & Descriptions)
+try {
+    $conn->exec("CREATE TABLE IF NOT EXISTS hero_videos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(120) NOT NULL,
+        video_url VARCHAR(500) NOT NULL,
+        poster_url VARCHAR(500) DEFAULT '/images/TransMan.webp',
+        caption_title VARCHAR(150) DEFAULT 'Melbourne Master Cut-in',
+        caption_desc TEXT NULL,
+        sort_order INT NOT NULL DEFAULT 0,
+        is_visible TINYINT(1) NOT NULL DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    $hvCount = $conn->query("SELECT COUNT(*) FROM hero_videos")->fetchColumn();
+    if ($hvCount == 0) {
+        $initialHeroVideos = [
+            [
+                'title' => 'Active Running',
+                'video_url' => '/videos/Runing.mp4',
+                'poster_url' => '/images/TransMan.webp',
+                'caption_title' => 'Melbourne Master Cut-in',
+                'caption_desc' => 'Breathable secure hold for running & active sports • Springvale Studio',
+                'sort_order' => 1,
+            ],
+            [
+                'title' => 'FFA Frontal Fringe',
+                'video_url' => '/videos/Frontal-sum.mp4',
+                'poster_url' => '/images/TransMan.webp',
+                'caption_title' => 'Undetectable Frontal Hairline',
+                'caption_desc' => 'Feather-light frontal hairpiece designed for receded hairlines & FFA',
+                'sort_order' => 2,
+            ],
+            [
+                'title' => 'Daily Shampoo',
+                'video_url' => '/videos/shampoo.mp4',
+                'poster_url' => '/images/TransMan.webp',
+                'caption_title' => 'Wash & Style Like Your Own Hair',
+                'caption_desc' => '100% Virgin Remy human hair stays soft and secure through daily showers',
+                'sort_order' => 3,
+            ],
+            [
+                'title' => 'Pool & Ocean Swim',
+                'video_url' => '/videos/swim.mp4',
+                'poster_url' => '/images/TransMan.webp',
+                'caption_title' => 'Waterproof Active Bond',
+                'caption_desc' => 'Swim freely in pools or the ocean with our medical-grade waterproof hold',
+                'sort_order' => 4,
+            ],
+            [
+                'title' => 'Strong Wind Hold',
+                'video_url' => '/videos/windy.mp4',
+                'poster_url' => '/images/TransMan.webp',
+                'caption_title' => 'All-Weather Confidence',
+                'caption_desc' => 'Natural movement and undetectable hairline even in strong Melbourne winds',
+                'sort_order' => 5,
+            ],
+        ];
+        $insHv = $conn->prepare("INSERT INTO hero_videos (title, video_url, poster_url, caption_title, caption_desc, sort_order, is_visible) VALUES (:title, :video_url, :poster_url, :caption_title, :caption_desc, :sort_order, 1)");
+        foreach ($initialHeroVideos as $hv) {
+            $insHv->execute($hv);
+        }
+    }
+} catch (Exception $e) {
+    // Table exists or error ignored
+}
+
 // Auto-check stock_items table columns for description, badge, is_visible, and gallery_images
 try {
     $cols = $conn->query("SHOW COLUMNS FROM stock_items")->fetchAll(PDO::FETCH_COLUMN);
@@ -718,6 +786,28 @@ try {
             'data' => $rows,
             'men' => $men,
             'women' => $women
+        ]);
+    }
+
+    // 6C. PUBLIC LIST HERO CAROUSEL VIDEOS (Main Page Hero Video & Captions)
+    if ($action === 'list_hero_videos') {
+        $includeHidden = !empty($_REQUEST['include_hidden']) && !empty($_SESSION['admin_user']);
+        $sql = "SELECT * FROM hero_videos";
+        if (!$includeHidden) {
+            $sql .= " WHERE is_visible = 1";
+        }
+        $sql .= " ORDER BY sort_order ASC, id ASC";
+        $stmt = $conn->query($sql);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as &$r) {
+            $r['id'] = (int)$r['id'];
+            $r['sort_order'] = (int)$r['sort_order'];
+            $r['is_visible'] = (int)$r['is_visible'];
+        }
+        unset($r);
+        sendJsonResponse([
+            'status' => 'success',
+            'data' => $rows
         ]);
     }
 
@@ -1315,6 +1405,157 @@ try {
         $stmt = $conn->prepare("DELETE FROM cap_guide_items WHERE id = :id");
         $stmt->execute([':id' => $id]);
         sendJsonResponse(['status' => 'success', 'message' => 'Cap Guide item deleted successfully.']);
+    }
+
+    // 16. SAVE HERO CAROUSEL VIDEO (Add or Update — Admin only)
+    if ($action === 'save_hero_video') {
+        $id = !empty($_POST['id']) ? intval($_POST['id']) : 0;
+        $title = trim($_POST['title'] ?? '');
+        $videoUrl = trim($_POST['video_url'] ?? '');
+        $posterUrl = trim($_POST['poster_url'] ?? '');
+        $captionTitle = trim($_POST['caption_title'] ?? '');
+        $captionDesc = trim($_POST['caption_desc'] ?? '');
+        $sortOrder = isset($_POST['sort_order']) && $_POST['sort_order'] !== '' ? intval($_POST['sort_order']) : 0;
+        $isVisible = isset($_POST['is_visible']) ? (filter_var($_POST['is_visible'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : 1;
+
+        if (empty($title)) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Video Badge Title is required.'], 400);
+        }
+
+        // Optional Video File Upload (MP4, WEBM, MOV, M4V)
+        if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['video_file']['error'] !== UPLOAD_ERR_OK) {
+                $errCodes = [
+                    1 => 'Video file exceeds server upload_max_filesize (32MB).',
+                    2 => 'Video file exceeds form MAX_FILE_SIZE.',
+                    3 => 'Video file was only partially uploaded.',
+                    6 => 'Missing temporary folder on server.',
+                    7 => 'Failed to write video file to disk.'
+                ];
+                $msg = $errCodes[$_FILES['video_file']['error']] ?? ('Upload error code ' . $_FILES['video_file']['error']);
+                sendJsonResponse(['status' => 'error', 'message' => $msg], 400);
+            }
+            $tmp = $_FILES['video_file']['tmp_name'];
+            $orig = $_FILES['video_file']['name'];
+            $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+            $allowedVideoExts = ['mp4', 'webm', 'mov', 'm4v'];
+            if (!in_array($ext, $allowedVideoExts)) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Invalid video format (.' . $ext . '). Allowed: MP4, WEBM, MOV, M4V.'], 400);
+            }
+            $newVideoName = 'herovideo_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
+            if (move_uploaded_file($tmp, $uploadDir . $newVideoName)) {
+                $videoUrl = '/uploads/' . $newVideoName;
+            } else {
+                sendJsonResponse(['status' => 'error', 'message' => 'Failed to save uploaded video to /uploads/.'], 500);
+            }
+        }
+
+        // Optional Poster Image Upload (JPG, PNG, WEBP)
+        if (isset($_FILES['poster_file']) && $_FILES['poster_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['poster_file']['error'] !== UPLOAD_ERR_OK) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Poster upload error (code ' . $_FILES['poster_file']['error'] . ').'], 400);
+            }
+            $tmp = $_FILES['poster_file']['tmp_name'];
+            $orig = $_FILES['poster_file']['name'];
+            $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+            $allowedImgExts = ['jpg', 'jpeg', 'png', 'webp'];
+            if (!in_array($ext, $allowedImgExts)) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Invalid poster format (.' . $ext . '). Allowed: JPG, PNG, WEBP.'], 400);
+            }
+            $newPosterName = 'heroposter_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
+            if (move_uploaded_file($tmp, $uploadDir . $newPosterName)) {
+                $posterUrl = '/uploads/' . $newPosterName;
+            } else {
+                sendJsonResponse(['status' => 'error', 'message' => 'Failed to save poster image to /uploads/.'], 500);
+            }
+        }
+
+        if (empty($posterUrl)) {
+            $posterUrl = '/images/TransMan.webp';
+        }
+        if (empty($captionTitle)) {
+            $captionTitle = $title;
+        }
+
+        if ($id > 0) {
+            if (empty($videoUrl)) {
+                $oldStmt = $conn->prepare("SELECT video_url FROM hero_videos WHERE id = :id");
+                $oldStmt->execute([':id' => $id]);
+                $videoUrl = (string)$oldStmt->fetchColumn();
+            }
+            if (empty($videoUrl)) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Video file or URL is required.'], 400);
+            }
+            $stmt = $conn->prepare("UPDATE hero_videos SET
+                title = :title,
+                video_url = :video_url,
+                poster_url = :poster_url,
+                caption_title = :caption_title,
+                caption_desc = :caption_desc,
+                sort_order = :sort_order,
+                is_visible = :is_visible
+                WHERE id = :id");
+            $stmt->execute([
+                ':title' => $title,
+                ':video_url' => $videoUrl,
+                ':poster_url' => $posterUrl,
+                ':caption_title' => $captionTitle,
+                ':caption_desc' => $captionDesc,
+                ':sort_order' => $sortOrder,
+                ':is_visible' => $isVisible,
+                ':id' => $id,
+            ]);
+            sendJsonResponse(['status' => 'success', 'message' => 'Hero video updated successfully.', 'id' => $id, 'video_url' => $videoUrl, 'poster_url' => $posterUrl]);
+        } else {
+            if (empty($videoUrl)) {
+                sendJsonResponse(['status' => 'error', 'message' => 'Please upload a video file or enter a video URL.'], 400);
+            }
+            if ($sortOrder === 0) {
+                $maxOrder = (int)$conn->query("SELECT COALESCE(MAX(sort_order), 0) FROM hero_videos")->fetchColumn();
+                $sortOrder = $maxOrder + 1;
+            }
+            $stmt = $conn->prepare("INSERT INTO hero_videos (title, video_url, poster_url, caption_title, caption_desc, sort_order, is_visible)
+                VALUES (:title, :video_url, :poster_url, :caption_title, :caption_desc, :sort_order, :is_visible)");
+            $stmt->execute([
+                ':title' => $title,
+                ':video_url' => $videoUrl,
+                ':poster_url' => $posterUrl,
+                ':caption_title' => $captionTitle,
+                ':caption_desc' => $captionDesc,
+                ':sort_order' => $sortOrder,
+                ':is_visible' => $isVisible,
+            ]);
+            sendJsonResponse(['status' => 'success', 'message' => 'New Hero video added successfully.', 'id' => (int)$conn->lastInsertId(), 'video_url' => $videoUrl, 'poster_url' => $posterUrl]);
+        }
+    }
+
+    // 17. TOGGLE HERO VIDEO VISIBILITY (Admin only)
+    if ($action === 'toggle_hero_video_visibility') {
+        $id = !empty($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+        if ($id <= 0) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid ID.'], 400);
+        }
+        $stmt = $conn->prepare("UPDATE hero_videos SET is_visible = IF(is_visible = 1, 0, 1) WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $visStmt = $conn->prepare("SELECT is_visible FROM hero_videos WHERE id = :id");
+        $visStmt->execute([':id' => $id]);
+        $newVis = (int)$visStmt->fetchColumn();
+        sendJsonResponse([
+            'status' => 'success',
+            'is_visible' => $newVis,
+            'message' => $newVis ? 'Hero video is now visible.' : 'Hero video is now hidden.'
+        ]);
+    }
+
+    // 18. DELETE HERO VIDEO (Admin only)
+    if ($action === 'delete_hero_video') {
+        $id = !empty($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
+        if ($id <= 0) {
+            sendJsonResponse(['status' => 'error', 'message' => 'Invalid ID.'], 400);
+        }
+        $stmt = $conn->prepare("DELETE FROM hero_videos WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        sendJsonResponse(['status' => 'success', 'message' => 'Hero video deleted successfully.']);
     }
 
 } catch (PDOException $e) {

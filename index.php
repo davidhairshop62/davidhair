@@ -12,6 +12,59 @@ require __DIR__ . '/includes/subpage_bar.php';
 
 $directory = dh_get_section_directory();
 
+// Load Hero Video Carousel Slides from MySQL (hero_videos) with safe fallback
+$heroSlides = [];
+try {
+    require_once __DIR__ . '/config.php';
+    if (isset($conn) && $conn instanceof PDO) {
+        $hvStmt = $conn->query("SELECT id, title, video_url, poster_url, caption_title, caption_desc FROM hero_videos WHERE is_visible = 1 ORDER BY sort_order ASC, id ASC");
+        $heroSlides = $hvStmt ? $hvStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+    }
+} catch (Exception $e) {
+    $heroSlides = [];
+}
+
+if (empty($heroSlides)) {
+    $heroSlides = [
+        [
+            'title' => 'Active Running',
+            'video_url' => '/videos/Runing.mp4',
+            'poster_url' => '/images/TransMan.webp',
+            'caption_title' => 'Melbourne Master Cut-in',
+            'caption_desc' => 'Breathable secure hold for running & active sports • Springvale Studio'
+        ],
+        [
+            'title' => 'FFA Frontal Fringe',
+            'video_url' => '/videos/Frontal-sum.mp4',
+            'poster_url' => '/images/TransMan.webp',
+            'caption_title' => 'Undetectable Frontal Hairline',
+            'caption_desc' => 'Feather-light frontal hairpiece designed for receded hairlines & FFA'
+        ],
+        [
+            'title' => 'Daily Shampoo',
+            'video_url' => '/videos/shampoo.mp4',
+            'poster_url' => '/images/TransMan.webp',
+            'caption_title' => 'Wash & Style Like Your Own Hair',
+            'caption_desc' => '100% Virgin Remy human hair stays soft and secure through daily showers'
+        ],
+        [
+            'title' => 'Pool & Ocean Swim',
+            'video_url' => '/videos/swim.mp4',
+            'poster_url' => '/images/TransMan.webp',
+            'caption_title' => 'Waterproof Active Bond',
+            'caption_desc' => 'Swim freely in pools or the ocean with our medical-grade waterproof hold'
+        ],
+        [
+            'title' => 'Strong Wind Hold',
+            'video_url' => '/videos/windy.mp4',
+            'poster_url' => '/images/TransMan.webp',
+            'caption_title' => 'All-Weather Confidence',
+            'caption_desc' => 'Natural movement and undetectable hairline even in strong Melbourne winds'
+        ],
+    ];
+}
+$firstHeroSlide = $heroSlides[0];
+
 $accentStyles = [
     'rose'    => ['icon' => 'bg-rose-500/15 border-rose-400/35 text-rose-300',       'badge' => 'bg-rose-500/20 text-rose-200 border-rose-400/40',       'hover' => 'hover:border-rose-400/60'],
     'teal'    => ['icon' => 'bg-teal-500/15 border-teal-400/35 text-teal-300',       'badge' => 'bg-teal-400/20 text-teal-200 border-teal-400/40',       'hover' => 'hover:border-teal-400/60'],
@@ -81,69 +134,109 @@ $accentStyles = [
                     </div>
                 </div>
 
-                <!-- Hero Video Card (Auto-plays immediately with WebP poster for instant paint) -->
+                <!-- Hero Video Card (DB-Managed Carousel + Dynamic Captions) -->
+                <script>
+                    window.__heroVideoSlides = <?php echo json_encode($heroSlides, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+                </script>
                 <div class="lg:col-span-5 order-2 lg:order-1"
                     x-data="{
-                        videos: [
-                            '/videos/Runing.mp4',
-                            '/videos/Frontal-sum.mp4',
-                            '/videos/shampoo.mp4',
-                            '/videos/swim.mp4',
-                            '/videos/windy.mp4'
-                        ],
-                        labels: ['Active Running', 'FFA Frontal Fringe', 'Daily Shampoo', 'Pool & Ocean Swim', 'Strong Wind Hold'],
+                        slides: window.__heroVideoSlides || [],
                         currentIdx: 0,
+                        timer: null,
+                        get currentSlide() {
+                            return this.slides[this.currentIdx] || { title: '', video_url: '', poster_url: '/images/TransMan.webp', caption_title: 'Melbourne Master Cut-in', caption_desc: 'Springvale Studio • Dandenong Market' };
+                        },
                         init() {
                             this.$nextTick(() => {
                                 const v = this.$refs.heroVideo;
                                 if (v) { v.play().catch(() => {}); }
                             });
-                            setInterval(() => { this.playNext(); }, 6500);
+                            if (this.slides.length > 1) {
+                                this.resetTimer();
+                            }
                         },
-                        playNext() {
-                            this.currentIdx = (this.currentIdx + 1) % this.videos.length;
+                        resetTimer() {
+                            if (this.timer) clearInterval(this.timer);
+                            this.timer = setInterval(() => { this.playNext(); }, 7000);
+                        },
+                        goTo(idx) {
+                            if (!this.slides.length) return;
+                            this.currentIdx = (idx + this.slides.length) % this.slides.length;
+                            this.resetTimer();
                             this.$nextTick(() => {
                                 const v = this.$refs.heroVideo;
                                 if (v) { v.load(); v.play().catch(() => {}); }
                             });
+                        },
+                        playNext() {
+                            this.goTo(this.currentIdx + 1);
+                        },
+                        playPrev() {
+                            this.goTo(this.currentIdx - 1);
                         }
                     }">
                     <div class="relative mx-auto max-w-md rounded-2xl overflow-hidden border border-brand-border shadow-2xl bg-brand-cardBg">
                         <!-- Immediate Auto-Playing Lifestyle Video with Instant WebP Poster -->
                         <div class="relative">
                             <video x-ref="heroVideo"
-                                :src="videos[currentIdx]"
-                                src="/videos/Runing.mp4"
-                                poster="/images/TransMan.webp"
+                                :src="currentSlide.video_url"
+                                :poster="currentSlide.poster_url || '/images/TransMan.webp'"
+                                src="<?php echo htmlspecialchars($firstHeroSlide['video_url'], ENT_QUOTES, 'UTF-8'); ?>"
+                                poster="<?php echo htmlspecialchars($firstHeroSlide['poster_url'] ?: '/images/TransMan.webp', ENT_QUOTES, 'UTF-8'); ?>"
                                 preload="metadata"
                                 autoplay muted playsinline
                                 @ended="playNext()"
                                 class="w-full h-64 sm:h-80 lg:h-[400px] object-cover bg-brand-darkBg">
                             </video>
-                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-darkBg/80 via-transparent to-black/20"></div>
-                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                                <span class="px-2.5 py-1 rounded-full bg-black/65 border border-teal-400/40 text-[10px] font-mono font-bold text-teal-300 backdrop-blur"
-                                    x-text="(currentIdx + 1) + '/' + videos.length + ' • ' + labels[currentIdx]">1/5 &bull; Active Running</span>
-                                <button type="button" @click="playNext()"
-                                    class="pointer-events-auto px-2.5 py-1 rounded-full bg-black/70 hover:bg-teal-600 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors">
-                                    Next <i class="fa-solid fa-forward-step ml-1"></i>
-                                </button>
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-darkBg/85 via-transparent to-black/25"></div>
+
+                            <!-- Top Badge & Prev/Next Controls -->
+                            <div class="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+                                <span class="px-2.5 py-1 rounded-full bg-black/70 border border-teal-400/40 text-[10px] font-mono font-bold text-teal-300 backdrop-blur truncate max-w-[65%]"
+                                    x-text="(currentIdx + 1) + '/' + slides.length + ' • ' + currentSlide.title">1/<?php echo count($heroSlides); ?> &bull; <?php echo htmlspecialchars($firstHeroSlide['title'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <div class="pointer-events-auto flex items-center gap-1" x-show="slides.length > 1">
+                                    <button type="button" @click="playPrev()"
+                                        class="w-7 h-7 rounded-full bg-black/70 hover:bg-teal-600 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors flex items-center justify-center" title="Previous video">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <button type="button" @click="playNext()"
+                                        class="px-2.5 h-7 rounded-full bg-black/70 hover:bg-teal-600 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors flex items-center gap-1" title="Next video">
+                                        <span>Next</span>
+                                        <i class="fa-solid fa-forward-step"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Slide Dots -->
+                            <div x-show="slides.length > 1" class="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+                                <template x-for="(s, idx) in slides" :key="'hdot-' + idx">
+                                    <button type="button" @click="goTo(idx)"
+                                        :class="currentIdx === idx ? 'w-5 bg-teal-400' : 'w-2 bg-white/45 hover:bg-white/75'"
+                                        class="h-1.5 rounded-full transition-all cursor-pointer" :title="s.title"></button>
+                                </template>
                             </div>
                         </div>
 
-                        <!-- Bottom Studio Caption -->
-                        <div class="px-4 py-3 bg-brand-cardBg border-t border-brand-border/80 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-2.5 min-w-0">
-                                <div class="w-8 h-8 rounded-full teal-gradient flex items-center justify-center font-bold text-white text-xs flex-shrink-0">
-                                    <i class="fa-solid fa-scissors"></i>
+                        <!-- Bottom Dynamic Studio Caption & Description (from hero_videos DB) -->
+                        <div class="px-4 py-3 bg-brand-cardBg border-t border-brand-border/80 flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                                <div class="w-8 h-8 rounded-full teal-gradient flex items-center justify-center font-bold text-white text-xs flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-film"></i>
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="text-xs font-bold text-white truncate">Melbourne Master Cut-in</div>
-                                    <div class="text-[10px] text-brand-tealLight font-semibold truncate">Springvale Studio &bull; Dandenong Market</div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-xs font-bold text-white leading-snug"
+                                        x-text="currentSlide.caption_title || currentSlide.title">
+                                        <?php echo htmlspecialchars($firstHeroSlide['caption_title'] ?: $firstHeroSlide['title'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <div class="text-[11px] text-brand-tealLight/95 font-medium leading-snug mt-0.5 line-clamp-2"
+                                        x-show="currentSlide.caption_desc"
+                                        x-text="currentSlide.caption_desc">
+                                        <?php echo htmlspecialchars($firstHeroSlide['caption_desc'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
                                 </div>
                             </div>
                             <button type="button" @click="openMapModal()"
-                                class="px-2.5 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/35 text-teal-300 text-[10px] font-bold shrink-0 cursor-pointer">
+                                class="px-2.5 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/35 text-teal-300 text-[10px] font-bold shrink-0 cursor-pointer mt-0.5">
                                 <i class="fa-solid fa-location-dot mr-1"></i>Map
                             </button>
                         </div>
