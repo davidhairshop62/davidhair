@@ -14,49 +14,7 @@
             </div>
 
             <!-- Simulator Interactive Container -->
-            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-7 eye-shadow space-y-5">
-
-                <!-- TOP STEP 1 SPOTLIGHT BAR: Makes "Take Photo First" Unmistakable on Mobile & Desktop -->
-                <div x-show="!isCameraActive"
-                    class="rounded-2xl p-3.5 sm:p-4 border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                    :class="!hasOwnPhoto ? 'bg-gradient-to-r from-amber-500/15 via-teal-500/15 to-sky-500/15 border-amber-400/50 shadow-lg' : 'bg-emerald-950/35 border-emerald-500/35'">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                            :class="!hasOwnPhoto ? 'bg-amber-400/20 border border-amber-300/60 text-amber-300' : 'bg-emerald-500/20 border border-emerald-400/50 text-emerald-300'">
-                            <i class="fa-solid text-base" :class="!hasOwnPhoto ? 'fa-camera-retro animate-bounce' : 'fa-circle-check'"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-[10px] font-mono font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                                    :class="!hasOwnPhoto ? 'bg-amber-400 text-slate-950 animate-pulse' : 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/40'"
-                                    x-text="!hasOwnPhoto ? 'STEP 1 • START HERE' : 'PHOTO READY'"></span>
-                                <span class="text-xs sm:text-sm font-heading font-extrabold text-white"
-                                    x-text="!hasOwnPhoto ? 'Take or Upload Your Face Photo First!' : 'Your Photo Is Ready — Pick Any Style Below'"></span>
-                            </div>
-                            <p class="text-[11px] text-slate-300 mt-0.5"
-                                x-text="!hasOwnPhoto ? 'Tap the glowing Take Photo button to preview hairstyles directly on your own face.' : 'Drag or pinch to adjust fit, or retake your photo anytime.'"></p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-                        <button @click="startCamera()" type="button"
-                            :class="!hasOwnPhoto ? 'ai-take-photo-pulse text-white' : 'teal-gradient text-white border border-teal-400/40'"
-                            class="relative flex-1 sm:flex-initial font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-3 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 min-h-[46px] cursor-pointer active:scale-95 whitespace-nowrap">
-                            <span x-show="!hasOwnPhoto" class="relative flex h-2.5 w-2.5">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-200 opacity-90"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-                            </span>
-                            <i class="fa-solid fa-camera text-base"></i>
-                            <span x-text="!hasOwnPhoto ? 'Take Photo Now' : 'Retake Photo'"></span>
-                        </button>
-                        <div class="relative border border-brand-border hover:border-teal-400 bg-brand-darkBg/90 hover:bg-slate-800 rounded-xl px-3.5 py-3 text-xs font-bold text-slate-200 hover:text-white flex items-center justify-center gap-1.5 min-h-[46px] cursor-pointer transition-colors shrink-0">
-                            <input type="file" accept="image/*" @change="handleFaceUpload($event)"
-                                class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
-                            <i class="fa-solid fa-upload text-teal-400"></i>
-                            <span>Upload</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="bg-brand-cardBg border border-brand-border rounded-2xl p-4 sm:p-7 eye-shadow">
 
                 <div class="grid lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
