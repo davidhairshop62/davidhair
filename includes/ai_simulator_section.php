@@ -399,41 +399,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 3: Fine-Tune Adjustments (Hair Color & Blend) -->
-                        <div class="pt-2 border-t border-brand-border space-y-2.5">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-brand-tealLight">Step 3:
-                                Fine-Tune Adjustments</label>
-
-                            <!-- Hair Color & Blend Selection -->
-                            <div class="bg-brand-inner/60 border border-brand-border/80 p-3.5 rounded-xl space-y-2.5">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-palette text-brand-tealLight"></i> Hair Color & Blend
-                                    </span>
-                                    <span class="text-[11px] font-mono text-brand-tealLight font-bold" x-text="selectedColor"></span>
-                                </div>
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <template
-                                        x-for="c in ['#1B Off Black', '#1 Jet Black', '#2 Dark Brown', '#4 Med Brown', '#613 Blonde']"
-                                        :key="c">
-                                        <button type="button" @click="selectedColor = c"
-                                            :class="selectedColor === c ? 'ring-2 ring-brand-teal scale-105 bg-teal-950 text-white font-bold border-brand-teal shadow-md' : 'opacity-70 hover:opacity-100 bg-brand-inner text-slate-300 border-brand-border hover:border-slate-500'"
-                                            class="px-2.5 py-1.5 rounded-lg border text-xs transition-all flex items-center gap-2 cursor-pointer">
-                                            <span class="w-3 h-3 rounded-full border border-white/20 inline-block shadow-inner shrink-0"
-                                                :style="{
-                                                    '#1B Off Black': 'background-color: #242424',
-                                                    '#1 Jet Black': 'background-color: #0d0d0d',
-                                                    '#2 Dark Brown': 'background-color: #3d2314',
-                                                    '#4 Med Brown': 'background-color: #633e24',
-                                                    '#613 Blonde': 'background-color: #e8ca8c'
-                                                }[c]"></span>
-                                            <span x-text="c"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Apply & Save Specifications Button -->
                         <button @click="runTransformation()" :disabled="isProcessing"
                             class="w-full teal-gradient text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-lg hover:opacity-95 transition-all min-h-[48px] flex items-center justify-center gap-2 disabled:opacity-50">
