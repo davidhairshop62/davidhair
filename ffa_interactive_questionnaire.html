@@ -64,7 +64,7 @@
           <span>Book Springvale Fitting</span>
           <span class="text-[10px] bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2 py-0.5 rounded-full font-mono font-semibold">$0 Free 1:1</span>
         </button>
-        <a href="/" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold shadow-sm transition-colors">
+        <a href="/" target="_top" onclick="goMainHome(event)" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold shadow-sm transition-colors">
           <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
           <span>Home</span>
         </a>
@@ -945,6 +945,25 @@ This assessment is strictly for personal self-reference and educational awarenes
 
       // 2. Standalone page fallback (when user opened directly in browser tab)
       window.location.href = '/?book=1#booking';
+    };
+
+    // Navigate top window to Main Home (never open home inside modal iframe)
+    window.goMainHome = function(e) {
+      if (e) e.preventDefault();
+      if (window.top && window.top !== window) {
+        try {
+          const topPath = window.top.location.pathname || '';
+          if (topPath === '/' || topPath === '/index.php') {
+            window.top.dispatchEvent(new CustomEvent('close-ffa-modal'));
+            window.top.dispatchEvent(new CustomEvent('close-all-submodals'));
+            window.top.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          window.top.location.href = '/';
+          return;
+        } catch (err) {}
+      }
+      window.location.href = '/';
     };
 
     // Initialize
