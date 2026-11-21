@@ -310,68 +310,68 @@
         </div>
 
         <!-- Main Content Container -->
-        <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-24 md:pb-8 space-y-4 sm:space-y-6">
+        <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-20 space-y-4 sm:space-y-5">
 
-            <!-- Top Navigation Tab Switcher (Smooth pill scroll on mobile, full bar on desktop) -->
-            <div class="flex items-center gap-1.5 sm:gap-2.5 border-b border-brand-border pb-2.5 sm:pb-3 overflow-x-auto no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
+            <!-- Top Navigation Tab Switcher (Compact Menu Buttons) -->
+            <div class="flex items-center gap-1 sm:gap-1.5 border-b border-brand-border pb-2 overflow-x-auto no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
                 <button @click="activeTab = 'stock'" 
-                        :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-boxes-stacked"></i> Stock
+                        :class="activeTab === 'stock' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-boxes-stacked text-[11px]"></i> Stock
                 </button>
                 <button @click="activeTab = 'ai_styles'; loadAiStyles()" 
-                        :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-scissors text-amber-400"></i> AI Styles
+                        :class="activeTab === 'ai_styles' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-scissors text-amber-400 text-[11px]"></i> AI Styles
                 </button>
                 <button @click="activeTab = 'bookings'; loadBookings()" 
-                        :class="activeTab === 'bookings' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Bookings
+                        :class="activeTab === 'bookings' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-calendar-check text-emerald-400 text-[11px]"></i> Bookings
                     <template x-if="pendingBookingsCount > 0">
-                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-rose-500 text-white animate-pulse" x-text="pendingBookingsCount"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'members'; loadMembers()" 
-                        :class="activeTab === 'members' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-users-gear text-purple-400"></i> Members
+                        :class="activeTab === 'members' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-users-gear text-purple-400 text-[11px]"></i> Members
                     <template x-if="members.length > 0">
-                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-purple-500/30 text-purple-300 border border-purple-500/40" x-text="members.length"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'sections'; loadSections()" 
-                        :class="activeTab === 'sections' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-layer-group text-sky-400"></i> Sections
+                        :class="activeTab === 'sections' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-layer-group text-sky-400 text-[11px]"></i> Sections
                 </button>
                 <button @click="activeTab = 'invoices'; loadInvoices()" 
-                        :class="activeTab === 'invoices' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-file-invoice-dollar text-amber-300"></i> Invoices
+                        :class="activeTab === 'invoices' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-file-invoice-dollar text-amber-300 text-[11px]"></i> Invoices
                     <template x-if="invoices.length > 0">
-                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="invoices.length"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'gallery'; loadGalleryCases()" 
-                        :class="activeTab === 'gallery' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i> B/A Gallery
+                        :class="activeTab === 'gallery' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-amber-400 text-[11px]"></i> B/A Gallery
                     <template x-if="galleryCases.length > 0">
-                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="galleryCases.length"></span>
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-amber-500/30 text-amber-300 border border-amber-500/40" x-text="galleryCases.length"></span>
                     </template>
                 </button>
                 <button @click="activeTab = 'pricing'; loadPricingConfig()" 
-                        :class="activeTab === 'pricing' ? 'bg-brand-teal text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-calculator text-brand-tealLight"></i> Quote Pricing
+                        :class="activeTab === 'pricing' ? 'bg-brand-teal text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-calculator text-brand-tealLight text-[11px]"></i> Pricing
                 </button>
                 <button @click="activeTab = 'analytics'; loadAnalytics()" 
-                        :class="activeTab === 'analytics' ? 'bg-cyan-600 text-white font-bold shadow-md' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
-                        class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2 relative whitespace-nowrap">
-                    <i class="fa-solid fa-chart-line text-cyan-400"></i> 방문자 분석
+                        :class="activeTab === 'analytics' ? 'bg-cyan-600 text-white font-bold shadow-sm' : 'bg-brand-cardBg text-slate-300 hover:text-white border border-brand-border'" 
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] uppercase tracking-wide transition-all flex items-center gap-1.5 relative whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-chart-line text-cyan-400 text-[11px]"></i> 방문자 분석
                     <template x-if="analyticsKpi.today_visitors > 0">
-                        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-cyan-500/30 text-cyan-300 border border-cyan-500/40" x-text="'오늘 ' + analyticsKpi.today_visitors + '명'"></span>
+                        <span class="px-1.5 py-0 text-[9px] font-black rounded-full bg-cyan-500/30 text-cyan-300 border border-cyan-500/40" x-text="analyticsKpi.today_visitors"></span>
                     </template>
                 </button>
             </div>
@@ -3654,41 +3654,106 @@
 
         </main>
 
-        <!-- MOBILE STICKY BOTTOM APP BAR (Thumb-Friendly for Galaxy S24 Ultra 6.8" 19.5:9) -->
-        <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-brand-cardBg/95 backdrop-blur-lg border-t border-brand-border shadow-[0_-8px_30px_rgba(0,0,0,0.6)] mobile-safe-bottom">
-            <div class="grid grid-cols-5 h-14 text-[10px] font-bold">
+        <!-- STICKY BOTTOM APP BAR (Mobile 5-Tab Dock + Desktop Compact All-9-Tab Dock) -->
+        <nav class="no-print fixed bottom-0 inset-x-0 z-40 bg-brand-cardBg/95 backdrop-blur-lg border-t border-brand-border shadow-[0_-8px_30px_rgba(0,0,0,0.6)] mobile-safe-bottom">
+            <!-- Mobile Dock (< md): 5 Thumb Buttons + All Tabs Sheet -->
+            <div class="grid md:hidden grid-cols-5 h-12 text-[10px] font-bold">
                 <button type="button" @click="activeTab = 'stock'; mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'stock' ? 'text-brand-tealLight' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
-                    <i class="fa-solid fa-boxes-stacked text-base"></i>
+                    <i class="fa-solid fa-boxes-stacked text-sm"></i>
                     <span>Stock</span>
                 </button>
                 <button type="button" @click="activeTab = 'bookings'; loadBookings(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'bookings' ? 'text-emerald-400' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 relative active:scale-95 transition-transform">
-                    <i class="fa-solid fa-calendar-check text-base"></i>
+                    <i class="fa-solid fa-calendar-check text-sm"></i>
                     <span>Bookings</span>
                     <template x-if="pendingBookingsCount > 0">
-                        <span class="absolute top-1.5 right-3 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
+                        <span class="absolute top-0.5 right-3 min-w-[15px] h-3.5 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
                     </template>
                 </button>
                 <button type="button" @click="activeTab = 'invoices'; loadInvoices(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'invoices' ? 'text-amber-300' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
-                    <i class="fa-solid fa-file-invoice-dollar text-base"></i>
+                    <i class="fa-solid fa-file-invoice-dollar text-sm"></i>
                     <span>Invoices</span>
                 </button>
                 <button type="button" @click="activeTab = 'pricing'; loadPricingConfig(); mobileMoreMenuOpen = false; window.scrollTo({top:0, behavior:'smooth'})"
                         :class="activeTab === 'pricing' ? 'text-brand-tealLight' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
-                    <i class="fa-solid fa-calculator text-base"></i>
+                    <i class="fa-solid fa-calculator text-sm"></i>
                     <span>Pricing</span>
                 </button>
                 <button type="button" @click="mobileMoreMenuOpen = !mobileMoreMenuOpen"
                         :class="mobileMoreMenuOpen || ['ai_styles','members','sections','gallery','analytics'].includes(activeTab) ? 'text-cyan-300' : 'text-slate-400'"
                         class="flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform">
-                    <i class="fa-solid" :class="mobileMoreMenuOpen ? 'fa-xmark text-base' : 'fa-grip text-base'"></i>
+                    <i class="fa-solid text-sm" :class="mobileMoreMenuOpen ? 'fa-xmark' : 'fa-grip'"></i>
                     <span>All Tabs</span>
+                </button>
+            </div>
+
+            <!-- Desktop / Tablet Dock (md+): Compact 9-Tab Bottom Navigation Bar -->
+            <div class="hidden md:grid grid-cols-9 max-w-6xl mx-auto h-12 py-1 px-3 gap-1 text-[10px] font-bold">
+                <button type="button" @click="activeTab = 'stock'; window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'stock' ? 'bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-boxes-stacked text-xs"></i>
+                    <span>Stock</span>
+                </button>
+                <button type="button" @click="activeTab = 'ai_styles'; loadAiStyles(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'ai_styles' ? 'bg-brand-teal/20 text-amber-300 border border-brand-teal/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-scissors text-xs text-amber-400"></i>
+                    <span>AI Styles</span>
+                </button>
+                <button type="button" @click="activeTab = 'bookings'; loadBookings(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'bookings' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 relative transition-all cursor-pointer">
+                    <i class="fa-solid fa-calendar-check text-xs text-emerald-400"></i>
+                    <span>Bookings</span>
+                    <template x-if="pendingBookingsCount > 0">
+                        <span class="absolute top-0.5 right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center" x-text="pendingBookingsCount"></span>
+                    </template>
+                </button>
+                <button type="button" @click="activeTab = 'members'; loadMembers(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'members' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-users-gear text-xs text-purple-400"></i>
+                    <span>Members</span>
+                </button>
+                <button type="button" @click="activeTab = 'sections'; loadSections(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'sections' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-layer-group text-xs text-sky-400"></i>
+                    <span>Sections</span>
+                </button>
+                <button type="button" @click="activeTab = 'invoices'; loadInvoices(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'invoices' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-file-invoice-dollar text-xs text-amber-300"></i>
+                    <span>Invoices</span>
+                </button>
+                <button type="button" @click="activeTab = 'gallery'; loadGalleryCases(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'gallery' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-xs text-amber-400"></i>
+                    <span>B/A Gallery</span>
+                </button>
+                <button type="button" @click="activeTab = 'pricing'; loadPricingConfig(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'pricing' ? 'bg-brand-teal/20 text-brand-tealLight border border-brand-teal/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-calculator text-xs text-brand-tealLight"></i>
+                    <span>Pricing</span>
+                </button>
+                <button type="button" @click="activeTab = 'analytics'; loadAnalytics(); window.scrollTo({top:0, behavior:'smooth'})"
+                        :class="activeTab === 'analytics' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'"
+                        class="rounded-lg flex flex-col items-center justify-center gap-0.5 relative transition-all cursor-pointer">
+                    <i class="fa-solid fa-chart-line text-xs text-cyan-400"></i>
+                    <span>방문자 분석</span>
+                    <template x-if="analyticsKpi.today_visitors > 0">
+                        <span class="absolute top-0.5 right-2 min-w-[15px] h-3.5 px-1 rounded-full bg-cyan-500 text-slate-950 text-[9px] font-black flex items-center justify-center" x-text="analyticsKpi.today_visitors"></span>
+                    </template>
                 </button>
             </div>
         </nav>
