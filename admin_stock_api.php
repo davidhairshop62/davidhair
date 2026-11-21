@@ -72,11 +72,18 @@ try {
         advantages TEXT NULL,
         drawbacks TEXT NULL,
         best_suited TEXT NULL,
+        style_photos TEXT NULL,
         sort_order INT NOT NULL DEFAULT 0,
         is_visible TINYINT(1) NOT NULL DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Ensure style_photos column exists on already-created cap_guide_items table
+    $cgCols = $conn->query("SHOW COLUMNS FROM cap_guide_items")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('style_photos', $cgCols)) {
+        $conn->exec("ALTER TABLE cap_guide_items ADD COLUMN style_photos TEXT NULL AFTER best_suited");
+    }
 
     $cgCount = $conn->query("SELECT COUNT(*) FROM cap_guide_items")->fetchColumn();
     if ($cgCount == 0) {
@@ -694,6 +701,8 @@ try {
             $r['breathability'] = max(1, min(5, (int)$r['breathability']));
             $r['sort_order'] = (int)$r['sort_order'];
             $r['is_visible'] = (int)$r['is_visible'];
+            $decodedPhotos = !empty($r['style_photos']) ? json_decode($r['style_photos'], true) : [];
+            $r['style_photos'] = is_array($decodedPhotos) ? array_values(array_filter(array_map('trim', $decodedPhotos))) : [];
             if (strtolower($r['category']) === 'women') {
                 $r['category'] = 'women';
                 $women[] = $r;
@@ -1145,6 +1154,49 @@ try {
             }
         }
 
+        // Optional Multi-Photo Upload for Real Hairstyle Photos (0 to many)
+        $stylePhotos = [];
+        if (isset($_POST['style_photos_json']) && trim($_POST['style_photos_json']) !== '') {
+            $parsed = json_decode($_POST['style_photos_json'], true);
+            if (is_array($parsed)) {
+                foreach ($parsed as $u) {
+                    $u = trim((string)$u);
+                    if ($u !== '') {
+                        $stylePhotos[] = $u;
+                    }
+                }
+            }
+        }
+
+        if (isset($_FILES['style_photo_files']) && is_array($_FILES['style_photo_files']['name'])) {
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            $fileCount = count($_FILES['style_photo_files']['name']);
+            for ($i = 0; $i < $fileCount; $i++) {
+                $err = $_FILES['style_photo_files']['error'][$i] ?? UPLOAD_ERR_NO_FILE;
+                if ($err === UPLOAD_ERR_NO_FILE) {
+                    continue;
+                }
+                if ($err !== UPLOAD_ERR_OK) {
+                    sendJsonResponse(['status' => 'error', 'message' => 'Style photo #' . ($i + 1) . ' upload error (code ' . $err . ').'], 400);
+                }
+                $tmp = $_FILES['style_photo_files']['tmp_name'][$i];
+                $orig = $_FILES['style_photo_files']['name'][$i];
+                $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+                if (!in_array($ext, $allowedExts)) {
+                    sendJsonResponse(['status' => 'error', 'message' => 'Invalid style photo format (.' . $ext . '). Allowed: JPG, PNG, WEBP.'], 400);
+                }
+                $newStyleFile = 'capstyle_' . time() . '_' . $i . '_' . rand(1000, 9999) . '.' . $ext;
+                if (move_uploaded_file($tmp, $uploadDir . $newStyleFile)) {
+                    $stylePhotos[] = '/uploads/' . $newStyleFile;
+                } else {
+                    sendJsonResponse(['status' => 'error', 'message' => 'Failed to save uploaded style photo #' . ($i + 1) . '.'], 500);
+                }
+            }
+        }
+
+        $stylePhotos = array_values(array_unique($stylePhotos));
+        $stylePhotosJson = json_encode($stylePhotos, JSON_UNESCAPED_UNICODE);
+
         if (empty($modalSubtitle)) {
             $modalSubtitle = ($category === 'women' ? "Women's Topper Base" : "Men's Toupee Base") . (!empty($subtitle) ? " • " . $subtitle : '');
         }
@@ -1176,6 +1228,7 @@ try {
                 advantages = :advantages,
                 drawbacks = :drawbacks,
                 best_suited = :best_suited,
+                style_photos = :style_photos,
                 sort_order = :sort_order,
                 is_visible = :is_visible
                 WHERE id = :id");
@@ -1196,19 +1249,20 @@ try {
                 ':advantages' => $advantages,
                 ':drawbacks' => $drawbacks,
                 ':best_suited' => $bestSuited,
+                ':style_photos' => $stylePhotosJson,
                 ':sort_order' => $sortOrder,
                 ':is_visible' => $isVisible,
                 ':id' => $id,
             ]);
-            sendJsonResponse(['status' => 'success', 'message' => 'Cap Guide item updated successfully.', 'id' => $id, 'image_url' => $imageUrl]);
+            sendJsonResponse(['status' => 'success', 'message' => 'Cap Guide item updated successfully.', 'id' => $id, 'image_url' => $imageUrl, 'style_photos' => $stylePhotos]);
         } else {
             if ($sortOrder === 0) {
                 $maxOrder = (int)$conn->query("SELECT COALESCE(MAX(sort_order), 0) FROM cap_guide_items WHERE category = " . $conn->quote($category))->fetchColumn();
                 $sortOrder = $maxOrder + 1;
             }
             $stmt = $conn->prepare("INSERT INTO cap_guide_items
-                (category, title, subtitle, image_url, modal_subtitle, modal_desc, realism, breathability, lifespan, lifespan_tone, annual_cost, annual_cost_sub, annual_cost_tone, advantages, drawbacks, best_suited, sort_order, is_visible)
-                VALUES (:category, :title, :subtitle, :image_url, :modal_subtitle, :modal_desc, :realism, :breathability, :lifespan, :lifespan_tone, :annual_cost, :annual_cost_sub, :annual_cost_tone, :advantages, :drawbacks, :best_suited, :sort_order, :is_visible)");
+                (category, title, subtitle, image_url, modal_subtitle, modal_desc, realism, breathability, lifespan, lifespan_tone, annual_cost, annual_cost_sub, annual_cost_tone, advantages, drawbacks, best_suited, style_photos, sort_order, is_visible)
+                VALUES (:category, :title, :subtitle, :image_url, :modal_subtitle, :modal_desc, :realism, :breathability, :lifespan, :lifespan_tone, :annual_cost, :annual_cost_sub, :annual_cost_tone, :advantages, :drawbacks, :best_suited, :style_photos, :sort_order, :is_visible)");
             $stmt->execute([
                 ':category' => $category,
                 ':title' => $title,
@@ -1226,10 +1280,11 @@ try {
                 ':advantages' => $advantages,
                 ':drawbacks' => $drawbacks,
                 ':best_suited' => $bestSuited,
+                ':style_photos' => $stylePhotosJson,
                 ':sort_order' => $sortOrder,
                 ':is_visible' => $isVisible,
             ]);
-            sendJsonResponse(['status' => 'success', 'message' => 'New Cap Guide item added successfully.', 'id' => (int)$conn->lastInsertId(), 'image_url' => $imageUrl]);
+            sendJsonResponse(['status' => 'success', 'message' => 'New Cap Guide item added successfully.', 'id' => (int)$conn->lastInsertId(), 'image_url' => $imageUrl, 'style_photos' => $stylePhotos]);
         }
     }
 

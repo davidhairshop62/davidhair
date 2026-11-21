@@ -3804,6 +3804,21 @@
                                 <div><span class="text-brand-textMuted block text-[10px]">Lifespan</span><span class="font-bold text-white" x-text="cg.lifespan || '-'"></span></div>
                                 <div><span class="text-brand-textMuted block text-[10px]">Annual Cost</span><span class="font-bold text-white" x-text="cg.annual_cost + (cg.annual_cost_sub ? ' ' + cg.annual_cost_sub : '')"></span></div>
                             </div>
+                            <!-- Real Hairstyle Photos Strip (Mobile) -->
+                            <template x-if="cg.style_photos && cg.style_photos.length > 0">
+                                <div class="space-y-1.5">
+                                    <div class="text-[10px] font-bold text-teal-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-images"></i>
+                                        <span>실제 헤어스타일 사진 (<span x-text="cg.style_photos.length"></span>장)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                                        <template x-for="(spUrl, spIdx) in cg.style_photos" :key="'mob-sp-' + cg.id + '-' + spIdx">
+                                            <img :src="spUrl" @click="lightboxSrc = spUrl; lightboxTitle = cg.title + ' — Hairstyle #' + (spIdx + 1); lightboxOpen = true;"
+                                                 class="w-12 h-12 rounded-lg object-cover border border-teal-500/40 shrink-0 cursor-pointer">
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
                             <div class="pt-2 border-t border-brand-border/60 flex items-center justify-end gap-1.5">
                                 <button type="button" @click="toggleCapGuideVisibility(cg)"
                                         :class="cg.is_visible == 1 ? 'bg-emerald-950/80 border-emerald-500/70 text-emerald-300' : 'bg-slate-800 border-slate-600 text-slate-400'"
@@ -3871,6 +3886,25 @@
                                             </div>
                                             <div class="font-bold text-white text-xs leading-snug" x-text="cg.title"></div>
                                             <div class="text-[10px] text-brand-textMuted mt-0.5" x-text="cg.subtitle"></div>
+                                            <template x-if="cg.style_photos && cg.style_photos.length > 0">
+                                                <div class="mt-2 space-y-1">
+                                                    <div class="text-[9px] font-bold text-teal-300 flex items-center gap-1">
+                                                        <i class="fa-solid fa-images"></i>
+                                                        <span>실제 스타일 <span x-text="cg.style_photos.length"></span>장</span>
+                                                    </div>
+                                                    <div class="flex flex-wrap gap-1">
+                                                        <template x-for="(spUrl, spIdx) in cg.style_photos.slice(0, 4)" :key="'desk-sp-' + cg.id + '-' + spIdx">
+                                                            <img :src="spUrl" @click="lightboxSrc = spUrl; lightboxTitle = cg.title + ' — Hairstyle #' + (spIdx + 1); lightboxOpen = true;"
+                                                                 class="w-9 h-9 rounded-md object-cover border border-teal-500/40 hover:border-teal-300 cursor-pointer transition-transform hover:scale-105">
+                                                        </template>
+                                                        <template x-if="cg.style_photos.length > 4">
+                                                            <button type="button" @click="openCapGuideModal('edit', cg)"
+                                                                    class="w-9 h-9 rounded-md bg-teal-950/90 border border-teal-500/40 text-[10px] font-extrabold text-teal-300 flex items-center justify-center cursor-pointer"
+                                                                    x-text="'+' + (cg.style_photos.length - 4)"></button>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </td>
                                         <td class="py-2.5 px-2.5 align-top whitespace-nowrap text-[11px] space-y-1">
                                             <div>
@@ -4170,6 +4204,78 @@
                             <span class="text-[10px] text-slate-400" x-text="capGuideImageFile ? capGuideImageFile.name : 'JPG, PNG, WEBP'"></span>
                         </div>
                         <input type="text" x-model="capGuideForm.image_url" placeholder="Or image path / URL (e.g. images/caps/men_hybrid_cap.jpg)" class="w-full bg-brand-darkBg border border-brand-border rounded-lg px-2.5 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-indigo-400">
+                    </div>
+                </div>
+
+                <!-- Real Hairstyle Photos (0 to Multiple Photos) -->
+                <div class="bg-brand-cardInner border border-teal-500/40 rounded-2xl p-3.5 space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <label class="block text-[11px] font-bold text-teal-300 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-images"></i>
+                                <span>Real Hairstyle Photos (실제 헤어스타일 사진 • 0~다중 등록)</span>
+                            </label>
+                            <p class="text-[10px] text-slate-400 mt-0.5">이 캡 베이스로 완성된 실제 착용 헤어스타일 사진을 여러 장 추가할 수 있습니다. (없으면 0장 가능)</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full bg-teal-950 border border-teal-500/40 text-teal-300 text-[10px] font-bold"
+                              x-text="((capGuideForm.style_photos ? capGuideForm.style_photos.length : 0) + capGuideStylePhotoPreviews.length) + '장'"></span>
+                    </div>
+
+                    <!-- Multi-file upload + optional URL add -->
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <label class="cursor-pointer bg-teal-600 hover:bg-teal-500 text-white font-bold px-3.5 py-2 rounded-xl inline-flex items-center justify-center gap-1.5 shrink-0 transition-colors">
+                            <i class="fa-solid fa-folder-plus"></i>
+                            <span>여러 장 사진 선택 (다중 업로드)</span>
+                            <input type="file" accept="image/*" multiple @change="handleCapGuideStylePhotosAdd($event)" class="hidden">
+                        </label>
+                        <div class="flex-1 flex gap-1.5 min-w-0">
+                            <input type="text" x-model="capGuideNewStyleUrl" @keydown.enter.prevent="addCapGuideStylePhotoUrl()"
+                                   placeholder="또는 사진 경로/URL 입력 후 추가..."
+                                   class="flex-1 min-w-0 bg-brand-darkBg border border-brand-border rounded-xl px-2.5 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-teal-400">
+                            <button type="button" @click="addCapGuideStylePhotoUrl()"
+                                    class="px-3 py-1.5 rounded-xl bg-brand-darkBg hover:bg-slate-800 text-teal-300 border border-teal-500/40 font-bold text-[11px] shrink-0 cursor-pointer">
+                                + 추가
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Saved + Pending Photo Thumbnail Grid -->
+                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-2"
+                         x-show="(capGuideForm.style_photos && capGuideForm.style_photos.length > 0) || capGuideStylePhotoPreviews.length > 0">
+                        <!-- Already Saved Photos -->
+                        <template x-for="(spUrl, idx) in (capGuideForm.style_photos || [])" :key="'edit-sp-' + idx + '-' + spUrl">
+                            <div class="relative group rounded-xl overflow-hidden border border-teal-500/40 bg-brand-darkBg aspect-square">
+                                <img :src="spUrl" @click="lightboxSrc = spUrl; lightboxTitle = (capGuideForm.title || 'Style') + ' #' + (idx + 1); lightboxOpen = true;"
+                                     class="w-full h-full object-cover cursor-pointer">
+                                <span class="absolute top-1 left-1 bg-black/75 text-white text-[9px] font-mono px-1.5 py-0.5 rounded" x-text="'#' + (idx + 1)"></span>
+                                <button type="button" @click="removeCapGuideSavedStylePhoto(idx)"
+                                        class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-[10px] flex items-center justify-center shadow cursor-pointer" title="사진 삭제">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <div class="absolute bottom-1 inset-x-1 flex items-center justify-between gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                    <button type="button" @click="moveCapGuideSavedStylePhoto(idx, -1)" :disabled="idx === 0"
+                                            class="w-5 h-5 rounded bg-black/75 text-white text-[9px] flex items-center justify-center disabled:opacity-30 cursor-pointer" title="앞으로">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <button type="button" @click="moveCapGuideSavedStylePhoto(idx, 1)" :disabled="idx === capGuideForm.style_photos.length - 1"
+                                            class="w-5 h-5 rounded bg-black/75 text-white text-[9px] flex items-center justify-center disabled:opacity-30 cursor-pointer" title="뒤로">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Newly Selected Pending Upload Photos -->
+                        <template x-for="(prev, pIdx) in capGuideStylePhotoPreviews" :key="'pend-sp-' + pIdx">
+                            <div class="relative rounded-xl overflow-hidden border-2 border-amber-400/80 bg-brand-darkBg aspect-square">
+                                <img :src="prev.url" class="w-full h-full object-cover">
+                                <span class="absolute top-1 left-1 bg-amber-400 text-slate-950 text-[8px] font-black uppercase px-1.5 py-0.5 rounded">NEW</span>
+                                <button type="button" @click="removeCapGuidePendingStylePhoto(pIdx)"
+                                        class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-[10px] flex items-center justify-center shadow cursor-pointer" title="업로드 취소">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
@@ -6544,6 +6650,9 @@
                 capGuideModalOpen: false,
                 capGuideImageFile: null,
                 capGuideImagePreview: '',
+                capGuideStylePhotoFiles: [],
+                capGuideStylePhotoPreviews: [],
+                capGuideNewStyleUrl: '',
                 capGuideForm: {
                     id: null,
                     category: 'men',
@@ -6562,6 +6671,7 @@
                     advantages: '',
                     drawbacks: '',
                     best_suited: '',
+                    style_photos: [],
                     sort_order: 0,
                     is_visible: true
                 },
@@ -9679,6 +9789,9 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                 openCapGuideModal(mode = 'add', item = null) {
                     this.capGuideImageFile = null;
                     this.capGuideImagePreview = '';
+                    this.capGuideStylePhotoFiles = [];
+                    this.capGuideStylePhotoPreviews = [];
+                    this.capGuideNewStyleUrl = '';
                     if (mode === 'edit' && item) {
                         this.capGuideForm = {
                             id: item.id,
@@ -9698,6 +9811,7 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                             advantages: item.advantages || '',
                             drawbacks: item.drawbacks || '',
                             best_suited: item.best_suited || '',
+                            style_photos: Array.isArray(item.style_photos) ? [...item.style_photos] : [],
                             sort_order: Number(item.sort_order) || 0,
                             is_visible: item.is_visible == 1
                         };
@@ -9723,6 +9837,7 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                             advantages: '',
                             drawbacks: '',
                             best_suited: '',
+                            style_photos: [],
                             sort_order: nextOrder,
                             is_visible: true
                         };
@@ -9745,6 +9860,53 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                     const reader = new FileReader();
                     reader.onload = (e) => { this.capGuideImagePreview = e.target.result; };
                     reader.readAsDataURL(file);
+                },
+
+                handleCapGuideStylePhotosAdd(event) {
+                    const files = Array.from(event.target.files || []);
+                    if (!files.length) return;
+                    files.forEach(file => {
+                        this.capGuideStylePhotoFiles.push(file);
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.capGuideStylePhotoPreviews.push({ name: file.name, url: e.target.result });
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    event.target.value = '';
+                },
+
+                addCapGuideStylePhotoUrl() {
+                    const url = (this.capGuideNewStyleUrl || '').trim();
+                    if (!url) return;
+                    if (!Array.isArray(this.capGuideForm.style_photos)) {
+                        this.capGuideForm.style_photos = [];
+                    }
+                    if (!this.capGuideForm.style_photos.includes(url)) {
+                        this.capGuideForm.style_photos.push(url);
+                    }
+                    this.capGuideNewStyleUrl = '';
+                },
+
+                removeCapGuideSavedStylePhoto(idx) {
+                    if (!Array.isArray(this.capGuideForm.style_photos)) return;
+                    this.capGuideForm.style_photos.splice(idx, 1);
+                },
+
+                moveCapGuideSavedStylePhoto(idx, dir) {
+                    const arr = this.capGuideForm.style_photos;
+                    if (!Array.isArray(arr)) return;
+                    const target = idx + dir;
+                    if (target < 0 || target >= arr.length) return;
+                    const tmp = arr[idx];
+                    arr[idx] = arr[target];
+                    arr[target] = tmp;
+                    this.capGuideForm.style_photos = [...arr];
+                },
+
+                removeCapGuidePendingStylePhoto(pIdx) {
+                    this.capGuideStylePhotoFiles.splice(pIdx, 1);
+                    this.capGuideStylePhotoPreviews.splice(pIdx, 1);
                 },
 
                 async saveCapGuideItem() {
@@ -9773,11 +9935,15 @@ Tel: +61 433 484 882 | www.davidhairshop.com`;
                         fd.append('advantages', this.capGuideForm.advantages || '');
                         fd.append('drawbacks', this.capGuideForm.drawbacks || '');
                         fd.append('best_suited', this.capGuideForm.best_suited || '');
+                        fd.append('style_photos_json', JSON.stringify(this.capGuideForm.style_photos || []));
                         fd.append('sort_order', this.capGuideForm.sort_order || 0);
                         fd.append('is_visible', this.capGuideForm.is_visible ? '1' : '0');
                         if (this.capGuideImageFile) {
                             fd.append('image_file', this.capGuideImageFile);
                         }
+                        (this.capGuideStylePhotoFiles || []).forEach(f => {
+                            fd.append('style_photo_files[]', f);
+                        });
 
                         const res = await fetch('/admin_stock_api.php?action=save_cap_guide', {
                             method: 'POST',
