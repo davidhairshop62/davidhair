@@ -445,58 +445,62 @@
                     </div>
                 </div>
 
-                <!-- Filter & Search Controls -->
-                <div class="bg-brand-cardBg border border-brand-border p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-                    <div class="relative w-full md:w-72">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Search by SKU, Name, Base..." class="w-full bg-brand-inner border border-brand-border rounded-lg pl-9 pr-4 py-2 text-xs text-white outline-none focus:border-brand-teal">
+                <!-- Filter & Search Controls (Compact & strictly aligned to Stock List width) -->
+                <div class="w-full max-w-full overflow-hidden bg-brand-cardBg border border-brand-border p-2.5 sm:p-3 rounded-xl grid grid-cols-2 md:grid-cols-4 gap-2 items-center mb-4">
+                    <!-- 1. Search Input -->
+                    <div class="relative col-span-2 md:col-span-1 min-w-0">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Search SKU, Name, Base..." class="w-full min-w-0 bg-brand-inner border border-brand-border rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-white outline-none focus:border-brand-teal">
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                        <!-- Category Filter -->
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider">Category:</label>
-                            <select x-model="selectedCategory" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal">
-                                <option value="All">All Categories</option>
-                                <option value="Men's Toupee">Men's Toupee</option>
-                                <option value="Women's topper">Women's topper</option>
-                                <option value="Human Hair Wig">Human Hair Wig</option>
-                                <option value="Synthetic Wig">Synthetic Wig</option>
-                                <option value="Hair Extension">Hair Extension</option>
-                            </select>
-                        </div>
+                    <!-- 2. Category Filter -->
+                    <div class="col-span-1 min-w-0 flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-brand-textMuted uppercase shrink-0 flex items-center gap-1" title="Category">
+                            <i class="fa-solid fa-layer-group text-brand-tealLight text-[11px]"></i>
+                            <span class="hidden xl:inline">Category</span>
+                        </label>
+                        <select x-model="selectedCategory" class="w-full min-w-0 flex-1 bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-2 py-1.5 outline-none focus:border-brand-teal truncate">
+                            <option value="All">All Categories</option>
+                            <option value="Men's Toupee">Men's Toupee</option>
+                            <option value="Women's topper">Women's topper</option>
+                            <option value="Human Hair Wig">Human Hair Wig</option>
+                            <option value="Synthetic Wig">Synthetic Wig</option>
+                            <option value="Hair Extension">Hair Extension</option>
+                        </select>
+                    </div>
 
-                        <!-- Visibility Filter -->
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider flex items-center gap-1">
-                                <i class="fa-solid fa-eye text-brand-tealLight"></i> Display:
-                            </label>
-                            <select x-model="selectedVisibility" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal font-medium">
-                                <option value="All">All Status (전체)</option>
-                                <option value="visible">Visible Only (노출 중)</option>
-                                <option value="hidden">Hidden Only (숨김)</option>
-                            </select>
-                        </div>
+                    <!-- 3. Visibility Filter -->
+                    <div class="col-span-1 min-w-0 flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-brand-textMuted uppercase shrink-0 flex items-center gap-1" title="Display Status">
+                            <i class="fa-solid fa-eye text-brand-tealLight text-[11px]"></i>
+                            <span class="hidden xl:inline">Display</span>
+                        </label>
+                        <select x-model="selectedVisibility" class="w-full min-w-0 flex-1 bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-2 py-1.5 outline-none focus:border-brand-teal font-medium truncate">
+                            <option value="All">All (전체)</option>
+                            <option value="visible">Visible (노출)</option>
+                            <option value="hidden">Hidden (숨김)</option>
+                        </select>
+                    </div>
 
-                        <!-- Sort By Selector -->
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-brand-textMuted uppercase tracking-wider flex items-center gap-1">
-                                <i class="fa-solid fa-arrow-down-short-wide text-brand-tealLight"></i> Sort:
-                            </label>
-                            <select @change="applySelectSort($event.target.value)" :value="sortColumn ? (sortColumn + '-' + sortDirection) : 'id-desc'" class="bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-brand-teal font-medium">
-                                <option value="id-desc">Newest First</option>
-                                <option value="name-asc">Item Name (A–Z)</option>
-                                <option value="name-desc">Item Name (Z–A)</option>
-                                <option value="category-asc">Category</option>
-                                <option value="size-asc">Size</option>
-                                <option value="price-asc">Price (Lowest First ↑)</option>
-                                <option value="price-desc">Price (Highest First ↓)</option>
-                                <option value="stockQty-desc">Stock Qty (Highest First ↓)</option>
-                                <option value="stockQty-asc">Stock Qty (Lowest First ↑)</option>
-                                <option value="is_visible-desc">Display: Visible First (노출 우선)</option>
-                                <option value="is_visible-asc">Display: Hidden First (숨김 우선)</option>
-                            </select>
-                        </div>
+                    <!-- 4. Sort By Selector -->
+                    <div class="col-span-2 md:col-span-1 min-w-0 flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-brand-textMuted uppercase shrink-0 flex items-center gap-1" title="Sort Order">
+                            <i class="fa-solid fa-arrow-down-short-wide text-brand-tealLight text-[11px]"></i>
+                            <span class="hidden xl:inline">Sort</span>
+                        </label>
+                        <select @change="applySelectSort($event.target.value)" :value="sortColumn ? (sortColumn + '-' + sortDirection) : 'id-desc'" class="w-full min-w-0 flex-1 bg-brand-inner border border-brand-border text-xs text-white rounded-lg px-2 py-1.5 outline-none focus:border-brand-teal font-medium truncate">
+                            <option value="id-desc">Newest First</option>
+                            <option value="name-asc">Name (A–Z)</option>
+                            <option value="name-desc">Name (Z–A)</option>
+                            <option value="category-asc">Category</option>
+                            <option value="size-asc">Size</option>
+                            <option value="price-asc">Price (Low ↑)</option>
+                            <option value="price-desc">Price (High ↓)</option>
+                            <option value="stockQty-desc">Qty (High ↓)</option>
+                            <option value="stockQty-asc">Qty (Low ↑)</option>
+                            <option value="is_visible-desc">Visible First (노출)</option>
+                            <option value="is_visible-asc">Hidden First (숨김)</option>
+                        </select>
                     </div>
                 </div>
 
